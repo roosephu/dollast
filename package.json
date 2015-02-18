@@ -1,0 +1,21 @@
+{
+  "name": "dollast",
+  "version": "0.0.1",
+  "description": "the online judge for CJ",
+  "main": "server.js",
+  "dependencies": {
+    "koa": "latest",
+    "log4js": "latest",
+    "mongoose": "latest",
+    "koa-json": "latest",
+    "koa-bodyparser": "latest",
+    "koa-generic-session": "latest",
+    "koa-passport": "latest",
+    "passport-local": "latest",
+    "koa-validate": "latest",
+    "koa-static": "latest",
+    "koa-router": "latest",
+    "mongoose-deep-populate": "latest",
+    "mongoose-auto-increment": "latest"
+  }
+}
