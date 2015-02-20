@@ -14,13 +14,28 @@ app.config ['$routeProvider', ($route-provider) ->
     .when '/solution/submit/:pid',
       template-url: 'partials/solution/submit.html'
       controller  : 'sol-submit-ctrl'
+    .when '/problem/modify/:pid',
+      template-url: 'partials/problem/modify.html'
+      controller  : 'prob-modify-ctrl'
     .when '/login',
       template-url: 'partials/login.html'
       controller  : 'login-ctrl'
     .when '/solution',
       template-url: 'partials/solution/list.html'
       controller  : 'sol-list-ctrl'
+    .when '/solution/:sid',
+      template-url: 'partials/solution/show.html'
+      controller  : 'sol-show-ctrl'
     .otherwise template-url: 'partials/404.html'
+]
+
+app.controller 'navbar-ctrl', [
+  "$scope", "$http",
+  ($scope, $http) ->
+    $http.get '/session'
+      .success (data, status, headers, config) ->
+        $scope.uid = data.user
+        console.log "#{JSON.stringify data}"
 ]
 
 app.controller 'index-ctrl', [
@@ -62,6 +77,17 @@ app.controller 'prob-list-ctrl', [
         $scope.probs = data
 ]
 
+app.controller 'prob-modify-ctrl', [
+  "$scope", "$http", "$routeParams"
+  ($scope, $http, $route-params) ->
+    pid = $route-params.pid
+    $http.get "/problem/#{pid}"
+      .success (data, status, headers, config) ->
+        $scope.prob = data with _id: pid
+    $scope.submit = ->
+      $http.post "/problem/modify/#{pid}", $scope.prob
+]
+
 app.controller 'sol-submit-ctrl', [
   "$scope", "$http", "$routeParams"
   ($scope, $http, $route-params) ->
@@ -81,4 +107,14 @@ app.controller 'sol-list-ctrl', [
       .success (data, status, headers, config) ->
         console.log "data: #{data}"
         $scope.sols = data
+]
+
+app.controller 'sol-show-ctrl', [
+  "$scope", "$http", "$routeParams"
+  ($scope, $http, $route-params) ->
+    $scope.sid = $route-params.sid
+    $http.get "/solution/#{$scope.sid}"
+      .success (data, status, headers, config) ->
+        console.log "data: #{data}"
+        $scope.sol = data
 ]

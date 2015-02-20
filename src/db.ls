@@ -6,7 +6,7 @@ require! {
   'util'
 }
 
-logger = log4js.get-logger!
+logger = log4js.get-logger 'dollast'
 ObjectID = mongoose.Schema.Types.ObjectID
 
 export conn = mongoose.create-connection 'mongodb://localhost/dollast'
@@ -47,8 +47,11 @@ class sol-model
       return if err
       logger.trace "Current solution: #{util.inspect sol}"
   list: ~>*
-    sols = yield @model.find {}, '-code' .populate 'prob', 'title' .exec!
+    sols = yield @model.find {}, '-code' .populate 'prob', 'title stat' .exec!
     return sols
+  show: (sid) ~>*
+    sol = yield @model.find-by-id sid .populate 'prob', 'title' .exec!
+    return sol
 
 # ==== problem ====
 
@@ -65,7 +68,7 @@ class prob-model
       stat: {}
   show: (pid) ->*
     logger.trace "query problem #{pid}"
-    prob = yield @model .find-one! .where '_id' .equals pid .exec!
+    prob = yield @model .find-by-id pid .exec!
     return prob
   list: ->*
     probs = yield @model .find {}, 'id title stat' .exec!

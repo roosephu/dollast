@@ -6,7 +6,7 @@
   mongooseAutoIncrement = require('mongoose-auto-increment');
   log4js = require('log4js');
   util = require('util');
-  logger = log4js.getLogger();
+  logger = log4js.getLogger('dollast');
   ObjectID = mongoose.Schema.Types.ObjectID;
   out$.conn = conn = mongoose.createConnection('mongodb://localhost/dollast');
   mongooseAutoIncrement.initialize(conn);
@@ -15,6 +15,7 @@
     solModel.displayName = 'solModel';
     var prototype = solModel.prototype, constructor = solModel;
     function solModel(){
+      this.show = bind$(this, 'show', prototype);
       this.list = bind$(this, 'list', prototype);
       this.submit = bind$(this, 'submit', prototype);
       this.schema = new mongoose.Schema({
@@ -57,8 +58,13 @@
     };
     prototype.list = function*(){
       var sols;
-      sols = yield this.model.find({}, '-code').populate('prob', 'title').exec();
+      sols = yield this.model.find({}, '-code').populate('prob', 'title stat').exec();
       return sols;
+    };
+    prototype.show = function*(sid){
+      var sol;
+      sol = yield this.model.findById(sid).populate('prob', 'title').exec();
+      return sol;
     };
     return solModel;
   }());
@@ -80,7 +86,7 @@
     prototype.show = function*(pid){
       var prob;
       logger.trace("query problem " + pid);
-      prob = yield this.model.findOne().where('_id').equals(pid).exec();
+      prob = yield this.model.findById(pid).exec();
       return prob;
     };
     prototype.list = function*(){

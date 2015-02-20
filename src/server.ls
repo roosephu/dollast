@@ -35,7 +35,8 @@ app.use koa-generic-session(
 )
 app.use koa-bodyparser!
 
-require './auth'
+require './auth' .init db
+
 app.use koa-passport.initialize!
 app.use koa-passport.session!
 
@@ -80,11 +81,17 @@ private-router
   .post '/solution/submit', ->*
     console.log "#{util.inspect @session}"
     logger.trace 'submit session'
-    uid = that if @session.passport.user?.uid?
+    uid ?= @session.passport.user?._id?
     uid ?= "roosephu"
     @body = yield db.sol.submit @request.body, uid
   .get '/solution', ->*
     @body = yield db.sol.list!
+  .get '/session', ->*
+    console.log "Current session: #{util.inspect @session}"
+    @body =
+      user: if @session.passport?.user?._id? then that else void
+  .get '/solution/:sid', ->*
+    @body = yield db.sol.show @params.sid
 
 app.use private-router.middleware!
 

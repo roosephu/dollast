@@ -29,7 +29,7 @@
     }
   }));
   app.use(koaBodyparser());
-  require('./auth');
+  require('./auth').init(db);
   app.use(koaPassport.initialize());
   app.use(koaPassport.session());
   app.use(koaJson());
@@ -56,16 +56,22 @@
   }).get('/problem/:pid', function*(){
     this.body = yield db.prob.show(this.params.pid);
   }).post('/solution/submit', function*(){
-    var that, ref$, uid;
+    var uid, ref$;
     console.log(util.inspect(this.session) + "");
     logger.trace('submit session');
-    if ((that = (ref$ = this.session.passport.user) != null ? ref$.uid : void 8) != null) {
-      uid = that;
-    }
+    uid == null && (uid = ((ref$ = this.session.passport.user) != null ? ref$._id : void 8) != null);
     uid == null && (uid = "roosephu");
     this.body = yield db.sol.submit(this.request.body, uid);
   }).get('/solution', function*(){
     this.body = yield db.sol.list();
+  }).get('/session', function*(){
+    var that, ref$, ref1$;
+    console.log("Current session: " + util.inspect(this.session));
+    this.body = {
+      user: (that = (ref$ = this.session.passport) != null ? (ref1$ = ref$.user) != null ? ref1$._id : void 8 : void 8) != null ? that : void 8
+    };
+  }).get('/solution/:sid', function*(){
+    this.body = yield db.sol.show(this.params.sid);
   });
   app.use(privateRouter.middleware());
   console.log("Listening port 3000");
