@@ -1,0 +1,8 @@
+<p> round {{rnd._id}}: {{rnd.title}} </p>
+<p> from {{rnd.begTime | date:'medium'}} to {{rnd.endTime | date:'medium'}} </p>
+
+<p> problemset </p>
+<ul ng-repeat="prob in rnd.probs">
+  <li>{{prob._id}}: <a href="#/problem/{{prob._id}}">{{prob.title}}</a></li>
+</ul>
+<a href="#/round/{{rnd._id}}/modify">modify</a>

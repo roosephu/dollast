@@ -1,0 +1,17 @@
+<p> round {{rnd._id}} </p>
+<p> title: <input ng-model="rnd.title"/></p>
+<p> from <input data-date-time-input="YYYY-MM-DD HH:mm:ss" ng-model="rnd.begTime"/>,
+  to <input data-date-time-input="YYYY-MM-DD HH:mm:ss" ng-model="rnd.endTime"/>
+</p>
+<p> start time {{rnd.begTime | date:'yyyy-MM-dd HH:mm:ss'}} </p>
+
+<p> problemset </p>
+<ul ng-repeat="prob in probs">
+  <li>
+    {{prob._id}}: <a href="#/problem/{{prob._id}}">{{prob.title}}</a>
+    <input type="button" ng-click="remove(prob._id)" value="remove" />
+  </li>
+</ul>
+<input type="number" ng-model="pid"/><input type="button" ng-click="insert()" value="insert" />
+<input type="button" ng-click="submit()" value="submit"/>
+<input type="button" ng-click="delete()" value="delete"/>

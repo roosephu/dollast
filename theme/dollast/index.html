@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dollast-app">
+<head>
+  <meta charset="utf-8">
+  <title>dollast</title>
+  <script src="js/lib/angular.js"></script>
+  <script src="js/lib/angular-route.js"></script>
+  <script src="js/lib/preludels.min.js" charset="utf-8"></script>
+  <script src="js/lib/moment.js"></script>
+  <script src="js/dateTimeInput.js"></script>
+  <script src="js/dollast.js"></script>
+</head>
+<body>
+  <div ng-controller="navbar-ctrl">
+    <a href="#/">home </a>
+    <div ng-hide="uid">
+      <a href="#/login">login</a>
+    </div>
+    <div ng-show="uid">
+      <a href="#/user/{{uid}}">{{uid}}</a>
+      <a href="#/logout">logout</a>
+    </div>
+    <a href="#/problem">problem list</a>
+    <a href="#/solution">status</a>
+    <a href="#/round">contest</a>
+  </div>
+  <div ng-view></div>
+</body>
+</html>
