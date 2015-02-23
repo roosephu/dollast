@@ -6,6 +6,8 @@ app.config ['$routeProvider', ($route-provider) ->
     .when '/',
       template-url: 'partials/index.html'
       controller  : 'index-ctrl'
+    .when '/about',
+      template-url: 'partials/about.html'
     .when '/problem',
       template-url: 'partials/problem/list.html'
       controller  : 'prob-list-ctrl'
@@ -45,27 +47,34 @@ app.config ['$routeProvider', ($route-provider) ->
     .otherwise template-url: 'partials/404.html'
 ]
 
+mk-cb = (a, b, c) ->
+  f = (a, y) ->
+    a = y
+  c.x f a
+
 app.service 'doffirst', ['$http',
   class
     (@$http) ->
       @caller = (obj, opts, cb, http) ->
-        http.success (data, status, headers, config) ->
-          if typeof opts == 'undefined'
+        suc-cb = (obj, opts, cb, data, status, headers, config) -->
+          if 'undefined' == typeof opts
             opts = {}
-          else if typeof opts == 'function'
+          else if 'function' == typeof opts
             cb = opts
             opts = {}
-          obj <<< data
           if opts.debug
             console.log "data: #{JSON.stringify data}"
-          cb $scope if cb
+          if obj
+            obj <<< data
+            cb obj if cb
+        http.success suc-cb obj, opts, cb
     get: (url, obj, opts, cb) ->
       @caller obj, opts, cb, @$http.get url
     put: (url, data, obj, opts, cb) ->
       @caller obj, opts, cb, @$http.put url, data
-    post: (url, data, opts, cb) ->
+    post: (url, data, obj, opts, cb) ->
       @caller obj, opts, cb, @$http.post url, data
-    delete: (url, opts, cb) ->
+    delete: (url, obj, opts, cb) ->
       @caller obj, opts, cb, @$http.delete url
 ]
 
@@ -73,151 +82,117 @@ app.controller 'navbar-ctrl', [
   "$scope", "doffirst",
   ($scope, doffirst) ->
     doffirst.get '/session', $scope
-    /*$http.get '/session'
-      .success (data, status, headers, config) ->
-        $scope.uid = data.uid
-        console.log "#{JSON.stringify data}"*/
 ]
 
 app.controller 'index-ctrl', [
-  "$scope", "$http", "$location"
-  ($scope, $http, $location) ->
+  "$scope", "doffirst", "$location"
+  ($scope, doffirst, $location) ->
     $scope.submit = ->
       $location.path "/solution"
 ]
 
 app.controller 'login-ctrl', [
-  "$scope", "$http",
-  ($scope, $http) ->
+  "$scope", "doffirst",
+  ($scope, doffirst) ->
     $scope.user =
       username: ''
       password: ''
     $scope.submit = (user) ->
       console.log user
-      $http.post '/login', $scope.user
-        .success (data, status, headers, config) ->
-          console.log 'login OK'
-        .error (data, status, headers, config) ->
-          console.log 'login Error'
+      doffirst.post '/login', $scope.user, $scope, ->
+        it.msg = it.status == false
 ]
 
 app.controller 'prob-show-ctrl', [
-  "$scope", "$http", "$routeParams"
-  ($scope, $http, $route-params) ->
+  "$scope", "doffirst", "$routeParams"
+  ($scope, doffirst, $route-params) ->
     $scope.pid = parse-int $route-params.pid
-    $http.get "/problem/#{$scope.pid}"
-      .success (data, status, headers, config) ->
-        console.log data
-        $scope.prob = data
+    doffirst.get "/problem/#{$scope.pid}", $scope
 ]
 
 app.controller 'prob-list-ctrl', [
-  "$scope", "$http", "$routeParams"
-  ($scope, $http, $route-params) ->
-    $http.get "/problem"
-      .success (data, status, headers, config) ->
-        console.log "data: #{data}"
-        $scope.probs = data
+  "$scope", "doffirst", "$routeParams"
+  ($scope, doffirst, $route-params) ->
+    doffirst.get "/problem", $scope
 ]
 
 app.controller 'prob-modify-ctrl', [
-  "$scope", "$http", "$routeParams"
-  ($scope, $http, $route-params) ->
+  "$scope", "doffirst", "$routeParams"
+  ($scope, doffirst, $route-params) ->
     if $route-params.pid
       pid = parse-int that
-      $http.get "/problem/#{pid}/modify"
-        .success (data, status, headers, config) ->
-          $scope.prob = data with _id: pid
-          console.log data
+      doffirst.get "/problem/#{pid}/modify", $scope, -> it <<< _id: pid
     else
-      $http.get "/problem/create"
-        .success (data, status, headers, config) ->
-          console.log data
-          $scope.prob = data
+      doffirst.get "/problem/create", $scope
     $scope.submit = ->
       console.log $scope.prob
-      $http.put "/problem/#{pid}", $scope.prob
+      doffirst.put "/problem/#{pid}", $scope.prob
 ]
 
 app.controller 'sol-submit-ctrl', [
-  "$scope", "$http", "$routeParams", "$location"
-  ($scope, $http, $route-params, $location) ->
+  "$scope", "doffirst", "$routeParams", "$location"
+  ($scope, doffirst, $route-params, $location) ->
     $scope.pid = parse-int $route-params.pid
     $scope.lang = 'C++'
     $scope.submit = ->
-      $http.post '/submit',
+      doffirst.post '/submit',
         code: $scope.code
         pid: $scope.pid
         lang: $scope.lang
+        {}
       $location.path "/solution"
 ]
 
 app.controller 'sol-list-ctrl', [
-  "$scope", "$http", "$routeParams"
-  ($scope, $http, $route-params) ->
-    $http.get "/solution"
-      .success (data, status, headers, config) ->
-        console.log "data: #{data}"
-        $scope.sols = data
+  "$scope", "doffirst", "$routeParams"
+  ($scope, doffirst, $route-params) ->
+    doffirst.get "/solution", $scope
 ]
 
 app.controller 'sol-show-ctrl', [
-  "$scope", "$http", "$routeParams"
-  ($scope, $http, $route-params) ->
+  "$scope", "doffirst", "$routeParams"
+  ($scope, doffirst, $route-params) ->
     $scope.sid = parse-int $route-params.sid
-    $http.get "/solution/#{$scope.sid}"
-      .success (data, status, headers, config) ->
-        console.log "data: #{data}"
-        $scope.sol = data
+    doffirst.get "/solution/#{$scope.sid}", $scope
 ]
 
 app.controller 'rnd-list-ctrl', [
-  "$scope", "$http", "$routeParams"
-  ($scope, $http, $route-params) ->
-    $http.get "/round"
-      .success (data, status, headers, config) ->
-        console.log data
-        $scope.rounds = data
+  "$scope", "doffirst", "$routeParams"
+  ($scope, doffirst, $route-params) ->
+    doffirst.get "/round", $scope
 ]
 
 app.controller 'rnd-show-ctrl', [
-  "$scope", "$http", "$routeParams"
-  ($scope, $http, $route-params) ->
+  "$scope", "doffirst", "$routeParams"
+  ($scope, doffirst, $route-params) ->
     rid = parse-int $route-params.rid
-    $http.get "/round/#{rid}"
-      .success (data, status, headers, config) ->
-        console.log data
-        $scope <<< data
+    doffirst.get "/round/#{rid}", $scope
 ]
 
 app.controller 'rnd-modify-ctrl', [
-  "$scope", "$http", "$routeParams"
-  ($scope, $http, $route-params) ->
+  "$scope", "doffirst", "$routeParams"
+  ($scope, doffirst, $route-params) ->
     $scope.pid = 0
     if $route-params.rid
-      $http.get "/round/#{that}/modify"
-        .success (data, status, headers, config) ->
-          $scope.rnd = data with _id: that
-          $scope.probs = data.probs
-          console.log "initial #{$scope.probs}"
+      doffirst.get "/round/#{that}/modify", $scope, ->
+        it.rnd <<< _id: that
+        it.probs = it.rnd.probs
     else
-      $http.get "/round/create"
-        .success (data, status, headers, config) ->
-          $scope.rnd = data with
-            beg-time: new Date Date.now!
-            end-time: new Date Date.now!
-          $scope.probs = []
+      doffirst.get "/round/create", $scope, ->
+        it.rnd <<<
+          beg-time: new Date Date.now!
+          end-time: new Date Date.now!
+        it.probs = []
     $scope.submit = ->
       console.log $scope.rnd
       $scope.rnd.probs = _.map (._id), $scope.probs
-      console.log typeof $scope.rnd.probs
-      $http.put "/round/#{$scope.rnd._id}", $scope.rnd
+      doffirst.put "/round/#{$scope.rnd._id}", $scope.rnd
     $scope.insert = ->
-      $http.get "/problem/#{$scope.pid}"
-        .success (data, status, headers, config) ->
-          $scope.probs.push data
+      new-prob = {}
+      doffirst.get "/problem/#{$scope.pid}", new-prob, ->
+        $scope.probs.push it.prob
     $scope.remove = (pid) ->
       $scope.probs = _.reject (._id == pid), $scope.probs
     $scope.delete = ->
-      $http.delete "/round/#{$scope.rnd._id}"
+      doffirst.delete "/round/#{$scope.rnd._id}"
 ]

@@ -28,7 +28,7 @@ class my-model
 # ==== solution model ====
 class sol-model extends my-model
   ->
-    @schema = new mongoose.Schema(
+    @schema = new mongoose.Schema do
       code: String
       time: Number
       space: Number
@@ -38,12 +38,11 @@ class sol-model extends my-model
       user: type: String, ref: "user"
       round: type: Number, ref: "round"
       # groups: [type: Number, ref: "group"]
-    )
     @schema.plugin mongoose-auto-increment.plugin, model: "solution"
     @model = conn.model 'solution', @schema
   submit: (req, uid) ~>*
     res = runner.run req.lang, req.code
-    sol = new @model(
+    sol = new @model do
       code: req.code
       time: res.time
       space: res.space
@@ -51,7 +50,6 @@ class sol-model extends my-model
       prob: req.pid
       user: uid
       result: res.result
-    )
     sol.save (err, sol) ->
       return if err
   list: ~>*
@@ -63,7 +61,7 @@ class sol-model extends my-model
 
 class prob-model extends my-model
   ->
-    @schema = new mongoose.Schema(
+    @schema = new mongoose.Schema do
       _id: Number
       desc: String
       title: String
@@ -75,7 +73,6 @@ class prob-model extends my-model
       sample-out: String
       stat: {}
       disabled: Boolean
-    )
     @schema.plugin mongoose-auto-increment.plugin, model: "problem"
     @model = conn.model 'problem', @schema
   show: (pid) ->*
@@ -106,14 +103,13 @@ class user-model
 
 class round-model extends my-model
   ~>
-    @schema = new mongoose.Schema(
+    @schema = new mongoose.Schema do
       _id: Number
       title: String
       beg-time: Date
       end-time: Date
       probs: [type: Number, ref: "problem"]
       # groups: [type: Number, ref: ]
-    )
     @schema.plugin mongoose-auto-increment.plugin, model: 'round', start-at: 1
     @model = conn.model 'round', @schema
   modify: (rid, rnd) ~>*

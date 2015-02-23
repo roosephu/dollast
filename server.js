@@ -54,10 +54,26 @@
     yield next;
   });
   publicRouter = new koaRouter();
-  publicRouter.post('/login', koaPassport.authenticate('local', {
-    successRedirect: '#/',
-    failureRedirect: '/#/login'
-  })).get('/logout', function*(next){
+  publicRouter.post('/login', function*(next){
+    var cb, this$ = this;
+    cb = function*(err, user, info){
+      var that;
+      if (that = err) {
+        throw that;
+      }
+      if (user !== false) {
+        yield this$.login(user);
+        this$.body = {
+          status: true
+        };
+      } else {
+        this$.body = {
+          status: false
+        };
+      }
+    };
+    yield koaPassport.authenticate('local', cb).call(this, next);
+  }).get('/logout', function*(next){
     this.logout();
     this.redirect('/#/');
   });
@@ -71,19 +87,27 @@
   });
   privateRouter = new koaRouter();
   privateRouter.get('/problem', function*(){
-    this.body = yield db.prob.list();
+    this.body = {
+      probs: yield db.prob.list()
+    };
   }).get('/problem/create', function*(){
     this.body = {
       _id: yield db.prob.nextCount()
     };
   }).get('/problem/:pid', function*(){
-    this.body = yield db.prob.show(parseInt(this.params.pid));
+    this.body = {
+      prob: yield db.prob.show(parseInt(this.params.pid))
+    };
   }).get('/problem/:pid/modify', function*(){
     var pid;
     pid = parseInt(this.params.pid);
-    this.body = yield db.prob.show(pid, true);
+    this.body = {
+      prob: yield db.prob.show(pid, true)
+    };
   }).put('/problem/:pid', function*(){
-    this.body = yield db.prob.modify(this.params.pid, this.request.body);
+    this.body = {
+      status: yield db.prob.modify(this.params.pid, this.request.body)
+    };
   })['delete']('/problem/:pid', function*(){
     throw Error('unimplemented');
   }).post('/submit', function*(){
@@ -91,18 +115,26 @@
     uid == null && (uid = (ref$ = this.session.passport.user) != null ? ref$._id : void 8);
     uid == null && (uid = "roosephu");
     console.log("uid: " + uid);
-    this.body = yield db.sol.submit(this.request.body, uid);
+    this.body = {
+      status: yield db.sol.submit(this.request.body, uid)
+    };
   }).get('/solution', function*(){
-    this.body = yield db.sol.list();
+    this.body = {
+      sols: yield db.sol.list()
+    };
   }).get('/session', function*(){
     var that, ref$, ref1$;
     this.body = {
       uid: (that = (ref$ = this.session.passport) != null ? (ref1$ = ref$.user) != null ? ref1$._id : void 8 : void 8) != null ? that : void 8
     };
   }).get('/solution/:sid', function*(){
-    this.body = yield db.sol.show(parseInt(this.params.sid));
+    this.body = {
+      sol: yield db.sol.show(parseInt(this.params.sid))
+    };
   }).get('/round', function*(){
-    this.body = yield db.rnd.list();
+    this.body = {
+      rounds: yield db.rnd.list()
+    };
   }).get('/round/create', function*(){
     this.body = {
       _id: yield db.rnd.nextCount()
@@ -112,17 +144,21 @@
   }).put('/round/:rid', function*(){
     var rid;
     rid = parseInt(this.params.rid);
-    this.body = yield db.rnd.modify(rid, this.request.body);
+    this.body = {
+      status: yield db.rnd.modify(rid, this.request.body)
+    };
   }).get('/round/:rid/modify', function*(){
     var rid;
     rid = parseInt(this.params.rid);
     this.body = yield db.rnd.show(rid, true);
   })['delete']('/round/:rid', function*(){
-    this.body = yield db.rnd['delete'](this.params.rid);
+    this.body = {
+      status: yield db.rnd['delete'](this.params.rid)
+    };
   }).get('/theme/:theme', function*(){
     this.session.theme = this.params.theme;
     this.body = {
-      result: true
+      status: true
     };
   });
   app.use(privateRouter.middleware());

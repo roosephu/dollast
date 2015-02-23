@@ -31,10 +31,9 @@ app.use (next) ->*
 # ==== Passport ====
 
 app.keys = ['drdrd']
-app.use koa-generic-session(
+app.use koa-generic-session do
   cookie:
     max-age: 1000 * 60 * 5
-)
 app.use koa-bodyparser!
 
 require './auth' .init db
@@ -60,10 +59,15 @@ app.use (next) ->*
 public-router = new koa-router!
 
 public-router
-  .post '/login',
-    koa-passport.authenticate 'local',
-      success-redirect: '#/'
-      failure-redirect: '/#/login'
+  .post '/login', (next) ->*
+    cb = (err, user, info) ~>*
+      throw that if err
+      if user != false
+        yield @login user
+        @body = status: true
+      else
+        @body = status: false
+    yield koa-passport.authenticate 'local', cb .call @, next
   .get '/logout', (next) ->*
     @logout!
     @redirect '/#/'
@@ -84,46 +88,46 @@ private-router = new koa-router!
 
 private-router
   .get '/problem', ->*
-    @body = yield db.prob.list!
+    @body = probs: yield db.prob.list!
   .get '/problem/create', ->*
     @body = _id: yield db.prob.next-count!
   .get '/problem/:pid', ->*
-    @body = yield db.prob.show parse-int @params.pid
+    @body = prob: yield db.prob.show parse-int @params.pid
   .get '/problem/:pid/modify', ->*
     pid = parse-int @params.pid
-    @body = yield db.prob.show pid, true
+    @body = prob: yield db.prob.show pid, true
   .put '/problem/:pid', ->*
-    @body = yield db.prob.modify @params.pid, @request.body
+    @body = status: yield db.prob.modify @params.pid, @request.body
   .delete '/problem/:pid', ->*
     ...
   .post '/submit', ->*
     uid ?= @session.passport.user?._id
     uid ?= "roosephu"
     console.log "uid: #{uid}"
-    @body = yield db.sol.submit @request.body, uid
+    @body = status: yield db.sol.submit @request.body, uid
   .get '/solution', ->*
-    @body = yield db.sol.list!
+    @body = sols: yield db.sol.list!
   .get '/session', ->*
     @body = uid: if @session.passport?.user?._id? then that else void
   .get '/solution/:sid', ->*
-    @body = yield db.sol.show parse-int @params.sid
+    @body = sol: yield db.sol.show parse-int @params.sid
   .get '/round', ->*
-    @body = yield db.rnd.list!
+    @body = rounds: yield db.rnd.list!
   .get '/round/create', ->*
     @body = _id: yield db.rnd.next-count!
   .get '/round/:rid', ->*
     @body = yield db.rnd.show parse-int @params.rid
   .put '/round/:rid', ->*
     rid = parse-int @params.rid
-    @body = yield db.rnd.modify rid, @request.body
+    @body = status: yield db.rnd.modify rid, @request.body
   .get '/round/:rid/modify', ->*
     rid = parse-int @params.rid
     @body = yield db.rnd.show rid, true
   .delete '/round/:rid', ->*
-    @body = yield db.rnd.delete @params.rid
+    @body = status: yield db.rnd.delete @params.rid
   .get '/theme/:theme', ->*
     @session.theme = @params.theme
-    @body = result: true
+    @body = status: true
 
 app.use private-router.middleware!
 
