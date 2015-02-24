@@ -8,7 +8,7 @@
 <p> problemset </p>
 <ul ng-repeat="prob in probs">
   <li>
-    {{prob._id}}: <a href="#/problem/{{prob._id}}">{{prob.title}}</a>
+    {{prob._id}}: <a href="#/problem/{{prob._id}}">{{prob.outlook.title}}</a>
     <input type="button" ng-click="remove(prob._id)" value="remove" />
   </li>
 </ul>

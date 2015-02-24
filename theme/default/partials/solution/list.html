@@ -11,11 +11,11 @@
   </tr>
   <tr ng-repeat="sol in sols">
     <td>{{ sol._id }}</td>
-    <td>{{ sol.time }} </td>
-    <td>{{ sol.space }} </td>
-    <td><a href="#/problem/{{sol.prob._id}}">{{sol.prob.title}}</a></td>
+    <td>{{ sol.time | number: 2 }} </td>
+    <td>{{ sol.space | number: 2 }} </td>
+    <td><a href="#/problem/{{sol.prob._id}}">{{sol.prob._id}}. {{sol.prob.outlook.title}}</a></td>
     <td><a href="#/user/{{sol.user}}">{{sol.user}}</a></td>
-    <td>{{sol.result}}</td>
+    <td>{{sol.result | number: 2}}</td>
     <td>{{sol.lang}}</td>
     <td><a href="#/solution/{{sol._id}}">view code</a></td>
   </tr>

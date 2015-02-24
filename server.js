@@ -90,19 +90,25 @@
     this.body = {
       probs: yield db.prob.list()
     };
-  }).get('/problem/create', function*(){
+  }).get('/problem/next-count', function*(){
     this.body = {
       _id: yield db.prob.nextCount()
     };
   }).get('/problem/:pid', function*(){
+    var pid;
+    pid = this.params.pid;
     this.body = {
-      prob: yield db.prob.show(parseInt(this.params.pid))
+      prob: yield db.prob.show(pid, {
+        mode: "view"
+      })
     };
-  }).get('/problem/:pid/modify', function*(){
+  }).get('/problem/:pid/total', function*(){
     var pid;
     pid = parseInt(this.params.pid);
     this.body = {
-      prob: yield db.prob.show(pid, true)
+      prob: yield db.prob.show(pid, {
+        mode: "total"
+      })
     };
   }).put('/problem/:pid', function*(){
     this.body = {
@@ -135,22 +141,28 @@
     this.body = {
       rounds: yield db.rnd.list()
     };
-  }).get('/round/create', function*(){
+  }).get('/round/next-count', function*(){
     this.body = {
       _id: yield db.rnd.nextCount()
     };
   }).get('/round/:rid', function*(){
-    this.body = yield db.rnd.show(parseInt(this.params.rid));
+    var rid;
+    rid = parseInt(this.params.rid);
+    this.body = yield db.rnd.show(rid, {
+      mode: "view"
+    });
   }).put('/round/:rid', function*(){
     var rid;
     rid = parseInt(this.params.rid);
     this.body = {
       status: yield db.rnd.modify(rid, this.request.body)
     };
-  }).get('/round/:rid/modify', function*(){
+  }).get('/round/:rid/total', function*(){
     var rid;
     rid = parseInt(this.params.rid);
-    this.body = yield db.rnd.show(rid, true);
+    this.body = yield db.rnd.show(rid, {
+      mode: "total"
+    });
   })['delete']('/round/:rid', function*(){
     this.body = {
       status: yield db.rnd['delete'](this.params.rid)

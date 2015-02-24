@@ -1,9 +1,9 @@
-<p> title {{ prob.id }}: {{ prob.title }} </p>
-<p> description: {{ prob.desc }} </p>
-<p> time limit: {{ prob.timeLmt }} space limit {{ prob.spaceLmt }} </p>
-<p> input format: {{ prob.inFmt }} </p>
-<p> output format: {{ prob.outFmt }} </p>
-<p> sample input: {{ prob.sampleIn }} </p>
-<p> sample output: {{ prob.sampleOut }} </p>
+<p> title {{ prob._id }}: {{ prob.outlook.title }} </p>
+<p> description: {{ prob.outlook.desc }} </p>
+<p> time limit: {{ prob.config.timeLmt }} space limit {{ prob.config.spaceLmt }} </p>
+<p> input format: {{ prob.outlook.inFmt }} </p>
+<p> output format: {{ prob.outlook.outFmt }} </p>
+<p> sample input: {{ prob.outlook.sampleIn }} </p>
+<p> sample output: {{ prob.outlook.sampleOut }} </p>
 <a href="#/submit/{{prob._id}}">submit</a>
 <a href="#/problem/{{prob._id}}/modify">modify</a>

@@ -17,16 +17,12 @@
     myModel.displayName = 'myModel';
     var prototype = myModel.prototype, constructor = myModel;
     prototype.nextCount = function*(){
-      var promise;
-      promise = new mongoose.Promise();
-      this.model.nextCount(function(err, count){
-        if (err) {
-          return promose.reject(err);
-        } else {
-          return promise.complete(count);
-        }
-      });
-      return yield promise;
+      this.counter || (this.counter = 1);
+      while (yield this.model.findById(this.counter, '_id').lean().exec()) {
+        this.counter += 1;
+        console.log("@counter");
+      }
+      return this.counter;
     };
     function myModel(){
       this.nextCount = bind$(this, 'nextCount', prototype);
@@ -65,6 +61,7 @@
     }
     prototype.submit = function*(req, uid){
       var res, sol;
+      console.log(util.inspect(req) + "");
       res = runner.run(req.lang, req.code);
       sol = new this.model({
         code: req.code,
@@ -77,15 +74,15 @@
       });
       sol.save(function(err, sol){
         if (err) {
-          return;
+          throw err;
         }
       });
     };
     prototype.list = function*(){
-      return yield this.model.find({}, '-code').populate('prob', 'title stat').exec();
+      return yield this.model.find({}, '-code').populate('prob', 'outlook.title').lean().exec();
     };
     prototype.show = function*(sid){
-      return yield this.model.findById(sid).populate('prob', 'title').exec();
+      return yield this.model.findById(sid).populate('prob', 'outlook.title').lean().exec();
     };
     return solModel;
   }(myModel));
@@ -94,28 +91,44 @@
     function probModel(){
       this.schema = new mongoose.Schema({
         _id: Number,
-        desc: String,
-        title: String,
-        inFmt: String,
-        outFmt: String,
-        timeLmt: Number,
-        spaceLmt: Number,
-        sampleIn: String,
-        sampleOut: String,
+        outlook: {
+          desc: String,
+          title: String,
+          inFmt: String,
+          outFmt: String,
+          sampleIn: String,
+          sampleOut: String
+        },
+        config: {
+          timeLmt: Number,
+          spaceLmt: Number,
+          regexp: String,
+          inputs: [String],
+          outputs: [String]
+        },
         stat: {},
         disabled: Boolean
       });
-      this.schema.plugin(mongooseAutoIncrement.plugin, {
-        model: "problem"
-      });
       this.model = conn.model('problem', this.schema);
     }
-    prototype.show = function*(pid){
-      logger.trace("query problem " + pid);
-      return yield this.model.findById(pid).exec();
+    prototype.show = function*(pid, opts){
+      var fields;
+      opts == null && (opts = {});
+      opts.mode || (opts.mode = "view");
+      fields = (function(){
+        switch (opts.mode) {
+        case "view":
+          return "_id outlook config.timeLmt config.spaceLmt";
+        case "total":
+          return undefined;
+        default:
+          throw Error('unimplemented');
+        }
+      }());
+      return yield this.model.findById(pid, fields).lean().exec();
     };
     prototype.list = function*(){
-      return yield this.model.find({}, 'id title stat').exec();
+      return yield this.model.find({}, '_id outlook.title stat').lean().exec();
     };
     prototype.modify = function*(pid, prob){
       return yield this.model.update({
@@ -125,7 +138,7 @@
       }, {
         upsert: true,
         overwrite: true
-      }).exec();
+      }).lean().exec();
     };
     return probModel;
   }(myModel));
@@ -174,10 +187,6 @@
           ref: "problem"
         }]
       });
-      this$.schema.plugin(mongooseAutoIncrement.plugin, {
-        model: 'round',
-        startAt: 1
-      });
       this$.model = conn.model('round', this$.schema);
       return this$;
     } function ctor$(){} ctor$.prototype = prototype;
@@ -196,13 +205,14 @@
       }, {
         upsert: true,
         overwrite: true
-      }).exec();
+      }).lean().exec();
     };
-    prototype.show = function*(rid, forced){
+    prototype.show = function*(rid, opts){
       var rnd, started;
-      forced == null && (forced = false);
-      rnd = yield this.model.findById(rid).populate('probs', '_id title').exec();
-      if (!forced && moment().isBefore(rnd.begTime)) {
+      opts == null && (opts = {});
+      opts.mode || (opts.mode = "view");
+      rnd = yield this.model.findById(rid).populate('probs', '_id outlook.title').lean().exec();
+      if (opts.mode === "view" && moment().isBefore(rnd.begTime)) {
         rnd.probs = [];
         started = false;
       } else {
@@ -214,10 +224,10 @@
       };
     };
     prototype.list = function*(){
-      return yield this.model.find({}, '_id title').exec();
+      return yield this.model.find({}, '_id title').lean().exec();
     };
     prototype['delete'] = function*(rid){
-      return yield this.model.findByIdAndRemove(rid).exec();
+      return yield this.model.findByIdAndRemove(rid).lean().exec();
     };
     return roundModel;
   }(myModel));

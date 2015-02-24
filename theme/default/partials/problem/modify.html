@@ -1,27 +1,27 @@
-<form>
-  <p> problem: {{prob._id}} </p>
-  <input ng-model="prob.title" />
-  <div>
-    description <textarea ng-model="prob.desc"></textarea>
-  </div>
-  <div>
-    input format <textarea ng-model="prob.inFmt"></textarea>
-  </div>
-  <div>
-    output format <textarea ng-model="prob.outFmt"></textarea>
-  </div>
-  <div>
-    sample input <textarea ng-model="prob.sampleIn"></textarea>
-  </div>
-  <div>
-    sample output <textarea ng-model="prob.sampleOut"></textarea>
-  </div>
-  <div>
-    time limit: <input type="number" ng-model="prob.timeLmt"/>
-  </div>
-  <div>
-    space limit: <input type="number" ng-model="prob.spaceLmt" />
-  </div>
+<p> problem: {{prob._id}} </p>
+<input ng-model="prob.outlook.title" />
+<div>
+  description <textarea ng-model="prob.outlook.desc"></textarea>
+</div>
+<div>
+  input format <textarea ng-model="prob.outlook.inFmt"></textarea>
+</div>
+<div>
+  output format <textarea ng-model="prob.outlook.outFmt"></textarea>
+</div>
+<div>
+  sample input <textarea ng-model="prob.outlook.sampleIn"></textarea>
+</div>
+<div>
+  sample output <textarea ng-model="prob.outlook.sampleOut"></textarea>
+</div>
+<div>
+  time limit: <input type="number" ng-model="prob.config.timeLmt"/>
+</div>
+<div>
+  space limit: <input type="number" ng-model="prob.config.spaceLmt" />
+</div>
 
-  <input type="button" ng-click="submit()" value="submit"/>
-</form>
+<input type="button" ng-click="submit()" value="submit"/>
+
+upload files <input type="file" ng-file-select ng-model="testData"/>

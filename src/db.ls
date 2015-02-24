@@ -17,13 +17,11 @@ mongoose.plugin mongoose-deep-populate
 
 class my-model
   next-count: ~>*
-    promise = new mongoose.Promise!
-    @model.next-count (err, count) ->
-      if err
-        promose.reject err
-      else
-        promise.complete count
-    return yield promise
+    @counter ||= 1
+    while yield @model.find-by-id @counter, '_id' .lean! .exec!
+      @counter += 1
+      console.log "@counter"
+    return @counter
 
 # ==== solution model ====
 class sol-model extends my-model
@@ -41,6 +39,7 @@ class sol-model extends my-model
     @schema.plugin mongoose-auto-increment.plugin, model: "solution"
     @model = conn.model 'solution', @schema
   submit: (req, uid) ~>*
+    console.log "#{util.inspect req}"
     res = runner.run req.lang, req.code
     sol = new @model do
       code: req.code
@@ -51,11 +50,11 @@ class sol-model extends my-model
       user: uid
       result: res.result
     sol.save (err, sol) ->
-      return if err
+      throw err if err
   list: ~>*
-    return yield @model.find {}, '-code' .populate 'prob', 'title stat' .exec!
+    return yield @model.find {}, '-code' .populate 'prob', 'outlook.title' .lean! .exec!
   show: (sid) ~>*
-    return yield @model.find-by-id sid .populate 'prob', 'title' .exec!
+    return yield @model.find-by-id sid .populate 'prob', 'outlook.title' .lean! .exec!
 
 # ==== problem ====
 
@@ -63,25 +62,34 @@ class prob-model extends my-model
   ->
     @schema = new mongoose.Schema do
       _id: Number
-      desc: String
-      title: String
-      in-fmt: String
-      out-fmt: String
-      time-lmt: Number
-      space-lmt: Number
-      sample-in: String
-      sample-out: String
+      outlook:
+        desc: String
+        title: String
+        in-fmt: String
+        out-fmt: String
+        sample-in: String
+        sample-out: String
+      config:
+        time-lmt: Number
+        space-lmt: Number
+        regexp: String
+        inputs: [String]
+        outputs: [String]
       stat: {}
       disabled: Boolean
-    @schema.plugin mongoose-auto-increment.plugin, model: "problem"
+    # @schema.plugin mongoose-auto-increment.plugin, model: "problem", start-at: 1
     @model = conn.model 'problem', @schema
-  show: (pid) ->*
-    logger.trace "query problem #{pid}"
-    return yield @model .find-by-id pid .exec!
+  show: (pid, opts = {}) ->*
+    opts.mode ||= "view"
+    fields = switch opts.mode
+      | "view"    => "_id outlook config.timeLmt config.spaceLmt"
+      | "total"   => undefined
+      | otherwise => ...
+    return yield @model .find-by-id pid, fields .lean! .exec!
   list: ->*
-    return yield @model .find {}, 'id title stat' .exec!
+    return yield @model .find {}, '_id outlook.title stat' .lean! .exec!
   modify: (pid, prob) ->*
-    return yield @model.update _id: pid, {$set: prob}, upsert: true, overwrite: true .exec!
+    return yield @model.update _id: pid, {$set: prob}, upsert: true, overwrite: true .lean! .exec!
 
 # ==== user ====
 
@@ -110,24 +118,24 @@ class round-model extends my-model
       end-time: Date
       probs: [type: Number, ref: "problem"]
       # groups: [type: Number, ref: ]
-    @schema.plugin mongoose-auto-increment.plugin, model: 'round', start-at: 1
     @model = conn.model 'round', @schema
   modify: (rid, rnd) ~>*
     rnd.beg-time = new Date that if rnd.beg-time
     rnd.end-time = new Date that if rnd.end-time
-    return yield @model.update _id: rid, {$set: rnd}, upsert: true, overwrite: true .exec!
-  show: (rid, forced = false) ~>*
-    rnd = yield @model.find-by-id rid .populate 'probs', '_id title' .exec!
-    if not forced and moment!.is-before rnd.beg-time
+    return yield @model.update _id: rid, {$set: rnd}, upsert: true, overwrite: true .lean! .exec!
+  show: (rid, opts = {}) ~>*
+    opts.mode ||= "view"
+    rnd = yield @model.find-by-id rid .populate 'probs', '_id outlook.title' .lean! .exec!
+    if opts.mode == "view" and moment!.is-before rnd.beg-time
       rnd.probs = []
       started = false
     else
       started = true
     return rnd: rnd, started: started
   list: ~>*
-    return yield @model.find {}, '_id title' .exec!
+    return yield @model.find {}, '_id title' .lean! .exec!
   delete: (rid) ~>*
-    return yield @model.find-by-id-and-remove rid .exec!
+    return yield @model.find-by-id-and-remove rid .lean! .exec!
 
 export sol = new sol-model
 export prob = new prob-model

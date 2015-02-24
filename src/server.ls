@@ -89,13 +89,14 @@ private-router = new koa-router!
 private-router
   .get '/problem', ->*
     @body = probs: yield db.prob.list!
-  .get '/problem/create', ->*
+  .get '/problem/next-count', ->*
     @body = _id: yield db.prob.next-count!
   .get '/problem/:pid', ->*
-    @body = prob: yield db.prob.show parse-int @params.pid
-  .get '/problem/:pid/modify', ->*
+    pid = @params.pid
+    @body = prob: yield db.prob.show pid, mode: "view"
+  .get '/problem/:pid/total', ->*
     pid = parse-int @params.pid
-    @body = prob: yield db.prob.show pid, true
+    @body = prob: yield db.prob.show pid, mode: "total"
   .put '/problem/:pid', ->*
     @body = status: yield db.prob.modify @params.pid, @request.body
   .delete '/problem/:pid', ->*
@@ -113,16 +114,17 @@ private-router
     @body = sol: yield db.sol.show parse-int @params.sid
   .get '/round', ->*
     @body = rounds: yield db.rnd.list!
-  .get '/round/create', ->*
+  .get '/round/next-count', ->*
     @body = _id: yield db.rnd.next-count!
   .get '/round/:rid', ->*
-    @body = yield db.rnd.show parse-int @params.rid
+    rid = parse-int @params.rid
+    @body = yield db.rnd.show rid, mode: "view"
   .put '/round/:rid', ->*
     rid = parse-int @params.rid
     @body = status: yield db.rnd.modify rid, @request.body
-  .get '/round/:rid/modify', ->*
+  .get '/round/:rid/total', ->*
     rid = parse-int @params.rid
-    @body = yield db.rnd.show rid, true
+    @body = yield db.rnd.show rid, mode: "total"
   .delete '/round/:rid', ->*
     @body = status: yield db.rnd.delete @params.rid
   .get '/theme/:theme', ->*

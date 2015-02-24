@@ -4,7 +4,7 @@
 <p> problemset </p>
 <div ng-show="started">
   <ul ng-repeat="prob in rnd.probs">
-    <li>{{prob._id}}: <a href="#/problem/{{prob._id}}">{{prob.title}}</a></li>
+    <li>{{prob._id}}: <a href="#/problem/{{prob._id}}">{{prob.outlook.title}}</a></li>
   </ul>
 </div>
 <div ng-hide="started">
