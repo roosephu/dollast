@@ -89,6 +89,11 @@
   probModel = (function(superclass){
     var prototype = extend$((import$(probModel, superclass).displayName = 'probModel', probModel), superclass).prototype, constructor = probModel;
     function probModel(){
+      this.dataAtomSchema = new mongoose.Schema({
+        input: String,
+        output: String,
+        weight: Number
+      });
       this.schema = new mongoose.Schema({
         _id: Number,
         outlook: {
@@ -103,8 +108,7 @@
           timeLmt: Number,
           spaceLmt: Number,
           regexp: String,
-          inputs: [String],
-          outputs: [String]
+          dataset: [this.dataAtomSchema]
         },
         stat: {},
         disabled: Boolean

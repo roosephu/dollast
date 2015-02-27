@@ -60,6 +60,10 @@ class sol-model extends my-model
 
 class prob-model extends my-model
   ->
+    @data-atom-schema = new mongoose.Schema do
+      input: String
+      output: String
+      weight: Number
     @schema = new mongoose.Schema do
       _id: Number
       outlook:
@@ -70,14 +74,13 @@ class prob-model extends my-model
         sample-in: String
         sample-out: String
       config:
+        round: type: Number, ref: "round"
         time-lmt: Number
         space-lmt: Number
         regexp: String
-        inputs: [String]
-        outputs: [String]
+        dataset: [@data-atom-schema]
       stat: {}
       disabled: Boolean
-    # @schema.plugin mongoose-auto-increment.plugin, model: "problem", start-at: 1
     @model = conn.model 'problem', @schema
   show: (pid, opts = {}) ->*
     opts.mode ||= "view"
@@ -98,7 +101,7 @@ class user-model
     @model = conn.model 'user',
       _id: String
       pswd: String
-  query: (uid, pswd, done) ~>
+  query: (uid, pswd, salt, done) ~>
     @model.find-by-id uid, (err, user) ->
       if err
         done err

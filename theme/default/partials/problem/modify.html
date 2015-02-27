@@ -1,8 +1,19 @@
 <p> problem: {{prob._id}} </p>
 <input ng-model="prob.outlook.title" />
+
+<br />
+<div type="file" ng-file-select ng-file-drop ng-model="uploadFile" class="drop-box" allow-dir="true">
+  drop or click
+</div>
+<input type="button" ng-click="upload()" value="upload{{uploadFile.name}}" ng-disabled="uploadFile.flag"/>
+
+<br />
+
 <div>
   description <textarea ng-model="prob.outlook.desc"></textarea>
 </div>
+
+<br />
 <div>
   input format <textarea ng-model="prob.outlook.inFmt"></textarea>
 </div>
@@ -23,5 +34,3 @@
 </div>
 
 <input type="button" ng-click="submit()" value="submit"/>
-
-upload files <input type="file" ng-file-select ng-model="testData"/>

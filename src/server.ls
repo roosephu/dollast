@@ -2,7 +2,7 @@ require! {
   'koa'
   'koa-json'
   'koa-static'
-  'koa-bodyparser'
+  'koa-better-body'
   'koa-generic-session'
   'koa-passport'
   'util'
@@ -11,14 +11,16 @@ require! {
   'log4js'
   'koa-send'
   'path'
+  'co-busboy'
+  'fs'
+  './config'
 }
 
 app = koa!
 
 # ==== Database ====
 
-logger = log4js.get-logger 'dollast'
-global.runner = require './runner'
+config.logger = log4js.get-logger 'dollast'
 require! "./db"
 
 logger.fatal "No Database found" if !db
@@ -34,7 +36,10 @@ app.keys = ['drdrd']
 app.use koa-generic-session do
   cookie:
     max-age: 1000 * 60 * 5
-app.use koa-bodyparser!
+app.use koa-better-body do
+  extend-types:
+    json: ['application/x-javascript']
+    multipart: ['multipart/form-data']
 
 require './auth' .init db
 
@@ -99,6 +104,14 @@ private-router
     @body = prob: yield db.prob.show pid, mode: "total"
   .put '/problem/:pid', ->*
     @body = status: yield db.prob.modify @params.pid, @request.body
+  .post '/problem/:pid/upload', ->*
+    pid = parse-int @params.pid
+    parts = co-busboy @, auto-fields: true
+    while part = yield parts
+      console.log "filename: #{part.filename}"
+      part.pipe fs.create-write-stream "upload/#{part.filename}"
+    console.log "done"
+    @body = status: true
   .delete '/problem/:pid', ->*
     ...
   .post '/submit', ->*
@@ -130,6 +143,8 @@ private-router
   .get '/theme/:theme', ->*
     @session.theme = @params.theme
     @body = status: true
+  .get '/session/login-token', ->*
+    @body = @session.login-token = ...
 
 app.use private-router.middleware!
 
