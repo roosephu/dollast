@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "koa": "latest",
-    "log4js": "latest",
     "mongoose": "latest",
     "koa-json": "latest",
     "koa-generic-session": "latest",
@@ -23,7 +22,7 @@
     "prelude-ls": "latest",
     "koa-send": "latest",
     "moment": "latest",
-    "koa-better-body": "latest",
+    "koa-bodyparser": "latest",
     "co-busboy": "latest",
     "debug": "latest",
     "async": "latest",

@@ -2,13 +2,15 @@ require! {
   'mongoose'
   'mongoose-deep-populate'
   'mongoose-auto-increment'
-  'log4js'
   'util'
   'prelude-ls': _
   'moment'
+  'bluebird'
+  'co'
 }
 
-logger = log4js.get-logger 'dollast'
+# logger = log4js.get-logger 'dollast'
+logger = console
 ObjectID = mongoose.Schema.Types.ObjectID
 
 export conn = mongoose.create-connection 'mongodb://localhost/dollast'
@@ -49,8 +51,7 @@ class sol-model extends my-model
       prob: req.pid
       user: uid
       result: res.result
-    sol.save (err, sol) ->
-      throw err if err
+    yield sol.save!
   list: ~>*
     return yield @model.find {}, '-code' .populate 'prob', 'outlook.title' .lean! .exec!
   show: (sid) ~>*
@@ -79,20 +80,20 @@ class prob-model extends my-model
         space-lmt: Number
         regexp: String
         dataset: [@data-atom-schema]
+        disabled: Boolean
       stat: {}
-      disabled: Boolean
     @model = conn.model 'problem', @schema
   show: (pid, opts = {}) ->*
     opts.mode ||= "view"
     fields = switch opts.mode
-      | "view"    => "_id outlook config.timeLmt config.spaceLmt"
+      | "view"    => "outlook config.timeLmt config.spaceLmt"
       | "total"   => undefined
       | otherwise => ...
-    return yield @model .find-by-id pid, fields .lean! .exec!
+    return yield @model .find-by-id pid, fields .exec!
   list: ->*
-    return yield @model .find {}, '_id outlook.title stat' .lean! .exec!
+    return yield @model .find {}, 'outlook.title stat' .exec!
   modify: (pid, prob) ->*
-    return yield @model.update _id: pid, {$set: prob}, upsert: true, overwrite: true .lean! .exec!
+    return yield @model.update _id: pid, {$set: prob}, upsert: true, overwrite: true .exec!
 
 # ==== user ====
 

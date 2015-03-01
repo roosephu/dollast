@@ -10,7 +10,7 @@ doffirst.service 'doffirst', ['$http',
             cb = opts
             opts = {}
           if opts.debug
-            console.log "data: #{JSON.stringify data}"
+            console.log "doffirst: #{JSON.stringify data}"
           if obj
             obj <<< data
             cb obj if cb
@@ -18,6 +18,7 @@ doffirst.service 'doffirst', ['$http',
     get: (url, obj, opts, cb) ->
       @caller obj, opts, cb, @$http.get url
     put: (url, data, obj, opts, cb) ->
+      console.log "to put #{JSON.stringify data}"
       @caller obj, opts, cb, @$http.put url, data
     post: (url, data, obj, opts, cb) ->
       @caller obj, opts, cb, @$http.post url, data

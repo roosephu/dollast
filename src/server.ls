@@ -2,13 +2,12 @@ require! {
   'koa'
   'koa-json'
   'koa-static'
-  'koa-better-body'
+  'koa-bodyparser'
   'koa-generic-session'
   'koa-passport'
   'util'
   'koa-validate'
   'koa-router'
-  'log4js'
   'koa-send'
   'path'
   'co-busboy'
@@ -20,14 +19,20 @@ app = koa!
 
 # ==== Database ====
 
-config.logger = log4js.get-logger 'dollast'
+# config.logger = log4js.get-logger 'dollast'
 require! "./db"
 
 logger.fatal "No Database found" if !db
 
+app.use koa-bodyparser do
+  extend-types:
+    json: ['application/x-javascript']
+    multipart: ['multipart/form-data']
+
 # ==== Logger ====
+app.use koa-json!
 app.use (next) ->*
-  console.log "#{@req.method} #{@req.url}"
+  console.log "#{@req.method} #{@req.url} #{util.inspect @request?.body}"
   yield next
 
 # ==== Passport ====
@@ -36,10 +41,6 @@ app.keys = ['drdrd']
 app.use koa-generic-session do
   cookie:
     max-age: 1000 * 60 * 5
-app.use koa-better-body do
-  extend-types:
-    json: ['application/x-javascript']
-    multipart: ['multipart/form-data']
 
 require './auth' .init db
 
@@ -52,7 +53,6 @@ app.use (next) ->*
   @session.theme ||= "default"
   yield next
 
-app.use koa-json!
 app.use koa-static "public/"
 app.use (next) ->*
   if @method in ['HEAD', 'GET']
@@ -93,17 +93,18 @@ private-router = new koa-router!
 
 private-router
   .get '/problem', ->*
-    @body = probs: yield db.prob.list!
+    @body = yield db.prob.list!
   .get '/problem/next-count', ->*
     @body = _id: yield db.prob.next-count!
   .get '/problem/:pid', ->*
     pid = @params.pid
-    @body = prob: yield db.prob.show pid, mode: "view"
+    @body = yield db.prob.show pid, mode: "view"
+    console.log "body: #{util.inspect @body}"
   .get '/problem/:pid/total', ->*
     pid = parse-int @params.pid
-    @body = prob: yield db.prob.show pid, mode: "total"
-  .put '/problem/:pid', ->*
-    @body = status: yield db.prob.modify @params.pid, @request.body
+    @body = yield db.prob.show pid, mode: "total"
+  .post '/problem/:pid', ->*
+    @body = yield db.prob.modify @params.pid, @request.body
   .post '/problem/:pid/upload', ->*
     pid = parse-int @params.pid
     parts = co-busboy @, auto-fields: true
@@ -116,8 +117,6 @@ private-router
     ...
   .post '/submit', ->*
     uid ?= @session.passport.user?._id
-    uid ?= "roosephu"
-    console.log "uid: #{uid}"
     @body = status: yield db.sol.submit @request.body, uid
   .get '/solution', ->*
     @body = sols: yield db.sol.list!
@@ -144,7 +143,8 @@ private-router
     @session.theme = @params.theme
     @body = status: true
   .get '/session/login-token', ->*
-    @body = @session.login-token = ...
+    ...
+    @body = @session.login-token = 1
 
 app.use private-router.middleware!
 

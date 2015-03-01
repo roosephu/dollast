@@ -17,7 +17,7 @@
               opts = {};
             }
             if (opts.debug) {
-              console.log("data: " + JSON.stringify(data));
+              console.log("doffirst: " + JSON.stringify(data));
             }
             if (obj) {
               import$(obj, data);
@@ -33,6 +33,7 @@
         return this.caller(obj, opts, cb, this.$http.get(url));
       };
       prototype.put = function(url, data, obj, opts, cb){
+        console.log("to put " + JSON.stringify(data));
         return this.caller(obj, opts, cb, this.$http.put(url, data));
       };
       prototype.post = function(url, data, obj, opts, cb){

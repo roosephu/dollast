@@ -1,4 +1,4 @@
-sol-app = angular.module 'dollast-sol-app', ["doffirst"]
+sol-app = angular.module 'dollast-sol-app', ["doffirst", "ngRoute"]
 
 sol-app.controller 'sol-submit-ctrl', [
   "$scope", "doffirst", "$routeParams", "$location"
