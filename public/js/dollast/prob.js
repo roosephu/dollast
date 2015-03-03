@@ -16,7 +16,7 @@
     }
   ]);
   probApp.controller('prob-modify-ctrl', [
-    "$scope", "prob-serv", "$routeParams", "$upload", function($scope, probServ, $routeParams, $upload){
+    "$scope", "prob-serv", "data-serv", "$routeParams", "$upload", function($scope, probServ, dataServ, $routeParams, $upload){
       var that, pid, x$;
       if (that = $routeParams.pid) {
         pid = parseInt(that);
@@ -26,25 +26,25 @@
         });
         x$._id = pid;
       } else {
-        $scope.prob = probServ.nextCount;
+        $scope.prob = probServ.nextCount();
       }
       $scope.uploadFile = {
         flag: true,
         name: ""
       };
       $scope.submit = function(){
-        var pid;
         console.log($scope.prob);
-        pid = $scope.prob._id;
-        $scope.prob.$save();
-        return $scope.prob = probServ.get({
-          pid: pid
+        return probServ.save($scope.prob);
+      };
+      $scope.upload = function(){
+        return $upload.upload({
+          url: "/data/" + $scope.prob._id + "/upload",
+          file: $scope.uploadFile
         });
       };
-      return $scope.upload = function(){
-        return $upload.upload({
-          url: "/problem/" + $scope.prob._id + "/upload",
-          file: $scope.uploadFile
+      return $scope.updateDatasetList = function(){
+        return $scope.prob.config.dataset = dataServ.query({
+          pid: $scope.prob._id
         });
       };
     }

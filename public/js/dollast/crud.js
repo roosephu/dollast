@@ -12,7 +12,9 @@
       return $resource("/site/:mode/:param/", {}, {
         login: {
           method: 'POST',
-          mode: 'login'
+          params: {
+            mode: 'login'
+          }
         }
       });
     }
@@ -23,7 +25,9 @@
         pid: '@_id'
       }, {
         nextCount: {
-          pid: 'next-count'
+          params: {
+            pid: 'next-count'
+          }
         }
       });
     }
@@ -34,7 +38,9 @@
         rid: '@_id'
       }, {
         nextCount: {
-          rid: 'next-count'
+          params: {
+            rid: 'next-count'
+          }
         }
       });
     }
@@ -47,6 +53,13 @@
         submit: {
           method: 'POST'
         }
+      });
+    }
+  ]);
+  crud.service("data-serv", [
+    "$resource", function($resource){
+      return $resource("/data/:pid/:mode", {
+        sid: '@_id'
       });
     }
   ]);

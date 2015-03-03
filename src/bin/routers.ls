@@ -13,25 +13,32 @@ tmp = bluebird.promisify-all require 'tmp'
 db  = config.db
 log = debug 'router'
 
-prob-ctrl =
-  list: ->*
-    @body = yield db.prob.list!
-  next-count: ->*
-    @body = _id: yield db.prob.next-count!
-  show: ->*
-    pid = @params.pid
-    @body = yield db.prob.show pid, mode: "view"
-    console.log "body: #{util.inspect @body}"
-  total: ->*
-    pid = parse-int @params.pid
-    @body = yield db.prob.show pid, mode: "total"
-  save: ->*
-    @body = yield db.prob.modify @params.pid, @request.body
+data-ctrl =
   upload: ->*
-    pid = parse-int @params.pid
+    pid = @params.pid
     parts = co-busboy @, auto-fields: true
     while part = yield parts
       @body = yield core.upload pid, part
+    yield db.prob.upd-data pid
+  delete: ->*
+    ...
+  show: ->*
+    data = yield db.prob.list-dataset @params.pid
+    @body = data
+
+prob-ctrl =
+  list: ->*
+    @body = yield db.prob.list!
+    log "prob-list #{@body}"
+  next-count: ->*
+    @body = _id: yield db.prob.next-count!
+  show: ->*
+    @body = yield db.prob.show @params.pid, mode: "view"
+    console.log "body: #{util.inspect @body}"
+  total: ->*
+    @body = yield db.prob.show @params.pid, mode: "total"
+  save: ->*
+    @body = yield db.prob.modify @params.pid, @request.body
   delete: ->*
     ...
 
@@ -42,7 +49,7 @@ sol-ctrl =
   list: ->*
     @body = yield db.sol.list!
   show: ->*
-    @body = yield db.sol.show parse-int @params.sid
+    @body = yield db.sol.show @params.sid
 
 rnd-ctrl =
   list: ->*
@@ -50,14 +57,11 @@ rnd-ctrl =
   next-count: ->*
     @body = _id: yield db.rnd.next-count!
   show: ->*
-    rid = parse-int @params.rid
-    @body = yield db.rnd.show rid, mode: "view"
+    @body = yield db.rnd.show @params.rid, mode: "view"
   save: ->*
-    rid = parse-int @params.rid
-    @body = status: yield db.rnd.modify rid, @request.body
+    @body = status: yield db.rnd.modify @params.rid, @request.body
   total: ->*
-    rid = parse-int @params.rid
-    @body = yield db.rnd.show rid, mode: "total"
+    @body = yield db.rnd.show @params.rid, mode: "total"
   delete: ->*
     @body = status: yield db.rnd.delete @params.rid
 
@@ -71,15 +75,32 @@ site-ctrl =
   session: ->*
     @body = uid: if @session.passport?.user?._id? then that else void
 
+params-validator =
+  pid: (pid, next) ->*
+    @params.pid = parse-int pid
+    yield next
+  sid: (sid, next) ->*
+    @params.sid = parse-int sid
+    yield next
+  rid: (rid, next) ->*
+    @params.rid = parse-int rid
+    yield next
+
 router = new koa-router!
 router
+  .param 'pid', params-validator.pid
+  .param 'sid', params-validator.sid
+  .param 'rid', params-validator.rid
+
   .get '/problem', prob-ctrl.list
   .get '/problem/next-count', prob-ctrl.next-count
   .get '/problem/:pid', prob-ctrl.show
   .get '/problem/:pid/total', prob-ctrl.total
   .post '/problem/:pid', prob-ctrl.save
-  .post '/problem/:pid/upload', prob-ctrl.upload
   .delete '/problem/:pid', prob-ctrl.delete
+
+  .get '/data/:pid', data-ctrl.show
+  .post '/data/:pid/upload', data-ctrl.upload
 
   .post '/solution/submit', sol-ctrl.submit
   .get '/solution', sol-ctrl.list

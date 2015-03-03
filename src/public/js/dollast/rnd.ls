@@ -36,9 +36,10 @@ app.controller 'rnd-modify-ctrl', [
       $scope.rnd.probs = _.map (._id), $scope.probs
       rnd-serv.save $scope.rnd
     $scope.insert = ->
-      prob-serv.get $scope.pid, ->
-        if it.prob
-          $scope.probs.push it.prob
+      prob-serv.get pid: $scope.pid, ->
+        console.log "ret #{JSON.stringify it}"
+        if it._id
+          $scope.probs.push it._id
         else
           ...
     $scope.remove = (pid) ->

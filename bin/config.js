@@ -6,7 +6,7 @@
   ref$.sandboxer = './sandboxer/sandboxer';
   ref$.keys = ['drdrd'];
   ref$.dataDir = "./data";
-  ref$.judgerDir = "./utils/judger";
+  ref$.judgerDir = "./utils/judgers";
   ref$.langSuffix = {
     'C': '.c',
     'C++': '.cpp',

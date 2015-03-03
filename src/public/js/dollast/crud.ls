@@ -10,7 +10,8 @@ crud.service "site-serv", [
     $resource "/site/:mode/:param/", {},
       login:
         method: 'POST'
-        mode: 'login'
+        params:
+          mode: 'login'
 ]
 
 crud.service 'prob-serv', [
@@ -18,7 +19,8 @@ crud.service 'prob-serv', [
   ($resource) ->
     $resource '/problem/:pid/:mode/', pid: '@_id',
       next-count:
-        pid: 'next-count'
+        params:
+          pid: 'next-count'
 ]
 
 crud.service "rnd-serv", [
@@ -26,7 +28,8 @@ crud.service "rnd-serv", [
   ($resource) ->
     $resource "/round/:rid/:mode", rid: '@_id',
       next-count:
-        rid: 'next-count'
+        params:
+          rid: 'next-count'
 ]
 
 crud.service "sol-serv", [
@@ -35,4 +38,10 @@ crud.service "sol-serv", [
     $resource "/solution/:sid/:mode", sid: '@_id',
       submit:
         method: 'POST'
+]
+
+crud.service "data-serv", [
+  "$resource",
+  ($resource) ->
+    $resource "/data/:pid/:mode", sid: '@_id'
 ]

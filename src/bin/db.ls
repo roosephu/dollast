@@ -7,11 +7,11 @@ require! {
   'moment'
   'bluebird'
   'co'
+  'debug'
   './core'
 }
 
-# logger = log4js.get-logger 'dollast'
-logger = console
+log = debug 'db'
 ObjectID = mongoose.Schema.Types.ObjectID
 
 export conn = mongoose.create-connection 'mongodb://localhost/dollast'
@@ -77,6 +77,7 @@ class prob-model extends my-model
         time-lmt: Number
         space-lmt: Number
         regexp: String
+        judge: String
         dataset: [@data-atom-schema]
         disabled: Boolean
       stat: {}
@@ -92,6 +93,15 @@ class prob-model extends my-model
     return yield @model .find {}, 'outlook.title stat' .exec!
   modify: (pid, prob) ->*
     return yield @model.update _id: pid, {$set: prob}, upsert: true, overwrite: true .exec!
+  upd-data: (pid) ->*
+    prob = yield @model.find-by-id pid, 'config.dataset' .exec!
+    log "prob: #{util.inspect prob}"
+    pairs = yield core.gen-data-pairs pid
+    prob.config.dataset = _.map (<<< weight: 1), pairs
+    prob.save!
+  list-dataset: (pid) ->*
+    prob = yield @model.find-by-id pid, "config.dataset" .lean! .exec!
+    return prob.config.dataset
 
 # ==== user ====
 
@@ -124,7 +134,7 @@ class round-model extends my-model
   modify: (rid, rnd) ~>*
     rnd.beg-time = new Date that if rnd.beg-time
     rnd.end-time = new Date that if rnd.end-time
-    return yield @model.update _id: rid, {$set: rnd}, upsert: true, overwrite: true .lean! .exec!
+    return yield @model.update _id: rid, {$set: rnd}, upsert: true, overwrite: true .exec!
   show: (rid, opts = {}) ~>*
     opts.mode ||= "view"
     rnd = yield @model.find-by-id rid .populate 'probs', '_id outlook.title' .lean! .exec!

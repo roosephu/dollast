@@ -3,7 +3,7 @@ export
   sandboxer: './sandboxer/sandboxer'
   keys: ['drdrd']
   data-dir: "./data"
-  judger-dir: "./utils/judger"
+  judger-dir: "./utils/judgers"
   lang-suffix:
     'C': '.c'
     'C++': '.cpp'

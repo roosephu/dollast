@@ -8,6 +8,7 @@ require! {
   'co'
   'debug'
   'path'
+  'prelude-ls': _
   './config'
 }
 
@@ -24,7 +25,7 @@ export compile = co.wrap (tmp-dir, lang, code) ->*
   yield child-process.exec compile-cmd
   return exe-path
 
-flattern-dir = (base-dir) ->*
+flatten-dir = (base-dir) ->*
   walk = (dir) ->*
     files = fs.readdir-sync dir
     for file in files
@@ -44,18 +45,31 @@ export upload = co.wrap (pid, part) ->*
     data-dir = path.join config.data-dir, "/#pid"
     [stdout, stderr] = yield child-process.exec "7z e #{zip-file.name} -o#{data-dir} -y"
     log "output: #{stdout} #{stderr}"
-    yield flattern-dir data-dir
+    flatten-dir data-dir # no need to flatten
   catch err
     ret = status: "decompressing error"
   finally
     zip-file.remove-callback!
     ret = status: "OK"
+  log "unzip status: #{util.inspect ret}"
   return ret
 
-export get-data-list = co.wrap (pid) ->
-  data-dir = path.join config.data-dir "/#pid/"
+export gen-data-pairs = co.wrap (pid) ->* # what if no directory
+  data-dir = path.join config.data-dir, "/#pid/"
   files = fs.readdir-sync data-dir
-  return files
+  log "files: #{files}"
+  pairs = []
+  for inf in files # ensure no directories
+    inf-path = path.join data-dir, inf
+    if ".in" == path.extname inf
+      ouf = _.take (inf.length - 2), inf
+      ouf = ouf + "out"
+      if yield fs.exists path.join data-dir, ouf
+        log "find a pair: #{inf} => #{ouf}"
+        pairs.push do
+          input: inf
+          output: ouf
+  return pairs
 
 judge-result = co.wrap (pid, in-file, out-file, ans-file, config) ->*
   judger = switch config.judger
@@ -67,13 +81,15 @@ judge-result = co.wrap (pid, in-file, out-file, ans-file, config) ->*
   result = yield child-process.exec "#{judger} #{in-file} #{out-file} #{ans-file}"
   return JSON.parse result
 
-export run-atom = co.wrap (pid, lang, exe-path, config, callback) ->*
-  [out-file, callback] = yield tmp.file
+export run-atom = co.wrap (pid, lang, exe-path, config, callback) ->* # TODO if file not exists, throw an error
+  [ouf, callback] = yield tmp.file
+  inf = path.join config.data-dir, "/#pid/", config.input
+  ans = path.join config.data-dir, "/#pid/", config.output
   proc = yield child-process.exec "#{config.sandboxer} #{exe-path}
-  #{config.time-lmt} #{config.space-lmt} #{config.stk-lmt} #{config.out-lmt} #{config.input} #{out-file}"
+  #{config.time-lmt} #{config.space-lmt} #{config.stk-lmt} #{config.out-lmt} #{inf} #{ouf}"
   exe-res = JSON.parse proc
   return exe-res if exe-res.status != 'OK'
-  judge-res = yield judge-result pid, config.input, out-file, config.output
+  judge-res = yield judge-result pid, inf, ouf, ans
   return exe-res <<< judge-res
 
 export judge = co.wrap (lang, code, prob-config, doc) ->*
@@ -88,7 +104,7 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
     results = yield async.parallel-limit tasks, config.concurrency
     console.log "judge results #{results}"
     # modify doc
-    ...
+    # ...
   catch err
     throw err
   finally

@@ -49,9 +49,12 @@
         return rndServ.save($scope.rnd);
       };
       $scope.insert = function(){
-        return probServ.get($scope.pid, function(it){
-          if (it.prob) {
-            return $scope.probs.push(it.prob);
+        return probServ.get({
+          pid: $scope.pid
+        }, function(it){
+          console.log("ret " + JSON.stringify(it));
+          if (it._id) {
+            return $scope.probs.push(it._id);
           } else {
             throw Error('unimplemented');
           }
