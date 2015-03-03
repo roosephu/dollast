@@ -1,28 +1,27 @@
-sol-app = angular.module 'dollast-sol-app', ["doffirst", "ngRoute"]
+app = angular.module 'dollast-sol-app', ["dollast-crud"]
 
-sol-app.controller 'sol-submit-ctrl', [
-  "$scope", "doffirst", "$routeParams", "$location"
-  ($scope, doffirst, $route-params, $location) ->
-    $scope.pid = parse-int $route-params.pid
-    $scope.lang = 'C++'
+app.controller 'sol-submit-ctrl', [
+  "$scope", "sol-serv", "$routeParams", "$location"
+  ($scope, sol-serv, $route-params, $location) ->
+    $scope.sol =
+      _id: 'submit'
+      pid: parse-int $route-params.pid
+      lang: 'C++'
+      code: ''
     $scope.submit = ->
-      doffirst.post '/submit',
-        code: $scope.code
-        pid: $scope.pid
-        lang: $scope.lang
-        {}
+      sol-serv.submit $scope.sol
       $location.path "/solution"
 ]
 
-sol-app.controller 'sol-list-ctrl', [
-  "$scope", "doffirst", "$routeParams"
-  ($scope, doffirst, $route-params) ->
-    doffirst.get "/solution", $scope
+app.controller 'sol-list-ctrl', [
+  "$scope", "sol-serv", "$routeParams"
+  ($scope, sol-serv, $route-params) ->
+    $scope.sols = sol-serv.query!
 ]
 
-sol-app.controller 'sol-show-ctrl', [
-  "$scope", "doffirst", "$routeParams"
-  ($scope, doffirst, $route-params) ->
-    $scope.sid = parse-int $route-params.sid
-    doffirst.get "/solution/#{$scope.sid}", $scope
+app.controller 'sol-show-ctrl', [
+  "$scope", "sol-serv", "$routeParams"
+  ($scope, sol-serv, $route-params) ->
+    sid = parse-int $route-params.sid
+    $scope.sol = sol-serv.get sid: sid
 ]

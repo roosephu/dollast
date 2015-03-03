@@ -27,6 +27,8 @@
     "debug": "latest",
     "async": "latest",
     "bluebird": "latest",
-    "co": "latest"
+    "co": "latest",
+    "mz": "latest",
+    "tmp": "latest"
   }
 }

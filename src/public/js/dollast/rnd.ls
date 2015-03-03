@@ -1,43 +1,42 @@
 _ = require 'prelude-ls'
 
-sol-app = angular.module 'dollast-rnd-app', ["doffirst", "ui.dateTimeInput"]
+app = angular.module 'dollast-rnd-app', ["dollast-crud", "ui.dateTimeInput"]
 
-sol-app.controller 'rnd-list-ctrl', [
-  "$scope", "doffirst", "$routeParams"
-  ($scope, doffirst, $route-params) ->
-    doffirst.get "/round", $scope
+app.controller 'rnd-list-ctrl', [
+  "$scope", "rnd-serv", "$routeParams"
+  ($scope, rnd-serv, $route-params) ->
+    $scope.rnds = rnd-serv.query!
 ]
 
-sol-app.controller 'rnd-show-ctrl', [
-  "$scope", "doffirst", "$routeParams"
-  ($scope, doffirst, $route-params) ->
+app.controller 'rnd-show-ctrl', [
+  "$scope", "rnd-serv", "$routeParams"
+  ($scope, rnd-serv, $route-params) ->
     rid = parse-int $route-params.rid
-    doffirst.get "/round/#{rid}", $scope
+    $scope.rnd = rnd-serv.get rid: rid
 ]
 
-sol-app.controller 'rnd-modify-ctrl', [
-  "$scope", "doffirst", "$routeParams"
-  ($scope, doffirst, $route-params) ->
+app.controller 'rnd-modify-ctrl', [
+  "$scope", "rnd-serv", "prob-serv" "$routeParams"
+  ($scope, rnd-serv, prob-serv, $route-params) ->
     $scope.pid = 0
     if $route-params.rid
-      doffirst.get "/round/#{that}/total", $scope, ->
-        it.rnd <<< _id: that
-        it.probs = it.rnd.probs
+      $scope.rnd = rnd-serv.get rid: that, mode: "total", ->
+        $scope.probs = it.probs
     else
-      doffirst.get "/round/next-count", $scope, ->
-        it.rnd =
+      rnd-serv.next-count ->
+        $scope.rnd =
           _id: it._id
           beg-time: new Date Date.now!
           end-time: new Date Date.now!
-        it.probs = []
-        console.log "temp: #{JSON.stringify it.rnd}"
+        $scope.probs = []
+        console.log "temp: #{JSON.stringify it}"
     $scope.submit = ->
       console.log $scope.rnd
+      rid = $scope.rnd._id
       $scope.rnd.probs = _.map (._id), $scope.probs
-      doffirst.put "/round/#{$scope.rnd._id}", $scope.rnd
+      rnd-serv.save $scope.rnd
     $scope.insert = ->
-      new-prob = {}
-      doffirst.get "/problem/#{$scope.pid}", new-prob, ->
+      prob-serv.get $scope.pid, ->
         if it.prob
           $scope.probs.push it.prob
         else
@@ -45,5 +44,5 @@ sol-app.controller 'rnd-modify-ctrl', [
     $scope.remove = (pid) ->
       $scope.probs = _.reject (._id == pid), $scope.probs
     $scope.delete = ->
-      doffirst.delete "/round/#{$scope.rnd._id}"
+      rnd-serv.delete rid: $scope.rnd._id
 ]

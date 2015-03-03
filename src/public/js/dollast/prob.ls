@@ -1,16 +1,4 @@
-prob-app = angular.module 'dollast-prob-app', ["ngFileUpload", "ngResource"]
-
-prob-app.config ["$resourceProvider", ($resource-provider) ->
-  $resource-provider.defaults.strip-trailing-slashes = false
-]
-
-prob-app.service 'prob-serv', [
-  "$resource"
-  ($resource) ->
-    $resource '/problem/:pid/:mode/', pid: '@_id',
-      next-count:
-        pid: 'next-count'
-]
+prob-app = angular.module 'dollast-prob-app', ["ngFileUpload", "dollast-crud"]
 
 prob-app.controller 'prob-show-ctrl', [
   "$scope", "prob-serv", "$routeParams"

@@ -1,6 +1,6 @@
 app = angular.module 'dollast-app', [
   * "ngRoute"
-  * "doffirst"
+  * "dollast-site-app"
   * "dollast-prob-app"
   * "dollast-sol-app"
   * "dollast-rnd-app"
@@ -50,29 +50,4 @@ app.config ['$routeProvider', ($route-provider) ->
       template-url: 'partials/round/modify.html'
       controller  : 'rnd-modify-ctrl'
     .otherwise template-url: 'partials/404.html'
-]
-
-app.controller 'navbar-ctrl', [
-  "$scope", "doffirst",
-  ($scope, doffirst) ->
-    doffirst.get '/session', $scope
-]
-
-app.controller 'index-ctrl', [
-  "$scope", "doffirst", "$location"
-  ($scope, doffirst, $location) ->
-    $scope.submit = ->
-      $location.path "/solution"
-]
-
-app.controller 'login-ctrl', [
-  "$scope", "doffirst",
-  ($scope, doffirst) ->
-    $scope.user =
-      username: ''
-      password: ''
-    $scope.submit = (user) ->
-      console.log user
-      doffirst.post '/login', $scope.user, $scope, ->
-        it.msg = it.status == false
 ]
