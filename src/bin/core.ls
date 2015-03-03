@@ -10,7 +10,6 @@ require! {
   'path'
   './config'
 }
-tmp = bluebird.promisify-all tmp
 
 log = debug 'core'
 
@@ -38,16 +37,20 @@ flattern-dir = (base-dir) ->*
 
 export upload = co.wrap (pid, part) ->*
   ext-name = path.extname part.filename
-  [zjp-file, clean-up] = yield tmp.file postfix: ext-name
+  zip-file = tmp.file-sync postfix: ext-name
+  log "upload #{part.filename} -> #{zip-file.name}"
   try
-    part.pipe fs.create-write-stream zip-file
-    data-dir = path.join config.data-dir "/#pid/"
-    child-process.exec "7z x #{zip-file} -o#{data-dir}"
+    part.pipe fs.create-write-stream zip-file.name
+    data-dir = path.join config.data-dir, "/#pid"
+    [stdout, stderr] = yield child-process.exec "7z e #{zip-file.name} -o#{data-dir} -y"
+    log "output: #{stdout} #{stderr}"
     yield flattern-dir data-dir
   catch err
-    throw err
+    ret = status: "decompressing error"
   finally
-    clean-up!
+    zip-file.remove-callback!
+    ret = status: "OK"
+  return ret
 
 export get-data-list = co.wrap (pid) ->
   data-dir = path.join config.data-dir "/#pid/"

@@ -3,11 +3,13 @@ require! {
   'debug'
   'util'
   'path'
+  'co-busboy'
+  'bluebird'
   './config'
   './core'
 }
 
-tmp = bluebird.promisify require 'tmp'
+tmp = bluebird.promisify-all require 'tmp'
 db  = config.db
 log = debug 'router'
 
@@ -29,10 +31,7 @@ prob-ctrl =
     pid = parse-int @params.pid
     parts = co-busboy @, auto-fields: true
     while part = yield parts
-      console.log "filename: #{part.filename}"
-      yield core.upload pid, part
-    console.log "done"
-    @body = status: true
+      @body = yield core.upload pid, part
   delete: ->*
     ...
 

@@ -10,7 +10,6 @@ require! {
   'koa-router'
   'koa-send'
   'path'
-  'co-busboy'
   'fs'
   './config'
 }
@@ -35,8 +34,6 @@ app.use (next) ->*
   yield next
 
 # ==== Passport ====
-
-console.log "keys: #{config.keys}"
 
 app.keys = config.keys
 app.use koa-generic-session do

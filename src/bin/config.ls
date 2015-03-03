@@ -2,7 +2,7 @@ export
   concurrency: 3
   sandboxer: './sandboxer/sandboxer'
   keys: ['drdrd']
-  data-dir: "/home/dollast/data"
+  data-dir: "./data"
   judger-dir: "./utils/judger"
   lang-suffix:
     'C': '.c'
