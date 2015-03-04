@@ -1,5 +1,5 @@
 # dollast
-the Online Judge for Changjun Middle School
+the Online Judge for Changjun Middle School 
 
 # installation
 1. install nodejs(need ES6 support, ver >= 0.11 required), npm, mongodb by your package manager
