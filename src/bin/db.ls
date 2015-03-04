@@ -31,27 +31,36 @@ class sol-model extends my-model
   ->
     @schema = new mongoose.Schema do
       code: String
-      time: Number
-      space: Number
       lang: String
-      result: Number
       prob: type: Number, ref: "problem"
       user: type: String, ref: "user"
       round: type: Number, ref: "round"
+      max-time: Number
+      max-space: Number
+      score: Number
+      results: [
+        time: Number
+        space: Number
+        message: String
+        score: Number
+        status: String
+        input: String
+      ]
       # groups: [type: Number, ref: "group"]
     @schema.plugin mongoose-auto-increment.plugin, model: "solution"
     @model = conn.model 'solution', @schema
-  submit: (req, uid) ~>*
+  submit: (req, uid) ->*
     sol = new @model do
       code: req.code
       lang: req.lang
       prob: req.pid
       user: uid
-    yield sol.populate 'prob', 'config' .exec!
-    core.judge req.lang, req.code, sol.prob.config, sol
     yield sol.save!
+    yield sol.populate 'prob', 'config' .exec-populate!
+    @body = status: 'OK'
+    core.judge req.lang, req.code, sol.prob.config, sol
   list: ~>*
-    return yield @model.find {}, '-code' .populate 'prob', 'outlook.title' .lean! .exec!
+    return yield @model.find {}, '-code -results' .populate 'prob', 'outlook.title' .lean! .exec!
   show: (sid) ~>*
     return yield @model.find-by-id sid .populate 'prob', 'outlook.title' .lean! .exec!
 
@@ -76,8 +85,10 @@ class prob-model extends my-model
         round: type: Number, ref: "round"
         time-lmt: Number
         space-lmt: Number
+        stk-lmt: Number
+        out-lmt: Number
         regexp: String
-        judge: String
+        judger: String
         dataset: [@data-atom-schema]
         disabled: Boolean
       stat: {}
@@ -88,7 +99,7 @@ class prob-model extends my-model
       | "view"    => "outlook config.timeLmt config.spaceLmt"
       | "total"   => undefined
       | otherwise => ...
-    return yield @model .find-by-id pid, fields .exec!
+    return yield @model .find-by-id pid, fields .lean! .exec!
   list: ->*
     return yield @model .find {}, 'outlook.title stat' .exec!
   modify: (pid, prob) ->*
@@ -98,7 +109,7 @@ class prob-model extends my-model
     log "prob: #{util.inspect prob}"
     pairs = yield core.gen-data-pairs pid
     prob.config.dataset = _.map (<<< weight: 1), pairs
-    prob.save!
+    yield prob.save!
   list-dataset: (pid) ->*
     prob = yield @model.find-by-id pid, "config.dataset" .lean! .exec!
     return prob.config.dataset

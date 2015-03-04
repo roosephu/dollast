@@ -44,10 +44,25 @@
   sample output <textarea ng-model="prob.outlook.sampleOut"></textarea>
 </div>
 <div>
-  time limit: <input type="number" ng-model="prob.config.timeLmt"/>
+  time limit(s): <input type="number" ng-model="prob.config.timeLmt"/>
 </div>
 <div>
-  space limit: <input type="number" ng-model="prob.config.spaceLmt" />
+  space limit(MB): <input type="number" ng-model="prob.config.spaceLmt" />
+</div>
+<div>
+  stack limit(MB): <input type="number" ng-model="prob.config.stkLmt" />
+</div>
+<div>
+  output limit(MB): <input type="number" ng-model="prob.config.outLmt" />
+</div>
+<div>
+  <span>judger</span>
+  <select ng-model='prob.config.judger'>
+    <option value='string'>string</option>
+    <option value='real'>real</option>
+    <option value="strict">strict</option>
+    <option value="custom">custom</option>
+  </select>
 </div>
 
 <input type="button" ng-click="submit()" value="submit"/>

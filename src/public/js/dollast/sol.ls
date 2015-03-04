@@ -10,7 +10,7 @@ app.controller 'sol-submit-ctrl', [
       code: ''
     $scope.submit = ->
       sol-serv.submit $scope.sol
-      $location.path "/solution"
+      # $location.path "/solution"
 ]
 
 app.controller 'sol-list-ctrl', [

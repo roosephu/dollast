@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "koa": "latest",
-    "mongoose": "latest",
+    "mongoose": "~3.9",
     "koa-json": "latest",
     "koa-generic-session": "latest",
     "koa-passport": "latest",
@@ -29,6 +29,7 @@
     "bluebird": "latest",
     "co": "latest",
     "mz": "latest",
-    "tmp": "latest"
+    "tmp": "latest",
+    "co-limiter": "latest"
   }
 }

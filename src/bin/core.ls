@@ -8,17 +8,19 @@ require! {
   'co'
   'debug'
   'path'
+  'co-limiter'
   'prelude-ls': _
   './config'
 }
 
 log = debug 'core'
+asyc = bluebird.promisify-all async
 
 export compile = co.wrap (tmp-dir, lang, code) ->*
-  src-path = path.join tmp-dir "/main#{config.lang-suffix[lang]}"
-  exe-path = path.join tmp-dir "/main"
+  src-path = path.join tmp-dir, "/main#{config.lang-suffix[lang]}"
+  exe-path = path.join tmp-dir, "/main"
   src-file = fs.create-write-stream src-path
-  src-file.write code
+  yield fs.write-file src-path, code
 
   compile-cmd = config.compile-fmt[lang] src-path, exe-path
   log "compile-cmd #{compile-cmd}"
@@ -71,41 +73,95 @@ export gen-data-pairs = co.wrap (pid) ->* # what if no directory
           output: ouf
   return pairs
 
-judge-result = co.wrap (pid, in-file, out-file, ans-file, config) ->*
-  judger = switch config.judger
+testlib-exitcodes =
+  0: 'ok'
+  1: 'wa'
+  2: 'pe'
+  3: 'fail'
+  6: 'unexpected'
+
+judge-result = co.wrap (pid, in-file, out-file, ans-file, cfg) ->*
+  judger = switch cfg.judger
     | 'string'  => path.join config.judger-dir, "/string"
     | 'real'    => path.join config.judger-dir, "/real"
     | 'strict'  => path.join config.judger-dir, "/strict"
     | 'custom'  => path.join config.data-dir, "/#pid/", "/judge"
     | otherwise => ...
-  result = yield child-process.exec "#{judger} #{in-file} #{out-file} #{ans-file}"
-  return JSON.parse result
+  try
+    [stdout, stderr] = yield child-process.exec "#{judger} #{in-file} #{out-file} #{ans-file}"
+  catch e
+    messages = _.unlines _.drop 1, _.lines e.message
+    return
+      status: testlib-exitcodes[e.code]
+      score: 0
+      message: messages.trim!
+  [status, score, ...message] = stderr.trim!.split ' '
+  log "judger output: #stdout / #status / #score / #message"
+  message = _.unwords message
+  return
+    status: status
+    score: parse-float score
+    message: message
 
-export run-atom = co.wrap (pid, lang, exe-path, config, callback) ->* # TODO if file not exists, throw an error
-  [ouf, callback] = yield tmp.file
-  inf = path.join config.data-dir, "/#pid/", config.input
-  ans = path.join config.data-dir, "/#pid/", config.output
-  proc = yield child-process.exec "#{config.sandboxer} #{exe-path}
-  #{config.time-lmt} #{config.space-lmt} #{config.stk-lmt} #{config.out-lmt} #{inf} #{ouf}"
-  exe-res = JSON.parse proc
-  return exe-res if exe-res.status != 'OK'
-  judge-res = yield judge-result pid, inf, ouf, ans
-  return exe-res <<< judge-res
+limit = co-limiter config.concurrency
+
+run-atom = (pid, lang, exe-path, data, cfg) ->* # TODO if file not exists, throw an error
+  log "running atom..."
+  tmp-file = tmp.file-sync!
+  ouf = tmp-file.name
+  inf = path.join config.data-dir, "/#pid/", data.input
+  ans = path.join config.data-dir, "/#pid/", data.output
+  log "inf #{inf} ans #{ans}"
+  exec-cmd = "\"#{config.sandboxer}\" \"#{exe-path}\" #{cfg.time-lmt} #{cfg.space-lmt} #{cfg.stk-lmt} #{cfg.out-lmt} \"#{inf}\" \"#{ouf}\""
+  [proc-out, proc-err] = yield child-process.exec exec-cmd, cwd: path.dirname config.sandboxer
+  log "sandboxer result: #proc-err"
+  exe-res = JSON.parse proc-err
+
+  if exe-res.status != 'OK'
+    tmp-file.remove-callback!
+    return exe-res <<< input: data.input
+
+  judge-res = yield judge-result pid, inf, ouf, ans, cfg
+  tmp-file.remove-callback!
+  return exe-res <<< judge-res <<< input: data.input
+
+calc-prob-score = (results) ->
+  ret =
+    max-time : 0
+    max-space: 0
+
+  [sum, ws] = [0, 0]
+  for [data, result] in results
+    if result.time
+      max-time  >?= result.time
+    if result.space
+    max-space >?= result.space
+    sum += data.weight * result.score
+    ws  += data.weight
+  return ret <<< score: sum / ws
 
 export judge = co.wrap (lang, code, prob-config, doc) ->*
-  [tmp-dir, clean-up] = yield tmp.dir
+  log "Start judging: lang: #{lang}"
+  tmp-dir = tmp.dir-sync unsafe-cleanup: true
+  config = prob-config.to-object!
+  pid = doc.prob._id
   try
-    exe-path = yield compile tmp-dir, lang, code
-    dataset = delete prob-config.dataset
-    tasks = dataset
-      |> map ->
-        (callback) ->
-          run-atom pid, lang, exe-path, it with prob-config, callback
-    results = yield async.parallel-limit tasks, config.concurrency
-    console.log "judge results #{results}"
-    # modify doc
-    # ...
+    exe-path = yield compile tmp-dir.name, lang, code
+    dataset = delete config.dataset
+
+    results = []
+    for data in dataset
+      res = yield limit run-atom pid, lang, exe-path, data, config
+      results.push res
+
+    log "starting modifying doc"
+    doc.results = results
+    doc <<< calc-prob-score _.zip dataset, results
+    yield doc.save!
   catch err
-    throw err
+    log err
+    ret = err
   finally
-    clean-up!
+    tmp-dir.remove-callback!
+    ret = status: "OK"
+  return ret

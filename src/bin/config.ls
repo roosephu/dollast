@@ -1,9 +1,13 @@
+require! {
+  'path'
+}
+
 export
   concurrency: 3
-  sandboxer: './sandboxer/sandboxer'
+  sandboxer: path.resolve './utils/sandboxer/sandboxer'
   keys: ['drdrd']
-  data-dir: "./data"
-  judger-dir: "./utils/judgers"
+  data-dir: path.resolve "./data"
+  judger-dir: path.resolve "./utils/judgers"
   lang-suffix:
     'C': '.c'
     'C++': '.cpp'

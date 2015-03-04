@@ -21,7 +21,8 @@ prob-app.controller 'prob-modify-ctrl', [
       $scope.prob = prob-serv.get pid: pid, mode: "total"
         .._id = pid
     else
-      $scope.prob = prob-serv.next-count!
+      $scope.prob = prob-serv.next-count ->
+        it.config.judger = "string"
     $scope.upload-file =
       flag: true
       name: ""

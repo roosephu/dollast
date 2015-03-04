@@ -1,5 +1,28 @@
 <p>author: {{sol.user}}</p>
 <p>lang: {{sol.lang}}</p>
-<p>time: {{sol.time}} memory: {{sol.space}} result: {{sol.result}}</p>
+<p>time: {{sol.maxTime | number: 3}} memory: {{sol.maxSpace | number: 3}} score: {{sol.score | number: 3}}</p>
 <p>problem: <a href="#/problem/{{sol.prob._id}}">{{sol.prob._id}}. {{sol.prob.outlook.title}}</a></p>
-<p>code: {{sol.code}}</p>
+<div>
+  code <pre>{{sol.code}}</pre>
+</div>
+<div>
+  <p>details</p>
+  <table>
+    <tr>
+      <th>input</th>
+      <th>status</th>
+      <th>time</th>
+      <th>space</th>
+      <th>score</th>
+      <th>message</th>
+    </tr>
+    <tr ng-repeat="result in sol.results">
+      <td>{{result.input}}</td>
+      <td>{{result.status}}</td>
+      <td>{{result.time}}</td>
+      <td>{{result.space}}</td>
+      <td>{{result.score}}</td>
+      <td>{{result.message}}</td>
+    </tr>
+  </table>
+</div>
