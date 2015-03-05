@@ -24,3 +24,4 @@ ref$['default'] = {
   }
 };
 ref$.bcryptCost = 10;
+ref$.secret = 'drdrdrd';

@@ -14,21 +14,16 @@ schema = new mongoose.Schema do
   priv-list: [String]
 
 schema.methods.check-password = (candidate) ->
-  return bcrypt.compare-sync @pswd, candidate
+  return bcrypt.compare-sync candidate, @pswd
 
 model = conn.conn.model 'user', schema
 
 export do
-  query: (uid, pswd, done) ->*
-    usr = yield model.find-by-id uid .exec!
-
-    , (err, user) ->
-      if err
-        done err
-      else if !user or user.pswd != pswd
-        done null, false
-      else
-        done null, user
+  query: (user) ->*
+    usr = yield model.find-by-id user._id .exec!
+    if not usr or not usr.check-password user.pswd
+      return null
+    return usr
   show: (uid) ->*
     @acquire-privilege 'user-all'
     log "uid: #uid"
@@ -40,6 +35,7 @@ export do
   register: (user) ->*
     user.priv-list = ['']
     user = new model user
+    user.pswd = bcrypt.hash-sync user.pswd, config.bcrypt-cost
     yield user.save!
     return "OK"
 

@@ -19,3 +19,4 @@ export
     priv:
       "prob-view": true
   bcrypt-cost: 10
+  secret: 'drdrdrd'

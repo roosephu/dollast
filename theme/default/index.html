@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>dollast</title>
   <script src="js/lib/angular/angular.js"></script>
+  <script src="js/lib/angular/angular-jwt.js"></script>
   <script src="js/lib/angular/angular-resource.js"></script>
   <script src="js/lib/angular/angular-route.js"></script>
   <script src="js/lib/angular/dateTimeInput.js"></script>
@@ -31,7 +32,7 @@
     </div>
     <div ng-show="uid">
       <a href="#/user/{{uid}}">{{uid}}</a>
-      <a href="#/logout">logout</a>
+      <input type="button" value="logout" ng-click="logout()" />
     </div>
     <a href="#/problem">problem list</a>
     <a href="#/solution">status</a>

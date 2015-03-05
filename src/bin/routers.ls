@@ -1,10 +1,12 @@
 require! {
   'koa-router'
+  'koa-jwt'
   'debug'
   'util'
   'path'
   'co-busboy'
   'bluebird'
+  'prelude-ls': _
   './config'
   './core'
   "./db"
@@ -44,7 +46,7 @@ prob-ctrl =
 
 sol-ctrl =
   submit:  ->*
-    uid ?= @session.passport.user?._id
+    uid = @user._id
     @body = status: yield db.sol.submit @request.body, uid
   list: ->*
     @body = yield db.sol.list!
@@ -77,6 +79,20 @@ site-ctrl =
   session: ->*
     log @session
     @body = uid: if @session.passport?.user?._id? then that else void
+  login: ->*
+    user = yield db.user.query @request.body
+    if not user
+      @body = status: "invalid"
+    else
+      priv-list = user.priv-list
+      priv-list.push 'login'
+      @session.priv-list = _.pairs-to-obj priv-list, [true for i from 1 to priv-list.length]
+
+      claims = _id: user._id
+      token = koa-jwt.sign claims, config.secret, expire-in-minutes: 1
+      @body = token: token, status: "OK"
+  logout: ->*
+    ...
 
 user-ctrl =
   show: ->*
@@ -135,9 +151,11 @@ router
   .get '/site/theme/:theme',            reg-priv site-ctrl.theme
   .get '/site/session',                 reg-priv site-ctrl.session
   .get '/site/session/login-token',     reg-priv site-ctrl.login-token
+  .post '/site/login',                  reg-priv site-ctrl.login
+  .post '/site/logout',                 reg-priv site-ctrl.logout
 
   .get '/user/:uid/profile',            reg-priv user-ctrl.show
   .post '/user/register/',              reg-priv user-ctrl.register
   .post '/user/:uid/modify',            reg-priv user-ctrl.save
 
-export private-router = router.middleware!
+export router = router.middleware!

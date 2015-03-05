@@ -4,22 +4,23 @@ require! {
   'koa-static'
   'koa-bodyparser'
   'koa-generic-session'
-  'koa-passport'
-  'util'
   'koa-validate'
   'koa-router'
   'koa-send'
+  'koa-jwt'
+  'util'
   'path'
   'fs'
+  'debug'
   './config'
   './db'
 }
 
 app = koa!
 
-# ==== Database ====
+log = debug 'server'
 
-# config.logger = log4js.get-logger 'dollast'
+# ==== Database ====
 
 logger.fatal "No Database found" if !db
 
@@ -30,7 +31,7 @@ app.use koa-bodyparser do
 
 # ==== Logger ====
 app.use (next) ->*
-  console.log "#{@req.method} #{@req.url} #{util.inspect @request?.header}"
+  console.log "#{@req.method} #{@req.url} #{util.inspect @header.authorization}"
   yield next
 
 # ==== Passport ====
@@ -40,10 +41,7 @@ app.use koa-generic-session do
   cookie:
     max-age: 1000 * 60 * 5
 
-require './auth'
-
-app.use koa-passport.initialize!
-app.use koa-passport.session!
+# require './auth'
 
 # ==== JSON and Static Serving ====
 
@@ -59,35 +57,18 @@ app.use (next) ->*
 
 # ========= Router ===============
 
-public-router = new koa-router!
+routers = require './routers'
 
-public-router
-  .post '/site/login', (next) ->*
-    cb = (err, user, info) ~>*
-      throw that if err
-      if user != false
-        yield @login user
-        @body = status: true
-      else
-        @body = status: false
-    yield koa-passport.authenticate 'local', cb .call @, next
-  .get '/site/logout', (next) ->*
-    @logout!
-    @redirect '/#/'
+app.use koa-jwt do
+  secret: config.secret
+  passthrough: true
 
-app.use public-router.middleware!
-
-# require authenticated
 app.use (next) ->*
-  if true or @req.is-authenticated!
-    # console.log "#{util.inspect(@session)}"
-    yield next
-  else
-    @redirect '/login' # should be login
+  log "request", @request.body, "jwt", @user
+  yield next
 
 # now begin our private router
-routers = require './routers'
-app.use routers.private-router
+app.use routers.router
 
 # ====================================
 

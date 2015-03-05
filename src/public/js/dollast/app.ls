@@ -1,10 +1,19 @@
 app = angular.module 'dollast-app', [
+  * "angular-jwt"
   * "ngRoute"
   * "dollast-user-app"
   * "dollast-site-app"
   * "dollast-prob-app"
   * "dollast-sol-app"
   * "dollast-rnd-app"
+]
+
+app.config  [
+  "$httpProvider", "jwtInterceptorProvider",
+  ($http-provider, jwt-interceptor-provider) ->
+    jwt-interceptor-provider.token-getter = ->
+      local-storage.token
+    $http-provider.interceptors.push 'jwtInterceptor'
 ]
 
 app.config ['$routeProvider', ($route-provider) ->

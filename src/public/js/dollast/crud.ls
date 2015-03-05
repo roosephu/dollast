@@ -51,7 +51,7 @@ crud.service "data-serv", [
 ]
 
 crud.service "user-serv", [
-  "$resource",
+  "$resource"
   ($resource) ->
     $resource "/user/:uid/:mode", uid: '@_id',
       save:
