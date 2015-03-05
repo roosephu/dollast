@@ -73,7 +73,16 @@ site-ctrl =
     ...
     @body = @session.login-token = 1
   session: ->*
+    log @session
     @body = uid: if @session.passport?.user?._id? then that else void
+
+user-ctrl =
+  show: ->*
+    @body = yield db.user.show @params.uid
+  save: ->*
+    @body = status: yield db.user.modify @request.body
+  register: ->*
+    @body = status: yield db.user.register @request.body
 
 params-validator =
   pid: (pid, next) ->*
@@ -86,35 +95,58 @@ params-validator =
     @params.rid = parse-int rid
     yield next
 
+reg-priv = (acquired-priv, func) ->
+  let
+    check-privilege = (priv) ->*
+      for priv in _.words @session.passport.priv-list
+        if priv == "login" and not @session.passport.user
+          return false
+        else
+          if not user
+            user = yield db.user.model.find-by-id user, "priv-list"
+          if not user.query-priv priv
+            return false
+      return true
+
+    (next) ->*
+      if false # and check-privilege!
+        @body = status: "privilege acquired"
+      else
+        yield func.call this
+
 router = new koa-router!
 router
   .param 'pid', params-validator.pid
   .param 'sid', params-validator.sid
   .param 'rid', params-validator.rid
 
-  .get '/problem', prob-ctrl.list
-  .get '/problem/next-count', prob-ctrl.next-count
-  .get '/problem/:pid', prob-ctrl.show
-  .get '/problem/:pid/total', prob-ctrl.total
-  .post '/problem/:pid', prob-ctrl.save
-  .delete '/problem/:pid', prob-ctrl.delete
+  .get '/problem',                      reg-priv 'login'    , prob-ctrl.list
+  .get '/problem/next-count',           reg-priv 'prob-all' , prob-ctrl.next-count
+  .get '/problem/:pid',                 reg-priv 'login'    , prob-ctrl.show     # in case viewing a invisible problem
+  .get '/problem/:pid/total',           reg-priv 'prob-all' , prob-ctrl.total
+  .post '/problem/:pid',                reg-priv 'prob-all' , prob-ctrl.save
+  .delete '/problem/:pid',              reg-priv 'prob-all' , prob-ctrl.delete
 
-  .get '/data/:pid', data-ctrl.show
-  .post '/data/:pid/upload', data-ctrl.upload
+  .get '/data/:pid',                    reg-priv 'prob-all' , data-ctrl.show
+  .post '/data/:pid/upload',            reg-priv 'prob-all' , data-ctrl.upload
 
-  .post '/solution/submit', sol-ctrl.submit
-  .get '/solution', sol-ctrl.list
-  .get '/solution/:sid', sol-ctrl.show
+  .post '/solution/submit',             reg-priv 'login'    , sol-ctrl.submit
+  .get '/solution',                     reg-priv ''         , sol-ctrl.list
+  .get '/solution/:sid',                reg-priv 'sol-all'  , sol-ctrl.show
 
-  .get '/round', rnd-ctrl.list
-  .get '/round/next-count', rnd-ctrl.next-count
-  .get '/round/:rid', rnd-ctrl.show
-  .post '/round/:rid', rnd-ctrl.save
-  .get '/round/:rid/total', rnd-ctrl.total
-  .delete '/round/:rid', rnd-ctrl.delete
+  .get '/round',                        reg-priv 'login'    , rnd-ctrl.list
+  .get '/round/next-count',             reg-priv 'rnd-all'  , rnd-ctrl.next-count
+  .get '/round/:rid',                   reg-priv 'login'    , rnd-ctrl.show
+  .post '/round/:rid',                  reg-priv 'rnd-all'  , rnd-ctrl.save
+  .get '/round/:rid/total',             reg-priv 'rnd-all'  , rnd-ctrl.total
+  .delete '/round/:rid',                reg-priv 'rnd-all'  , rnd-ctrl.delete
 
-  .get '/site/theme/:theme', site-ctrl.theme
-  .get '/site/session', site-ctrl.session
-  .get '/site/session/login-token', site-ctrl.login-token
+  .get '/site/theme/:theme',            reg-priv 'login'    , site-ctrl.theme
+  .get '/site/session',                 reg-priv ''         , site-ctrl.session
+  .get '/site/session/login-token',     reg-priv ''         , site-ctrl.login-token
+
+  .get '/user/:uid/profile',            reg-priv ''         , user-ctrl.show
+  .post '/user/register/',              reg-priv ''         , user-ctrl.register
+  .post '/user/:uid/modify',            reg-priv ''         , user-ctrl.save
 
 export private-router = router.middleware!

@@ -140,7 +140,6 @@ runAtom = function*(pid, lang, exePath, data, cfg){
   var tmpFile, ouf, inf, ans, execCmd, ref$, procOut, procErr, exeRes, judgeRes;
   log("running atom...");
   tmpFile = tmp.fileSync();
-  log(tmpFile.removeCallback);
   ouf = tmpFile.name;
   inf = path.join(config.dataDir, "/" + pid + "/", data.input);
   ans = path.join(config.dataDir, "/" + pid + "/", data.output);
@@ -160,21 +159,27 @@ runAtom = function*(pid, lang, exePath, data, cfg){
   return ref$ = import$(exeRes, judgeRes), ref$.input = data.input, ref$;
 };
 calcProbScore = function(results){
-  var maxTime, maxSpace, ref$, sum, ws, i$, len$, data, result;
-  maxTime = 0;
-  maxSpace = 0;
+  var ret, ref$, sum, ws, i$, len$, data, result;
+  ret = {
+    maxTime: 0,
+    maxSpace: 0
+  };
   ref$ = [0, 0], sum = ref$[0], ws = ref$[1];
   for (i$ = 0, len$ = results.length; i$ < len$; ++i$) {
     ref$ = results[i$], data = ref$[0], result = ref$[1];
-    maxTime >= (ref$ = result.time) || (maxTime = ref$);
-    maxSpace >= (ref$ = result.space) || (maxSpace = ref$);
+    if (result.time) {
+      ret.maxTime >= (ref$ = result.time) || (ret.maxTime = ref$);
+    }
+    if (result.space) {
+      ret.maxSpace >= (ref$ = result.space) || (ret.maxSpace = ref$);
+    }
     sum += data.weight * result.score;
     ws += data.weight;
   }
-  return [maxTime, maxSpace, sum / ws];
+  return ret.score = sum / ws, ret;
 };
 out$.judge = judge = co.wrap(function*(lang, code, probConfig, doc){
-  var tmpDir, config, pid, exePath, dataset, ref$, results, i$, len$, data, res, maxTime, maxSpace, score, err, ret;
+  var tmpDir, config, pid, exePath, dataset, ref$, results, i$, len$, data, res, err, ret;
   log("Start judging: lang: " + lang);
   tmpDir = tmp.dirSync({
     unsafeCleanup: true
@@ -192,11 +197,7 @@ out$.judge = judge = co.wrap(function*(lang, code, probConfig, doc){
     }
     log("starting modifying doc");
     doc.results = results;
-    ref$ = calcProbScore(_.zip(dataset, results)), maxTime = ref$[0], maxSpace = ref$[1], score = ref$[2];
-    log(maxTime, maxSpace, score);
-    doc.maxTime = maxTime;
-    doc.maxSpace = maxSpace;
-    doc.score = score;
+    import$(doc, calcProbScore(_.zip(dataset, results)));
     yield doc.save();
   } catch (e$) {
     err = e$;

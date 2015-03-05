@@ -14,3 +14,7 @@ export
     'Java': '.java'
   compile-fmt:
     'C++': (src, dst) -> "g++ #src -o #dst"
+  default:
+    theme: "default"
+    priv:
+      "prob-view": true

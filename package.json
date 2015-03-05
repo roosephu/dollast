@@ -15,7 +15,6 @@
     "koa-passport": "latest",
     "passport-local": "latest",
     "koa-validate": "latest",
-    "koa-static": "latest",
     "koa-router": "latest",
     "mongoose-deep-populate": "latest",
     "mongoose-auto-increment": "latest",

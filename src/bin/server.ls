@@ -40,7 +40,7 @@ app.use koa-generic-session do
   cookie:
     max-age: 1000 * 60 * 5
 
-require './auth' .init db
+require './auth'
 
 app.use koa-passport.initialize!
 app.use koa-passport.session!
@@ -49,7 +49,8 @@ app.use koa-passport.session!
 
 app.use koa-json!
 app.use (next) ->*
-  @session.theme ||= "default"
+  @session.theme ||= config.default.theme
+  @session.priv  ||= config.default.priv
   if @method in ['HEAD', 'GET']
     for folders in ["public", "theme/#{@session.theme}"]
       return if yield koa-send @, @path, index: 'index.html', root: path.resolve folders

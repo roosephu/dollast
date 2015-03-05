@@ -17,3 +17,9 @@ ref$.compileFmt = {
     return "g++ " + src + " -o " + dst;
   }
 };
+ref$['default'] = {
+  theme: "default",
+  priv: {
+    "prob-view": true
+  }
+};

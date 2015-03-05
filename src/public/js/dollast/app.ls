@@ -1,5 +1,6 @@
 app = angular.module 'dollast-app', [
   * "ngRoute"
+  * "dollast-user-app"
   * "dollast-site-app"
   * "dollast-prob-app"
   * "dollast-sol-app"
@@ -49,5 +50,11 @@ app.config ['$routeProvider', ($route-provider) ->
     .when '/round/:rid/modify',
       template-url: 'partials/round/modify.html'
       controller  : 'rnd-modify-ctrl'
+    .when '/user/register',
+      template-url: 'partials/user/register.html'
+      controller  : 'user-reg-ctrl'
+    .when '/user/:uid/modify',
+      template-url: 'partials/user/modify.html'
+      controller  : 'user-modify-ctrl'
     .otherwise template-url: 'partials/404.html'
 ]

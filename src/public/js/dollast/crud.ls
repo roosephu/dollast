@@ -45,3 +45,20 @@ crud.service "data-serv", [
   ($resource) ->
     $resource "/data/:pid/:mode", sid: '@_id'
 ]
+
+crud.service "user-serv", [
+  "$resource",
+  ($resource) ->
+    $resource "/user/:uid/:mode", uid: '@_id',
+      save:
+        method: 'POST'
+        params:
+          mode: 'modify'
+      get:
+        params:
+          mode: 'profile'
+      reg:
+        method: 'POST'
+        params:
+          uid: 'register'
+]

@@ -62,3 +62,28 @@ crud.service("data-serv", [
     });
   }
 ]);
+crud.service("user-serv", [
+  "$resource", function($resource){
+    return $resource("/user/:uid/:mode", {
+      uid: '@_id'
+    }, {
+      save: {
+        method: 'POST',
+        params: {
+          mode: 'modify'
+        }
+      },
+      get: {
+        params: {
+          mode: 'profile'
+        }
+      },
+      reg: {
+        method: 'POST',
+        params: {
+          uid: 'register'
+        }
+      }
+    });
+  }
+]);

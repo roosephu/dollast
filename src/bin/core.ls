@@ -133,9 +133,9 @@ calc-prob-score = (results) ->
   [sum, ws] = [0, 0]
   for [data, result] in results
     if result.time
-      max-time  >?= result.time
+      ret.max-time  >?= result.time
     if result.space
-    max-space >?= result.space
+      ret.max-space >?= result.space
     sum += data.weight * result.score
     ws  += data.weight
   return ret <<< score: sum / ws

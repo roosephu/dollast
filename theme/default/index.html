@@ -13,6 +13,7 @@
   <script src="js/dollast/app.js"></script>
   <script src="js/dollast/crud.js"></script>
   <script src="js/dollast/site.js"></script>
+  <script src="js/dollast/user.js"></script>
   <script src="js/dollast/prob.js"></script>
   <script src="js/dollast/sol.js"></script>
   <script src="js/dollast/rnd.js"></script>
@@ -26,6 +27,7 @@
     <a href="#/">home </a>
     <div ng-hide="uid">
       <a href="#/login">login</a>
+      <a href="#/user/register">register</a>
     </div>
     <div ng-show="uid">
       <a href="#/user/{{uid}}">{{uid}}</a>

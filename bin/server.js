@@ -35,13 +35,14 @@ app.use(koaGenericSession({
     maxAge: 1000 * 60 * 5
   }
 }));
-require('./auth').init(db);
+require('./auth');
 app.use(koaPassport.initialize());
 app.use(koaPassport.session());
 app.use(koaJson());
 app.use(function*(next){
   var ref$, i$, len$, folders;
-  (ref$ = this.session).theme || (ref$.theme = "default");
+  (ref$ = this.session).theme || (ref$.theme = config['default'].theme);
+  (ref$ = this.session).priv || (ref$.priv = config['default'].priv);
   if ((ref$ = this.method) === 'HEAD' || ref$ === 'GET') {
     for (i$ = 0, len$ = (ref$ = ["public", "theme/" + this.session.theme]).length; i$ < len$; ++i$) {
       folders = ref$[i$];
