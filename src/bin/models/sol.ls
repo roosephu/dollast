@@ -6,6 +6,7 @@ require! {
 }
 
 schema = new mongoose.Schema do
+  open: Boolean
   code: String
   lang: String
   prob: type: Number, ref: "problem"
@@ -29,6 +30,7 @@ count = 0
 
 export do
   submit: (req, uid) ->*
+    @acquire-privilege 'login'
     sol = new model do
       code: req.code
       lang: req.lang
@@ -41,5 +43,14 @@ export do
   list: ~>*
     return yield model.find {}, '-code -results' .populate 'prob', 'outlook.title' .lean! .exec!
   show: (sid) ~>*
-    return yield model.find-by-id sid .populate 'prob', 'outlook.title' .lean! .exec!
-  next-count: conn.next-count model, count
+    sol = yield model.find-by-id sid .populate 'prob', 'outlook.title' .lean! .exec!
+    if not sol.open and sol.user != @get-current-user._id # todo: open other source
+      @acquire-privilege 'sol-all'
+    return sol
+  toggle: (sid) ->*
+    sol = yield model.find-by-id sid .exec!
+    if sol.user != @get-current-user._id
+      @acquire-privilege 'sol-all'
+    != sol.open
+    yield sol.save!
+    return open: sol.open

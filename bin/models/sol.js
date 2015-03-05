@@ -5,6 +5,7 @@ mongooseAutoIncrement = require('mongoose-auto-increment');
 conn = require('./conn');
 core = require('./../core');
 schema = new mongoose.Schema({
+  open: Boolean,
   code: String,
   lang: String,
   prob: {
@@ -39,6 +40,7 @@ count = 0;
 import$(out$, {
   submit: function*(req, uid){
     var sol, body;
+    this.acquirePrivilege('login');
     sol = new model({
       code: req.code,
       lang: req.lang,
@@ -56,9 +58,25 @@ import$(out$, {
     return yield model.find({}, '-code -results').populate('prob', 'outlook.title').lean().exec();
   },
   show: function*(sid){
-    return yield model.findById(sid).populate('prob', 'outlook.title').lean().exec();
+    var sol;
+    sol = yield model.findById(sid).populate('prob', 'outlook.title').lean().exec();
+    if (!sol.open && sol.user !== this$.getCurrentUser._id) {
+      this$.acquirePrivilege('sol-all');
+    }
+    return sol;
   },
-  nextCount: conn.nextCount(model, count)
+  toggle: function*(sid){
+    var sol;
+    sol = yield model.findById(sid).exec();
+    if (sol.user !== this.getCurrentUser._id) {
+      this.acquirePrivilege('sol-all');
+    }
+    sol.open = !sol.open;
+    yield sol.save();
+    return {
+      open: sol.open
+    };
+  }
 });
 function import$(obj, src){
   var own = {}.hasOwnProperty;

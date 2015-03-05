@@ -38,6 +38,10 @@ crud.service "sol-serv", [
     $resource "/solution/:sid/:mode", sid: '@_id',
       submit:
         method: 'POST'
+      toggle:
+        method: 'POST'
+        params:
+          mode: 'toggle'
 ]
 
 crud.service "data-serv", [

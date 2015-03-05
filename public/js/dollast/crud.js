@@ -51,6 +51,12 @@ crud.service("sol-serv", [
     }, {
       submit: {
         method: 'POST'
+      },
+      toggle: {
+        method: 'POST',
+        params: {
+          mode: 'toggle'
+        }
       }
     });
   }

@@ -23,8 +23,15 @@ app.controller('sol-show-ctrl', [
   "$scope", "sol-serv", "$routeParams", function($scope, solServ, $routeParams){
     var sid;
     sid = parseInt($routeParams.sid);
-    return $scope.sol = solServ.get({
+    $scope.sol = solServ.get({
       sid: sid
     });
+    return $scope.toggle = function(){
+      return solServ.toggle({
+        sid: sid
+      }, {}, function(it){
+        return $scope.sol.open = it.open;
+      });
+    };
   }
 ]);

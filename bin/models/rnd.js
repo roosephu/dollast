@@ -19,6 +19,7 @@ model = conn.conn.model('round', schema);
 import$(out$, {
   modify: function*(rid, rnd){
     var that;
+    this$.acquirePrivilege('rnd-all');
     if (that = rnd.begTime) {
       rnd.begTime = new Date(that);
     }
@@ -38,6 +39,9 @@ import$(out$, {
     var rnd, started;
     opts == null && (opts = {});
     opts.mode || (opts.mode = "view");
+    if (opts.mode === "total") {
+      this$.acquirePrivilege('rnd-all');
+    }
     rnd = yield model.findById(rid).populate('probs', '_id outlook.title').lean().exec();
     if (opts.mode === "view" && moment().isBefore(rnd.begTime)) {
       rnd.probs = [];
@@ -54,6 +58,7 @@ import$(out$, {
     return yield model.find({}, '_id title').lean().exec();
   },
   'delete': function*(rid){
+    this$.acquirePrivilege('rnd-all');
     return yield model.findByIdAndRemove(rid).lean().exec();
   }
 });

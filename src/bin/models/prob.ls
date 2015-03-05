@@ -42,18 +42,28 @@ export do
       | "view"    => "outlook config.timeLmt config.spaceLmt"
       | "total"   => undefined
       | otherwise => ...
-    return yield model .find-by-id pid, fields .lean! .exec!
+    if opts.mode == "total"
+      @acquire-privilege 'prob-all'
+    prob = yield model .find-by-id pid, fields .lean! .exec!
+    if prob.disabled
+      @acquire-privilege 'prob-all'
+    return prob
   list: ->*
     return yield model .find {}, 'outlook.title stat' .exec!
   modify: (pid, prob) ->*
+    @acquire-privilege 'prob-all'
     return yield model.update _id: pid, {$set: prob}, upsert: true, overwrite: true .exec!
   upd-data: (pid) ->*
+    @acquire-privilege 'prob-all'
     prob = yield model.find-by-id pid, 'config.dataset' .exec!
     log "prob: #{util.inspect prob}"
     pairs = yield core.gen-data-pairs pid
     prob.config.dataset = _.map (<<< weight: 1), pairs
     yield prob.save!
   list-dataset: (pid) ->*
+    @acquire-privilege 'prob-all'
     prob = yield model.find-by-id pid, "config.dataset" .lean! .exec!
     return prob.config.dataset
-  next-count: conn.next-count model, count
+  next-count: ->*
+    @acquire-privilege 'prob-all'
+    yield conn.next-count model, count

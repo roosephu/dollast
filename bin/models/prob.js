@@ -39,7 +39,7 @@ out$.model = model = conn.conn.model('problem', schema);
 count = 0;
 import$(out$, {
   show: function*(pid, opts){
-    var fields;
+    var fields, prob;
     opts == null && (opts = {});
     opts.mode || (opts.mode = "view");
     fields = (function(){
@@ -52,12 +52,20 @@ import$(out$, {
         throw Error('unimplemented');
       }
     }());
-    return yield model.findById(pid, fields).lean().exec();
+    if (opts.mode === "total") {
+      this.acquirePrivilege('prob-all');
+    }
+    prob = yield model.findById(pid, fields).lean().exec();
+    if (prob.disabled) {
+      this.acquirePrivilege('prob-all');
+    }
+    return prob;
   },
   list: function*(){
     return yield model.find({}, 'outlook.title stat').exec();
   },
   modify: function*(pid, prob){
+    this.acquirePrivilege('prob-all');
     return yield model.update({
       _id: pid
     }, {
@@ -69,6 +77,7 @@ import$(out$, {
   },
   updData: function*(pid){
     var prob, pairs;
+    this.acquirePrivilege('prob-all');
     prob = yield model.findById(pid, 'config.dataset').exec();
     log("prob: " + util.inspect(prob));
     pairs = yield core.genDataPairs(pid);
@@ -79,10 +88,14 @@ import$(out$, {
   },
   listDataset: function*(pid){
     var prob;
+    this.acquirePrivilege('prob-all');
     prob = yield model.findById(pid, "config.dataset").lean().exec();
     return prob.config.dataset;
   },
-  nextCount: conn.nextCount(model, count)
+  nextCount: function*(){
+    this.acquirePrivilege('prob-all');
+    yield conn.nextCount(model, count);
+  }
 });
 function import$(obj, src){
   var own = {}.hasOwnProperty;

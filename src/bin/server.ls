@@ -12,6 +12,7 @@ require! {
   'path'
   'fs'
   './config'
+  './db'
 }
 
 app = koa!
@@ -19,7 +20,6 @@ app = koa!
 # ==== Database ====
 
 # config.logger = log4js.get-logger 'dollast'
-db = config.db = require "./db"
 
 logger.fatal "No Database found" if !db
 
@@ -30,7 +30,7 @@ app.use koa-bodyparser do
 
 # ==== Logger ====
 app.use (next) ->*
-  console.log "#{@req.method} #{@req.url} #{util.inspect @request?.body}"
+  console.log "#{@req.method} #{@req.url} #{util.inspect @request?.header}"
   yield next
 
 # ==== Passport ====
@@ -49,6 +49,7 @@ app.use koa-passport.session!
 
 app.use koa-json!
 app.use (next) ->*
+  db.bind-ctx @
   @session.theme ||= config.default.theme
   @session.priv  ||= config.default.priv
   if @method in ['HEAD', 'GET']
@@ -61,7 +62,7 @@ app.use (next) ->*
 public-router = new koa-router!
 
 public-router
-  .post '/login', (next) ->*
+  .post '/site/login', (next) ->*
     cb = (err, user, info) ~>*
       throw that if err
       if user != false
@@ -70,7 +71,7 @@ public-router
       else
         @body = status: false
     yield koa-passport.authenticate 'local', cb .call @, next
-  .get '/logout', (next) ->*
+  .get '/site/logout', (next) ->*
     @logout!
     @redirect '/#/'
 

@@ -18,3 +18,4 @@ export
     theme: "default"
     priv:
       "prob-view": true
+  bcrypt-cost: 10

@@ -29,6 +29,7 @@
     "co": "latest",
     "mz": "latest",
     "tmp": "latest",
-    "co-limiter": "latest"
+    "co-limiter": "latest",
+    "bcrypt": "latest"
   }
 }

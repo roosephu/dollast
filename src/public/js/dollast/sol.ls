@@ -24,4 +24,8 @@ app.controller 'sol-show-ctrl', [
   ($scope, sol-serv, $route-params) ->
     sid = parse-int $route-params.sid
     $scope.sol = sol-serv.get sid: sid
+
+    $scope.toggle = ->
+      sol-serv.toggle sid: sid, {}, ->
+        $scope.sol.open = it.open
 ]

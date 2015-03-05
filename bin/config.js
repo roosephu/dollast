@@ -23,3 +23,4 @@ ref$['default'] = {
     "prob-view": true
   }
 };
+ref$.bcryptCost = 10;
