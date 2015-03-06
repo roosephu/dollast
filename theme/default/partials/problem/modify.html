@@ -5,7 +5,7 @@
 <div type="file" ng-file-select ng-file-drop ng-model="uploadFile" class="drop-box" allow-dir="true">
   drop or click
 </div>
-<input type="button" ng-click="upload()" value="upload{{uploadFile.name}}" ng-disabled="uploadFile.flag"/>
+<input type="button" ng-click="upload()" value="upload {{uploadFile.name}}" ng-disabled="uploadFile.flag"/>
 
 <br />
 <div>
@@ -27,21 +27,21 @@
 <input type="button" ng-click="updateDatasetList()" value="update data list" />
 
 <div>
-  description <textarea ng-model="prob.outlook.desc"></textarea>
+  description <textarea froala ng-model="prob.outlook.desc"></textarea>
 </div>
 
 <br />
 <div>
-  input format <textarea ng-model="prob.outlook.inFmt"></textarea>
+  input format <textarea froala ng-model="prob.outlook.inFmt"></textarea>
 </div>
 <div>
-  output format <textarea ng-model="prob.outlook.outFmt"></textarea>
+  output format <textarea froala ng-model="prob.outlook.outFmt"></textarea>
 </div>
 <div>
-  sample input <textarea ng-model="prob.outlook.sampleIn"></textarea>
+  sample input <textarea froala ng-model="prob.outlook.sampleIn"></textarea>
 </div>
 <div>
-  sample output <textarea ng-model="prob.outlook.sampleOut"></textarea>
+  sample output <textarea froala ng-model="prob.outlook.sampleOut"></textarea>
 </div>
 <div>
   time limit(s): <input type="number" ng-model="prob.config.timeLmt"/>

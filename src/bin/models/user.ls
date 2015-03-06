@@ -6,7 +6,7 @@ require! {
   "../config"
 }
 
-log = debug "user-model"
+log = debug "user"
 
 schema = new mongoose.Schema do
   _id: String
@@ -25,15 +25,16 @@ export do
       return null
     return usr
   show: (uid) ->*
-    @acquire-privilege 'user-all'
-    log "uid: #uid"
+    log "uid: #uid", @get-current-user!
+    if uid != @get-current-user!._id
+      @acquire-privilege 'user-all'
     return yield model.find-by-id uid, "privList" .exec!
   modify: (user) ->*
-    if user._id != @get-current-user._id
+    if user._id != @get-current-user!._id
       @acquire-privilege 'user-all'
     return yield model.update _id: user._id, {$set: user}, upsert: true, overwrite: true .exec!
   register: (user) ->*
-    user.priv-list = ['']
+    user.priv-list = []
     user = new model user
     user.pswd = bcrypt.hash-sync user.pswd, config.bcrypt-cost
     yield user.save!

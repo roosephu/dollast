@@ -16,7 +16,7 @@ require! {
   './db'
 }
 
-app = koa!
+export app = koa!
 
 log = debug 'server'
 
@@ -31,7 +31,7 @@ app.use koa-bodyparser do
 
 # ==== Logger ====
 app.use (next) ->*
-  console.log "#{@req.method} #{@req.url} #{util.inspect @header.authorization}"
+  console.log "#{@req.method} #{@req.url}"
   yield next
 
 # ==== Passport ====
@@ -64,7 +64,7 @@ app.use koa-jwt do
   passthrough: true
 
 app.use (next) ->*
-  log "request", @request.body, "jwt", @user
+  log "request", @request.body, "jwt", @user, "session", @session, "query", @query
   yield next
 
 # now begin our private router

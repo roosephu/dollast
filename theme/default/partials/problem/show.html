@@ -1,5 +1,10 @@
 <p> title {{ prob._id }}: {{ prob.outlook.title }} </p>
-<p mathjax> description: {{ prob.outlook.desc }} </p>
+<div>
+  description:
+  <div ng-bind-html="prob.outlook.desc" mathjax>
+  </div>
+</div>
+
 <p> time limit: {{ prob.config.timeLmt }} space limit {{ prob.config.spaceLmt }} </p>
 <p> input format: {{ prob.outlook.inFmt }} </p>
 <p> output format: {{ prob.outlook.outFmt }} </p>

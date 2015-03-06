@@ -56,6 +56,15 @@ export upload = co.wrap (pid, part) ->*
   log "unzip status: #{util.inspect ret}"
   return ret
 
+export upload-image = co.wrap (part) ->*
+  ext-name = path.extname part.filename
+  {name: image-file} = tmp.file-sync postfix: ext-name, prefix: "", dir: config.image-dir, keep: true
+  log "image upload #{part.filename} -> #{path.resolve image-file}"
+  part.pipe fs.create-write-stream path.resolve image-file
+  base-name = path.basename image-file
+  log image-file, base-name
+  return "/image/#{base-name}"
+
 export gen-data-pairs = co.wrap (pid) ->* # what if no directory
   data-dir = path.join config.data-dir, "/#pid/"
   files = fs.readdir-sync data-dir
@@ -80,6 +89,9 @@ testlib-exitcodes =
   3: 'fail'
   6: 'unexpected'
 
+drop-first-line = (message) ->
+  _.unlines _.drop 1, _.lines message
+
 judge-result = co.wrap (pid, in-file, out-file, ans-file, cfg) ->*
   judger = switch cfg.judger
     | 'string'  => path.join config.judger-dir, "/string"
@@ -90,7 +102,7 @@ judge-result = co.wrap (pid, in-file, out-file, ans-file, cfg) ->*
   try
     [stdout, stderr] = yield child-process.exec "#{judger} #{in-file} #{out-file} #{ans-file}"
   catch e
-    messages = _.unlines _.drop 1, _.lines e.message
+    messages = drop-first-line e.message
     return
       status: testlib-exitcodes[e.code]
       score: 0
@@ -147,6 +159,16 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
   pid = doc.prob._id
   try
     exe-path = yield compile tmp-dir.name, lang, code
+  catch e
+    message = drop-first-line err.message
+    result =
+      results: []
+      score: "0"
+    doc <<< result
+    yield doc.save!
+    return status: "CE"
+
+  try
     dataset = delete config.dataset
 
     results = []
@@ -160,7 +182,6 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
     yield doc.save!
   catch err
     log err
-    ret = err
   finally
     tmp-dir.remove-callback!
     ret = status: "OK"

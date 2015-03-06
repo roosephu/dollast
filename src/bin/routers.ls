@@ -30,7 +30,7 @@ data-ctrl =
 
 prob-ctrl =
   list: ->*
-    @body = yield db.prob.list!
+    @body = yield db.prob.list @query
     log "prob-list #{@body}"
   next-count: ->*
     @body = _id: yield db.prob.next-count!
@@ -44,12 +44,19 @@ prob-ctrl =
   delete: ->*
     ...
 
+image-ctrl =
+  upload: ->*
+    parts = co-busboy @, auto-fields: true
+    while part = yield parts
+      @body = link: yield core.upload-image part
+    log @body
+
 sol-ctrl =
   submit:  ->*
     uid = @user._id
     @body = status: yield db.sol.submit @request.body, uid
   list: ->*
-    @body = yield db.sol.list!
+    @body = yield db.sol.list @query
   show: ->*
     @body = yield db.sol.show @params.sid
   toggle: ->*
@@ -86,7 +93,7 @@ site-ctrl =
     else
       priv-list = user.priv-list
       priv-list.push 'login'
-      @session.priv-list = _.pairs-to-obj priv-list, [true for i from 1 to priv-list.length]
+      @session.priv = _.lists-to-obj priv-list, [true for i from 1 to priv-list.length]
 
       claims = _id: user._id
       token = koa-jwt.sign claims, config.secret, expire-in-minutes: 1
@@ -126,36 +133,38 @@ router
   .param 'sid', params-validator.sid
   .param 'rid', params-validator.rid
 
-  .get '/problem',                      reg-priv prob-ctrl.list
-  .get '/problem/next-count',           reg-priv prob-ctrl.next-count
-  .get '/problem/:pid',                 reg-priv prob-ctrl.show     # in case viewing a invisible problem
-  .get '/problem/:pid/total',           reg-priv prob-ctrl.total
-  .post '/problem/:pid',                reg-priv prob-ctrl.save
+  .get    '/problem',                   reg-priv prob-ctrl.list
+  .get    '/problem/next-count',        reg-priv prob-ctrl.next-count
+  .get    '/problem/:pid',              reg-priv prob-ctrl.show     # in case viewing a invisible problem
+  .get    '/problem/:pid/total',        reg-priv prob-ctrl.total
+  .post   '/problem/:pid',              reg-priv prob-ctrl.save
   .delete '/problem/:pid',              reg-priv prob-ctrl.delete
 
-  .get '/data/:pid',                    reg-priv data-ctrl.show
-  .post '/data/:pid/upload',            reg-priv data-ctrl.upload
+  .get    '/data/:pid',                 reg-priv data-ctrl.show
+  .post   '/data/:pid/upload',          reg-priv data-ctrl.upload
 
-  .post '/solution/submit',             reg-priv sol-ctrl.submit
-  .get '/solution',                     reg-priv sol-ctrl.list
-  .get '/solution/:sid',                reg-priv sol-ctrl.show
-  .post '/solution/:sid/toggle',        reg-priv sol-ctrl.toggle
+  .post   '/solution/submit',           reg-priv sol-ctrl.submit
+  .get    '/solution',                  reg-priv sol-ctrl.list
+  .get    '/solution/:sid',             reg-priv sol-ctrl.show
+  .post   '/solution/:sid/toggle',      reg-priv sol-ctrl.toggle
 
-  .get '/round',                        reg-priv rnd-ctrl.list
-  .get '/round/next-count',             reg-priv rnd-ctrl.next-count
-  .get '/round/:rid',                   reg-priv rnd-ctrl.show
-  .post '/round/:rid',                  reg-priv rnd-ctrl.save
-  .get '/round/:rid/total',             reg-priv rnd-ctrl.total
+  .get    '/round',                     reg-priv rnd-ctrl.list
+  .get    '/round/next-count',          reg-priv rnd-ctrl.next-count
+  .get    '/round/:rid',                reg-priv rnd-ctrl.show
+  .post   '/round/:rid',                reg-priv rnd-ctrl.save
+  .get    '/round/:rid/total',          reg-priv rnd-ctrl.total
   .delete '/round/:rid',                reg-priv rnd-ctrl.delete
 
-  .get '/site/theme/:theme',            reg-priv site-ctrl.theme
-  .get '/site/session',                 reg-priv site-ctrl.session
-  .get '/site/session/login-token',     reg-priv site-ctrl.login-token
-  .post '/site/login',                  reg-priv site-ctrl.login
-  .post '/site/logout',                 reg-priv site-ctrl.logout
+  .get    '/site/theme/:theme',         reg-priv site-ctrl.theme
+  .get    '/site/session',              reg-priv site-ctrl.session
+  .get    '/site/session/login-token',  reg-priv site-ctrl.login-token
+  .post   '/site/login',                reg-priv site-ctrl.login
+  .post   '/site/logout',               reg-priv site-ctrl.logout
 
-  .get '/user/:uid/profile',            reg-priv user-ctrl.show
-  .post '/user/register/',              reg-priv user-ctrl.register
-  .post '/user/:uid/modify',            reg-priv user-ctrl.save
+  .get    '/user/:uid/profile',         reg-priv user-ctrl.show
+  .post   '/user/register/',            reg-priv user-ctrl.register
+  .post   '/user/:uid/modify',          reg-priv user-ctrl.save
+
+  .post   '/image/upload',              reg-priv image-ctrl.upload
 
 export router = router.middleware!

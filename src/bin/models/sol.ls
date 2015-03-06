@@ -1,8 +1,11 @@
 require! {
   "mongoose"
   "mongoose-auto-increment"
+  "debug"
   "./conn"
-  "./../core"
+  "../db"
+  "../core"
+  "../config"
 }
 
 schema = new mongoose.Schema do
@@ -28,6 +31,8 @@ schema.plugin mongoose-auto-increment.plugin, model: "solution"
 model = conn.conn.model 'solution', schema
 count = 0
 
+log = debug 'sol'
+
 export do
   submit: (req, uid) ->*
     @acquire-privilege 'login'
@@ -36,17 +41,38 @@ export do
       lang: req.lang
       prob: req.pid
       user: uid
+
+    log "middle"
+    prob = yield db.prob.model.find-by-id req.pid, 'config' .exec!
+    log 'there'
+    if prob.config.round
+      sol.round = that
+      yield prob.populate 'config.round', 'begTime' .exec-populate!
+      if not prob.config.round.is-started!
+        @acquire-privilege 'prob-all'
+
+    log "here"
     yield sol.save!
-    yield sol.populate 'prob', 'config' .exec-populate!
     body = status: 'OK'
-    core.judge req.lang, req.code, sol.prob.config, sol
-  list: ~>*
-    return yield model.find {}, '-code -results' .populate 'prob', 'outlook.title' .lean! .exec!
+    core.judge req.lang, req.code, prob.config, sol
+
+  list: (opts) ~>*
+    opts = config.sol-list-opts with opts
+    sol-list = yield model.find {}, '-code -results'
+      .populate 'prob', 'outlook.title'
+      .sort '-_id'
+      .skip opts.skip
+      .limit opts.limit
+      .lean!
+      .exec!
+    return sol-list
+
   show: (sid) ~>*
     sol = yield model.find-by-id sid .populate 'prob', 'outlook.title' .lean! .exec!
     if not sol.open and sol.user != @get-current-user._id # todo: open other source
       @acquire-privilege 'sol-all'
     return sol
+
   toggle: (sid) ->*
     sol = yield model.find-by-id sid .exec!
     if sol.user != @get-current-user._id

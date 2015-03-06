@@ -3,6 +3,7 @@ require! {
   "util"
   "debug"
   "./conn"
+  "../config"
 }
 
 log = debug "prob-model"
@@ -48,8 +49,15 @@ export do
     if prob.disabled
       @acquire-privilege 'prob-all'
     return prob
-  list: ->*
-    return yield model .find {}, 'outlook.title stat' .exec!
+
+  list: (opts) ->*
+    opts = config.prob-list-opts with opts
+    return yield model
+      .find {}, 'outlook.title stat'
+      .skip opts.skip
+      .limit opts.limit
+      .exec!
+
   modify: (pid, prob) ->*
     @acquire-privilege 'prob-all'
     return yield model.update _id: pid, {$set: prob}, upsert: true, overwrite: true .exec!

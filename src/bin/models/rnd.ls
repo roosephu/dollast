@@ -14,6 +14,13 @@ schema = new mongoose.Schema do
   end-time: Date
   probs: [type: Number, ref: "problem"]
   # groups: [type: Number, ref: ]
+
+schema.methods.is-started = ->
+  moment!.is-after @beg-time
+
+schema.methods.is-ended = ->
+  moment!.is-after @end-time
+
 model = conn.conn.model 'round', schema
 
 export do

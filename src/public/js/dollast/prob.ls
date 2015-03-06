@@ -1,4 +1,9 @@
-prob-app = angular.module 'dollast-prob-app', ["ngFileUpload", "dollast-crud"]
+prob-app = angular.module 'dollast-prob-app', ["ngFileUpload", "dollast-crud", "froala", "ngSanitize"]
+
+prob-app.value 'froalaConfig',
+  inline-mode: false
+  place-holder: "Hello world"
+  image-upload-URL: '/image/upload'
 
 prob-app.controller 'prob-show-ctrl', [
   "$scope", "prob-serv", "$routeParams"
@@ -14,8 +19,8 @@ prob-app.controller 'prob-list-ctrl', [
 ]
 
 prob-app.controller 'prob-modify-ctrl', [
-  "$scope", "prob-serv", "data-serv", "$routeParams", "$upload"
-  ($scope, prob-serv, data-serv, $route-params, $upload) ->
+  "$scope", "prob-serv", "data-serv", "$routeParams", "$upload", "$sanitize"
+  ($scope, prob-serv, data-serv, $route-params, $upload, $sanitize) ->
     if $route-params.pid
       pid = parse-int that
       $scope.prob = prob-serv.get pid: pid, mode: "total"
@@ -35,5 +40,6 @@ prob-app.controller 'prob-modify-ctrl', [
         url: "/data/#{$scope.prob._id}/upload"
         file: $scope.upload-file
     $scope.update-dataset-list = ->
-      $scope.prob.config.dataset = data-serv.query pid: $scope.prob._id
+      # $scope.prob.config.dataset = data-serv.query pid: $scope.prob._id
+      console.log $scope.html
 ]
