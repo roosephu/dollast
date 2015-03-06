@@ -1,9 +1,4 @@
-prob-app = angular.module 'dollast-prob-app', ["ngFileUpload", "dollast-crud", "froala", "ngSanitize"]
-
-prob-app.value 'froalaConfig',
-  inline-mode: false
-  place-holder: "Hello world"
-  image-upload-URL: '/image/upload'
+prob-app = angular.module 'dollast-prob-app', ["ngFileUpload", "dollast-crud", "ngSanitize", "ngCkeditor"]
 
 prob-app.controller 'prob-show-ctrl', [
   "$scope", "prob-serv", "$routeParams"
@@ -21,6 +16,10 @@ prob-app.controller 'prob-list-ctrl', [
 prob-app.controller 'prob-modify-ctrl', [
   "$scope", "prob-serv", "data-serv", "$routeParams", "$upload", "$sanitize"
   ($scope, prob-serv, data-serv, $route-params, $upload, $sanitize) ->
+    $scope.editor-options =
+      language: "en"
+      extra-plugins: "autogrow"
+      skin: 'minimalist'
     if $route-params.pid
       pid = parse-int that
       $scope.prob = prob-serv.get pid: pid, mode: "total"
