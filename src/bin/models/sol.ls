@@ -8,6 +8,17 @@ require! {
   "../config"
 }
 
+atom-result-schema = new mongoose.Schema do
+  _id: false
+  time: Number
+  space: Number
+  message: String
+  score: Number
+  status: String
+  input: String
+  output: String
+  weight: Number
+
 schema = new mongoose.Schema do
   open: Boolean
   code: String
@@ -15,23 +26,22 @@ schema = new mongoose.Schema do
   prob: type: Number, ref: "problem"
   user: type: String, ref: "user"
   round: type: Number, ref: "round"
-  max-time: Number
-  max-space: Number
-  score: Number
-  results: [
+  final:
     time: Number
     space: Number
     message: String
     score: Number
     status: String
     input: String
-  ]
+    output: String
+    weight: Number
+  results: [atom-result-schema]
   # groups: [type: Number, ref: "group"]
 schema.plugin mongoose-auto-increment.plugin, model: "solution"
 model = conn.conn.model 'solution', schema
 count = 0
 
-log = debug 'sol'
+log = debug 'dollast:sol'
 
 export do
   submit: (req, uid) ->*
@@ -42,9 +52,9 @@ export do
       prob: req.pid
       user: uid
 
-    log "middle"
     prob = yield db.prob.model.find-by-id req.pid, 'config' .exec!
-    log 'there'
+    if not prob
+      throw new Error 'no problem found. '
     if prob.config.round
       sol.round = that
       yield prob.populate 'config.round', 'begTime' .exec-populate!
@@ -63,12 +73,14 @@ export do
       .sort '-_id'
       .skip opts.skip
       .limit opts.limit
-      .lean!
-      .exec!
+      .lean! .exec!
     return sol-list
 
   show: (sid) ~>*
-    sol = yield model.find-by-id sid .populate 'prob', 'outlook.title' .lean! .exec!
+    sol = yield model.find-by-id sid
+      .populate 'prob', 'outlook.title'
+      .populate 'results'
+      .lean! .exec!
     if not sol.open and sol.user != @get-current-user._id # todo: open other source
       @acquire-privilege 'sol-all'
     return sol

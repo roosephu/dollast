@@ -21,6 +21,9 @@ crud.service 'prob-serv', [
       next-count:
         params:
           pid: 'next-count'
+      repair:
+        params:
+          mode: 'repair'
 ]
 
 crud.service "rnd-serv", [
@@ -47,7 +50,7 @@ crud.service "sol-serv", [
 crud.service "data-serv", [
   "$resource",
   ($resource) ->
-    $resource "/data/:pid/:mode", sid: '@_id'
+    $resource "/data/:pid/:file", sid: '@_id'
 ]
 
 crud.service "user-serv", [

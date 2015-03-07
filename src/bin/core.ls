@@ -13,7 +13,7 @@ require! {
   './config'
 }
 
-log = debug 'core'
+log = debug 'dollast:core'
 asyc = bluebird.promisify-all async
 
 export compile = co.wrap (tmp-dir, lang, code) ->*
@@ -56,7 +56,13 @@ export upload = co.wrap (pid, part) ->*
   log "unzip status: #{util.inspect ret}"
   return ret
 
-export upload-image = co.wrap (part) ->*
+export delete-test-data = co.wrap (pid, filename) ->*
+  filename = path.basename filename
+  file-path = path.join config.data-dir, "/#pid/", filename
+  log "delete #{file-path}"
+  yield fs.unlink file-path
+
+export upload-image = co.wrap (part) ->* # deprecated
   ext-name = path.extname part.filename
   {name: image-file} = tmp.file-sync postfix: ext-name, prefix: "", dir: config.image-dir, keep: true
   log "image upload #{part.filename} -> #{path.resolve image-file}"
@@ -131,23 +137,23 @@ run-atom = (pid, lang, exe-path, data, cfg) ->* # TODO if file not exists, throw
 
   if exe-res.status != 'OK'
     tmp-file.remove-callback!
-    return exe-res <<< input: data.input
+    return exe-res <<< data
 
   judge-res = yield judge-result pid, inf, ouf, ans, cfg
   tmp-file.remove-callback!
-  return exe-res <<< judge-res <<< input: data.input
+  return exe-res <<< judge-res <<< data
 
 calc-prob-score = (results) ->
   ret =
-    max-time : 0
-    max-space: 0
+    time : 0
+    space: 0
 
   [sum, ws] = [0, 0]
   for [data, result] in results
     if result.time
-      ret.max-time  >?= result.time
+      ret.time  >?= result.time
     if result.space
-      ret.max-space >?= result.space
+      ret.space >?= result.space
     sum += data.weight * result.score
     ws  += data.weight
   return ret <<< score: sum / ws
@@ -161,10 +167,10 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
     exe-path = yield compile tmp-dir.name, lang, code
   catch e
     message = drop-first-line err.message
-    result =
-      results: []
-      score: "0"
-    doc <<< result
+    doc.final =
+      score: 0
+      status: "CE"
+      message: message
     yield doc.save!
     return status: "CE"
 
@@ -178,7 +184,7 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
 
     log "starting modifying doc"
     doc.results = results
-    doc <<< calc-prob-score _.zip dataset, results
+    doc.final = calc-prob-score _.zip dataset, results
     yield doc.save!
   catch err
     log err

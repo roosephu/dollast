@@ -6,7 +6,7 @@ require! {
   "../config"
 }
 
-log = debug "user"
+log = debug "dollast:user"
 
 schema = new mongoose.Schema do
   _id: String

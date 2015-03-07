@@ -13,7 +13,7 @@ require! {
 }
 
 tmp = bluebird.promisify-all require 'tmp'
-log = debug 'router'
+log = debug 'dollast:router'
 
 data-ctrl =
   upload: ->*
@@ -22,8 +22,10 @@ data-ctrl =
     while part = yield parts
       @body = yield core.upload pid, part
     yield db.prob.upd-data pid
-  delete: ->*
-    ...
+  delete: ->* # validate
+    pid = @params.pid
+    yield core.delete-test-data pid, @params.file
+    @body = status: "OK"
   show: ->*
     data = yield db.prob.list-dataset @params.pid
     @body = data
@@ -36,15 +38,19 @@ prob-ctrl =
     @body = _id: yield db.prob.next-count!
   show: ->*
     @body = yield db.prob.show @params.pid, mode: "view"
-    console.log "body: #{util.inspect @body}"
   total: ->*
     @body = yield db.prob.show @params.pid, mode: "total"
+  brief: ->*
+    @body = yield db.prob.show @params.pid, mode: "brief"
   save: ->*
     @body = yield db.prob.modify @params.pid, @request.body
   delete: ->*
     ...
+  repair: ->*
+    yield db.prob.upd-data @params.pid
+    @body = status: "OK"
 
-image-ctrl =
+image-ctrl = # deprecated
   upload: ->*
     parts = co-busboy @, auto-fields: true
     while part = yield parts
@@ -75,6 +81,9 @@ rnd-ctrl =
     @body = yield db.rnd.show @params.rid, mode: "total"
   delete: ->*
     @body = status: yield db.rnd.delete @params.rid
+  board: ->*
+    rid = @params.rid
+    @body = yield db.rnd.board rid
 
 site-ctrl =
   theme: ->*
@@ -96,7 +105,7 @@ site-ctrl =
       @session.priv = _.lists-to-obj priv-list, [true for i from 1 to priv-list.length]
 
       claims = _id: user._id
-      token = koa-jwt.sign claims, config.secret, expire-in-minutes: 1
+      token = koa-jwt.sign claims, config.secret, expires-in-seconds: 10
       @body = token: token, status: "OK"
   logout: ->*
     ...
@@ -125,7 +134,7 @@ reg-priv = (func) ->
     try
       yield func.call this
     catch err
-      log err.message
+      log err
 
 router = new koa-router!
 router
@@ -136,12 +145,15 @@ router
   .get    '/problem',                   reg-priv prob-ctrl.list
   .get    '/problem/next-count',        reg-priv prob-ctrl.next-count
   .get    '/problem/:pid',              reg-priv prob-ctrl.show     # in case viewing a invisible problem
+  .get    '/problem/:pid/brief',        reg-priv prob-ctrl.brief
   .get    '/problem/:pid/total',        reg-priv prob-ctrl.total
+  .get    '/problem/:pid/repair',       reg-priv prob-ctrl.repair
   .post   '/problem/:pid',              reg-priv prob-ctrl.save
   .delete '/problem/:pid',              reg-priv prob-ctrl.delete
 
   .get    '/data/:pid',                 reg-priv data-ctrl.show
   .post   '/data/:pid/upload',          reg-priv data-ctrl.upload
+  .delete '/data/:pid/:file',           reg-priv data-ctrl.delete
 
   .post   '/solution/submit',           reg-priv sol-ctrl.submit
   .get    '/solution',                  reg-priv sol-ctrl.list
@@ -154,6 +166,7 @@ router
   .post   '/round/:rid',                reg-priv rnd-ctrl.save
   .get    '/round/:rid/total',          reg-priv rnd-ctrl.total
   .delete '/round/:rid',                reg-priv rnd-ctrl.delete
+  .get    '/round/:rid/board',          reg-priv rnd-ctrl.board
 
   .get    '/site/theme/:theme',         reg-priv site-ctrl.theme
   .get    '/site/session',              reg-priv site-ctrl.session

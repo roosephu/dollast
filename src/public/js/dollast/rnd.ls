@@ -5,7 +5,7 @@ app = angular.module 'dollast-rnd-app', ["dollast-crud", "ui.dateTimeInput"]
 app.controller 'rnd-list-ctrl', [
   "$scope", "rnd-serv", "$routeParams"
   ($scope, rnd-serv, $route-params) ->
-    $scope.rnds = rnd-serv.query!
+    $scope.rounds = rnd-serv.query!
 ]
 
 app.controller 'rnd-show-ctrl', [
@@ -36,10 +36,10 @@ app.controller 'rnd-modify-ctrl', [
       $scope.rnd.probs = _.map (._id), $scope.probs
       rnd-serv.save $scope.rnd
     $scope.insert = ->
-      prob-serv.get pid: $scope.pid, ->
+      prob-serv.get pid: $scope.pid, mode: "brief", ->
         console.log "ret #{JSON.stringify it}"
         if it._id
-          $scope.probs.push it._id
+          $scope.probs.push it
         else
           ...
     $scope.remove = (pid) ->

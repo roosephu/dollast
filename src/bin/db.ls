@@ -7,7 +7,7 @@ require! {
   "./models/user"
 }
 
-log = debug "db"
+log = debug "dollast:db"
 
 export sol, rnd, prob, user
 

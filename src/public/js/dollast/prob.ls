@@ -1,3 +1,5 @@
+prelude = require 'prelude-ls'
+
 prob-app = angular.module 'dollast-prob-app', ["ngFileUpload", "dollast-crud", "ngSanitize", "ngCkeditor"]
 
 prob-app.controller 'prob-show-ctrl', [
@@ -20,6 +22,7 @@ prob-app.controller 'prob-modify-ctrl', [
       language: "en"
       extra-plugins: "autogrow"
       skin: 'minimalist'
+
     if $route-params.pid
       pid = parse-int that
       $scope.prob = prob-serv.get pid: pid, mode: "total"
@@ -31,6 +34,12 @@ prob-app.controller 'prob-modify-ctrl', [
       flag: true
       name: ""
 
+    $scope.del-data = (atom) ->
+      pid = $scope.prob._id
+      data-serv.delete pid: pid, file: atom.input, ->
+        data-serv.delete pid: pid, file: atom.output, ->
+          prob-serv.repair pid: pid
+      $scope.prob.dataset = prelude.reject (.input == atom.input), $scope.prob.dataset
     $scope.submit = ->
       console.log $scope.prob
       prob-serv.save $scope.prob
@@ -39,6 +48,5 @@ prob-app.controller 'prob-modify-ctrl', [
         url: "/data/#{$scope.prob._id}/upload"
         file: $scope.upload-file
     $scope.update-dataset-list = ->
-      # $scope.prob.config.dataset = data-serv.query pid: $scope.prob._id
-      console.log $scope.html
+      $scope.prob.config.dataset = data-serv.query pid: $scope.prob._id
 ]

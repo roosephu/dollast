@@ -2,11 +2,13 @@ require! {
   'mongoose'
   "util"
   "debug"
+  "prelude-ls": _
   "./conn"
+  "../core"
   "../config"
 }
 
-log = debug "prob-model"
+log = debug "dollast:prob"
 
 schema = new mongoose.Schema do
   _id: Number
@@ -30,7 +32,6 @@ schema = new mongoose.Schema do
       output: String
       weight: Number
     ]
-    disabled: Boolean
   stat: {}
 
 export model = conn.conn.model 'problem', schema
@@ -40,20 +41,26 @@ export do
   show: (pid, opts = {}) ->*
     opts.mode ||= "view"
     fields = switch opts.mode
-      | "view"    => "outlook config.timeLmt config.spaceLmt"
+      | "view"    => "outlook config.timeLmt config.spaceLmt config.round"
       | "total"   => undefined
+      | "brief"   => "outlook.title config.round"
       | otherwise => ...
     if opts.mode == "total"
       @acquire-privilege 'prob-all'
-    prob = yield model .find-by-id pid, fields .lean! .exec!
-    if prob.disabled
-      @acquire-privilege 'prob-all'
+    prob = yield model .find-by-id pid, fields .populate "config.round", "begTime" .exec!
+    if prob.config?.round?
+      if not that.is-started!
+        @acquire-privilege 'prob-all'
+      prob .= to-object!
+      delete prob.config.round
+    else
+      prob .= to-object!
     return prob
 
   list: (opts) ->*
     opts = config.prob-list-opts with opts
     return yield model
-      .find {}, 'outlook.title stat'
+      .find "config.round": $exists: false, 'outlook.title stat'
       .skip opts.skip
       .limit opts.limit
       .exec!
@@ -61,11 +68,12 @@ export do
   modify: (pid, prob) ->*
     @acquire-privilege 'prob-all'
     return yield model.update _id: pid, {$set: prob}, upsert: true, overwrite: true .exec!
+
   upd-data: (pid) ->*
     @acquire-privilege 'prob-all'
     prob = yield model.find-by-id pid, 'config.dataset' .exec!
-    log "prob: #{util.inspect prob}"
     pairs = yield core.gen-data-pairs pid
+    log "prob:", prob, "pairs:", pairs
     prob.config.dataset = _.map (<<< weight: 1), pairs
     yield prob.save!
   list-dataset: (pid) ->*
@@ -74,4 +82,4 @@ export do
     return prob.config.dataset
   next-count: ->*
     @acquire-privilege 'prob-all'
-    yield conn.next-count model, count
+    return yield conn.next-count model, count

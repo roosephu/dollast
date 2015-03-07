@@ -18,7 +18,7 @@ require! {
 
 export app = koa!
 
-log = debug 'server'
+log = debug 'dollast:server'
 
 # ==== Database ====
 
@@ -64,7 +64,7 @@ app.use koa-jwt do
   passthrough: true
 
 app.use (next) ->*
-  log "request", @request.body, "jwt", @user, "session", @session, "query", @query
+  log "request", @request.body, "jwt", @user, "query", @query
   yield next
 
 # now begin our private router
