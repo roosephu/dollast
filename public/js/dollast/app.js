@@ -52,6 +52,9 @@ app.config([
     }).when('/round/:rid/modify', {
       templateUrl: 'partials/round/modify.html',
       controller: 'rnd-modify-ctrl'
+    }).when('/round/:rid/board', {
+      templateUrl: 'partials/round/board.html',
+      controller: 'rnd-board-ctrl'
     }).when('/user/register', {
       templateUrl: 'partials/user/register.html',
       controller: 'user-reg-ctrl'

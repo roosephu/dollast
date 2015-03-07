@@ -72,3 +72,15 @@ app.controller('rnd-modify-ctrl', [
     };
   }
 ]);
+app.controller('rnd-board-ctrl', [
+  "$scope", "rnd-serv", "$routeParams", function($scope, rndServ, $routeParams){
+    var rid;
+    rid = parseInt($routeParams.rid);
+    $scope.board = rndServ.board({
+      rid: rid
+    });
+    return $scope.rnd = rndServ.get({
+      rid: rid
+    });
+  }
+]);

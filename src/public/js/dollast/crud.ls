@@ -33,6 +33,9 @@ crud.service "rnd-serv", [
       next-count:
         params:
           rid: 'next-count'
+      board:
+        params:
+          mode: 'board'
 ]
 
 crud.service "sol-serv", [

@@ -59,6 +59,9 @@ app.config ['$routeProvider', ($route-provider) ->
     .when '/round/:rid/modify',
       template-url: 'partials/round/modify.html'
       controller  : 'rnd-modify-ctrl'
+    .when '/round/:rid/board',
+      template-url: 'partials/round/board.html'
+      controller  : 'rnd-board-ctrl'
     .when '/user/register',
       template-url: 'partials/user/register.html'
       controller  : 'user-reg-ctrl'

@@ -162,7 +162,7 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
   log "Start judging: lang: #{lang}"
   tmp-dir = tmp.dir-sync unsafe-cleanup: true
   config = prob-config.to-object!
-  pid = doc.prob._id
+  pid = doc.prob
   try
     exe-path = yield compile tmp-dir.name, lang, code
   catch e

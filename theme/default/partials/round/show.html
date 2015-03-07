@@ -6,6 +6,7 @@
   <ul ng-repeat="prob in rnd.probs">
     <li>{{prob._id}}: <a href="#/problem/{{prob._id}}">{{prob.outlook.title}}</a></li>
   </ul>
+  <a href="#/round/{{rnd._id}}/board">board</a>
 </div>
 <div ng-hide="rnd.started">
   <p>sorry, this round has not started. </p>

@@ -38,7 +38,7 @@ schema = new mongoose.Schema do
   results: [atom-result-schema]
   # groups: [type: Number, ref: "group"]
 schema.plugin mongoose-auto-increment.plugin, model: "solution"
-model = conn.conn.model 'solution', schema
+export model = conn.conn.model 'solution', schema
 count = 0
 
 log = debug 'dollast:sol'
@@ -61,7 +61,6 @@ export do
       if not prob.config.round.is-started!
         @acquire-privilege 'prob-all'
 
-    log "here"
     yield sol.save!
     body = status: 'OK'
     core.judge req.lang, req.code, prob.config, sol
@@ -77,9 +76,9 @@ export do
     return sol-list
 
   show: (sid) ~>*
+    log sid
     sol = yield model.find-by-id sid
       .populate 'prob', 'outlook.title'
-      .populate 'results'
       .lean! .exec!
     if not sol.open and sol.user != @get-current-user._id # todo: open other source
       @acquire-privilege 'sol-all'

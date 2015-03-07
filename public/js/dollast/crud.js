@@ -45,6 +45,11 @@ crud.service("rnd-serv", [
         params: {
           rid: 'next-count'
         }
+      },
+      board: {
+        params: {
+          mode: 'board'
+        }
       }
     });
   }

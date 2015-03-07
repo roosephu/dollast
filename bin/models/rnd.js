@@ -102,8 +102,9 @@ import$(out$, {
   board: function*(rid, opts){
     var sols, results, i$, len$, sol, key$, ref$, cur, user, value;
     opts == null && (opts = {});
+    log('board...');
     sols = yield db.sol.model.find({
-      rnd: rid
+      round: rid
     }, 'final.score prob user').lean().exec();
     results = {};
     for (i$ = 0, len$ = sols.length; i$ < len$; ++i$) {
@@ -111,19 +112,23 @@ import$(out$, {
       results[key$ = sol.user] || (results[key$] = {});
       (ref$ = results[sol.user])[key$ = sol.prob] || (ref$[key$] = {});
       cur = results[sol.user][sol.prob];
-      if (!cur._id || cur._id < sol._id) {
-        compose$(sol, cur);
+      log(cur, sol);
+      if (cur._id == null || cur._id < sol._id) {
+        cur._id = sol._id;
+        cur.score = sol.final.score;
       }
     }
     for (user in results) {
       value = results[user];
       results[user].total = _.sum(
       _.map(fn$)(
-      value));
+      _.values(
+      value)));
     }
+    log(results);
     return results;
     function fn$(it){
-      return it.final.score;
+      return it.score;
     }
   },
   list: function*(){
@@ -142,15 +147,4 @@ function import$(obj, src){
   var own = {}.hasOwnProperty;
   for (var key in src) if (own.call(src, key)) obj[key] = src[key];
   return obj;
-}
-function compose$() {
-  var functions = arguments;
-  return function() {
-    var i, result;
-    result = functions[0].apply(this, arguments);
-    for (i = 1; i < functions.length; ++i) {
-      result = functions[i](result);
-    }
-    return result;
-  };
 }

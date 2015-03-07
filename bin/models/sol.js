@@ -49,7 +49,7 @@ schema = new mongoose.Schema({
 schema.plugin(mongooseAutoIncrement.plugin, {
   model: "solution"
 });
-model = conn.conn.model('solution', schema);
+out$.model = model = conn.conn.model('solution', schema);
 count = 0;
 log = debug('dollast:sol');
 import$(out$, {
@@ -73,7 +73,6 @@ import$(out$, {
         this.acquirePrivilege('prob-all');
       }
     }
-    log("here");
     yield sol.save();
     body = {
       status: 'OK'
@@ -88,7 +87,8 @@ import$(out$, {
   },
   show: function*(sid){
     var sol;
-    sol = yield model.findById(sid).populate('prob', 'outlook.title').populate('results').lean().exec();
+    log(sid);
+    sol = yield model.findById(sid).populate('prob', 'outlook.title').lean().exec();
     if (!sol.open && sol.user !== this$.getCurrentUser._id) {
       this$.acquirePrivilege('sol-all');
     }

@@ -210,7 +210,7 @@ out$.judge = judge = co.wrap(function*(lang, code, probConfig, doc){
     unsafeCleanup: true
   });
   config = probConfig.toObject();
-  pid = doc.prob._id;
+  pid = doc.prob;
   try {
     exePath = yield compile(tmpDir.name, lang, code);
   } catch (e$) {

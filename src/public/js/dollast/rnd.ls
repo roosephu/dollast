@@ -47,3 +47,11 @@ app.controller 'rnd-modify-ctrl', [
     $scope.delete = ->
       rnd-serv.delete rid: $scope.rnd._id
 ]
+
+app.controller 'rnd-board-ctrl', [
+  "$scope", "rnd-serv", "$routeParams",
+  ($scope, rnd-serv, $route-params) ->
+    rid = parse-int $route-params.rid
+    $scope.board = rnd-serv.board rid: rid
+    $scope.rnd = rnd-serv.get rid: rid
+]

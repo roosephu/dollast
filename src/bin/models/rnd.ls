@@ -70,18 +70,21 @@ export do
     return rnd
 
   board: (rid, opts = {}) ->*
-    sols = yield db.sol.model.find rnd: rid, 'final.score prob user' .lean! .exec!
+    log 'board...'
+    sols = yield db.sol.model.find round: rid, 'final.score prob user' .lean! .exec!
     results = {}
     for sol in sols
       results[sol.user] ||= {}
       results[sol.user][sol.prob] ||= {}
 
       cur = results[sol.user][sol.prob]
-      if not cur._id or cur._id < sol._id
-        cur << sol
+      log cur, sol
+      if not cur._id? or cur._id < sol._id
+        cur <<< _id: sol._id, score: sol.final.score
 
     for user, value of results
-      results[user].total = value |> _.map (.final.score) |> _.sum
+      results[user].total = value |> _.values |> _.map (.score) |> _.sum
+    log results
     return results
 
   list: ~>*
