@@ -17,7 +17,7 @@ export
   compile-fmt:
     'C++': (src, dst) -> "g++ #src -o #dst"
   default:
-    theme: "default"
+    theme: "dollast"
     priv: {}
   bcrypt-cost: 10
   secret: 'drdrdrd'

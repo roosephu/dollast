@@ -1,0 +1,6 @@
+<form>
+  User ID: <input type="text" ng-model="user._id" /> <br />
+  Password: <input type="password" ng-model="user.pswd" /> <br />
+  <input type="button" ng-click="submit(user)" value="Submit"/><br />
+  <p ng-show="msg">wrong username/password combination</p>
+</form>

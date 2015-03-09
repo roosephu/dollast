@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html ng-app="dollast-app">
+  <head>
+    <meta charset="utf-8">
+    <title>dollast</title>
+    <script src="js/lib/angular/angular.js"></script>
+    <script src="js/lib/angular/angular-jwt.js"></script>
+    <script src="js/lib/angular/angular-sanitize.js"></script>
+    <script src="js/lib/angular/angular-resource.js"></script>
+    <script src="js/lib/angular/angular-route.js"></script>
+    <script src="js/lib/angular/angular-file-upload.js"></script>
+    <script src="js/lib/angular/dateTimeInput.js"></script>
+    <script src="js/lib/angular/ng-ckeditor.js"></script>
+    <script src="js/lib/preludels.min.js"></script>
+    <script src="js/lib/moment.js"></script>
+    <script src="js/lib/ckeditor/ckeditor.js"></script>
+    <script src="js/dollast/app.js"></script>
+    <script src="js/dollast/crud.js"></script>
+    <script src="js/dollast/filter.js"></script>
+    <script src="js/dollast/site.js"></script>
+    <script src="js/dollast/user.js"></script>
+    <script src="js/dollast/prob.js"></script>
+    <script src="js/dollast/sol.js"></script>
+    <script src="js/dollast/rnd.js"></script>
+    <script src="js/lib/jquery.js"></script>
+    <script src="semantic-ui/semantic.js"></script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link type="text/css" rel="stylesheet" href="css/default.css">
+    <link type="text/css" rel="stylesheet" href="semantic-ui/semantic.css">
+  </head>
+  <body class="side">
+    <div class="ui grid page">
+      <div class="row">
+        <div ng-controller="navbar-ctrl" class="ui navbar large fixed page grid inverted blue menu">
+          <div class="header item">dollast</div><a href="#/" class="item">home</a><a href="#/problem" class="ui item labeled button icon"> <i class="icon browser"></i><span>problem</span></a><a href="#/solution" class="item">status</a><a href="#/round" class="item">contest</a><a href="#/about" class="item">about</a>
+          <div class="right menu"><a href="#/login" ng-hide="uid" class="item">login</a><a href="#/user/register" ng-hide="uid" class="item">register</a><a ng-href="#/user{{uid}}" ng-show="uid" class="item">{{uid}}</a><a ng-click="logout()" ng-show="uid" class="item">logout</a></div>
+        </div>
+      </div>
+      <div class="row my-main">
+        <div class="column">
+          <div ng-view></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+doctype html
+html(ng-app="dollast-app")
+  head
+    meta(charset="utf-8")
+    title dollast
+    script(src="js/lib/angular/angular.js")
+    script(src="js/lib/angular/angular-jwt.js")
+    script(src="js/lib/angular/angular-sanitize.js")
+    script(src="js/lib/angular/angular-resource.js")
+    script(src="js/lib/angular/angular-route.js")
+    script(src="js/lib/angular/angular-file-upload.js")
+    script(src="js/lib/angular/dateTimeInput.js")
+    script(src="js/lib/angular/ng-ckeditor.js")
+    script(src="js/lib/preludels.min.js")
+    script(src="js/lib/moment.js")
+    script(src="js/lib/ckeditor/ckeditor.js")
+    script(src="js/dollast/app.js")
+    script(src="js/dollast/crud.js")
+    script(src="js/dollast/filter.js")
+    script(src="js/dollast/site.js")
+    script(src="js/dollast/user.js")
+    script(src="js/dollast/prob.js")
+    script(src="js/dollast/sol.js")
+    script(src="js/dollast/rnd.js")
+    script(src="js/lib/jquery.js")
+    script(src="semantic-ui/semantic.js")
+    script(src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
+    link(type="text/css" rel="stylesheet" href="css/default.css")
+    link(type="text/css" rel="stylesheet" href="semantic-ui/semantic.css")
+  body.side
+    .ui.grid.page
+      .row
+        .ui.navbar.large.fixed.page.grid.inverted.blue.menu(ng-controller="navbar-ctrl")
+          .header.item dollast
+          a.item(href="#/") home
+
+
+          
+          a.ui.item.labeled.button.icon(href="#/problem") 
+            i.icon.browser
+            span problem
+          a.item(href="#/solution") status
+          a.item(href="#/round") contest
+          a.item(href="#/about") about
+          
+          .right.menu
+            a.item(href="#/login" ng-hide="uid") login
+            a.item(href="#/user/register" ng-hide="uid") register
+            a.item(ng-href="#/user{{uid}}" ng-show="uid") {{uid}}
+            a.item(ng-click="logout()" ng-show="uid") logout
+    
+      .row.my-main
+        .column
+          div(ng-view)
+      

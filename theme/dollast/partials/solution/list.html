@@ -1,18 +1,20 @@
 <table>
   <tr>
-    <th>problem</th>
+    <th>ID</th>
     <th>time</th>
     <th>space</th>
+    <th>problem</th>
     <th>user</th>
     <th>score</th>
     <th>language</th>
     <th>link</th>
   </tr>
   <tr ng-repeat="sol in sols">
-    <td><span ng-bind-html="sol.prob | profRef"></span></td>
+    <td>{{ sol._id }}</td>
     <td>{{ sol.final.time | number: 3 }} </td>
     <td>{{ sol.final.space | number: 3 }} </td>
-    <td><a ng-href="#/user/{{sol.user}}">{{sol.user}}</a></td>
+    <td><a href="#/problem/{{sol.prob._id}}">{{sol.prob._id}}. {{sol.prob.outlook.title}}</a></td>
+    <td><a href="#/user/{{sol.user}}">{{sol.user}}</a></td>
     <td>{{sol.final.score | number: 3}}</td>
     <td>{{sol.lang}}</td>
     <td><a href="#/solution/{{sol._id}}">view code</a></td>

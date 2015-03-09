@@ -165,8 +165,9 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
   pid = doc.prob
   try
     exe-path = yield compile tmp-dir.name, lang, code
-  catch e
+  catch err
     message = drop-first-line err.message
+    log "CE:", message
     doc.final =
       score: 0
       status: "CE"

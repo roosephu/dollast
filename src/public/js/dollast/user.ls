@@ -3,8 +3,8 @@ _ = require 'prelude-ls'
 app = angular.module "dollast-user-app", ["dollast-crud"]
 
 app.controller "user-modify-ctrl", [
-  "$scope", "user-serv", "$routeParams"
-  ($scope, user-serv, $route-params) ->
+  "$scope", "user-serv", "$routeParams", "$jwtHelper"
+  ($scope, user-serv, $route-params, $jwt-helper) ->
     $scope.usr = user-serv.get uid: $route-params.uid
     $scope.priv = ""
 

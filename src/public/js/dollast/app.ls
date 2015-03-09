@@ -1,6 +1,7 @@
 app = angular.module 'dollast-app', [
   * "angular-jwt"
   * "ngRoute"
+  * "dollast-filters"
   * "dollast-user-app"
   * "dollast-site-app"
   * "dollast-prob-app"

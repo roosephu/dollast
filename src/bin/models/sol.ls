@@ -51,6 +51,8 @@ export do
       lang: req.lang
       prob: req.pid
       user: uid
+      final:
+        status: "running"
 
     prob = yield db.prob.model.find-by-id req.pid, 'config' .exec!
     if not prob

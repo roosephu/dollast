@@ -60,7 +60,10 @@ import$(out$, {
       code: req.code,
       lang: req.lang,
       prob: req.pid,
-      user: uid
+      user: uid,
+      final: {
+        status: "running"
+      }
     });
     prob = yield db.prob.model.findById(req.pid, 'config').exec();
     if (!prob) {

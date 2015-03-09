@@ -204,7 +204,7 @@ calcProbScore = function(results){
   return ret.score = sum / ws, ret;
 };
 out$.judge = judge = co.wrap(function*(lang, code, probConfig, doc){
-  var tmpDir, config, pid, exePath, e, message, dataset, ref$, results, i$, len$, data, res, err, ret;
+  var tmpDir, config, pid, exePath, err, message, dataset, ref$, results, i$, len$, data, res, ret;
   log("Start judging: lang: " + lang);
   tmpDir = tmp.dirSync({
     unsafeCleanup: true
@@ -214,8 +214,9 @@ out$.judge = judge = co.wrap(function*(lang, code, probConfig, doc){
   try {
     exePath = yield compile(tmpDir.name, lang, code);
   } catch (e$) {
-    e = e$;
+    err = e$;
     message = dropFirstLine(err.message);
+    log("CE:", message);
     doc.final = {
       score: 0,
       status: "CE",

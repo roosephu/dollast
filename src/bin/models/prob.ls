@@ -52,7 +52,7 @@ export do
       if not that.is-started!
         @acquire-privilege 'prob-all'
       prob .= to-object!
-      delete prob.config.round
+      prob.config.round .= _id
     else
       prob .= to-object!
     return prob

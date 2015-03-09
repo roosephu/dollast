@@ -41,7 +41,7 @@ out$.model = model = conn.conn.model('problem', schema);
 count = 0;
 import$(out$, {
   show: function*(pid, opts){
-    var fields, prob, that, ref$;
+    var fields, prob, that, ref$, ref1$;
     opts == null && (opts = {});
     opts.mode || (opts.mode = "view");
     fields = (function(){
@@ -65,7 +65,7 @@ import$(out$, {
         this.acquirePrivilege('prob-all');
       }
       prob = prob.toObject();
-      delete prob.config.round;
+      (ref1$ = prob.config).round = ref1$.round._id;
     } else {
       prob = prob.toObject();
     }

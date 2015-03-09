@@ -3,7 +3,7 @@ var _, app;
 _ = require('prelude-ls');
 app = angular.module("dollast-user-app", ["dollast-crud"]);
 app.controller("user-modify-ctrl", [
-  "$scope", "user-serv", "$routeParams", function($scope, userServ, $routeParams){
+  "$scope", "user-serv", "$routeParams", "$jwtHelper", function($scope, userServ, $routeParams, $jwtHelper){
     $scope.usr = userServ.get({
       uid: $routeParams.uid
     });

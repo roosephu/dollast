@@ -20,7 +20,7 @@ ref$.compileFmt = {
   }
 };
 ref$['default'] = {
-  theme: "default",
+  theme: "dollast",
   priv: {}
 };
 ref$.bcryptCost = 10;

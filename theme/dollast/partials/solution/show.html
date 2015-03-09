@@ -1,6 +1,5 @@
 <p>author: {{sol.user}}</p>
 <p>lang: {{sol.lang}}</p>
-<p>problem: <span ng-bind-html="sol.prob | probRef"></span> </p>
 <div ng-switch="sol.final.status">
   <div ng-switch-when="CE">
     <p>compile message: <pre>{{sol.final.message}}</pre></p>
@@ -10,6 +9,7 @@
   </div>
   <div ng-switch-default>
     <p>time: {{sol.final.time | number: 3}} memory: {{sol.final.space | number: 3}} score: {{sol.final.score | number: 3}}</p>
+    <p>problem: <a href="#/problem/{{sol.prob._id}}">{{sol.prob._id}}. {{sol.prob.outlook.title}}</a></p>
     <p>current state:
       <span ng-hide="$scope.open">private</span>
       <span ng-show="$scope.open">public</span>
