@@ -1,20 +1,23 @@
-table
-  tr
-    th problem
-    th time
-    th space
-    th user
-    th score
-    th language
-    th link
-  tr(ng-repeat='sol in sols')
-    td
-      span(ng-bind-html='sol.prob | profRef')
-    td {{ sol.final.time | number: 3 }} 
-    td {{ sol.final.space | number: 3 }} 
-    td
-      a(ng-href='#/user/{{sol.user}}') {{sol.user}}
-    td {{sol.final.score | number: 3}}
-    td {{sol.lang}}
-    td
-      a(href='#/solution/{{sol._id}}') view code
+h2.ui.dividing.header Status
+table.ui.table.segment.large
+  thead
+    tr
+      th problem
+      th time
+      th space
+      th user
+      th score
+      th language
+      th link
+  tbody
+    tr(ng-repeat='sol in sols')
+      td
+        span(ng-bind-html='sol.prob | profRef')
+      td {{ sol.final.time | number: 3 }} 
+      td {{ sol.final.space | number: 3 }} 
+      td
+        a(ng-href='#/user/{{sol.user}}') {{sol.user}}
+      td {{sol.final.score | number: 3}}
+      td {{sol.lang}}
+      td
+        a(href='#/solution/{{sol._id}}') view code

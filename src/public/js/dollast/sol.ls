@@ -1,4 +1,4 @@
-app = angular.module 'dollast-sol-app', ["dollast-crud"]
+app = angular.module 'dollast-sol-app', ["dollast-crud", "dollast-filters"]
 
 app.controller 'sol-submit-ctrl', [
   "$scope", "sol-serv", "$routeParams", "$location"
@@ -20,10 +20,12 @@ app.controller 'sol-list-ctrl', [
 ]
 
 app.controller 'sol-show-ctrl', [
-  "$scope", "sol-serv", "$routeParams"
-  ($scope, sol-serv, $route-params) ->
+  "$scope", "sol-serv", "$routeParams", "$timeout"
+  ($scope, sol-serv, $route-params, $timeout) ->
     sid = parse-int $route-params.sid
     $scope.sol = sol-serv.get sid: sid
+    $timeout ->
+      $ '.ui.checkbox' .checkbox!
 
     $scope.toggle = ->
       sol-serv.toggle sid: sid, {}, ->

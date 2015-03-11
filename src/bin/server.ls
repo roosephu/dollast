@@ -4,10 +4,12 @@ require! {
   'koa-static'
   'koa-bodyparser'
   'koa-generic-session'
+  'koa-conditional-get'
   'koa-validate'
   'koa-router'
   'koa-jade'
   'koa-send'
+  'koa-etag'
   'koa-jwt'
   'util'
   'path'
@@ -25,6 +27,9 @@ log = debug 'dollast:server'
 # ==== Database ====
 
 log "No Database found" if !db
+
+app.use koa-conditional-get!
+app.use koa-etag!
 
 app.use koa-bodyparser do
   extend-types:
