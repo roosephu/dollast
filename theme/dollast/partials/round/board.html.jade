@@ -1,0 +1,11 @@
+table.ui.table.segment
+  thead
+    tr
+      th.collapsing user
+      th.collapsing total
+      th.centered(ng-repeat="prob in rnd.probs") {{prob._id}}. {{prob.outlook.title}}
+  tbody
+    tr(ng-repeat="(user, result) in board")
+      td {{user}}
+      td {{result.total}}
+      td(ng-repeat="prob in rnd.probs") {{result[prob._id].score}}

@@ -1,0 +1,34 @@
+.tab
+  .ui.secondary.pointing.filter.menu
+    a.blue.item.active(data-tab="all") All
+    a.green.item(data-tab="solved") Solved
+    a.red.item(data-tab="unsolved") Unsolved
+
+  .ui.tab.active(data-tab="all")
+    .ui.very.relaxed.divided.link.list(ng-repeat="prob in probs")
+      a.item(ng-href="#/problem/{{prob._id}}")
+        .left.floated.ui
+          i.icon.check
+          i.icon.remove
+        .right.floated.ui stat: {{prob.statc}}
+        .description {{prob._id}}. {{prob.outlook.title}}
+
+  .ui.tab(data-tab="solved")
+    .ui.very.relaxed.divided.link.list(ng-repeat="prob in probs")
+      a.item(ng-href="#/problem/{{prob._id}}")
+        .left.floated.ui
+          i.icon.check
+        .right.floated.ui {{prob.statc}}
+        .description {{prob._id}}. {{prob.outlook.title}}
+
+  .ui.tab(data-tab="unsolved")
+    .ui.very.relaxed.divided.link.list(ng-repeat="prob in probs")
+      a.item(ng-href="#/problem/{{prob._id}}")
+        .left.floated.ui
+          i.icon.remove
+        .right.floated.ui {{prob.statc}}
+        .description {{prob._id}}. {{prob.outlook.title}}
+
+  a.ui.right.floated.launch.primary.labeled.button(href="#/problem/create")
+    i.icon.plus
+    | create

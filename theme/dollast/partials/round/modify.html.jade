@@ -1,0 +1,32 @@
+p round {{rnd._id}}
+p title: 
+  .ui.input
+    input(ng-model="rnd.title")
+p from 
+  .ui.input
+    input(data-date-time-input="YYYY-MM-DD HH:mm:ss" ng-model="rnd.begTime")
+  | , to 
+  .ui.input
+    input(data-date-time-input="YYYY-MM-DD HH:mm:ss" ng-model="rnd.endTime")
+  | .
+
+p problemset
+.ui.two.column.row.grid
+  .column
+    .ui.very.relaxed.divided.link.list(ng-repeat="prob in probs")
+      a.item(ng-href="#/problem/{{prob._id}}")
+        .left.floated.ui
+          i.icon.file.text
+        .right.floated.ui.black.button(ng-click="remove(prob._id)") remove 
+        .description {{rnd._id}}. {{rnd.title}}
+
+  .column
+    .ui.input.action
+      input(type="number" ng-model="pid")
+      button.icon.labeled.purple.right.ui.button(ng-click="insert()") 
+        | insert
+        i.icon.chevron.right
+  
+a.floated.right.ui.button(ng-click="submit()") submit
+a.floated.right.ui.button(ng-click="delete()") delete
+a.floated.right.ui.button cancel

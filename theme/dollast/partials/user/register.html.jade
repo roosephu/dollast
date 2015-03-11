@@ -1,0 +1,16 @@
+.ui.form.segment
+  .field
+    .ui.labeled.input
+      a.ui.label 
+        i.user.icon
+        | User ID
+      input.labeled(ng-model="usr._id")
+  .field
+    .ui.labeled.input
+      a.ui.label 
+        i.lock.icon
+        | Password
+      input(type="password" ng-model="usr.pswd")
+  a.ui.right.floated.primary.labeled.button(ng-click="submit()")
+    i.icon.sign.in
+    | Register

@@ -1,0 +1,20 @@
+h1.ui.centered {{ prob._id }}. {{ prob.outlook.title }}
+p time limit: {{ prob.config.timeLmt }} space limit {{ prob.config.spaceLmt }}
+
+h3 description
+p.ui(ng-bind-html="prob.outlook.desc" mathjax)
+
+h3 input format
+p.ui {{prob.outlook.inFmt}}
+
+h3 output format
+p.ui {{prob.outlook.outFmt}}
+
+h3 sample input
+p.ui {{ prob.outlook.sampleIn }}
+
+h3 sample output
+p.ui {{ prob.outlook.sampleOut }}
+
+.button.ui.primary(ng-href="#/submit/{{prob._id}}") submit
+.button.ui(ng-href="#/problem/{{prob._id}}/modify") modify

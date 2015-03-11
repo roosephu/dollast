@@ -12,7 +12,8 @@ probApp.controller('prob-show-ctrl', [
 ]);
 probApp.controller('prob-list-ctrl', [
   "$scope", "$routeParams", "prob-serv", function($scope, $routeParams, probServ){
-    return $scope.probs = probServ.query();
+    $scope.probs = probServ.query();
+    return $('.filter.menu .item').tab();
   }
 ]);
 probApp.controller('prob-modify-ctrl', [

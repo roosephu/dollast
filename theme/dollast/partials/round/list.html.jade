@@ -1,0 +1,14 @@
+.tab
+  .ui.secondary.pointing.filter.menu
+    a.red.item.active(data-tab="all") All contests
+
+  .ui.tab.active(data-tab="all")
+    .ui.very.relaxed.divided.link.list(ng-repeat="rnd in rounds")
+      a.item(ng-href="#/round/{{rnd._id}}")
+        .left.floated.ui
+          i.icon.star
+        .description {{rnd._id}}. {{rnd.title}}
+
+  a.ui.right.floated.launch.primary.labeled.button(href="#/round/create")
+    i.icon.plus
+    | create

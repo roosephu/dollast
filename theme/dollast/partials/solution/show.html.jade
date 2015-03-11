@@ -1,0 +1,38 @@
+p author: {{sol.user}}
+p lang: {{sol.lang}}
+p
+  | problem: 
+  span(ng-bind-html='sol.prob | probRef')
+div(ng-switch='sol.final.status')
+  div(ng-switch-when='CE')
+    p
+      | compile message: 
+      pre {{sol.final.message}}            
+  div(ng-switch-when='running')
+    p running
+  div(ng-switch-default='')
+    p time: {{sol.final.time | number: 3}} memory: {{sol.final.space | number: 3}} score: {{sol.final.score | number: 3}}
+    p current state:
+      span(ng-hide='$scope.open') private
+      span(ng-show='$scope.open') public
+      input(type='button', value='toggle', ng-click='toggle()')
+    div
+      p details
+      table
+        tr
+          th input
+          th status
+          th time
+          th space
+          th score
+          th message
+        tr(ng-repeat='result in sol.results')
+          td {{result.input}}
+          td {{result.status}}
+          td {{result.time}}
+          td {{result.space}}
+          td {{result.score}}
+          td {{result.message}}
+div
+  | code 
+  pre {{sol.code}}        

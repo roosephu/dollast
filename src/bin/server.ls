@@ -6,12 +6,14 @@ require! {
   'koa-generic-session'
   'koa-validate'
   'koa-router'
+  'koa-jade'
   'koa-send'
   'koa-jwt'
   'util'
   'path'
   'fs'
   'debug'
+  'prelude-ls': _
   './config'
   './db'
 }
@@ -22,7 +24,7 @@ log = debug 'dollast:server'
 
 # ==== Database ====
 
-logger.fatal "No Database found" if !db
+log "No Database found" if !db
 
 app.use koa-bodyparser do
   extend-types:
@@ -31,7 +33,7 @@ app.use koa-bodyparser do
 
 # ==== Logger ====
 app.use (next) ->*
-  console.log "#{@req.method} #{@req.url}"
+  log "#{@req.method} #{@req.url}"
   yield next
 
 # ==== Passport ====
@@ -52,8 +54,23 @@ app.use (next) ->*
   @session.priv  ||= config.default.priv
   if @method in ['HEAD', 'GET']
     for folders in ["public", "theme/#{@session.theme}"]
-      return if yield koa-send @, @path, index: 'index.html', root: path.resolve folders
+      if yield koa-send @, @path, index: 'index.html', max-age: 864000000, root: path.resolve folders
+        return
   yield next
+
+app.use koa-jade.middleware do
+  view-path: "theme/dollast"
+  pretty: true
+  compile-debug: false
+
+app.use (next) ->*
+  extname = path.extname @req.url
+  if @req.url == "/"
+    yield @render "index.html", {}, true
+  else if extname == ".html"
+    yield @render @req.url, {}, true
+  else
+    yield next
 
 # ========= Router ===============
 

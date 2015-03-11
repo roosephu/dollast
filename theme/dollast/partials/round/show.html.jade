@@ -1,0 +1,12 @@
+p round {{rnd._id}}: {{rnd.title}}
+p from {{rnd.begTime | date:'medium'}} to {{rnd.endTime | date:'medium'}}
+
+p problemset
+div(ng-show="rnd.started")
+  ul(ng-repeat="prob in rnd.probs")
+    li 
+      a(ng-href="#/problem/{{prob._id}}") {{prob._id}}. {{prob.outlook.title}}
+    a(ng-href="#/round/{{rnd._id}}/board") board
+div(ng-hide="rnd.started")
+  p sorry, this round has not started.
+a(ng-href="#/round/{{rnd._id}}/modify") modify

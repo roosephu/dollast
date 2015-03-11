@@ -13,6 +13,8 @@ prob-app.controller 'prob-list-ctrl', [
   "$scope", "$routeParams", "prob-serv"
   ($scope, $route-params, prob-serv) ->
     $scope.probs = prob-serv.query!
+
+    $ '.filter.menu .item' .tab!
 ]
 
 prob-app.controller 'prob-modify-ctrl', [
