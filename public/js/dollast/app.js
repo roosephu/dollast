@@ -37,6 +37,9 @@ app.config([
     }).when('/solution', {
       templateUrl: 'partials/solution/list.html',
       controller: 'sol-list-ctrl'
+    }).when('/solution/user/:uid', {
+      templateUrl: 'partials/solution/list.html',
+      controller: 'sol-list-ctrl'
     }).when('/solution/:sid', {
       templateUrl: 'partials/solution/show.html',
       controller: 'sol-show-ctrl'
@@ -58,6 +61,9 @@ app.config([
     }).when('/user/register', {
       templateUrl: 'partials/user/register.html',
       controller: 'user-reg-ctrl'
+    }).when('/user/:uid', {
+      templateUrl: 'partials/user/profile.html',
+      controller: 'user-profile-ctrl'
     }).when('/user/:uid/modify', {
       templateUrl: 'partials/user/modify.html',
       controller: 'user-modify-ctrl'

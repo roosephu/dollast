@@ -23,7 +23,7 @@ export
   secret: 'drdrdrd'
   sol-list-opts:
     skip: 0
-    limit: 5
+    limit: 20
   prob-list-opts:
     skip: 0
     limit: 2

@@ -212,6 +212,9 @@ userCtrl = {
     this.body = {
       status: yield db.user.register(this.request.body)
     };
+  },
+  profile: function*(){
+    this.body = yield db.user.profile(this.params.uid);
   }
 };
 paramsValidator = {

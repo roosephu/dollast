@@ -119,6 +119,8 @@ user-ctrl =
     @body = status: yield db.user.modify @request.body
   register: ->*
     @body = status: yield db.user.register @request.body
+  profile: ->*
+    @body = yield db.user.profile @params.uid
 
 params-validator =
   pid: (pid, next) ->*

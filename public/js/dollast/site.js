@@ -4,14 +4,19 @@ app = angular.module('dollast-site-app', ["dollast-crud", "angular-jwt"]);
 app.controller('navbar-ctrl', [
   "$scope", "jwtHelper", function($scope, jwtHelper){
     $scope.loadToken = function(){
-      var token, payload;
+      var token, payload, e;
       token = localStorage.token;
       if (!token) {
         return;
       }
-      payload = jwtHelper.decodeToken(token);
-      console.log(payload);
-      return $scope.uid = payload._id;
+      try {
+        payload = jwtHelper.decodeToken(token);
+        console.log(payload);
+        return $scope.uid = payload._id;
+      } catch (e$) {
+        e = e$;
+        return console.log(e);
+      }
     };
     $scope.logout = function(){
       var ref$;

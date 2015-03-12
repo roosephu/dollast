@@ -11,6 +11,7 @@ log = debug "dollast:user"
 schema = new mongoose.Schema do
   _id: String
   pswd: String
+  desc: String
   priv-list: [String]
 
 schema.methods.check-password = (candidate) ->
@@ -39,5 +40,8 @@ export do
     user.pswd = bcrypt.hash-sync user.pswd, config.bcrypt-cost
     yield user.save!
     return "OK"
+  profile: (uid) ->*
+    user = yield model.find-by-id uid, '-pswd' .exec!
+    return user
 
 # CSRF

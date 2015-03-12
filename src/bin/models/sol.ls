@@ -79,13 +79,20 @@ export do
     core.judge req.lang, req.code, prob.config, sol
 
   list: (opts) ~>*
-    opts = config.sol-list-opts with opts
-    sol-list = yield model.find {}, '-code -results'
+    new-opts = {}
+    new-opts <<<< config.sol-list-opts
+    new-opts <<<< opts
+    log new-opts
+    opts = new-opts
+    query = model.find {}, '-code -results'
       .populate 'prob', 'outlook.title'
       .sort '-_id'
       .skip opts.skip
       .limit opts.limit
-      .lean! .exec!
+      .lean!
+    if opts.uid
+      query .= where 'user' .equals that
+    sol-list = yield query.exec!
     return sol-list
 
   show: (sid) ~>*

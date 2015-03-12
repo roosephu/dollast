@@ -45,6 +45,9 @@ app.config ['$routeProvider', ($route-provider) ->
     .when '/solution',
       template-url: 'partials/solution/list.html'
       controller  : 'sol-list-ctrl'
+    .when '/solution/user/:uid',
+      template-url: 'partials/solution/list.html'
+      controller  : 'sol-list-ctrl'
     .when '/solution/:sid',
       template-url: 'partials/solution/show.html'
       controller  : 'sol-show-ctrl'
@@ -66,6 +69,9 @@ app.config ['$routeProvider', ($route-provider) ->
     .when '/user/register',
       template-url: 'partials/user/register.html'
       controller  : 'user-reg-ctrl'
+    .when '/user/:uid',
+      template-url: 'partials/user/profile.html'
+      controller  : 'user-profile-ctrl'
     .when '/user/:uid/modify',
       template-url: 'partials/user/modify.html'
       controller  : 'user-modify-ctrl'

@@ -9,6 +9,7 @@ log = debug("dollast:user");
 schema = new mongoose.Schema({
   _id: String,
   pswd: String,
+  desc: String,
   privList: [String]
 });
 schema.methods.checkPassword = function(candidate){
@@ -50,6 +51,11 @@ import$(out$, {
     user.pswd = bcrypt.hashSync(user.pswd, config.bcryptCost);
     yield user.save();
     return "OK";
+  },
+  profile: function*(uid){
+    var user;
+    user = yield model.findById(uid, '-pswd').exec();
+    return user;
   }
 });
 function import$(obj, src){

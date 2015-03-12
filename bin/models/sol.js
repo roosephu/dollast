@@ -94,9 +94,17 @@ import$(out$, {
     core.judge(req.lang, req.code, prob.config, sol);
   },
   list: function*(opts){
-    var solList;
-    opts = import$(clone$(config.solListOpts), opts);
-    solList = yield model.find({}, '-code -results').populate('prob', 'outlook.title').sort('-_id').skip(opts.skip).limit(opts.limit).lean().exec();
+    var newOpts, query, that, solList;
+    newOpts = {};
+    importAll$(newOpts, config.solListOpts);
+    importAll$(newOpts, opts);
+    log(newOpts);
+    opts = newOpts;
+    query = model.find({}, '-code -results').populate('prob', 'outlook.title').sort('-_id').skip(opts.skip).limit(opts.limit).lean();
+    if (that = opts.uid) {
+      query = query.where('user').equals(that);
+    }
+    solList = yield query.exec();
     return solList;
   },
   show: function*(sid){
@@ -127,7 +135,7 @@ function import$(obj, src){
   for (var key in src) if (own.call(src, key)) obj[key] = src[key];
   return obj;
 }
-function clone$(it){
-  function fun(){} fun.prototype = it;
-  return new fun;
+function importAll$(obj, src){
+  for (var key in src) obj[key] = src[key];
+  return obj;
 }

@@ -3,7 +3,7 @@ var _, app;
 _ = require('prelude-ls');
 app = angular.module("dollast-user-app", ["dollast-crud"]);
 app.controller("user-modify-ctrl", [
-  "$scope", "user-serv", "$routeParams", "$jwtHelper", function($scope, userServ, $routeParams, $jwtHelper){
+  "$scope", "user-serv", "$routeParams", function($scope, userServ, $routeParams){
     $scope.usr = userServ.get({
       uid: $routeParams.uid
     });
@@ -14,10 +14,13 @@ app.controller("user-modify-ctrl", [
     $scope.insert = function(){
       return $scope.usr.privList.push($scope.priv);
     };
-    return $scope.remove = function(priv){
+    $scope.remove = function(priv){
       return $scope.usr.privList = _.reject((function(it){
         return it === priv;
       }), $scope.usr.privList);
+    };
+    return $scope['delete'] = function(){
+      throw Error('unimplemented');
     };
   }
 ]);
@@ -27,5 +30,12 @@ app.controller("user-reg-ctrl", [
     return $scope.submit = function(){
       return userServ.reg($scope.usr);
     };
+  }
+]);
+app.controller('user-profile-ctrl', [
+  "$scope", "user-serv", "$routeParams", function($scope, userServ, $routeParams){
+    return $scope.user = userServ.get({
+      uid: $routeParams.uid
+    });
   }
 ]);

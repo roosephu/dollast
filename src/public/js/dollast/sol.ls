@@ -23,7 +23,9 @@ app.controller 'sol-submit-ctrl', [
 app.controller 'sol-list-ctrl', [
   "$scope", "sol-serv", "$routeParams"
   ($scope, sol-serv, $route-params) ->
-    $scope.sols = sol-serv.query!
+    opts =
+      uid: $route-params.uid
+    $scope.sols = sol-serv.query opts
 ]
 
 app.controller 'sol-show-ctrl', [

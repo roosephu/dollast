@@ -6,9 +6,13 @@ app.controller 'navbar-ctrl', [
     $scope.load-token = ->
       token = local-storage.token
       return if not token
-      payload = jwt-helper.decode-token token
-      console.log payload
-      $scope.uid = payload._id
+      try
+        payload = jwt-helper.decode-token token
+        console.log payload
+        $scope.uid = payload._id
+      catch e
+        console.log e
+
     $scope.logout = ->
       delete local-storage.token
       delete $scope.uid

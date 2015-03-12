@@ -27,7 +27,7 @@ ref$.bcryptCost = 10;
 ref$.secret = 'drdrdrd';
 ref$.solListOpts = {
   skip: 0,
-  limit: 5
+  limit: 20
 };
 ref$.probListOpts = {
   skip: 0,

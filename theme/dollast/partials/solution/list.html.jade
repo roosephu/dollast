@@ -3,8 +3,8 @@ table.ui.table.segment.large
   thead
     tr
       th problem
-      th time
-      th space
+      th time(s)
+      th space(MB)
       th user
       th score
       th language
@@ -13,11 +13,11 @@ table.ui.table.segment.large
     tr(ng-repeat='sol in sols')
       td
         a(href="#/problem/{{sol.prob._id}}") {{sol.prob._id}}. {{sol.prob.outlook.title}}
-      td {{ sol.final.time | number: 3 }} 
-      td {{ sol.final.space | number: 3 }} 
+      td {{ sol.final.time | number }} 
+      td {{ sol.final.space | number }} 
       td
         a(ng-href='#/user/{{sol.user}}') {{sol.user}}
-      td {{sol.final.score | number: 3}}
+      td {{sol.final.score | number}}
       td {{sol.lang}}
       td
         a(href='#/solution/{{sol._id}}') view code

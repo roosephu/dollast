@@ -1,9 +1,31 @@
-p user id: {{usr._id}} 
-div
-  ul(ng-repeat='priv in usr.privList')
-    li
-      | {{priv}} 
-      input(type='button', ng-click='remove(priv)', value='remove')
-  input(type='text', ng-model='priv')
-  input(type='button', ng-click='insert()', value='insert')
-input(type='button', ng-click='submit()', value='submit')
+
+.ui.form.segment
+  h1.header.ui.dividing {{usr._id}} 
+
+  .two.fields.ui
+    .field
+      .ui.divided.link.list(ng-repeat="priv in usr.privList")
+        a.item
+          .left.floated.ui
+            i.icon.tasks
+          button.right.floated.ui.button.labeled.icon(ng-click="remove(priv)") 
+            i.icon.remove
+            | remove
+          .description {{priv}}
+      .ui.input.action.left.icon
+        i.icon.tasks
+        input(ng-model="priv")
+        button.icon.labeled.right.purple.ui.button(ng-click="insert()") 
+          | insert
+          i.icon.chevron.right
+    .field
+  .field
+    a.floated.right.ui.button.icon.labeled.red(ng-click="delete()")
+      i.icon.delete
+      | delete
+    a.floated.right.ui.button.icon.labeled.secondary
+      i.icon.cancel
+      | cancel
+    a.floated.right.ui.button.icon.labeled.primary(ng-click="submit()")
+      i.icon.save
+      | save

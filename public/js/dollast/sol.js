@@ -24,7 +24,11 @@ app.controller('sol-submit-ctrl', [
 ]);
 app.controller('sol-list-ctrl', [
   "$scope", "sol-serv", "$routeParams", function($scope, solServ, $routeParams){
-    return $scope.sols = solServ.query();
+    var opts;
+    opts = {
+      uid: $routeParams.uid
+    };
+    return $scope.sols = solServ.query(opts);
   }
 ]);
 app.controller('sol-show-ctrl', [
