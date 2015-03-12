@@ -1,10 +1,15 @@
 .form.segment.ui
   h1.header.dividing.ui problem: {{prob._id}}
-  .field
-    label title
-    .ui.input
-      input(ng-model='prob.outlook.title')
-      
+  .four.fields.ui
+    .inline.field
+      label title
+      .ui.input
+        input(ng-model='prob.outlook.title')
+    .field
+      .ui.toggle.checkbox
+        input(type="checkbox" ng-model="inNextRnd")
+        label in next round
+
   .field
     label description 
     textarea(ckeditor='editorOptions', ng-model='prob.outlook.desc')
@@ -53,39 +58,36 @@
 
   .ui.divider
 
-  .ui.two.fields
-    .field
-      .drop-box(type='file', ng-file-select='', ng-file-drop='', ng-model='uploadFile', allow-dir='true')
-        | drop or click
-    .field
-      table.ui.table.segment
-        thead
-          tr
-            th input
-            th output
-            th weight
-            th
-        tbody
-          tr(ng-repeat='atom in prob.config.dataset')
-            td {{ atom.input }} 
-            td {{ atom.output }} 
-            td {{ atom.weight }} 
-            td
-              button(ng-click='delData(atom)') delete
+  .field
+    .ui.icon.button.labeled(ng-file-select ng-model="uploadFile")
+      i.icon.file
+      | select
+    a.ui.button.icon.labeled.green(ng-click='upload()' ng-disabled='uploadFile.flag')
+      i.icon.upload
+      | upload {{uploadFile[0].name}}
+    a.ui.button.icon.labeled.teal(ng-click='updateDatasetList()')
+      i.icon.refresh
+      | refresh
+    a.ui.button.icon.labeled.purple(ng-click='repair()')
+      i.icon.retweet
+      | repair
+    table.ui.table.segment
+      thead
+        tr
+          th input
+          th output
+          th weight
+          th
+      tbody
+        tr(ng-repeat='atom in prob.config.dataset')
+          td {{ atom.input }} 
+          td {{ atom.output }} 
+          td {{ atom.weight }} 
+          td
+            button(ng-click='delData(atom)') delete
 
-      a.ui.button.icon.labeled.teal(ng-click='updateDatasetList()')
-        i.icon.refresh
-        | refresh
-      a.ui.button.icon.labeled.green(ng-click='upload()' ng-disabled='uploadFile.flag')
-        i.icon.upload
-        | upload {{uploadFile.name}}
   
-  .six.fields.ui
-    .field.five.wide
-      .ui.toggle.checkbox
-        input(type="checkbox" ng-model="inNextRnd")
-        label in next round
-    .field
-      a.ui.button.icon.labeled.floated.primary(ng-click='submit()')
-        i.icon.save
-        | Submit  
+  .field
+    a.ui.button.icon.labeled.floated.primary(ng-click='submit()')
+      i.icon.save
+      | Submit  

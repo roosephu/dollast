@@ -23,7 +23,7 @@ probApp.controller('prob-list-ctrl', [
   }
 ]);
 probApp.controller('prob-modify-ctrl', [
-  "$scope", "prob-serv", "data-serv", "$routeParams", "$upload", "$sanitize", "$timeout", function($scope, probServ, dataServ, $routeParams, $upload, $sanitize, $timeout){
+  "$scope", "prob-serv", "data-serv", "$routeParams", "$sanitize", "$timeout", "$upload", function($scope, probServ, dataServ, $routeParams, $sanitize, $timeout, $upload){
     var that, pid, x$;
     $scope.editorOptions = {
       language: "en",
@@ -38,7 +38,8 @@ probApp.controller('prob-modify-ctrl', [
       outlook: {}
     };
     $timeout(function(){
-      return $('.ui.dropdown').dropdown();
+      $('.ui.dropdown').dropdown();
+      return $('.ui.checkbox').checkbox();
     });
     if (that = $routeParams.pid) {
       pid = parseInt(that);
@@ -85,6 +86,7 @@ probApp.controller('prob-modify-ctrl', [
       return probServ.save($scope.prob);
     };
     $scope.upload = function(){
+      console.log($scope.uploadFile);
       return $upload.upload({
         url: "/data/" + $scope.prob._id + "/upload",
         file: $scope.uploadFile
@@ -95,8 +97,11 @@ probApp.controller('prob-modify-ctrl', [
         pid: $scope.prob._id
       });
     };
-    return $scope.select = function(judger){
+    $scope.select = function(judger){
       return $scope.prob.config.judger = judger;
+    };
+    return $scope.repair = function(){
+      return probServ.repair($scope.prob._id);
     };
   }
 ]);

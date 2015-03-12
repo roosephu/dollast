@@ -20,8 +20,8 @@ prob-app.controller 'prob-list-ctrl', [
 ]
 
 prob-app.controller 'prob-modify-ctrl', [
-  "$scope", "prob-serv", "data-serv", "$routeParams", "$upload", "$sanitize", "$timeout"
-  ($scope, prob-serv, data-serv, $route-params, $upload, $sanitize, $timeout) ->
+  "$scope", "prob-serv", "data-serv", "$routeParams", "$sanitize", "$timeout", "$upload",
+  ($scope, prob-serv, data-serv, $route-params, $sanitize, $timeout, $upload) ->
     $scope.editor-options =
       language: "en"
       extra-plugins: "autogrow"
@@ -33,6 +33,7 @@ prob-app.controller 'prob-modify-ctrl', [
       outlook: {}
     $timeout ->
       $ '.ui.dropdown' .dropdown!
+      $ '.ui.checkbox' .checkbox!
 
     if $route-params.pid
       pid = parse-int that
@@ -61,6 +62,7 @@ prob-app.controller 'prob-modify-ctrl', [
       prob-serv.save $scope.prob
 
     $scope.upload = ->
+      console.log $scope.upload-file
       $upload.upload do
         url: "/data/#{$scope.prob._id}/upload"
         file: $scope.upload-file
@@ -70,4 +72,8 @@ prob-app.controller 'prob-modify-ctrl', [
 
     $scope.select = (judger) ->
       $scope.prob.config.judger = judger
+
+    $scope.repair = ->
+      prob-serv.repair $scope.prob._id
+
 ]
