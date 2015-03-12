@@ -49,6 +49,8 @@ prob-ctrl =
   repair: ->*
     yield db.prob.upd-data @params.pid
     @body = status: "OK"
+  stat: ->*
+    @body = yield db.prob.stat @params.pid
 
 image-ctrl = # deprecated
   upload: ->*
@@ -148,6 +150,7 @@ router
   .get    '/problem/:pid/brief',        reg-priv prob-ctrl.brief
   .get    '/problem/:pid/total',        reg-priv prob-ctrl.total
   .get    '/problem/:pid/repair',       reg-priv prob-ctrl.repair
+  .get    '/problem/:pid/stat',         reg-priv prob-ctrl.stat
   .post   '/problem/:pid',              reg-priv prob-ctrl.save
   .delete '/problem/:pid',              reg-priv prob-ctrl.delete
 

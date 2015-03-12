@@ -1,12 +1,47 @@
-p round {{rnd._id}}: {{rnd.title}}
+h1.ui.header.dividing.centered Round {{rnd._id}}: {{rnd.title}}
 p from {{rnd.begTime | date:'medium'}} to {{rnd.endTime | date:'medium'}}
 
-p problemset
-div(ng-show="rnd.started")
-  ul(ng-repeat="prob in rnd.probs")
-    li 
-      a(ng-href="#/problem/{{prob._id}}") {{prob._id}}. {{prob.outlook.title}}
-    a(ng-href="#/round/{{rnd._id}}/board") board
-div(ng-hide="rnd.started")
+.ui.progress(ng-class="state.cls")
+  .bar(ng-style="state.sty")
+
+.tab(ng-show="started")
+  .ui.secondary.pointing.filter.menu
+    a.blue.item.active(data-tab="all") All
+    a.green.item(data-tab="solved") Solved
+    a.red.item(data-tab="unsolved") Unsolved
+
+  .ui.tab.active(data-tab="all")
+    .ui.very.relaxed.divided.link.list(ng-repeat="prob in rnd.probs")
+      a.item(ng-href="#/problem/{{prob._id}}")
+        .left.floated.ui
+          i.icon.check
+          i.icon.remove
+        .right.floated stat: {{prob.stat}}
+        .description {{prob._id}}. {{prob.outlook.title}}
+
+  .ui.tab(data-tab="solved")
+    .ui.very.relaxed.divided.link.list(ng-repeat="prob in rnd.probs")
+      a.item(ng-href="#/problem/{{prob._id}}")
+        .left.floated.ui
+          i.icon.check
+        .right.floated.ui {{prob.stat}}
+        .description {{prob._id}}. {{prob.outlook.title}}
+
+  .ui.tab(data-tab="unsolved")
+    .ui.very.relaxed.divided.link.list(ng-repeat="prob in rnd.probs")
+      a.item(ng-href="#/problem/{{prob._id}}")
+        .left.floated.ui
+          i.icon.remove
+        .right.floated.ui {{prob.stat}}
+        .description {{prob._id}}. {{prob.outlook.title}}
+
+h1.ui.header(ng-hide="rnd.started")
   p sorry, this round has not started.
-a(ng-href="#/round/{{rnd._id}}/modify") modify
+
+a.ui.right.floated.launch.primary.labeled.button.icon(ng-href="#/round/{{rnd._id}}/board") 
+  i.icon.tasks
+  | board
+
+a.ui.right.floated.launch.primary.labeled.button.icon(ng-href="#/round/{{rnd._id}}/modify")
+  i.icon.edit
+  | modify

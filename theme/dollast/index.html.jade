@@ -3,12 +3,14 @@ html(ng-app="dollast-app")
   head
     meta(charset="utf-8")
     title dollast
+    script(src="js/lib/Chart.js")
     script(src="js/lib/angular/angular.js")
     script(src="js/lib/angular/angular-jwt.js")
     script(src="js/lib/angular/angular-sanitize.js")
     script(src="js/lib/angular/angular-resource.js")
     script(src="js/lib/angular/angular-route.js")
     script(src="js/lib/angular/angular-file-upload.js")
+    script(src="js/lib/angular/angular-chart.js")
     script(src="js/lib/angular/dateTimeInput.js")
     script(src="js/lib/angular/ng-ckeditor.js")
     script(src="js/lib/preludels.min.js")
@@ -23,12 +25,14 @@ html(ng-app="dollast-app")
     script(src="js/dollast/sol.js")
     script(src="js/dollast/rnd.js")
     script(src="js/lib/jquery.js")
-    script(src="js/semantic-animate.js")
+    script(src="js/lib/highlight.pack.js")
     script(src="semantic-ui/semantic.js")
     script(src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
     link(type="text/css" rel="stylesheet" href="css/default.css")
+    link(type="text/css" rel="stylesheet" href="css/highlight/monokai_sublime.css")
     link(type="text/css" rel="stylesheet" href="semantic-ui/semantic.css")
-  body.side
+    link(type="text/css" rel="stylesheet" href="css/angular-chart.css")
+  body
     .ui.grid.page
       .row
         .ui.large.fixed.page.grid.inverted.blue.menu(ng-controller="navbar-ctrl")
@@ -46,13 +50,17 @@ html(ng-app="dollast-app")
             span status
                         
           a.ui.item.labeled.button(href="#/round") 
-            i.icon.child
+            i.icon.users
             span contest
 
           a.ui.item.labeled.button(href="#/about") 
             i.icon.help.circle
             span about
-          
+          .ui.item
+            a.ui.input.icon
+              i.icon.search
+              input(placeholder="ID or Searching")
+
           .right.menu
             a.ui.item.labeled.button(href="#/login" ng-hide="uid") 
               i.icon.sign.in
@@ -70,4 +78,3 @@ html(ng-app="dollast-app")
       .row.my-main
         .column
           div(ng-view)
-      

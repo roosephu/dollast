@@ -100,39 +100,38 @@ import$(out$, {
     return rnd;
   },
   board: function*(rid, opts){
-    var sols, results, i$, len$, sol, key$, ref$, cur, user, value;
+    var query, results;
     opts == null && (opts = {});
     log('board...');
-    sols = yield db.sol.model.find({
-      round: rid
-    }, 'final.score prob user').lean().exec();
-    results = {};
-    for (i$ = 0, len$ = sols.length; i$ < len$; ++i$) {
-      sol = sols[i$];
-      results[key$ = sol.user] || (results[key$] = {});
-      (ref$ = results[sol.user])[key$ = sol.prob] || (ref$[key$] = {});
-      cur = results[sol.user][sol.prob];
-      log(cur, sol);
-      if (cur._id == null || cur._id < sol._id) {
-        cur._id = sol._id;
-        cur.score = sol.final.score;
+    query = db.sol.model.aggregate({
+      $match: {
+        round: rid
       }
-    }
-    for (user in results) {
-      value = results[user];
-      results[user].total = _.sum(
-      _.map(fn$)(
-      _.values(
-      value)));
-    }
-    log(results);
+    }, {
+      $sort: {
+        prob: 1,
+        user: 1,
+        _id: -1
+      }
+    }, {
+      $group: {
+        _id: {
+          prob: "$prob",
+          user: "$user"
+        },
+        score: {
+          $first: '$final.score'
+        },
+        sid: {
+          $first: '$_id'
+        }
+      }
+    });
+    results = yield query.exec();
     return results;
-    function fn$(it){
-      return it.score;
-    }
   },
   list: function*(){
-    return yield model.find({}, '_id title').lean().exec();
+    return yield model.find({}, 'title begTime endTime').lean().exec();
   },
   'delete': function*(rid){
     this$.acquirePrivilege('rnd-all');

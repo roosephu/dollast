@@ -184,7 +184,7 @@ runAtom = function*(pid, lang, exePath, data, cfg){
   return import$(import$(exeRes, judgeRes), data);
 };
 calcProbScore = function(results){
-  var ret, ref$, sum, ws, i$, len$, data, result;
+  var ret, ref$, sum, ws, i$, len$, data, result, score;
   ret = {
     time: 0,
     space: 0
@@ -201,7 +201,8 @@ calcProbScore = function(results){
     sum += data.weight * result.score;
     ws += data.weight;
   }
-  return ret.score = sum / ws, ret;
+  score = ws ? sum / ws : 0;
+  return ret.score = score, ret;
 };
 out$.judge = judge = co.wrap(function*(lang, code, probConfig, doc){
   var tmpDir, config, pid, exePath, err, message, dataset, ref$, results, i$, len$, data, res, ret;

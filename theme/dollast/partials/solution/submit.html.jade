@@ -1,6 +1,19 @@
-p  problem: {{ sol.pid }} 
-textarea(ng-model='sol.code')
-select(ng-model='sol.lang')
-  option(value='C++') C++
-  option(value='Java') Java
-input(type='button', ng-click='submit()', value='submit')
+.ui.form.segment.relaxed
+  .field
+    h1.header.divided problem: {{ sol.pid }} 
+  .field
+    label code
+    textarea(ng-model='sol.code')
+  .ui.two.fields
+    .field
+      label language: 
+      .ui.dropdown.selection
+        input(type="hidden")
+        .text {{sol.lang}}
+        i.dropdown.icon
+        .menu
+          .item(ng-repeat="lang in languages" data-value="{{lang}}" ng-click="select(lang)") {{lang}}
+    .field
+      a.ui.right.floated.primary.labeled.button.icon(ng-click="submit()")
+        i.icon.sign.in
+        | submit

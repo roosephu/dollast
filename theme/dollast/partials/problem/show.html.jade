@@ -1,20 +1,21 @@
 h1.ui.centered {{ prob._id }}. {{ prob.outlook.title }}
 p time limit: {{ prob.config.timeLmt }} space limit {{ prob.config.spaceLmt }}
 
-h3 description
-p.ui(ng-bind-html="prob.outlook.desc" mathjax)
+.ui.raised.segment.large.labels
+  .ui.ribbon.label.green description
+  p(ng-bind-html="prob.outlook.desc" mathjax)
+  .ui.ribbon.label.green input format
+  p {{prob.outlook.inFmt}}
+  .ui.ribbon.label.green output format
+  p {{prob.outlook.outFmt}}
+  .ui.ribbon.label.green sample input
+  pre {{ prob.outlook.sampleIn }}
+  .ui.ribbon.label.green sample output
+  pre {{ prob.outlook.sampleOut }}
 
-h3 input format
-p.ui {{prob.outlook.inFmt}}
-
-h3 output format
-p.ui {{prob.outlook.outFmt}}
-
-h3 sample input
-p.ui {{ prob.outlook.sampleIn }}
-
-h3 sample output
-p.ui {{ prob.outlook.sampleOut }}
-
-.button.ui.primary(ng-href="#/submit/{{prob._id}}") submit
-.button.ui(ng-href="#/problem/{{prob._id}}/modify") modify
+a.button.ui.primary.icon.labeled(ng-href="#/submit/{{prob._id}}")
+  i.icon.rocket
+  | submit
+a.button.ui.icon.red.labeled(ng-href="#/problem/{{prob._id}}/modify")
+  i.icon.edit
+  | modify

@@ -1,57 +1,91 @@
-p  problem: {{prob._id}} 
-input(ng-model='prob.outlook.title')
-br
-.drop-box(type='file', ng-file-select='', ng-file-drop='', ng-model='uploadFile', allow-dir='true')
-  | drop or click
-input(type='button', ng-click='upload()', value='upload {{uploadFile.name}}', ng-disabled='uploadFile.flag')
-br
-div
-  table
-    tr
-      th input
-      th output
-      th weight
-      th
-    tr(ng-repeat='atom in prob.config.dataset')
-      td {{ atom.input }} 
-      td {{ atom.output }} 
-      td {{ atom.weight }} 
-      td
-        button(ng-click='delData(atom)') delete
-input(type='button', ng-click='updateDatasetList()', value='update data list')
-div
-  | description 
-  textarea(ckeditor='editorOptions', ng-model='prob.outlook.desc')
-br
-div
-  | input format 
-  textarea(ng-model='prob.outlook.inFmt')
-div
-  | output format 
-  textarea(ng-model='prob.outlook.outFmt')
-div
-  | sample input 
-  textarea(ng-model='prob.outlook.sampleIn')
-div
-  | sample output 
-  textarea(ng-model='prob.outlook.sampleOut')
-div
-  | time limit(s): 
-  input(type='number', ng-model='prob.config.timeLmt')
-div
-  | space limit(MB): 
-  input(type='number', ng-model='prob.config.spaceLmt')
-div
-  | stack limit(MB): 
-  input(type='number', ng-model='prob.config.stkLmt')
-div
-  | output limit(MB): 
-  input(type='number', ng-model='prob.config.outLmt')
-div
-  span judger
-  select(ng-model='prob.config.judger')
-    option(value='string') string
-    option(value='real') real
-    option(value='strict') strict
-    option(value='custom') custom
-button(ng-click='submit()') Submit
+.form.segment.ui
+  h1.header.dividing.ui problem: {{prob._id}}
+  .field
+    label title
+    .ui.input
+      input(ng-model='prob.outlook.title')
+      
+  .field
+    label description 
+    textarea(ckeditor='editorOptions', ng-model='prob.outlook.desc')
+
+  .two.fields.ui
+    .field
+      label input format 
+      textarea(ng-model='prob.outlook.inFmt')
+    .field
+      label output format 
+      textarea(ng-model='prob.outlook.outFmt')
+
+  .two.fields.ui
+    .field
+      label sample input 
+      textarea(ng-model='prob.outlook.sampleIn')
+    .field
+      label sample output 
+      textarea(ng-model='prob.outlook.sampleOut')
+  
+  .five.fields.ui
+    .field
+      label time limit(s):
+      .ui.input 
+        input(type='number', ng-model='prob.config.timeLmt')
+    .field
+      label space limit(MB): 
+      .ui.input
+        input(type='number', ng-model='prob.config.spaceLmt')
+    .field
+      label stack limit(MB): 
+      .ui.input
+        input(type='number', ng-model='prob.config.stkLmt')
+    .field
+      label output limit(MB): 
+      .ui.input
+        input(type='number', ng-model='prob.config.outLmt')
+    .field
+      label judger
+      .ui.dropdown.selection
+        input(type="hidden")
+        .text {{prob.config.judger}}
+        i.dropdown.icon
+        .menu
+          .item(ng-repeat="judger in judgers" data-value="{{judger}}" ng-click="select(judger)") {{judger}}
+
+  .ui.divider
+
+  .ui.two.fields
+    .field
+      .drop-box(type='file', ng-file-select='', ng-file-drop='', ng-model='uploadFile', allow-dir='true')
+        | drop or click
+    .field
+      table.ui.table.segment
+        thead
+          tr
+            th input
+            th output
+            th weight
+            th
+        tbody
+          tr(ng-repeat='atom in prob.config.dataset')
+            td {{ atom.input }} 
+            td {{ atom.output }} 
+            td {{ atom.weight }} 
+            td
+              button(ng-click='delData(atom)') delete
+
+      a.ui.button.icon.labeled.teal(ng-click='updateDatasetList()')
+        i.icon.refresh
+        | refresh
+      a.ui.button.icon.labeled.green(ng-click='upload()' ng-disabled='uploadFile.flag')
+        i.icon.upload
+        | upload {{uploadFile.name}}
+  
+  .six.fields.ui
+    .field.five.wide
+      .ui.toggle.checkbox
+        input(type="checkbox" ng-model="inNextRnd")
+        label in next round
+    .field
+      a.ui.button.icon.labeled.floated.primary(ng-click='submit()')
+        i.icon.save
+        | Submit  

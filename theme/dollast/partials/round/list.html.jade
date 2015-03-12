@@ -1,13 +1,13 @@
 .tab
   .ui.secondary.pointing.filter.menu
-    a.red.item.active(data-tab="all") All contests
+    a.blue.item.active(data-tab="all") All Contests
 
   .ui.tab.active(data-tab="all")
     .ui.very.relaxed.divided.link.list(ng-repeat="rnd in rounds")
       a.item(ng-href="#/round/{{rnd._id}}")
-        .left.floated.ui
-          i.icon.star
-        .description {{rnd._id}}. {{rnd.title}}
+        .left.floated.ui.star.rating
+        .right.floated.date from {{rnd.begTime | date: 'medium'}} to {{rnd.endTime | date: 'medium'}}
+        .description {{rnd._id}}. {{rnd.title}} 
 
   a.ui.right.floated.launch.primary.labeled.button(href="#/round/create")
     i.icon.plus

@@ -37,7 +37,18 @@ schema = new mongoose.Schema do
     weight: Number
   results: [atom-result-schema]
   # groups: [type: Number, ref: "group"]
+
 schema.plugin mongoose-auto-increment.plugin, model: "solution"
+schema.index do
+  round: 1
+  prob: 1
+  user: 1
+  _id: -1
+schema.index do
+  prob: 1
+  user: 1
+  "final.score": -1
+
 export model = conn.conn.model 'solution', schema
 count = 0
 
@@ -82,7 +93,8 @@ export do
     sol = yield model.find-by-id sid
       .populate 'prob', 'outlook.title'
       .lean! .exec!
-    if not sol.open and sol.user != @get-current-user._id # todo: open other source
+    if not sol.open and sol.user != @get-current-user!._id # todo: open other source
+      log sol.user, @get-current-user!
       @acquire-privilege 'sol-all'
     return sol
 

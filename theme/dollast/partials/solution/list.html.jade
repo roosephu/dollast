@@ -12,7 +12,7 @@ table.ui.table.segment.large
   tbody
     tr(ng-repeat='sol in sols')
       td
-        span(ng-bind-html='sol.prob | profRef')
+        a(href="#/problem/{{sol.prob._id}}") {{sol.prob._id}}. {{sol.prob.outlook.title}}
       td {{ sol.final.time | number: 3 }} 
       td {{ sol.final.space | number: 3 }} 
       td

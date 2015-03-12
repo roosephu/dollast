@@ -49,6 +49,17 @@ schema = new mongoose.Schema({
 schema.plugin(mongooseAutoIncrement.plugin, {
   model: "solution"
 });
+schema.index({
+  round: 1,
+  prob: 1,
+  user: 1,
+  _id: -1
+});
+schema.index({
+  prob: 1,
+  user: 1,
+  "final.score": -1
+});
 out$.model = model = conn.conn.model('solution', schema);
 count = 0;
 log = debug('dollast:sol');
@@ -92,7 +103,8 @@ import$(out$, {
     var sol;
     log(sid);
     sol = yield model.findById(sid).populate('prob', 'outlook.title').lean().exec();
-    if (!sol.open && sol.user !== this$.getCurrentUser._id) {
+    if (!sol.open && sol.user !== this$.getCurrentUser()._id) {
+      log(sol.user, this$.getCurrentUser());
       this$.acquirePrivilege('sol-all');
     }
     return sol;

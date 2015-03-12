@@ -10,12 +10,12 @@ ref$.dataDir = path.resolve("./data");
 ref$.judgerDir = path.resolve("./utils/judgers");
 ref$.imageDir = 'public/image';
 ref$.langSuffix = {
-  'C': '.c',
-  'C++': '.cpp',
-  'Java': '.java'
+  'c': '.c',
+  'cpp': '.cpp',
+  'java': '.java'
 };
 ref$.compileFmt = {
-  'C++': function(src, dst){
+  'cpp': function(src, dst){
     return "g++ " + src + " -o " + dst;
   }
 };

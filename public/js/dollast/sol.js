@@ -2,15 +2,23 @@
 var app;
 app = angular.module('dollast-sol-app', ["dollast-crud", "dollast-filters"]);
 app.controller('sol-submit-ctrl', [
-  "$scope", "sol-serv", "$routeParams", "$location", function($scope, solServ, $routeParams, $location){
+  "$scope", "sol-serv", "$routeParams", "$location", "$timeout", function($scope, solServ, $routeParams, $location, $timeout){
+    $scope.languages = ["cpp", "java"];
     $scope.sol = {
       _id: 'submit',
       pid: parseInt($routeParams.pid),
-      lang: 'C++',
+      lang: 'cpp',
       code: ''
     };
+    $timeout(function(){
+      return $('.ui.dropdown').dropdown();
+    });
+    $scope.select = function(lang){
+      return $scope.sol.lang = lang;
+    };
     return $scope.submit = function(){
-      return solServ.submit($scope.sol);
+      solServ.submit($scope.sol);
+      return $location.path("/solution");
     };
   }
 ]);
@@ -25,6 +33,12 @@ app.controller('sol-show-ctrl', [
     sid = parseInt($routeParams.sid);
     $scope.sol = solServ.get({
       sid: sid
+    }, function(){
+      return $timeout(function(){
+        return $('pre code').each(function(i, block){
+          return hljs.highlightBlock(block);
+        });
+      });
     });
     $timeout(function(){
       return $('.ui.checkbox').checkbox();

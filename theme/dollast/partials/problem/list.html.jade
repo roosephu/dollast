@@ -1,3 +1,4 @@
+.hidden.divider
 .tab
   .ui.secondary.pointing.filter.menu
     a.blue.item.active(data-tab="all") All
@@ -7,10 +8,10 @@
   .ui.tab.active(data-tab="all")
     .ui.very.relaxed.divided.link.list(ng-repeat="prob in probs")
       a.item(ng-href="#/problem/{{prob._id}}")
-        .left.floated.ui
+        .left.floated.ui.icon
           i.icon.check
           i.icon.remove
-        .right.floated.ui stat: {{prob.statc}}
+        .right.floated.ui stat: {{prob.stat}}
         .description {{prob._id}}. {{prob.outlook.title}}
 
   .ui.tab(data-tab="solved")
@@ -18,7 +19,7 @@
       a.item(ng-href="#/problem/{{prob._id}}")
         .left.floated.ui
           i.icon.check
-        .right.floated.ui {{prob.statc}}
+        .right.floated.ui {{prob.stat}}
         .description {{prob._id}}. {{prob.outlook.title}}
 
   .ui.tab(data-tab="unsolved")
@@ -26,7 +27,7 @@
       a.item(ng-href="#/problem/{{prob._id}}")
         .left.floated.ui
           i.icon.remove
-        .right.floated.ui {{prob.statc}}
+        .right.floated.ui {{prob.stat}}
         .description {{prob._id}}. {{prob.outlook.title}}
 
   a.ui.right.floated.launch.primary.labeled.button(href="#/problem/create")

@@ -1,16 +1,23 @@
 app = angular.module 'dollast-sol-app', ["dollast-crud", "dollast-filters"]
 
 app.controller 'sol-submit-ctrl', [
-  "$scope", "sol-serv", "$routeParams", "$location"
-  ($scope, sol-serv, $route-params, $location) ->
+  "$scope", "sol-serv", "$routeParams", "$location", "$timeout"
+  ($scope, sol-serv, $route-params, $location, $timeout) ->
+    $scope.languages = ["cpp", "java"]
     $scope.sol =
       _id: 'submit'
       pid: parse-int $route-params.pid
-      lang: 'C++'
+      lang: 'cpp'
       code: ''
+    $timeout ->
+      $ '.ui.dropdown' .dropdown!
+
+    $scope.select = (lang) ->
+      $scope.sol.lang = lang
+
     $scope.submit = ->
       sol-serv.submit $scope.sol
-      # $location.path "/solution"
+      $location.path "/solution"
 ]
 
 app.controller 'sol-list-ctrl', [
@@ -23,7 +30,10 @@ app.controller 'sol-show-ctrl', [
   "$scope", "sol-serv", "$routeParams", "$timeout"
   ($scope, sol-serv, $route-params, $timeout) ->
     sid = parse-int $route-params.sid
-    $scope.sol = sol-serv.get sid: sid
+    $scope.sol = sol-serv.get sid: sid, ->
+      $timeout ->
+        $ 'pre code' .each (i, block) ->
+          hljs.highlight-block block
     $timeout ->
       $ '.ui.checkbox' .checkbox!
 

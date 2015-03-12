@@ -156,7 +156,8 @@ calc-prob-score = (results) ->
       ret.space >?= result.space
     sum += data.weight * result.score
     ws  += data.weight
-  return ret <<< score: sum / ws
+  score = if ws then sum / ws else 0
+  return ret <<< score: score
 
 export judge = co.wrap (lang, code, prob-config, doc) ->*
   log "Start judging: lang: #{lang}"

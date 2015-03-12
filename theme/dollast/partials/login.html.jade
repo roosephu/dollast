@@ -1,16 +1,12 @@
-.ui.form.segment
+.ui.form.segment.relaxed
   .field
-    .ui.labeled.input
-      a.ui.label 
-        i.user.icon
-        | User ID
-      input.labeled(type="text" ng-model="user._id")
+    .ui.left.icon.input
+      input(ng-model="user._id")
+      i.user.icon
   .field
-    .ui.labeled.input
-      a.ui.label 
-        i.lock.icon
-        | Password
+    .ui.left.icon.input
       input(type="password" ng-model="user.pswd")
+      i.lock.icon
   a.ui.right.floated.primary.labeled.button(ng-click="submit(user)")
     i.icon.sign.in
     | Login

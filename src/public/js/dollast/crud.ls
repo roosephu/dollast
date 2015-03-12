@@ -34,6 +34,7 @@ crud.service "rnd-serv", [
         params:
           rid: 'next-count'
       board:
+        is-array: true
         params:
           mode: 'board'
 ]

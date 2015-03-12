@@ -71,24 +71,23 @@ export do
 
   board: (rid, opts = {}) ->*
     log 'board...'
-    sols = yield db.sol.model.find round: rid, 'final.score prob user' .lean! .exec!
-    results = {}
-    for sol in sols
-      results[sol.user] ||= {}
-      results[sol.user][sol.prob] ||= {}
 
-      cur = results[sol.user][sol.prob]
-      log cur, sol
-      if not cur._id? or cur._id < sol._id
-        cur <<< _id: sol._id, score: sol.final.score
-
-    for user, value of results
-      results[user].total = value |> _.values |> _.map (.score) |> _.sum
-    log results
+    query = db.sol.model.aggregate do
+      * $match: round: rid
+      * $sort: prob: 1, user: 1, _id: -1
+      * $group:
+          _id:
+            prob: "$prob"
+            user: "$user"
+          score:
+            $first: '$final.score'
+          sid:
+            $first: '$_id'
+    results = yield query.exec!
     return results
 
   list: ~>*
-    return yield model.find {}, '_id title' .lean! .exec!
+    return yield model.find {}, 'title begTime endTime' .lean! .exec!
 
   delete: (rid) ~>*
     @acquire-privilege 'rnd-all'

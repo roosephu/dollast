@@ -11,11 +11,11 @@ export
   judger-dir: path.resolve "./utils/judgers"
   image-dir: 'public/image'
   lang-suffix:
-    'C': '.c'
-    'C++': '.cpp'
-    'Java': '.java'
+    'c': '.c'
+    'cpp': '.cpp'
+    'java': '.java'
   compile-fmt:
-    'C++': (src, dst) -> "g++ #src -o #dst"
+    'cpp': (src, dst) -> "g++ #src -o #dst"
   default:
     theme: "dollast"
     priv: {}

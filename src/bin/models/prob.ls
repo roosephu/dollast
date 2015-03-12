@@ -6,6 +6,7 @@ require! {
   "./conn"
   "../core"
   "../config"
+  "../db"
 }
 
 log = debug "dollast:prob"
@@ -48,14 +49,34 @@ export do
     if opts.mode == "total"
       @acquire-privilege 'prob-all'
     prob = yield model .find-by-id pid, fields .populate "config.round", "begTime" .exec!
-    if prob.config?.round?
+    if prob?.config?.round?
       if not that.is-started!
         @acquire-privilege 'prob-all'
       prob .= to-object!
       prob.config.round .= _id
-    else
+    else if prob
       prob .= to-object!
     return prob
+
+  stat: (pid, opts = {}) ->*
+    prob = yield model.find-by-id pid, 'config.round' .populate 'config.round', 'endTime' .exec!
+    return if not prob
+    if prob.config?.round?
+      if not that.is-ended
+        @acquire-privilege 'rnd-all'
+    log prob
+    query = db.sol.model.aggregate do
+      * $match: prob: pid
+      * $sort: user: 1, "final.score": -1
+      * $group:
+          _id:
+            user: "$user"
+          score:
+            $first: "$final.score"
+
+    stat = yield query.exec!
+    log stat
+    return stat
 
   list: (opts) ->*
     opts = config.prob-list-opts with opts

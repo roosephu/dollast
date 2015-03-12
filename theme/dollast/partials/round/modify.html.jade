@@ -1,32 +1,46 @@
-p round {{rnd._id}}
-p title: 
-  .ui.input
-    input(ng-model="rnd.title")
-p from 
-  .ui.input
-    input(data-date-time-input="YYYY-MM-DD HH:mm:ss" ng-model="rnd.begTime")
-  | , to 
-  .ui.input
-    input(data-date-time-input="YYYY-MM-DD HH:mm:ss" ng-model="rnd.endTime")
-  | .
-
-p problemset
-.ui.two.column.row.grid
-  .column
-    .ui.very.relaxed.divided.link.list(ng-repeat="prob in probs")
-      a.item(ng-href="#/problem/{{prob._id}}")
-        .left.floated.ui
-          i.icon.file.text
-        .right.floated.ui.black.button(ng-click="remove(prob._id)") remove 
-        .description {{rnd._id}}. {{rnd.title}}
-
-  .column
-    .ui.input.action
-      input(type="number" ng-model="pid")
-      button.icon.labeled.purple.right.ui.button(ng-click="insert()") 
-        | insert
-        i.icon.chevron.right
+.form.segment.ui
+  h1.header.ui.dividing round {{rnd._id}}
   
-a.floated.right.ui.button(ng-click="submit()") submit
-a.floated.right.ui.button(ng-click="delete()") delete
-a.floated.right.ui.button cancel
+  .three.fields.ui
+    .field
+      label title
+      .ui.input
+        input(ng-model="rnd.title")
+    .field
+      label start from
+      .ui.input
+        input(data-date-time-input="YYYY-MM-DD HH:mm:ss" ng-model="rnd.begTime")
+    .field
+      label end in
+      .ui.input
+        input(data-date-time-input="YYYY-MM-DD HH:mm:ss" ng-model="rnd.endTime")
+
+  h2.dividing.header.ui problemset
+  .two.fields.ui
+    .field
+      .ui.divided.link.list(ng-repeat="prob in probs")
+        a.item
+          .left.floated.ui
+            i.icon.tasks
+          button.right.floated.ui.button.labeled.icon(ng-click="remove(prob._id)") 
+            i.icon.remove
+            | remove
+          .description(ng-href="#/problem/{{prob._id}}") {{prob._id}}. {{prob.outlook.title}}
+      .ui.input.action.left.icon
+        i.icon.tasks
+        input(type="number" ng-model="pid")
+        button.icon.labeled.right.purple.ui.button(ng-click="insert()") 
+          | insert
+          i.icon.chevron.right
+    .field
+  
+  .field
+    a.floated.right.ui.button.icon.labeled.red(ng-click="delete()")
+      i.icon.delete
+      | delete
+    a.floated.right.ui.button.icon.labeled.secondary
+      i.icon.cancel
+      | cancel
+    a.floated.right.ui.button.icon.labeled.primary(ng-click="submit()")
+      i.icon.save
+      | save

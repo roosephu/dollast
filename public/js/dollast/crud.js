@@ -47,6 +47,7 @@ crud.service("rnd-serv", [
         }
       },
       board: {
+        isArray: true,
         params: {
           mode: 'board'
         }
