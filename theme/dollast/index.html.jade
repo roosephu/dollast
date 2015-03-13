@@ -23,56 +23,56 @@ html(ng-app="dollast-app")
     script(src="js/dollast/prob.js")
     script(src="js/dollast/sol.js")
     script(src="js/dollast/rnd.js")
-    script(src="js/lib/jquery.js")
+    script(src="js/lib/jquery.min.js")
     script(src="js/lib/highlight.pack.js")
     script(src="semantic-ui/semantic.js")
     script(src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
-    link(type="text/css" rel="stylesheet" href="css/default.css")
     link(type="text/css" rel="stylesheet" href="css/highlight/monokai_sublime.css")
     link(type="text/css" rel="stylesheet" href="semantic-ui/semantic.css")
   body.pusher
-    .ui.grid.page
-      .row
-        .ui.large.fixed.page.grid.inverted.blue.menu(ng-controller="navbar-ctrl")
-          .header.item dollast
-          a.ui.item.labeled.button(href="#/")
-            i.icon.home
-            span home
+    .ui.large.fixed.page.grid.inverted.blue.menu(ng-controller="navbar-ctrl")
+      .header.item dollast
+      
+      .ui.buttons
+        a.ui.item.labeled.button(href="#/")
+          i.icon.home
+          span home
+        a.ui.item.labeled.button(href="#/problem") 
+          i.icon.browser
+          span problem
+        a.ui.item.labeled.button(href="#/solution") 
+          i.icon.info.circle
+          span status
+        a.ui.item.labeled.button(href="#/round") 
+          i.icon.users
+          span contest
+        a.ui.item.labeled.button(href="#/about") 
+          i.icon.help.circle
+          span about
 
-          a.ui.item.labeled.button(href="#/problem") 
-            i.icon.browser
-            span problem
+      .ui.item
+        a.ui.input.icon
+          i.icon.search
+          input(placeholder="ID or Searching")
 
-          a.ui.item.labeled.button(href="#/solution") 
-            i.icon.info.circle
-            span status
-                        
-          a.ui.item.labeled.button(href="#/round") 
-            i.icon.users
-            span contest
+      .right.menu
+        .buttons.ui(ng-hide="uid")
+          a.ui.item.labeled.button(href="#/login") 
+            i.icon.sign.in
+            span login
+          a.ui.item.labeled.button(href="#/user/register" ng-hide="uid") 
+            i.icon.signup
+            span register
 
-          a.ui.item.labeled.button(href="#/about") 
-            i.icon.help.circle
-            span about
-          .ui.item
-            a.ui.input.icon
-              i.icon.search
-              input(placeholder="ID or Searching")
+        .buttons.ui(ng-show="uid")
+          a.ui.item.labeled.button(ng-href="#/user/{{uid}}") 
+            i.icon.user
+            span {{uid}}
+          a.ui.item.labeled.button(ng-click="logout()") 
+            i.icon.sign.out
+            span logout
 
-          .right.menu
-            a.ui.item.labeled.button(href="#/login" ng-hide="uid") 
-              i.icon.sign.in
-              span login
-            a.ui.item.labeled.button(href="#/user/register" ng-hide="uid") 
-              i.icon.signup
-              span register
-            a.ui.item.labeled.button(ng-href="#/user/{{uid}}" ng-show="uid") 
-              i.icon.user
-              span {{uid}}
-            a.ui.item.labeled.button(ng-click="logout()" ng-show="uid") 
-              i.icon.sign.out
-              span logout
-    
+    .ui.page.grid
       .row.my-main
         .column
           div(ng-view)

@@ -9,7 +9,7 @@ app.service 'msgCenter', ["$timeout",
         if @messages
           @messages.push msg
           $timeout ->
-            center.sidebar!
+            center.sidebar msg
             func = -> center.shape 'flip right'
             $timeout func, 500
       shape: (dir) ~>

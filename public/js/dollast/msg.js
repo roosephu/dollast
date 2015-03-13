@@ -13,7 +13,7 @@ app.service('msgCenter', [
           this$.messages.push(msg);
           return $timeout(function(){
             var func;
-            center.sidebar();
+            center.sidebar(msg);
             func = function(){
               return center.shape('flip right');
             };
