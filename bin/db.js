@@ -16,7 +16,8 @@ out$.bindCtx = bindCtx = function(ctx){
   for (i$ = 0, len$ = (ref$ = [sol, rnd, prob, user]).length; i$ < len$; ++i$) {
     obj = ref$[i$];
     obj.getCurrentUser = fn$;
-    results$.push(obj.acquirePrivilege = fn1$);
+    obj.acquirePrivilege = fn1$;
+    results$.push(obj['throw'] = ctx['throw']);
   }
   return results$;
   function fn$(){
@@ -28,7 +29,7 @@ out$.bindCtx = bindCtx = function(ctx){
       ctx.body = {
         status: "failure on privilege checking, " + priv + " required. "
       };
-      throw new Error("unauthorized: " + priv + " required. ");
+      return ctx['throw'](403, "unauthorized: " + priv + " required. ");
     }
   }
 };

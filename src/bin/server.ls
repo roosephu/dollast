@@ -36,23 +36,28 @@ app.use koa-bodyparser do
     json: ['application/x-javascript']
     multipart: ['multipart/form-data']
 
-# ==== Logger ====
-app.use (next) ->*
-  log "#{@req.method} #{@req.url}"
-  yield next
-
-# ==== Passport ====
+# ==== Session ====
 
 app.keys = config.keys
 app.use koa-generic-session do
   cookie:
     max-age: 1000 * 60 * 5
 
-# require './auth'
+# ==== Logger ====
+app.use (next) ->*
+  try
+    log "#{@req.method} #{@req.url}"
+    yield next
+  catch e
+    log e
+    @status = e.status || 500
+    @body = e.message
+    @app.emit 'error', e, @
 
 # ==== JSON and Static Serving ====
 
 app.use koa-json!
+
 app.use (next) ->*
   db.bind-ctx @
   @session.theme ||= config.default.theme
@@ -62,6 +67,8 @@ app.use (next) ->*
       if yield koa-send @, @path, index: 'index.html', max-age: 864000000, root: path.resolve folders
         return
   yield next
+
+# ==== Jade ====
 
 app.use koa-jade.middleware do
   view-path: "theme/dollast"

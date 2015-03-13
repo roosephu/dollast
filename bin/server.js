@@ -32,16 +32,25 @@ app.use(koaBodyparser({
     multipart: ['multipart/form-data']
   }
 }));
-app.use(function*(next){
-  log(this.req.method + " " + this.req.url);
-  yield next;
-});
 app.keys = config.keys;
 app.use(koaGenericSession({
   cookie: {
     maxAge: 1000 * 60 * 5
   }
 }));
+app.use(function*(next){
+  var e;
+  try {
+    log(this.req.method + " " + this.req.url);
+    yield next;
+  } catch (e$) {
+    e = e$;
+    log(e);
+    this.status = e.status || 500;
+    this.body = e.message;
+    this.app.emit('error', e, this);
+  }
+});
 app.use(koaJson());
 app.use(function*(next){
   var ref$, i$, len$, folders;

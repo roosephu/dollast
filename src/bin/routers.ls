@@ -22,10 +22,15 @@ data-ctrl =
     while part = yield parts
       @body = yield core.upload pid, part
     yield db.prob.upd-data pid
+    @body <<< status:
+      type: "ok"
+      msg: "upload successful"
   delete: ->* # validate
     pid = @params.pid
     yield core.delete-test-data pid, @params.file
-    @body = status: "OK"
+    @body = status:
+      type: "ok"
+      msg: "data has been deleted"
   show: ->*
     data = yield db.prob.list-dataset @params.pid
     @body = data
@@ -44,11 +49,16 @@ prob-ctrl =
     @body = yield db.prob.show @params.pid, mode: "brief"
   save: ->*
     @body = yield db.prob.modify @params.pid, @request.body
+    @body <<< status:
+      type: "ok"
+      msg: "problem has been saved"
   delete: ->*
     ...
   repair: ->*
     yield db.prob.upd-data @params.pid
-    @body = status: "OK"
+    @body = status:
+      type: "ok"
+      msg: "repaired all data"
   stat: ->*
     @body = yield db.prob.stat @params.pid
 
@@ -62,13 +72,19 @@ image-ctrl = # deprecated
 sol-ctrl =
   submit:  ->*
     uid = @user._id
-    @body = status: yield db.sol.submit @request.body, uid
+    yield db.sol.submit @request.body, uid
+    @body = status:
+      type: "ok"
+      msg: "solution submited successfully"
   list: ->*
     @body = yield db.sol.list @query
   show: ->*
     @body = yield db.sol.show @params.sid
   toggle: ->*
     @body = yield db.sol.toggle @params.sid
+    @body <<< status:
+      type: "ok"
+      msg: "solution toggled"
 
 rnd-ctrl =
   list: ->*
@@ -78,11 +94,17 @@ rnd-ctrl =
   show: ->*
     @body = yield db.rnd.show @params.rid, mode: "view"
   save: ->*
-    @body = status: yield db.rnd.modify @params.rid, @request.body
+    yield db.rnd.modify @params.rid, @request.body
+    @body = status:
+      type: "ok"
+      msg: "round saved"
   total: ->*
     @body = yield db.rnd.show @params.rid, mode: "total"
   delete: ->*
-    @body = status: yield db.rnd.delete @params.rid
+    yield db.rnd.delete @params.rid
+    @body = status:
+      type: "ok"
+      msg: "round has been deleted"
   board: ->*
     rid = @params.rid
     @body = yield db.rnd.board rid
@@ -100,7 +122,9 @@ site-ctrl =
   login: ->*
     user = yield db.user.query @request.body
     if not user
-      @body = status: "invalid"
+      @body = status:
+        type: "err"
+        msg: "bad user/password combination"
     else
       priv-list = user.priv-list
       priv-list.push 'login'
@@ -108,7 +132,11 @@ site-ctrl =
 
       claims = _id: user._id
       token = koa-jwt.sign claims, config.secret, expires-in-seconds: 10
-      @body = token: token, status: "OK"
+      @body =
+        token: token
+        status:
+          type: "ok"
+          msg: "login successfully"
   logout: ->*
     ...
 
@@ -116,9 +144,15 @@ user-ctrl =
   show: ->*
     @body = yield db.user.show @params.uid
   save: ->*
-    @body = status: yield db.user.modify @request.body
+    yield db.user.modify @request.body
+    @body = status:
+      type: "ok"
+      msg: "user profile saved"
   register: ->*
-    @body = status: yield db.user.register @request.body
+    yield db.user.register @request.body
+    @body = status:
+      type: "ok"
+      msg: "registering successfully"
   profile: ->*
     @body = yield db.user.profile @params.uid
 

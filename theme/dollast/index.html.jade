@@ -3,20 +3,19 @@ html(ng-app="dollast-app")
   head
     meta(charset="utf-8")
     title dollast
-    script(src="js/lib/Chart.js")
     script(src="js/lib/angular/angular.js")
     script(src="js/lib/angular/angular-jwt.js")
     script(src="js/lib/angular/angular-sanitize.js")
     script(src="js/lib/angular/angular-resource.js")
     script(src="js/lib/angular/angular-route.js")
     script(src="js/lib/angular/angular-file-upload.js")
-    script(src="js/lib/angular/angular-chart.js")
     script(src="js/lib/angular/dateTimeInput.js")
     script(src="js/lib/angular/ng-ckeditor.js")
     script(src="js/lib/preludels.min.js")
     script(src="js/lib/moment.js")
     script(src="js/lib/ckeditor/ckeditor.js")
     script(src="js/dollast/app.js")
+    script(src="js/dollast/msg.js")
     script(src="js/dollast/crud.js")
     script(src="js/dollast/filter.js")
     script(src="js/dollast/site.js")
@@ -31,8 +30,7 @@ html(ng-app="dollast-app")
     link(type="text/css" rel="stylesheet" href="css/default.css")
     link(type="text/css" rel="stylesheet" href="css/highlight/monokai_sublime.css")
     link(type="text/css" rel="stylesheet" href="semantic-ui/semantic.css")
-    link(type="text/css" rel="stylesheet" href="css/angular-chart.css")
-  body
+  body.pusher
     .ui.grid.page
       .row
         .ui.large.fixed.page.grid.inverted.blue.menu(ng-controller="navbar-ctrl")
@@ -78,3 +76,18 @@ html(ng-app="dollast-app")
       .row.my-main
         .column
           div(ng-view)
+
+      .ui.bottom.labeled.icon.sidebar.overlay(ng-controller="msg-center-ctrl")
+        .ui.grid.page.inverted
+          .ui.icon.button.left.floated(ng-click="flip('flip left')")
+            i.left.chevron.icon
+          .ui.icon.button.right.floated(ng-click="flip('flip right')")
+            i.right.chevron.icon
+          .ui.button.fluid
+            .ui.text.shape
+              .sides
+                .ui.default.side.active 
+                  | welcome to dollast online judge
+                .ui.default.side(ng-repeat="msg in shared.messages track by $index") 
+                  label.ui.label(ng-class="style(msg.type)")
+                    | {{msg.msg}}

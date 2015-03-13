@@ -24,13 +24,20 @@ dataCtrl = {
       this.body = yield core.upload(pid, part);
     }
     yield db.prob.updData(pid);
+    this.body.status = {
+      type: "ok",
+      msg: "upload successful"
+    };
   },
   'delete': function*(){
     var pid;
     pid = this.params.pid;
     yield core.deleteTestData(pid, this.params.file);
     this.body = {
-      status: "OK"
+      status: {
+        type: "ok",
+        msg: "data has been deleted"
+      }
     };
   },
   show: function*(){
@@ -66,6 +73,10 @@ probCtrl = {
   },
   save: function*(){
     this.body = yield db.prob.modify(this.params.pid, this.request.body);
+    this.body.status = {
+      type: "ok",
+      msg: "problem has been saved"
+    };
   },
   'delete': function*(){
     throw Error('unimplemented');
@@ -73,7 +84,10 @@ probCtrl = {
   repair: function*(){
     yield db.prob.updData(this.params.pid);
     this.body = {
-      status: "OK"
+      status: {
+        type: "ok",
+        msg: "repaired all data"
+      }
     };
   },
   stat: function*(){
@@ -98,8 +112,12 @@ solCtrl = {
   submit: function*(){
     var uid;
     uid = this.user._id;
+    yield db.sol.submit(this.request.body, uid);
     this.body = {
-      status: yield db.sol.submit(this.request.body, uid)
+      status: {
+        type: "ok",
+        msg: "solution submited successfully"
+      }
     };
   },
   list: function*(){
@@ -110,6 +128,10 @@ solCtrl = {
   },
   toggle: function*(){
     this.body = yield db.sol.toggle(this.params.sid);
+    this.body.status = {
+      type: "ok",
+      msg: "solution toggled"
+    };
   }
 };
 rndCtrl = {
@@ -127,8 +149,12 @@ rndCtrl = {
     });
   },
   save: function*(){
+    yield db.rnd.modify(this.params.rid, this.request.body);
     this.body = {
-      status: yield db.rnd.modify(this.params.rid, this.request.body)
+      status: {
+        type: "ok",
+        msg: "round saved"
+      }
     };
   },
   total: function*(){
@@ -137,8 +163,12 @@ rndCtrl = {
     });
   },
   'delete': function*(){
+    yield db.rnd['delete'](this.params.rid);
     this.body = {
-      status: yield db.rnd['delete'](this.params.rid)
+      status: {
+        type: "ok",
+        msg: "round has been deleted"
+      }
     };
   },
   board: function*(){
@@ -170,7 +200,10 @@ siteCtrl = {
     user = yield db.user.query(this.request.body);
     if (!user) {
       this.body = {
-        status: "invalid"
+        status: {
+          type: "err",
+          msg: "bad user/password combination"
+        }
       };
     } else {
       privList = user.privList;
@@ -191,7 +224,10 @@ siteCtrl = {
       });
       this.body = {
         token: token,
-        status: "OK"
+        status: {
+          type: "ok",
+          msg: "login successfully"
+        }
       };
     }
   },
@@ -204,13 +240,21 @@ userCtrl = {
     this.body = yield db.user.show(this.params.uid);
   },
   save: function*(){
+    yield db.user.modify(this.request.body);
     this.body = {
-      status: yield db.user.modify(this.request.body)
+      status: {
+        type: "ok",
+        msg: "user profile saved"
+      }
     };
   },
   register: function*(){
+    yield db.user.register(this.request.body);
     this.body = {
-      status: yield db.user.register(this.request.body)
+      status: {
+        type: "ok",
+        msg: "registering successfully"
+      }
     };
   },
   profile: function*(){

@@ -39,3 +39,28 @@ app.controller('login-ctrl', [
     };
   }
 ]);
+app.controller('msg-center-ctrl', [
+  "$scope", "$timeout", "msgCenter", function($scope, $timeout, msgCenter){
+    $scope.shared = {
+      messages: [],
+      type: ""
+    };
+    console.log(msgCenter);
+    $timeout(function(){
+      return msgCenter.load($scope.shared);
+    });
+    $scope.flip = function(dir){
+      msgCenter.shape(dir);
+    };
+    return $scope.style = function(type){
+      switch (type) {
+      case "ok":
+        return "green";
+      case "err":
+        return "red";
+      default:
+        throw Error('unimplemented');
+      }
+    };
+  }
+]);

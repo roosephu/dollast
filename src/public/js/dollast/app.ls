@@ -1,6 +1,7 @@
 app = angular.module 'dollast-app', [
   * "angular-jwt"
   * "ngRoute"
+  * "dollast-msg-center"
   * "dollast-filters"
   * "dollast-user-app"
   * "dollast-site-app"
@@ -14,6 +15,25 @@ app.config  [
   ($http-provider, jwt-interceptor-provider) ->
     jwt-interceptor-provider.token-getter = ->
       local-storage.token
+
+    $http-provider.interceptors.push ["$q", "msgCenter", ($q, msg-center) ->
+      response: ->
+        if it.data?.status? # JSON returned
+          info = that
+          if "object" == typeof info
+            msg-center.push info
+          else if "string" == typeof info
+            msg-center.push do
+              type: "ok"
+              msg: info
+          else
+            console.log "bad status returned", info
+        return it
+      response-error: (rejection) ->
+        console.log "rejection", rejection
+        return $q.reject rejection
+    ]
+
     $http-provider.interceptors.push 'jwtInterceptor'
 ]
 

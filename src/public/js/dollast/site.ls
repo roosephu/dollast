@@ -34,3 +34,23 @@ app.controller 'login-ctrl', [
         site-serv.token = it.token
         local-storage.token = it.token
 ]
+
+app.controller 'msg-center-ctrl', [
+  "$scope", "$timeout", "msgCenter"
+  ($scope, $timeout, msg-center) ->
+    $scope.shared =
+      messages: []
+      type: ""
+
+    console.log msg-center
+    $timeout ->
+      msg-center.load $scope.shared
+
+    $scope.flip = (dir) !->
+      msg-center.shape dir
+    $scope.style = (type) ->
+      switch type
+        | "ok"  => "green"
+        | "err" => "red"
+        | _     => ...
+]
