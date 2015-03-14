@@ -1,6 +1,9 @@
 require! {
   "../db"
   "debug"
+  "prelude-ls": _
+  "koa-jwt"
+  "../config"
 }
 
 log = debug 'dollast:ctrl:site'

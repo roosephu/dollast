@@ -108,19 +108,19 @@ import$(out$, {
     return solList;
   },
   show: function*(sid){
-    var sol;
+    var sol, ref$;
     log(sid);
     sol = yield model.findById(sid).populate('prob', 'outlook.title').lean().exec();
-    if (!sol.open && sol.user !== this$.getCurrentUser()._id) {
+    if (!sol.open && sol.user !== ((ref$ = this$.getCurrentUser()) != null ? ref$._id : void 8)) {
       log(sol.user, this$.getCurrentUser());
       this$.acquirePrivilege('sol-all');
     }
     return sol;
   },
   toggle: function*(sid){
-    var sol;
+    var sol, ref$;
     sol = yield model.findById(sid).exec();
-    if (sol.user !== this.getCurrentUser._id) {
+    if (sol.user !== ((ref$ = this.getCurrentUser()) != null ? ref$._id : void 8)) {
       this.acquirePrivilege('sol-all');
     }
     sol.open = !sol.open;

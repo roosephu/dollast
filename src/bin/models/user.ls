@@ -41,7 +41,7 @@ export do
     yield user.save!
     return "OK"
   profile: (uid) ->*
-    user = yield model.find-by-id uid, '-pswd' .exec!
+    user = yield model.find-by-id uid, '-pswd' .lean! .exec!
     return user
 
 # CSRF

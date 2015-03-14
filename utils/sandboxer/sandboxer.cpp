@@ -156,7 +156,8 @@ void run_parent(pid_t pid) {
 		// cerr("[runner]catch syscall: %s\n", syscall_name[syscall]);
 
 		if (maxcnt[syscall]-- == 0) {
-			// cerr("[runner]dangerous syscall: %d %s\n", syscall, syscall_name[syscall].c_str());
+			cerr("{\"score\": 0, \"status\": \"invalid syscall %s\"}\n", syscall_name[syscall].c_str());
+			ptrace(PTRACE_KILL, pid, NULL, NULL);
 			break;
 		} else if (syscall == __NR_open || syscall == __NR_access) {
 		  string fn = read_string_from_regs(reg.rdi, pid);

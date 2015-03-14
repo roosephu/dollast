@@ -100,14 +100,14 @@ export do
     sol = yield model.find-by-id sid
       .populate 'prob', 'outlook.title'
       .lean! .exec!
-    if not sol.open and sol.user != @get-current-user!._id # todo: open other source
+    if not sol.open and sol.user != @get-current-user!?._id # todo: open other source
       log sol.user, @get-current-user!
       @acquire-privilege 'sol-all'
     return sol
 
   toggle: (sid) ->*
     sol = yield model.find-by-id sid .exec!
-    if sol.user != @get-current-user._id
+    if sol.user != @get-current-user!?._id
       @acquire-privilege 'sol-all'
     != sol.open
     yield sol.save!

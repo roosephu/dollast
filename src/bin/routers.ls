@@ -50,6 +50,7 @@ params-validator =
     @params.uid = uid
     @check-params 'uid' .len 6, 15
     return if @errors
+    yield next
 
 router = new koa-router!
 router
@@ -91,7 +92,7 @@ router
   .post   '/site/login',                site.login
   .post   '/site/logout',               site.logout
 
-  .get    '/user/:uid/profile',         user.show
+  .get    '/user/:uid/profile',         user.profile
   .post   '/user/register/',            user.register
   .post   '/user/:uid/modify',          user.save
 

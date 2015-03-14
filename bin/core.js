@@ -217,6 +217,7 @@ out$.judge = judge = co.wrap(function*(lang, code, probConfig, doc){
   } catch (e$) {
     err = e$;
     message = dropFirstLine(err.message);
+    tmpDir.removeCallback();
     log("CE:", message);
     doc.final = {
       score: 0,

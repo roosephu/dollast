@@ -1,6 +1,7 @@
 require! {
   "../db"
   "../core"
+  "co-busboy"
 }
 
 export

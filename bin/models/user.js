@@ -54,7 +54,7 @@ import$(out$, {
   },
   profile: function*(uid){
     var user;
-    user = yield model.findById(uid, '-pswd').exec();
+    user = yield model.findById(uid, '-pswd').lean().exec();
     return user;
   }
 });
