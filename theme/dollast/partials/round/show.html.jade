@@ -10,30 +10,30 @@ p from {{rnd.begTime | date:'medium'}} to {{rnd.endTime | date:'medium'}}
     a.green.item(data-tab="solved") Solved
     a.red.item(data-tab="unsolved") Unsolved
 
-  .ui.tab.active(data-tab="all")
-    .ui.very.relaxed.divided.link.list(ng-repeat="prob in rnd.probs")
-      a.item(ng-href="#/problem/{{prob._id}}")
-        .left.floated.ui
-          i.icon.check
-          i.icon.remove
-        .right.floated stat: {{prob.stat}}
-        .description {{prob._id}}. {{prob.outlook.title}}
+.ui.tab.active(data-tab="all")
+  .ui.very.relaxed.divided.link.list
+    a.item(ng-href="#/problem/{{prob._id}}" ng-repeat="prob in rnd.probs")
+      .left.floated.ui
+        i.icon.check
+        i.icon.remove
+      .right.floated stat: {{prob.stat}}
+      .description {{prob._id}}. {{prob.outlook.title}}
 
-  .ui.tab(data-tab="solved")
-    .ui.very.relaxed.divided.link.list(ng-repeat="prob in rnd.probs")
-      a.item(ng-href="#/problem/{{prob._id}}")
-        .left.floated.ui
-          i.icon.check
-        .right.floated.ui {{prob.stat}}
-        .description {{prob._id}}. {{prob.outlook.title}}
+.ui.tab(data-tab="solved")
+  .ui.very.relaxed.divided.link.list
+    a.item(ng-href="#/problem/{{prob._id}}" ng-repeat="prob in rnd.probs")
+      .left.floated.ui
+        i.icon.check
+      .right.floated.ui {{prob.stat}}
+      .description {{prob._id}}. {{prob.outlook.title}}
 
-  .ui.tab(data-tab="unsolved")
-    .ui.very.relaxed.divided.link.list(ng-repeat="prob in rnd.probs")
-      a.item(ng-href="#/problem/{{prob._id}}")
-        .left.floated.ui
-          i.icon.remove
-        .right.floated.ui {{prob.stat}}
-        .description {{prob._id}}. {{prob.outlook.title}}
+.ui.tab(data-tab="unsolved")
+  .ui.very.relaxed.divided.link.list
+    a.item(ng-href="#/problem/{{prob._id}}" ng-repeat="prob in rnd.probs")
+      .left.floated.ui
+        i.icon.remove
+      .right.floated.ui {{prob.stat}}
+      .description {{prob._id}}. {{prob.outlook.title}}
 
 h1.ui.header(ng-hide="rnd.started")
   p sorry, this round has not started.

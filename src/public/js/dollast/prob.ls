@@ -36,10 +36,12 @@ prob-app.controller 'prob-modify-ctrl', [
       $ '.ui.checkbox' .checkbox!
 
     if $route-params.pid
+      method = "modify"
       pid = parse-int that
       $scope.prob = prob-serv.get pid: pid, mode: "total"
         .._id = pid
     else
+      method = "create"
       $scope.prob = prob-serv.next-count ->
         it <<<
           config:
@@ -59,7 +61,7 @@ prob-app.controller 'prob-modify-ctrl', [
 
     $scope.submit = ->
       console.log $scope.prob
-      prob-serv.save $scope.prob
+      prob-serv.save $scope.prob <<< method: method
 
     $scope.upload = ->
       console.log $scope.upload-file
@@ -74,6 +76,6 @@ prob-app.controller 'prob-modify-ctrl', [
       $scope.prob.config.judger = judger
 
     $scope.repair = ->
-      prob-serv.repair $scope.prob._id
+      prob-serv.repair pid: $scope.prob._id
 
 ]

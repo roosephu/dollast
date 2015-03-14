@@ -1,4 +1,4 @@
-# co-priority-queue [![Build Status](https://travis-ci.org/kinda/co-priority-queue.svg?branch=master)](https://travis-ci.org/kinda/co-priority-queue)
+# co-priority-queue [![Build Status](https://travis-ci.org/mvila/co-priority-queue.svg?branch=master)](https://travis-ci.org/mvila/co-priority-queue)
 
 A simple priority queue for co.
 

@@ -1,11 +1,15 @@
 
 .ui.form.segment
-  h1.header.ui.dividing {{usr._id}} 
+  h1.header.ui.dividing {{user._id}} 
 
   .two.fields.ui
     .field
-      .ui.divided.link.list(ng-repeat="priv in usr.privList")
-        a.item
+      label description
+      textarea(ng-model="user.desc")
+    .field
+      h3.ui.header.dividing privileges
+      .ui.divided.link.list
+        a.item(ng-repeat="priv in user.privList")
           .left.floated.ui
             i.icon.tasks
           button.right.floated.ui.button.labeled.icon(ng-click="remove(priv)") 
@@ -14,11 +18,10 @@
           .description {{priv}}
       .ui.input.action.left.icon
         i.icon.tasks
-        input(ng-model="priv")
+        input(ng-model="priv" placeholder="new privileges")
         button.icon.labeled.right.purple.ui.button(ng-click="insert()") 
           | insert
           i.icon.chevron.right
-    .field
   .field
     a.floated.right.ui.button.icon.labeled.red(ng-click="delete()")
       i.icon.delete

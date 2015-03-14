@@ -1,4 +1,4 @@
-.hidden.divider
+h1.ui.header.dividing problem list
 .tab
   .ui.secondary.pointing.filter.menu
     a.blue.item.active(data-tab="all") All
@@ -6,8 +6,8 @@
     a.red.item(data-tab="unsolved") Unsolved
 
   .ui.tab.active(data-tab="all")
-    .ui.very.relaxed.divided.link.list(ng-repeat="prob in probs")
-      a.item(ng-href="#/problem/{{prob._id}}")
+    .ui.very.relaxed.divided.link.list
+      a.item(ng-href="#/problem/{{prob._id}}" ng-repeat="prob in probs")
         .left.floated.ui.icon
           i.icon.check
           i.icon.remove
@@ -15,16 +15,16 @@
         .description {{prob._id}}. {{prob.outlook.title}}
 
   .ui.tab(data-tab="solved")
-    .ui.very.relaxed.divided.link.list(ng-repeat="prob in probs")
-      a.item(ng-href="#/problem/{{prob._id}}")
+    .ui.very.relaxed.divided.link.list
+      a.item(ng-href="#/problem/{{prob._id}}" ng-repeat="prob in probs")
         .left.floated.ui
           i.icon.check
         .right.floated.ui {{prob.stat}}
         .description {{prob._id}}. {{prob.outlook.title}}
 
   .ui.tab(data-tab="unsolved")
-    .ui.very.relaxed.divided.link.list(ng-repeat="prob in probs")
-      a.item(ng-href="#/problem/{{prob._id}}")
+    .ui.very.relaxed.divided.link.list
+      a.item(ng-href="#/problem/{{prob._id}}" ng-repeat="prob in probs")
         .left.floated.ui
           i.icon.remove
         .right.floated.ui {{prob.stat}}

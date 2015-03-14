@@ -27,7 +27,19 @@ app.config([
             return it;
           },
           responseError: function(rejection){
-            console.log("rejection", rejection);
+            var i$, ref$, len$, part, param, msg;
+            if (rejection.status === 400 && "object" === typeof rejection.data) {
+              for (i$ = 0, len$ = (ref$ = rejection.data).length; i$ < len$; ++i$) {
+                part = ref$[i$];
+                for (param in part) {
+                  msg = part[param];
+                  msgCenter.push({
+                    type: "err",
+                    msg: param + ": " + msg
+                  });
+                }
+              }
+            }
             return $q.reject(rejection);
           }
         };

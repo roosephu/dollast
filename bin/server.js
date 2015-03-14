@@ -26,6 +26,7 @@ if (!db) {
 }
 app.use(koaConditionalGet());
 app.use(koaEtag());
+app.use(koaJson());
 app.use(koaBodyparser({
   extendTypes: {
     json: ['application/x-javascript'],
@@ -48,10 +49,28 @@ app.use(function*(next){
     log(e);
     this.status = e.status || 500;
     this.body = e.message;
-    this.app.emit('error', e, this);
+  }
+  if (this.errors) {
+    this.status = 400;
+    this.body = this.errors;
   }
 });
-app.use(koaJson());
+app.use(koaValidate());
+app.use(function*(next){
+  this.check = function(obj, key, errMsg){
+    if (!obj) {
+      if (!this.errors) {
+        this.errors = [];
+      }
+      this.errors.push(errMsg + "");
+      return new koaValidate.Validator(this, null, null, false, null, false);
+    } else {
+      log(obj[key] != null, key);
+      return new koaValidate.Validator(this, key, obj[key], obj[key] != null, obj);
+    }
+  };
+  yield next;
+});
 app.use(function*(next){
   var ref$, i$, len$, folders;
   db.bindCtx(this);

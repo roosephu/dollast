@@ -30,6 +30,7 @@ log "No Database found" if !db
 
 app.use koa-conditional-get!
 app.use koa-etag!
+app.use koa-json!
 
 app.use koa-bodyparser do
   extend-types:
@@ -52,11 +53,24 @@ app.use (next) ->*
     log e
     @status = e.status || 500
     @body = e.message
-    @app.emit 'error', e, @
+  if @errors
+    @status = 400
+    @body = @errors
+
+app.use koa-validate!
+app.use (next) ->*
+  @check = (obj, key, err-msg) ->
+    if not obj
+      if not @errors
+        @errors = []
+      @errors.push "#{err-msg}"
+      new koa-validate.Validator @, null, null, false, null, false
+    else
+      log (obj[key]?), key
+      new koa-validate.Validator @, key, obj[key], obj[key]?, obj
+  yield next
 
 # ==== JSON and Static Serving ====
-
-app.use koa-json!
 
 app.use (next) ->*
   db.bind-ctx @

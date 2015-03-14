@@ -118,6 +118,9 @@ import$(out$, {
   },
   modify: function*(pid, prob){
     this.acquirePrivilege('prob-all');
+    if (prob._id) {
+      delete prob._id;
+    }
     return yield model.update({
       _id: pid
     }, {

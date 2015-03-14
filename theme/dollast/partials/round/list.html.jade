@@ -1,10 +1,11 @@
+h1.header.ui.dividing rounds
 .tab
   .ui.secondary.pointing.filter.menu
     a.blue.item.active(data-tab="all") All Contests
 
   .ui.tab.active(data-tab="all")
-    .ui.very.relaxed.divided.link.list(ng-repeat="rnd in rounds")
-      a.item(ng-href="#/round/{{rnd._id}}")
+    .ui.very.relaxed.divided.link.list
+      a.item(ng-href="#/round/{{rnd._id}}" ng-repeat="rnd in rounds")
         .left.floated.ui.star.rating
         .right.floated.date from {{rnd.begTime | date: 'medium'}} to {{rnd.endTime | date: 'medium'}}
         .description {{rnd._id}}. {{rnd.title}} 

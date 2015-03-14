@@ -1,4 +1,4 @@
-h2.ui.dividing.header Status
+h1.ui.dividing.header status
 table.ui.table.segment.large
   thead
     tr
@@ -21,3 +21,7 @@ table.ui.table.segment.large
       td {{sol.lang}}
       td
         a(href='#/solution/{{sol._id}}') view code
+
+.ui.button.icon.labeled.floated.right.primary(ng-click="refresh()")
+  i.icon.refresh
+  | refresh

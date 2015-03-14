@@ -28,7 +28,11 @@ app.controller('sol-list-ctrl', [
     opts = {
       uid: $routeParams.uid
     };
-    return $scope.sols = solServ.query(opts);
+    $scope.refresh = function(){
+      return $scope.sols = solServ.query(opts);
+    };
+    $scope.sols = [];
+    return $scope.refresh();
   }
 ]);
 app.controller('sol-show-ctrl', [

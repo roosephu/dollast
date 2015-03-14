@@ -24,7 +24,7 @@ probApp.controller('prob-list-ctrl', [
 ]);
 probApp.controller('prob-modify-ctrl', [
   "$scope", "prob-serv", "data-serv", "$routeParams", "$sanitize", "$timeout", "$upload", function($scope, probServ, dataServ, $routeParams, $sanitize, $timeout, $upload){
-    var that, pid, x$;
+    var that, method, pid, x$;
     $scope.editorOptions = {
       language: "en",
       extraPlugins: "autogrow",
@@ -42,6 +42,7 @@ probApp.controller('prob-modify-ctrl', [
       return $('.ui.checkbox').checkbox();
     });
     if (that = $routeParams.pid) {
+      method = "modify";
       pid = parseInt(that);
       x$ = $scope.prob = probServ.get({
         pid: pid,
@@ -49,6 +50,7 @@ probApp.controller('prob-modify-ctrl', [
       });
       x$._id = pid;
     } else {
+      method = "create";
       $scope.prob = probServ.nextCount(function(it){
         return it.config = {
           judger: "string"
@@ -82,8 +84,9 @@ probApp.controller('prob-modify-ctrl', [
       }, $scope.prob.dataset);
     };
     $scope.submit = function(){
+      var ref$;
       console.log($scope.prob);
-      return probServ.save($scope.prob);
+      return probServ.save((ref$ = $scope.prob, ref$.method = method, ref$));
     };
     $scope.upload = function(){
       console.log($scope.uploadFile);
@@ -101,7 +104,9 @@ probApp.controller('prob-modify-ctrl', [
       return $scope.prob.config.judger = judger;
     };
     return $scope.repair = function(){
-      return probServ.repair($scope.prob._id);
+      return probServ.repair({
+        pid: $scope.prob._id
+      });
     };
   }
 ]);

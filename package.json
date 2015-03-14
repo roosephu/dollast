@@ -30,7 +30,6 @@
     "tmp": "latest",
     "co-limiter": "latest",
     "bcrypt": "latest",
-    "validator": "latest",
     "koa-jade": "latest",
     "koa-conditional-get": "latest",
     "koa-etag": "latest"

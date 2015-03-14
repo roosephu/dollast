@@ -30,7 +30,12 @@ app.config  [
             console.log "bad status returned", info
         return it
       response-error: (rejection) ->
-        console.log "rejection", rejection
+        if rejection.status == 400 and "object" == typeof rejection.data
+          for part in rejection.data
+            for param, msg of part
+              msg-center.push do
+                type: "err"
+                msg: "#param: #msg"
         return $q.reject rejection
     ]
 

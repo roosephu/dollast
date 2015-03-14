@@ -88,6 +88,8 @@ export do
 
   modify: (pid, prob) ->*
     @acquire-privilege 'prob-all'
+    if prob._id
+      delete prob._id
     return yield model.update _id: pid, {$set: prob}, upsert: true, overwrite: true .exec!
 
   upd-data: (pid) ->*

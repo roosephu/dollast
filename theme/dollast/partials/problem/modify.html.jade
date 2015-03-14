@@ -12,7 +12,7 @@
 
   .field
     label description 
-    textarea(ckeditor='editorOptions', ng-model='prob.outlook.desc')
+    textarea(ckeditor='editorOptions' ng-model='prob.outlook.desc')
 
   .two.fields.ui
     .field
@@ -34,19 +34,19 @@
     .field
       label time limit(s):
       .ui.input 
-        input(type='number', ng-model='prob.config.timeLmt')
+        input(type='number' ng-model='prob.config.timeLmt')
     .field
       label space limit(MB): 
       .ui.input
-        input(type='number', ng-model='prob.config.spaceLmt')
+        input(type='number' ng-model='prob.config.spaceLmt')
     .field
       label stack limit(MB): 
       .ui.input
-        input(type='number', ng-model='prob.config.stkLmt')
+        input(type='number' ng-model='prob.config.stkLmt')
     .field
       label output limit(MB): 
       .ui.input
-        input(type='number', ng-model='prob.config.outLmt')
+        input(type='number' ng-model='prob.config.outLmt')
     .field
       label judger
       .ui.dropdown.selection

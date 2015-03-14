@@ -25,7 +25,13 @@ app.controller 'sol-list-ctrl', [
   ($scope, sol-serv, $route-params) ->
     opts =
       uid: $route-params.uid
-    $scope.sols = sol-serv.query opts
+
+    $scope.refresh = ->
+      $scope.sols = sol-serv.query opts
+
+    $scope.sols = []
+    $scope.refresh!
+
 ]
 
 app.controller 'sol-show-ctrl', [

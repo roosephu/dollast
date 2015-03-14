@@ -4,20 +4,20 @@ _ = require('prelude-ls');
 app = angular.module("dollast-user-app", ["dollast-crud"]);
 app.controller("user-modify-ctrl", [
   "$scope", "user-serv", "$routeParams", function($scope, userServ, $routeParams){
-    $scope.usr = userServ.get({
+    $scope.user = userServ.get({
       uid: $routeParams.uid
     });
     $scope.priv = "";
     $scope.submit = function(){
-      return userServ.save($scope.usr);
+      return userServ.save($scope.user);
     };
     $scope.insert = function(){
-      return $scope.usr.privList.push($scope.priv);
+      return $scope.user.privList.push($scope.priv);
     };
     $scope.remove = function(priv){
-      return $scope.usr.privList = _.reject((function(it){
+      return $scope.user.privList = _.reject((function(it){
         return it === priv;
-      }), $scope.usr.privList);
+      }), $scope.user.privList);
     };
     return $scope['delete'] = function(){
       throw Error('unimplemented');
