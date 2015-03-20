@@ -20,9 +20,9 @@ schema.methods.check-password = (candidate) ->
 model = conn.conn.model 'user', schema
 
 export do
-  query: (user) ->*
-    usr = yield model.find-by-id user._id .exec!
-    if not usr or not usr.check-password user.pswd
+  query: (uid, pswd) ->*
+    usr = yield model.find-by-id uid .exec!
+    if not usr or not usr.check-password pswd
       return null
     return usr
   show: (uid) ->*
@@ -30,16 +30,28 @@ export do
     if uid != @get-current-user!._id
       @acquire-privilege 'user-all'
     return yield model.find-by-id uid, "privList" .exec!
+
   modify: (user) ->*
     if user._id != @get-current-user!._id
       @acquire-privilege 'user-all'
     return yield model.update _id: user._id, {$set: user}, upsert: true, overwrite: true .exec!
+
   register: (user) ->*
+    old = yield model.find-by-id user._id, '_id' .lean! .exec!
+    if old
+      log "here", old
+      return status:
+          type: 'err'
+          msg: "duplicate user id"
     user.priv-list = []
     user = new model user
     user.pswd = bcrypt.hash-sync user.pswd, config.bcrypt-cost
     yield user.save!
-    return "OK"
+
+    return status:
+      type: "ok"
+      msg: "register successful"
+
   profile: (uid) ->*
     user = yield model.find-by-id uid, '-pswd' .lean! .exec!
     return user

@@ -1,10 +1,10 @@
 _ = require 'prelude-ls'
 
-app = angular.module "dollast-user-app", ["dollast-crud"]
+app = angular.module "dollast-user-app", ["dollast-crud", "dollast-sess"]
 
 app.controller "user-modify-ctrl", [
-  "$scope", "user-serv", "$routeParams"
-  ($scope, user-serv, $route-params) ->
+  "$scope", "user-serv", "$routeParams", "user-session"
+  ($scope, user-serv, $route-params, user-session) ->
     $scope.user = user-serv.get uid: $route-params.uid
     $scope.priv = ""
 
@@ -19,11 +19,10 @@ app.controller "user-modify-ctrl", [
 ]
 
 app.controller "user-reg-ctrl", [
-  "$scope", "user-serv",
-  ($scope, user-serv) ->
-    user-serv.usr = {}
+  "$scope", "user-session"
+  ($scope, user-session) ->
     $scope.submit = ->
-      user-serv.reg $scope.usr
+      user-session.register $scope.uid, $scope.pswd
 ]
 
 app.controller 'user-profile-ctrl', [

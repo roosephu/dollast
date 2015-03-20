@@ -17,10 +17,10 @@ schema.methods.checkPassword = function(candidate){
 };
 model = conn.conn.model('user', schema);
 import$(out$, {
-  query: function*(user){
+  query: function*(uid, pswd){
     var usr;
-    usr = yield model.findById(user._id).exec();
-    if (!usr || !usr.checkPassword(user.pswd)) {
+    usr = yield model.findById(uid).exec();
+    if (!usr || !usr.checkPassword(pswd)) {
       return null;
     }
     return usr;
@@ -46,11 +46,27 @@ import$(out$, {
     }).exec();
   },
   register: function*(user){
+    var old;
+    old = yield model.findById(user._id, '_id').lean().exec();
+    if (old) {
+      log("here", old);
+      return {
+        status: {
+          type: 'err',
+          msg: "duplicate user id"
+        }
+      };
+    }
     user.privList = [];
     user = new model(user);
     user.pswd = bcrypt.hashSync(user.pswd, config.bcryptCost);
     yield user.save();
-    return "OK";
+    return {
+      status: {
+        type: "ok",
+        msg: "register successful"
+      }
+    };
   },
   profile: function*(uid){
     var user;

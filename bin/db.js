@@ -27,7 +27,10 @@ out$.bindCtx = bindCtx = function(ctx){
     log("checking privilege: " + priv);
     if (config.mode !== "debug" && !ctx.session.priv[priv]) {
       ctx.body = {
-        status: "failure on privilege checking, " + priv + " required. "
+        status: {
+          type: "err",
+          msg: "failure on privilege checking, " + priv + " required. "
+        }
       };
       return ctx['throw'](403, "unauthorized: " + priv + " required. ");
     }

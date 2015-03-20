@@ -18,6 +18,8 @@ export bind-ctx = (ctx) ->
     obj.acquire-privilege = (priv) ~>
       log "checking privilege: #{priv}"
       if config.mode != "debug" and !ctx.session.priv[priv]
-        ctx.body = status: "failure on privilege checking, #priv required. "
+        ctx.body = status:
+          type: "err"
+          msg: "failure on privilege checking, #priv required. "
         ctx.throw 403, "unauthorized: #priv required. "
     obj.throw = ctx.throw

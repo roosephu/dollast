@@ -61,6 +61,9 @@ app.config ['$routeProvider', ($route-provider) ->
     .when '/problem/:pid/modify',
       template-url: 'partials/problem/modify.html'
       controller  : 'prob-modify-ctrl'
+    .when '/problem/:pid/stat',
+      template-url: 'partials/problem/stat.html'
+      controller  : 'prob-stat-ctrl'
     .when '/submit/:pid',
       template-url: 'partials/solution/submit.html'
       controller  : 'sol-submit-ctrl'

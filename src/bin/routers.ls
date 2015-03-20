@@ -13,7 +13,6 @@ require! {
   "./db"
 }
 
-tmp = bluebird.promisify-all require 'tmp'
 log = debug 'dollast:router'
 
 image = # deprecated
@@ -88,14 +87,14 @@ router
 
   .get    '/site/theme/:theme',         site.theme
   .get    '/site/session',              site.session
-  .get    '/site/session/login-token',  site.login-token
+  .get    '/site/token',                site.token
   .post   '/site/login',                site.login
   .post   '/site/logout',               site.logout
 
-  .get    '/user/:uid/profile',         user.profile
   .post   '/user/register/',            user.register
+  .get    '/user/:uid/profile',         user.profile
   .post   '/user/:uid/modify',          user.save
 
-  .post   '/image/upload',              image.upload
+  # .post   '/image/upload',              image.upload
 
 export router = router.middleware!

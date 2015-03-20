@@ -2,40 +2,23 @@
 var app;
 app = angular.module('dollast-site-app', ["dollast-crud", "angular-jwt"]);
 app.controller('navbar-ctrl', [
-  "$scope", "jwtHelper", function($scope, jwtHelper){
+  "$scope", "jwtHelper", "user-session", function($scope, jwtHelper, userSession){
+    var sess;
+    sess = $scope.sess = userSession;
     $scope.loadToken = function(){
-      var token, payload, e;
-      token = localStorage.token;
-      if (!token) {
-        return;
-      }
-      try {
-        payload = jwtHelper.decodeToken(token);
-        console.log(payload);
-        return $scope.uid = payload._id;
-      } catch (e$) {
-        e = e$;
-        return console.log(e);
-      }
+      return sess.loadToken();
     };
     $scope.logout = function(){
-      var ref$;
-      delete localStorage.token;
-      return ref$ = $scope.uid, delete $scope.uid, ref$;
+      return sess.logout();
     };
     return $scope.loadToken();
   }
 ]);
 app.controller('index-ctrl', ["$scope", "site-serv", "$location", function($scope, siteServ, $location){}]);
 app.controller('login-ctrl', [
-  "$scope", "site-serv", function($scope, siteServ){
+  "$scope", "site-serv", "user-session", function($scope, siteServ, userSession){
     return $scope.submit = function(user){
-      return siteServ.login($scope.user, function(it){
-        console.log(it);
-        $scope.msg = it.status !== "OK";
-        siteServ.token = it.token;
-        return localStorage.token = it.token;
-      });
+      return userSession.login($scope.user._id, $scope.user.pswd);
     };
   }
 ]);

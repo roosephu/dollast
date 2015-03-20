@@ -1,8 +1,9 @@
 require! {
   "../db"
+  "../salt"
   "debug"
-  "prelude-ls": _
   "koa-jwt"
+  "prelude-ls": _
   "../config"
 }
 
@@ -12,14 +13,24 @@ export
   theme: ->*
     @session.theme = @params.theme
     @body = status: true
-  login-token: ->*
-    ...
-    @body = @session.login-token = 1
+
+  token: ->*
+    str = salt.gen-salt!
+    @session.salt = str
+    @body = salt: str
+
   session: ->*
     log @session
     @body = uid: if @session.passport?.user?._id? then that else void
+
   login: ->*
-    user = yield db.user.query @request.body
+    # @check-body '_id' .len 6, 15
+    # @check-body 'pswd' .non-empty!
+    post = @request.body
+    pswd = salt.unsalt post.pswd, @
+    return if @errors
+
+    user = yield db.user.query post._id, pswd
     if not user
       @body = status:
         type: "err"

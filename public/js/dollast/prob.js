@@ -22,6 +22,7 @@ probApp.controller('prob-list-ctrl', [
     });
   }
 ]);
+probApp.controller('prob-stat-ctrl', ["$scope", "$routeParams"]);
 probApp.controller('prob-modify-ctrl', [
   "$scope", "prob-serv", "data-serv", "$routeParams", "$sanitize", "$timeout", "$upload", function($scope, probServ, dataServ, $routeParams, $sanitize, $timeout, $upload){
     var that, method, pid, x$;

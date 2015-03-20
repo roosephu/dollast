@@ -1,5 +1,6 @@
 require! {
   "../db"
+  "../salt"
   "debug"
 }
 
@@ -16,14 +17,12 @@ export
       type: "ok"
       msg: "user profile saved"
   register: ->*
-    @check-body '_id' .len 6, 15
-    @check-body 'pswd' .len 8, 15
-    return if @errors
+    # @check-body '_id' .len 6, 15
+    # @check-body 'pswd' .len 8, 15
+    uid = @request.body.uid
+    pswd = salt.unsalt @request.body.pswd, @
 
-    yield db.user.register @request.body
-    @body = status:
-      type: "ok"
-      msg: "registering successfully"
+    @body = yield db.user.register _id: uid, pswd: pswd
 
   profile: ->*
     @body = yield db.user.profile @params.uid

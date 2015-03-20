@@ -15,17 +15,19 @@ html(ng-app="dollast-app")
     script(src="js/lib/preludels.min.js")
     script(src="js/lib/moment.js")
     script(src="js/lib/ckeditor/ckeditor.js")
+    script(src="js/lib/jquery.min.js")
+    script(src="js/lib/forge.min.js")
+    script(src="js/lib/highlight.pack.js")
     script(src="js/dollast/app.js")
     script(src="js/dollast/msg.js")
     script(src="js/dollast/crud.js")
+    script(src="js/dollast/sess.js")
     script(src="js/dollast/filter.js")
     script(src="js/dollast/site.js")
     script(src="js/dollast/user.js")
     script(src="js/dollast/prob.js")
     script(src="js/dollast/sol.js")
     script(src="js/dollast/rnd.js")
-    script(src="js/lib/jquery.min.js")
-    script(src="js/lib/highlight.pack.js")
     script(src="semantic-ui/semantic.js")
     script(src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
     link(type="text/css" rel="stylesheet" href="css/highlight/monokai_sublime.css")
@@ -61,18 +63,18 @@ html(ng-app="dollast-app")
               input(placeholder="ID or Searching")
 
           .right.menu
-            .buttons.ui(ng-hide="uid")
+            .buttons.ui(ng-hide="sess.uid")
               a.ui.item.labeled.button(href="#/login") 
                 i.icon.sign.in
                 span login
-              a.ui.item.labeled.button(href="#/user/register" ng-hide="uid") 
+              a.ui.item.labeled.button(href="#/user/register" ng-hide="sess.uid") 
                 i.icon.signup
                 span register
 
-            .buttons.ui(ng-show="uid")
-              a.ui.item.labeled.button(ng-href="#/user/{{uid}}") 
+            .buttons.ui(ng-show="sess.uid")
+              a.ui.item.labeled.button(ng-href="#/user/{{sess.uid}}") 
                 i.icon.user
-                span {{uid}}
+                span {{sess.uid}}
               a.ui.item.labeled.button(ng-click="logout()") 
                 i.icon.sign.out
                 span logout

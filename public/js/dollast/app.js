@@ -67,6 +67,9 @@ app.config([
     }).when('/problem/:pid/modify', {
       templateUrl: 'partials/problem/modify.html',
       controller: 'prob-modify-ctrl'
+    }).when('/problem/:pid/stat', {
+      templateUrl: 'partials/problem/stat.html',
+      controller: 'prob-stat-ctrl'
     }).when('/submit/:pid', {
       templateUrl: 'partials/solution/submit.html',
       controller: 'sol-submit-ctrl'

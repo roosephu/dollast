@@ -1,21 +1,13 @@
 app = angular.module 'dollast-site-app', ["dollast-crud", "angular-jwt"]
 
 app.controller 'navbar-ctrl', [
-  "$scope", "jwtHelper",
-  ($scope, jwt-helper) ->
+  "$scope", "jwtHelper", "user-session"
+  ($scope, jwt-helper, user-session) ->
+    sess = $scope.sess = user-session
     $scope.load-token = ->
-      token = local-storage.token
-      return if not token
-      try
-        payload = jwt-helper.decode-token token
-        console.log payload
-        $scope.uid = payload._id
-      catch e
-        console.log e
-
+      sess.load-token!
     $scope.logout = ->
-      delete local-storage.token
-      delete $scope.uid
+      sess.logout!
     $scope.load-token!
 ]
 
@@ -25,14 +17,10 @@ app.controller 'index-ctrl', [
 ]
 
 app.controller 'login-ctrl', [
-  "$scope", "site-serv"
-  ($scope, site-serv) ->
+  "$scope", "site-serv", "user-session"
+  ($scope, site-serv, user-session) ->
     $scope.submit = (user) ->
-      site-serv.login $scope.user, ->
-        console.log it
-        $scope.msg = it.status != "OK"
-        site-serv.token = it.token
-        local-storage.token = it.token
+      user-session.login $scope.user._id, $scope.user.pswd
 ]
 
 app.controller 'msg-center-ctrl', [

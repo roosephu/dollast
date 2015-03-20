@@ -19,6 +19,10 @@ prob-app.controller 'prob-list-ctrl', [
       $ '.filter.menu .item' .tab!
 ]
 
+prob-app.controller 'prob-stat-ctrl', [
+  "$scope", "$routeParams"
+]
+
 prob-app.controller 'prob-modify-ctrl', [
   "$scope", "prob-serv", "data-serv", "$routeParams", "$sanitize", "$timeout", "$upload",
   ($scope, prob-serv, data-serv, $route-params, $sanitize, $timeout, $upload) ->

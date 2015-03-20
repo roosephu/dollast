@@ -32,6 +32,7 @@
     "bcrypt": "latest",
     "koa-jade": "latest",
     "koa-conditional-get": "latest",
-    "koa-etag": "latest"
+    "koa-etag": "latest",
+    "node-forge": "latest"
   }
 }
