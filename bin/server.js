@@ -27,6 +27,7 @@ if (!db) {
 app.use(koaConditionalGet());
 app.use(koaEtag());
 app.use(koaJson());
+app.use(koaValidate());
 app.use(koaBodyparser({
   extendTypes: {
     json: ['application/x-javascript'],
@@ -46,16 +47,17 @@ app.use(function*(next){
     yield next;
   } catch (e$) {
     e = e$;
-    log(e);
-    this.status = e.status || 500;
-    this.body = e.message;
+    log("catched.", e);
+    this.status = e.status || 400;
+    this.body = [{
+      error: e.message
+    }];
   }
   if (this.errors) {
     this.status = 400;
     this.body = this.errors;
   }
 });
-app.use(koaValidate());
 app.use(function*(next){
   this.check = function(obj, key, errMsg){
     if (!obj) {
@@ -65,7 +67,6 @@ app.use(function*(next){
       this.errors.push(errMsg + "");
       return new koaValidate.Validator(this, null, null, false, null, false);
     } else {
-      log(obj[key] != null, key);
       return new koaValidate.Validator(this, key, obj[key], obj[key] != null, obj);
     }
   };
@@ -107,14 +108,15 @@ app.use(function*(next){
   }
 });
 routers = require('./routers');
+app.use(routers.pubRouter);
 app.use(koaJwt({
   secret: config.secret,
-  passthrough: true
+  passthrough: false
 }));
 app.use(function*(next){
   log("request", this.request.body, "jwt", this.user, "query", this.query);
   yield next;
 });
-app.use(routers.router);
+app.use(routers.privRouter);
 console.log("Listening port 3000");
 app.listen(3000);

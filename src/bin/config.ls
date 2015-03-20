@@ -3,7 +3,8 @@ require! {
 }
 
 export
-  mode: "debug"
+  pass-guest: false
+  mode: "release"
   concurrency: 3
   sandboxer: path.resolve './utils/sandboxer/sandboxer'
   keys: ['drdrd']
@@ -27,3 +28,5 @@ export
   prob-list-opts:
     skip: 0
     limit: 2
+  uid-min-len: 3
+  uid-max-len: 15

@@ -22,6 +22,7 @@ app.service "user-session", [
           payload = jwt-helper.decode-token token
           console.log payload
           sess.uid = payload._id
+          sess.priv = payload.priv
         catch e
           console.log e
       logout: ->

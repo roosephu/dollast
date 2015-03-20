@@ -44,9 +44,15 @@ app.controller('rnd-show-ctrl', [
         };
       }
     });
-    return $timeout(function(){
+    $timeout(function(){
       return $('.filter.menu .item').tab();
     });
+    return $scope.publish = function(){
+      return rndServ.get({
+        rid: rid,
+        mode: "publish"
+      });
+    };
   }
 ]);
 app.controller('rnd-modify-ctrl', [

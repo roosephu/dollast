@@ -2,7 +2,7 @@ doctype html
 html(ng-app="dollast-app")
   head
     meta(charset="utf-8")
-    link(rel="shortcut icon" type="image/jpeg" href="atm.jpg")
+    link(rel="shortcut icon" type="image/jpeg" href="favicon.png")
     title dollast
     script(src="js/lib/angular/angular.js")
     script(src="js/lib/angular/angular-jwt.js")
@@ -36,8 +36,8 @@ html(ng-app="dollast-app")
     
   body.pusher
     .ui.page.grid
-      .row
-        .ui.large.fixed.page.grid.inverted.blue.menu(ng-controller="navbar-ctrl")
+      .row(ng-controller="navbar-ctrl")
+        .ui.large.fixed.page.grid.inverted.blue.menu
           .header.item dollast
           
           .ui.buttons
@@ -60,24 +60,22 @@ html(ng-app="dollast-app")
           .ui.item
             a.ui.input.icon
               i.icon.search
-              input(placeholder="ID or Searching")
+              input(placeholder="ID or Searching(unimp)")
 
-          .right.menu
-            .buttons.ui(ng-hide="sess.uid")
-              a.ui.item.labeled.button(href="#/login") 
-                i.icon.sign.in
-                span login
-              a.ui.item.labeled.button(href="#/user/register" ng-hide="sess.uid") 
-                i.icon.signup
-                span register
-
-            .buttons.ui(ng-show="sess.uid")
-              a.ui.item.labeled.button(ng-href="#/user/{{sess.uid}}") 
-                i.icon.user
-                span {{sess.uid}}
-              a.ui.item.labeled.button(ng-click="logout()") 
-                i.icon.sign.out
-                span logout
+          .buttons.ui(ng-hide="sess.uid")
+            a.ui.item.labeled.button(href="#/login") 
+              i.icon.sign.in
+              span login
+            a.ui.item.labeled.button(href="#/user/register" ng-hide="sess.uid") 
+              i.icon.signup
+              span register
+          .buttons.ui(ng-show="sess.uid")
+            a.ui.item.labeled.button(ng-href="#/user/{{sess.uid}}") 
+              i.icon.user
+              span {{sess.uid}}
+            a.ui.item.labeled.button(ng-click="logout()") 
+              i.icon.sign.out
+              span logout
 
       .row.my-main
         .column

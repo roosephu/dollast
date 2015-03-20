@@ -43,3 +43,8 @@ ref$.board = function*(){
   rid = this.params.rid;
   this.body = yield db.rnd.board(rid);
 };
+ref$.publish = function*(){
+  var rid;
+  rid = this.params.rid;
+  this.body = yield db.rnd.publish(rid);
+};

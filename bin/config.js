@@ -2,7 +2,8 @@
 var path, ref$, out$ = typeof exports != 'undefined' && exports || this;
 path = require('path');
 ref$ = out$;
-ref$.mode = "debug";
+ref$.passGuest = false;
+ref$.mode = "release";
 ref$.concurrency = 3;
 ref$.sandboxer = path.resolve('./utils/sandboxer/sandboxer');
 ref$.keys = ['drdrd'];
@@ -33,3 +34,5 @@ ref$.probListOpts = {
   skip: 0,
   limit: 2
 };
+ref$.uidMinLen = 3;
+ref$.uidMaxLen = 15;

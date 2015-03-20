@@ -27,6 +27,9 @@ app.controller 'rnd-show-ctrl', [
 
     $timeout ->
       $ '.filter.menu .item' .tab!
+
+    $scope.publish = ->
+      rnd-serv.get rid: rid, mode: "publish"
 ]
 
 app.controller 'rnd-modify-ctrl', [

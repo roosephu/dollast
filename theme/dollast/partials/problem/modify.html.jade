@@ -84,8 +84,9 @@
           td {{ atom.output }} 
           td {{ atom.weight }} 
           td
-            button(ng-click='delData(atom)') delete
-
+            button.right.floated.ui.button.mini.labeled.icon(ng-click="delData(atom)") 
+              i.icon.remove
+              | remove
   
   .field
     a.ui.button.icon.labeled.floated.primary(ng-click='submit()')

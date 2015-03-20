@@ -47,20 +47,18 @@ params-validator =
     yield next
   uid: (uid, next) ->*
     @params.uid = uid
-    @check-params 'uid' .len 6, 15
+    @check-params 'uid' .len config.uid-min-len, config.uid-max-len
     return if @errors
     yield next
 
-router = new koa-router!
-router
+priv-router = new koa-router!
+priv-router
   .param 'pid', params-validator.pid
   .param 'sid', params-validator.sid
   .param 'rid', params-validator.rid
   .param 'uid', params-validator.uid
 
-  .get    '/problem',                   prob.list
   .get    '/problem/next-count',        prob.next-count
-  .get    '/problem/:pid',              prob.show     # in case viewing a invisible problem
   .get    '/problem/:pid/brief',        prob.brief
   .get    '/problem/:pid/total',        prob.total
   .get    '/problem/:pid/repair',       prob.repair
@@ -72,18 +70,27 @@ router
   .post   '/data/:pid/upload',          data.upload
   .delete '/data/:pid/:file',           data.delete
 
-  .post   '/solution/submit',           sol.submit
-  .get    '/solution',                  sol.list
   .get    '/solution/:sid',             sol.show
+  .post   '/solution/submit',           sol.submit
   .post   '/solution/:sid/toggle',      sol.toggle
 
-  .get    '/round',                     rnd.list
-  .get    '/round/next-count',          rnd.next-count
-  .get    '/round/:rid',                rnd.show
   .post   '/round/:rid',                rnd.save
+  .get    '/round/next-count',          rnd.next-count
   .get    '/round/:rid/total',          rnd.total
+  .get    '/round/:rid/publish',        rnd.publish
   .delete '/round/:rid',                rnd.delete
-  .get    '/round/:rid/board',          rnd.board
+
+  .get    '/user/:uid/profile',         user.profile
+  .post   '/user/:uid/modify',          user.save
+
+  # .post   '/image/upload',              image.upload
+
+pub-router = new koa-router!
+pub-router
+  .param 'pid', params-validator.pid
+  .param 'sid', params-validator.sid
+  .param 'rid', params-validator.rid
+  .param 'uid', params-validator.uid
 
   .get    '/site/theme/:theme',         site.theme
   .get    '/site/session',              site.session
@@ -92,9 +99,15 @@ router
   .post   '/site/logout',               site.logout
 
   .post   '/user/register/',            user.register
-  .get    '/user/:uid/profile',         user.profile
-  .post   '/user/:uid/modify',          user.save
 
-  # .post   '/image/upload',              image.upload
+  .get    '/round',                     rnd.list
+  .get    '/round/:rid',                rnd.show
+  .get    '/round/:rid/board',          rnd.board
 
-export router = router.middleware!
+  .get    '/problem',                   prob.list
+  .get    '/problem/:pid',              prob.show
+
+  .get    '/solution',                  sol.list
+
+export priv-router = priv-router.middleware!
+export pub-router  = pub-router.middleware!

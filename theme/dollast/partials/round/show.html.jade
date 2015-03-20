@@ -42,6 +42,10 @@ a.ui.right.floated.launch.primary.labeled.button.icon(ng-href="#/round/{{rnd._id
   i.icon.tasks
   | board
 
-a.ui.right.floated.launch.primary.labeled.button.icon(ng-href="#/round/{{rnd._id}}/modify")
+a.ui.right.floated.launch.teal.labeled.button.icon(ng-href="#/round/{{rnd._id}}/modify")
   i.icon.edit
   | modify
+
+a.ui.right.floated.launch.purple.labeled.button.icon(ng-click="publish()") 
+  i.icon.tasks
+  | publish

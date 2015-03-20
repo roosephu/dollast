@@ -56,7 +56,8 @@ ref$.login = function*(){
       return results$;
     }()));
     claims = {
-      _id: user._id
+      _id: user._id,
+      priv: this.session.priv
     };
     token = koaJwt.sign(claims, config.secret, {
       expiresInSeconds: 10

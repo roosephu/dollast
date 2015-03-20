@@ -31,6 +31,7 @@ log "No Database found" if !db
 app.use koa-conditional-get!
 app.use koa-etag!
 app.use koa-json!
+app.use koa-validate!
 
 app.use koa-bodyparser do
   extend-types:
@@ -50,14 +51,13 @@ app.use (next) ->*
     log "#{@req.method} #{@req.url}"
     yield next
   catch e
-    log e
-    @status = e.status || 500
-    @body = e.message
+    log "catched.", e
+    @status = e.status || 400
+    @body = [error: e.message]
   if @errors
     @status = 400
     @body = @errors
 
-app.use koa-validate!
 app.use (next) ->*
   @check = (obj, key, err-msg) ->
     if not obj
@@ -66,7 +66,6 @@ app.use (next) ->*
       @errors.push "#{err-msg}"
       new koa-validate.Validator @, null, null, false, null, false
     else
-      log (obj[key]?), key
       new koa-validate.Validator @, key, obj[key], obj[key]?, obj
   yield next
 
@@ -102,16 +101,18 @@ app.use (next) ->*
 
 routers = require './routers'
 
+app.use routers.pub-router
+
 app.use koa-jwt do
   secret: config.secret
-  passthrough: true
+  passthrough: false
 
 app.use (next) ->*
   log "request", @request.body, "jwt", @user, "query", @query
   yield next
 
 # now begin our private router
-app.use routers.router
+app.use routers.priv-router
 
 # ====================================
 

@@ -1,21 +1,22 @@
-p author: {{sol.user}}
-p lang: {{sol.lang}}
-p problem: 
+h3.ui.header author: {{sol.user}}
+h3.ui.header lang: {{sol.lang}}
+h3.ui.header problem: 
   span(ng-bind-html='sol.prob | probRef')
+
 div(ng-switch='sol.final.status')
   div(ng-switch-when='CE')
     p
       | compile message: 
       pre {{sol.final.message}}            
   div(ng-switch-when='running')
-    p running
+    .ui running
   div(ng-switch-default='')
     .ui.toggle.checkbox
       input(type="checkbox" ng-model="open")
       label Current state: {{open ? "public" : "private"}}
       // input(type='button', value='toggle', ng-click='toggle()')
     .ui
-      h1.header.ui details
+      h1.header.ui.dividing details
       table.ui.table.segment
         thead
           tr

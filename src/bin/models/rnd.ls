@@ -93,6 +93,18 @@ export do
     @acquire-privilege 'rnd-all'
     return yield model.find-by-id-and-remove rid .lean! .exec!
 
+  publish: (rid) ->*
+    @acquire-privilege 'rnd-all'
+    doc = yield model.find-by-id rid .exec!
+    if not doc
+      @throw "no such round"
+    if moment!.is-before doc.end-time
+      @throw "before ending of this round"
+    yield unlock-prob rid, false, doc.probs
+    return status:
+      type: "ok"
+      msg: "published all problems"
+
   next-count: ->*
     @acquire-privilege 'rnd-all'
     return yield conn.next-count model, count

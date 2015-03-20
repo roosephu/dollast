@@ -137,6 +137,24 @@ import$(out$, {
     this$.acquirePrivilege('rnd-all');
     return yield model.findByIdAndRemove(rid).lean().exec();
   },
+  publish: function*(rid){
+    var doc;
+    this.acquirePrivilege('rnd-all');
+    doc = yield model.findById(rid).exec();
+    if (!doc) {
+      this['throw']("no such round");
+    }
+    if (moment().isBefore(doc.endTime)) {
+      this['throw']("before ending of this round");
+    }
+    yield unlockProb(rid, false, doc.probs);
+    return {
+      status: {
+        type: "ok",
+        msg: "published all problems"
+      }
+    };
+  },
   nextCount: function*(){
     this.acquirePrivilege('rnd-all');
     return yield conn.nextCount(model, count);

@@ -40,7 +40,7 @@ export
       priv-list.push 'login'
       @session.priv = _.lists-to-obj priv-list, [true for i from 1 to priv-list.length]
 
-      claims = _id: user._id
+      claims = _id: user._id, priv: @session.priv
       token = koa-jwt.sign claims, config.secret, expires-in-seconds: 10
       @body =
         token: token

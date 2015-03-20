@@ -16,7 +16,8 @@ app.service("user-session", [
         try {
           payload = jwtHelper.decodeToken(token);
           console.log(payload);
-          return sess.uid = payload._id;
+          sess.uid = payload._id;
+          return sess.priv = payload.priv;
         } catch (e$) {
           e = e$;
           return console.log(e);

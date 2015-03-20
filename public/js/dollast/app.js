@@ -27,10 +27,12 @@ app.config([
             return it;
           },
           responseError: function(rejection){
-            var i$, ref$, len$, part, param, msg;
+            var data, i$, len$, part, param, msg;
             if (rejection.status === 400 && "object" === typeof rejection.data) {
-              for (i$ = 0, len$ = (ref$ = rejection.data).length; i$ < len$; ++i$) {
-                part = ref$[i$];
+              data = rejection.data;
+              console.log(data);
+              for (i$ = 0, len$ = data.length; i$ < len$; ++i$) {
+                part = data[i$];
                 for (param in part) {
                   msg = part[param];
                   msgCenter.push({
@@ -39,6 +41,11 @@ app.config([
                   });
                 }
               }
+            } else if (rejection.status === 401) {
+              msgCenter.push({
+                type: "err",
+                msg: "unauthorized. login first. "
+              });
             }
             return $q.reject(rejection);
           }

@@ -31,11 +31,19 @@ app.config  [
         return it
       response-error: (rejection) ->
         if rejection.status == 400 and "object" == typeof rejection.data
-          for part in rejection.data
+          data = rejection.data
+          console.log data
+          # if not angular.is-array data
+          #  data = [data]
+          for part in data
             for param, msg of part
               msg-center.push do
                 type: "err"
                 msg: "#param: #msg"
+        else if rejection.status == 401
+          msg-center.push do
+            type: "err"
+            msg: "unauthorized. login first. "
         return $q.reject rejection
     ]
 

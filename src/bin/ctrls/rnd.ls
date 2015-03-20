@@ -24,3 +24,6 @@ export
   board: ->*
     rid = @params.rid
     @body = yield db.rnd.board rid
+  publish: ->*
+    rid = @params.rid
+    @body = yield db.rnd.publish rid

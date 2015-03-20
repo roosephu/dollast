@@ -1,6 +1,7 @@
 require! {
   "../db"
   "../salt"
+  "../config"
   "debug"
 }
 
@@ -8,7 +9,7 @@ log = debug 'dollast:ctrl:user'
 
 export
   save: ->*
-    @check-body '_id' .len 6, 15
+    @check-body '_id' .len config.uid-min-len, config.uid-max-len
     delete @request.body.pswd
     return if @errors
 
@@ -16,6 +17,7 @@ export
     @body = status:
       type: "ok"
       msg: "user profile saved"
+
   register: ->*
     # @check-body '_id' .len 6, 15
     # @check-body 'pswd' .len 8, 15
