@@ -4,7 +4,7 @@ require! {
 
 export
   pass-guest: false
-  mode: "release"
+  mode: "debug"
   concurrency: 3
   sandboxer: path.resolve './utils/sandboxer/sandboxer'
   keys: ['drdrd']

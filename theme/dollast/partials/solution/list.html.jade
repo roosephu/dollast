@@ -2,29 +2,32 @@ h1.ui.dividing.header status
 table.ui.table.segment.large
   thead
     tr
-      th.collapsing sol id
+      th.collapsing.right sol id
       th problem
+      th user
+      th status
+      th score
       th time(s)
       th space(MB)
-      th user
-      th score
       th.collapsing lang
       th.collapsing round
-      th link
   tbody
     tr(ng-repeat='sol in sols')
-      td {{ sol._id }}
+      td
+        a.ui.mini.teal.icon.button.labeled(href='#/solution/{{sol._id}}')
+          i.icon.code
+          | {{ sol._id }}
       td
         a(href="#/problem/{{sol.prob._id}}") {{sol.prob._id}}. {{sol.prob.outlook.title}}
-      td {{ sol.final.time | number }} 
-      td {{ sol.final.space | number }} 
       td
         a(ng-href='#/user/{{sol.user}}') {{sol.user}}
+      td {{sol.final.status}}
       td {{sol.final.score | number}}
+      td {{sol.final.time | number}} 
+      td {{sol.final.space | number}} 
       td {{sol.lang}}
-      td {{sol.round}}
-      td
-        a(href='#/solution/{{sol._id}}') view code
+      td {{sol.round._id}}
+
 
 .ui.button.icon.labeled.floated.right.primary(ng-click="refresh()")
   i.icon.refresh

@@ -32,6 +32,11 @@ crud.service('prob-serv', [
         params: {
           mode: 'repair'
         }
+      },
+      stat: {
+        params: {
+          mode: 'stat'
+        }
       }
     });
   }

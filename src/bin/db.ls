@@ -18,5 +18,5 @@ export bind-ctx = (ctx) ->
     obj.acquire-privilege = (priv) ~>
       log "checking privilege: #{priv}", ctx.user.priv
       if config.mode != "debug" and !ctx.user.priv[priv]
-        ctx.throw 400, "failure on privilege checking, #priv required. "
+        throw new Error "failure on privilege checking, #priv required. "
     obj.throw = ctx.throw

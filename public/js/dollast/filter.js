@@ -11,3 +11,12 @@ filters.filter('probRef', function(){
     }
   };
 });
+filters.filter('rndRef', function(){
+  return function(rnd){
+    if ("number" === typeof rnd) {
+      return rnd;
+    } else if ("object" === typeof rnd) {
+      return rnd._id + ". " + rnd.title;
+    }
+  };
+});

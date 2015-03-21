@@ -24,6 +24,9 @@ crud.service 'prob-serv', [
       repair:
         params:
           mode: 'repair'
+      stat:
+        params:
+          mode: 'stat'
 ]
 
 crud.service "rnd-serv", [

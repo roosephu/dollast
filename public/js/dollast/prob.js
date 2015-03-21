@@ -22,7 +22,20 @@ probApp.controller('prob-list-ctrl', [
     });
   }
 ]);
-probApp.controller('prob-stat-ctrl', ["$scope", "$routeParams"]);
+probApp.controller('prob-stat-ctrl', [
+  "$scope", "$routeParams", "prob-serv", function($scope, $routeParams, probServ){
+    var pid;
+    pid = $scope.pid = parseInt($routeParams.pid);
+    return probServ.stat({
+      pid: pid
+    }, function(it){
+      $scope.sols = _.sortBy(function(it){
+        return it.doc.final.score;
+      }, it.sols);
+      return console.log($scope.sols);
+    });
+  }
+]);
 probApp.controller('prob-modify-ctrl', [
   "$scope", "prob-serv", "data-serv", "$routeParams", "$sanitize", "$timeout", "$upload", function($scope, probServ, dataServ, $routeParams, $sanitize, $timeout, $upload){
     var that, method, pid, x$;

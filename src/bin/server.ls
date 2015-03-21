@@ -101,14 +101,16 @@ app.use (next) ->*
 
 routers = require './routers'
 
-app.use routers.pub-router
-
 app.use koa-jwt do
   secret: config.secret
-  passthrough: false
+  passthrough: true
+
+app.use routers.pub-router
 
 app.use (next) ->*
   log "request", @request.body, "jwt", @user, "query", @query
+  if not @user and config.mode != "debug"
+    throw new Error "login to explore more fields"
   yield next
 
 # now begin our private router

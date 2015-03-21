@@ -61,13 +61,16 @@ import$(out$, {
       this.acquirePrivilege('prob-all');
     }
     prob = yield model.findById(pid, fields).populate("config.round", "begTime").exec();
+    if (!prob) {
+      throw new Error("no such problem");
+    }
     if ((that = prob != null ? (ref$ = prob.config) != null ? ref$.round : void 8 : void 8) != null) {
       if (!that.isStarted()) {
         this.acquirePrivilege('prob-all');
       }
       prob = prob.toObject();
       (ref1$ = prob.config).round = ref1$.round._id;
-    } else if (prob) {
+    } else {
       prob = prob.toObject();
     }
     return prob;
@@ -75,16 +78,15 @@ import$(out$, {
   stat: function*(pid, opts){
     var prob, that, ref$, query, stat;
     opts == null && (opts = {});
-    prob = yield model.findById(pid, 'config.round').populate('config.round', 'endTime').exec();
+    prob = yield model.findById(pid, 'config.round').populate('config.round', 'published').exec();
     if (!prob) {
-      return;
+      throw new Error("no such problem");
     }
     if ((that = (ref$ = prob.config) != null ? ref$.round : void 8) != null) {
-      if (!that.isEnded) {
+      if (!that.published) {
         this.acquirePrivilege('rnd-all');
       }
     }
-    log(prob);
     query = db.sol.model.aggregate({
       $match: {
         prob: pid
@@ -95,18 +97,29 @@ import$(out$, {
         "final.score": -1
       }
     }, {
+      $project: {
+        lang: true,
+        final: true,
+        round: true,
+        user: true
+      }
+    }, {
       $group: {
         _id: {
           user: "$user"
         },
-        score: {
-          $first: "$final.score"
+        doc: {
+          $first: "$$CURRENT"
+        },
+        submits: {
+          $sum: 1
         }
       }
     });
     stat = yield query.exec();
-    log(stat);
-    return stat;
+    return {
+      sols: stat
+    };
   },
   list: function*(opts){
     opts = import$(clone$(config.probListOpts), opts);
@@ -127,15 +140,14 @@ import$(out$, {
       $set: prob
     }, {
       upsert: true,
-      overwrite: true
-    }).exec();
+      overwrite: true.exec()
+    });
   },
   updData: function*(pid){
     var prob, pairs;
     this.acquirePrivilege('prob-all');
     prob = yield model.findById(pid, 'config.dataset').exec();
     pairs = yield core.genDataPairs(pid);
-    log("prob:", prob, "pairs:", pairs);
     prob.config.dataset = _.map((function(it){
       return it.weight = 1, it;
     }), pairs);

@@ -20,7 +20,12 @@ prob-app.controller 'prob-list-ctrl', [
 ]
 
 prob-app.controller 'prob-stat-ctrl', [
-  "$scope", "$routeParams"
+  "$scope", "$routeParams", "prob-serv",
+  ($scope, $route-params, prob-serv) ->
+    pid = $scope.pid = parse-int $route-params.pid
+    prob-serv.stat pid: pid, ->
+      $scope.sols = _.sort-by (.doc.final.score), it.sols
+      console.log $scope.sols
 ]
 
 prob-app.controller 'prob-modify-ctrl', [

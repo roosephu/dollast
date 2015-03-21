@@ -48,6 +48,11 @@ schema.index do
   prob: 1
   user: 1
   "final.score": -1
+schema.index do
+  user: 1
+  prob: 1
+  round: 1
+  "final.score": -1
 
 export model = conn.conn.model 'solution', schema
 count = 0
@@ -82,27 +87,43 @@ export do
     new-opts = {}
     new-opts <<<< config.sol-list-opts
     new-opts <<<< opts
-    log new-opts
     opts = new-opts
+
     query = model.find {}, '-code -results'
       .populate 'prob', 'outlook.title'
+      .populate 'round', 'published'
       .sort '-_id'
       .skip opts.skip
       .limit opts.limit
       .lean!
     if opts.uid
       query .= where 'user' .equals that
+    if opts.pid
+      query .= where 'prob' .equals that
+
     sol-list = yield query.exec!
+
+    user = @get-current-user!
+    log "user", user
+    if 'unpub-rnd-sol' not in user.priv
+      for sol in sol-list
+        if sol.round and not sol.round.published
+          sol.final = status: "hidden"
+          delete sol.prob
+
     return sol-list
 
-  show: (sid) ~>*
-    log sid
+  show: (sid, opts = {}) ~>*
     sol = yield model.find-by-id sid
       .populate 'prob', 'outlook.title'
+      .populate 'round', 'published'
       .lean! .exec!
     if not sol.open and sol.user != @get-current-user!?._id # todo: open other source
       log sol.user, @get-current-user!
       @acquire-privilege 'sol-all'
+    if not sol.round.published and 'unpub-rnd-sol' not in @get-current-user.priv
+      sol.final = status: "private"
+      delete sol.results
     return sol
 
   toggle: (sid) ->*

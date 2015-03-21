@@ -9,14 +9,19 @@ export
   list: ->*
     @body = yield db.prob.list @query
     log "prob-list #{@body}"
+
   next-count: ->*
     @body = _id: yield db.prob.next-count!
+
   show: ->*
     @body = yield db.prob.show @params.pid, mode: "view"
+
   total: ->*
     @body = yield db.prob.show @params.pid, mode: "total"
+
   brief: ->*
     @body = yield db.prob.show @params.pid, mode: "brief"
+
   save: ->*
     req = @request.body
     @check-body 'method' .in ['modify', 'create'], 'wrong method'
@@ -39,12 +44,15 @@ export
     @body <<< status:
       type: "ok"
       msg: "problem has been saved"
+
   delete: ->*
     ...
+
   repair: ->*
     yield db.prob.upd-data @params.pid
     @body = status:
       type: "ok"
       msg: "repaired all data"
+
   stat: ->*
     @body = yield db.prob.stat @params.pid

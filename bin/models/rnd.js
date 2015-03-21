@@ -13,6 +13,7 @@ schema = new mongoose.Schema({
   title: String,
   begTime: Date,
   endTime: Date,
+  published: Boolean,
   probs: [{
     type: Number,
     ref: "problem"
@@ -100,9 +101,12 @@ import$(out$, {
     return rnd;
   },
   board: function*(rid, opts){
-    var query, results;
+    var rnd, query, results;
     opts == null && (opts = {});
-    log('board...');
+    rnd = yield model.findById(rid, "published").exec();
+    if (!(rnd != null && rnd.published)) {
+      this.acquirePrivilege("rnd-all");
+    }
     query = db.sol.model.aggregate({
       $match: {
         round: rid
@@ -142,12 +146,14 @@ import$(out$, {
     this.acquirePrivilege('rnd-all');
     doc = yield model.findById(rid).exec();
     if (!doc) {
-      this['throw']("no such round");
+      throw new Error("no such round");
     }
     if (moment().isBefore(doc.endTime)) {
-      this['throw']("before ending of this round");
+      throw new Error("round is running");
     }
     yield unlockProb(rid, false, doc.probs);
+    doc.published = true;
+    yield doc.save();
     return {
       status: {
         type: "ok",

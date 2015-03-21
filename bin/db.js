@@ -26,7 +26,7 @@ out$.bindCtx = bindCtx = function(ctx){
   function fn1$(priv){
     log("checking privilege: " + priv, ctx.user.priv);
     if (config.mode !== "debug" && !ctx.user.priv[priv]) {
-      return ctx['throw'](400, "failure on privilege checking, " + priv + " required. ");
+      throw new Error("failure on privilege checking, " + priv + " required. ");
     }
   }
 };

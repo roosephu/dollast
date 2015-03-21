@@ -60,6 +60,12 @@ schema.index({
   user: 1,
   "final.score": -1
 });
+schema.index({
+  user: 1,
+  prob: 1,
+  round: 1,
+  "final.score": -1
+});
 out$.model = model = conn.conn.model('solution', schema);
 count = 0;
 log = debug('dollast:sol');
@@ -94,26 +100,47 @@ import$(out$, {
     core.judge(req.lang, req.code, prob.config, sol);
   },
   list: function*(opts){
-    var newOpts, query, that, solList;
+    var newOpts, query, that, solList, user, i$, len$, sol;
     newOpts = {};
     importAll$(newOpts, config.solListOpts);
     importAll$(newOpts, opts);
-    log(newOpts);
     opts = newOpts;
-    query = model.find({}, '-code -results').populate('prob', 'outlook.title').sort('-_id').skip(opts.skip).limit(opts.limit).lean();
+    query = model.find({}, '-code -results').populate('prob', 'outlook.title').populate('round', 'published').sort('-_id').skip(opts.skip).limit(opts.limit).lean();
     if (that = opts.uid) {
       query = query.where('user').equals(that);
     }
+    if (that = opts.pid) {
+      query = query.where('prob').equals(that);
+    }
     solList = yield query.exec();
+    user = this$.getCurrentUser();
+    log("user", user);
+    if (!in$('unpub-rnd-sol', user.priv)) {
+      for (i$ = 0, len$ = solList.length; i$ < len$; ++i$) {
+        sol = solList[i$];
+        if (sol.round && !sol.round.published) {
+          sol.final = {
+            status: "hidden"
+          };
+          delete sol.prob;
+        }
+      }
+    }
     return solList;
   },
-  show: function*(sid){
+  show: function*(sid, opts){
     var sol, ref$;
-    log(sid);
-    sol = yield model.findById(sid).populate('prob', 'outlook.title').lean().exec();
+    opts == null && (opts = {});
+    sol = yield model.findById(sid).populate('prob', 'outlook.title').populate('round', 'published').lean().exec();
     if (!sol.open && sol.user !== ((ref$ = this$.getCurrentUser()) != null ? ref$._id : void 8)) {
       log(sol.user, this$.getCurrentUser());
       this$.acquirePrivilege('sol-all');
+    }
+    if (!sol.round.published && !in$('unpub-rnd-sol', this$.getCurrentUser.priv)) {
+      sol.final = {
+        status: "private"
+      };
+      delete sol.results;
     }
     return sol;
   },
@@ -138,4 +165,9 @@ function import$(obj, src){
 function importAll$(obj, src){
   for (var key in src) obj[key] = src[key];
   return obj;
+}
+function in$(x, xs){
+  var i = -1, l = xs.length >>> 0;
+  while (++i < l) if (x === xs[i]) return true;
+  return false;
 }

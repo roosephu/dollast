@@ -3,7 +3,7 @@ var path, ref$, out$ = typeof exports != 'undefined' && exports || this;
 path = require('path');
 ref$ = out$;
 ref$.passGuest = false;
-ref$.mode = "release";
+ref$.mode = "debug";
 ref$.concurrency = 3;
 ref$.sandboxer = path.resolve('./utils/sandboxer/sandboxer');
 ref$.keys = ['drdrd'];

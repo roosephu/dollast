@@ -1,1 +1,28 @@
 h1.ui.header.dividing statistics
+table.ui.table.segment.large
+  thead
+    tr
+      th.collapsing.right sol id
+      th user
+      th status
+      th score
+      th time(s)
+      th space(MB)
+      th.collapsing lang
+      th.collapsing round
+      th #submits
+  tbody
+    tr(ng-repeat='sol in sols')
+      td
+        a.ui.mini.teal.icon.button.labeled(href='#/solution/{{sol.doc._id}}')
+          i.icon.code
+          | {{ sol.doc._id }}
+      td
+        a(ng-href='#/user/{{sol._id.user}}') {{sol._id.user}}
+      td {{sol.doc.final.status}}
+      td {{sol.doc.final.score | number}}
+      td {{sol.doc.final.time | number}} 
+      td {{sol.doc.final.space | number}} 
+      td {{sol.doc.lang}}
+      td {{sol.doc.round._id}}
+      td {{sol.submits}}

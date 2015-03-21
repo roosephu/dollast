@@ -108,13 +108,16 @@ app.use(function*(next){
   }
 });
 routers = require('./routers');
-app.use(routers.pubRouter);
 app.use(koaJwt({
   secret: config.secret,
-  passthrough: false
+  passthrough: true
 }));
+app.use(routers.pubRouter);
 app.use(function*(next){
   log("request", this.request.body, "jwt", this.user, "query", this.query);
+  if (!this.user && config.mode !== "debug") {
+    throw new Error("login to explore more fields");
+  }
   yield next;
 });
 app.use(routers.privRouter);

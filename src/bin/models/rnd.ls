@@ -15,6 +15,7 @@ schema = new mongoose.Schema do
   title: String
   beg-time: Date
   end-time: Date
+  published: Boolean
   probs: [type: Number, ref: "problem"]
   # groups: [type: Number, ref: ]
 
@@ -70,7 +71,9 @@ export do
     return rnd
 
   board: (rid, opts = {}) ->*
-    log 'board...'
+    rnd = yield model.find-by-id rid, "published" .exec!
+    if not rnd?.published
+      @acquire-privilege "rnd-all"
 
     query = db.sol.model.aggregate do
       * $match: round: rid
@@ -97,10 +100,13 @@ export do
     @acquire-privilege 'rnd-all'
     doc = yield model.find-by-id rid .exec!
     if not doc
-      @throw "no such round"
+      throw new Error "no such round"
     if moment!.is-before doc.end-time
-      @throw "before ending of this round"
+      throw new Error "round is running"
     yield unlock-prob rid, false, doc.probs
+    doc.published = true
+    yield doc.save!
+
     return status:
       type: "ok"
       msg: "published all problems"

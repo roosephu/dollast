@@ -48,35 +48,51 @@ export do
       | otherwise => ...
     if opts.mode == "total"
       @acquire-privilege 'prob-all'
-    prob = yield model .find-by-id pid, fields .populate "config.round", "begTime" .exec!
+
+    prob = yield model .find-by-id pid, fields
+      .populate "config.round", "begTime"
+      .exec!
+    if not prob
+      throw new Error "no such problem"
+
     if prob?.config?.round?
       if not that.is-started!
         @acquire-privilege 'prob-all'
       prob .= to-object!
       prob.config.round .= _id
-    else if prob
+    else
       prob .= to-object!
     return prob
 
   stat: (pid, opts = {}) ->*
-    prob = yield model.find-by-id pid, 'config.round' .populate 'config.round', 'endTime' .exec!
-    return if not prob
+    prob = yield model.find-by-id pid, 'config.round'
+      .populate 'config.round', 'published'
+      .exec!
+    if not prob
+      throw new Error "no such problem"
+
     if prob.config?.round?
-      if not that.is-ended
+      if not that.published
         @acquire-privilege 'rnd-all'
-    log prob
+
     query = db.sol.model.aggregate do
       * $match: prob: pid
       * $sort: user: 1, "final.score": -1
+      * $project:
+          lang: true
+          final: true
+          round: true
+          user: true
       * $group:
           _id:
             user: "$user"
-          score:
-            $first: "$final.score"
+          doc:
+            $first: "$$CURRENT"
+          submits:
+            $sum: 1
 
-    stat = yield query.exec!
-    log stat
-    return stat
+    stat = yield query .exec!
+    return sols: stat
 
   list: (opts) ->*
     opts = config.prob-list-opts with opts
@@ -90,19 +106,22 @@ export do
     @acquire-privilege 'prob-all'
     if prob._id
       delete prob._id
-    return yield model.update _id: pid, {$set: prob}, upsert: true, overwrite: true .exec!
+    return yield model.update _id: pid, {$set: prob},
+      upsert: true, overwrite: true
+      .exec!
 
   upd-data: (pid) ->*
     @acquire-privilege 'prob-all'
     prob = yield model.find-by-id pid, 'config.dataset' .exec!
     pairs = yield core.gen-data-pairs pid
-    log "prob:", prob, "pairs:", pairs
     prob.config.dataset = _.map (<<< weight: 1), pairs
     yield prob.save!
+
   list-dataset: (pid) ->*
     @acquire-privilege 'prob-all'
     prob = yield model.find-by-id pid, "config.dataset" .lean! .exec!
     return prob.config.dataset
+
   next-count: ->*
     @acquire-privilege 'prob-all'
     return yield conn.next-count model, count

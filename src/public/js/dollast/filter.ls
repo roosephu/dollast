@@ -6,3 +6,10 @@ filters.filter 'probRef', ->
       "<a href='#/problem/#{prob._id}'>#{prob._id}. #{prob.outlook.title}</a>"
     else
       "hidden problem"
+
+filters.filter 'rndRef', ->
+  (rnd) ->
+    if "number" == typeof rnd
+      rnd
+    else if "object" == typeof rnd
+      "#{rnd._id}. #{rnd.title}"
