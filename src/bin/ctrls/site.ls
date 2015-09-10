@@ -1,36 +1,38 @@
 require! {
   "../db"
-  "../salt"
+  "../crypt"
   "debug"
   "koa-jwt"
   "prelude-ls": _
   "../config"
+  \node-forge
 }
 
 log = debug 'dollast:ctrl:site'
 
 export
   theme: ->*
-    @session.theme = @params.theme
+    @state.user.theme = @params.theme
     @body = status: true
 
   token: ->*
-    str = salt.gen-salt!
-    @session.salt = str
-    @body = salt: str
-
-  session: ->*
-    log @session
-    @body = uid: if @session.passport?.user?._id? then that else void
+    token = @crypt.gen-salt!
+    log {token}
+    # @state.user.token = str
+    @body = {token}
+  #
+  # session: ->*
+  #   log @session
+  #   @body = uid: if @session.passport?.user?._id? then that else void
 
   login: ->*
     # @check-body '_id' .len 6, 15
     # @check-body 'pswd' .non-empty!
     post = @request.body
-    pswd = salt.unsalt post.pswd, @
+    pswd = post.pswd
     return if @errors
 
-    user = yield db.user.query post._id, pswd
+    user = yield db.user.query post.uid, pswd
     if not user
       @body = status:
         type: "err"
@@ -38,10 +40,23 @@ export
     else
       priv-list = user.priv-list
       priv-list.push 'login'
-      @session.priv = _.lists-to-obj priv-list, [true for i from 1 to priv-list.length]
+      @state.user.priv = _.lists-to-obj priv-list, [true for i from 1 to priv-list.length]
 
-      claims = _id: user._id, priv: @session.priv
-      token = koa-jwt.sign claims, config.secret, expires-in-seconds: 10
+      client-key = @request.body.client-key
+      server-key = config.server-AES-key
+      server-payload = JSON.stringify do
+        uid: user._id
+        priv: @state.user.priv
+        client-key: client-key
+      client-payload = JSON.stringify do
+        uid: user._id
+      payload =
+        server: crypt.AES.enc server-payload, server-key
+        client: crypt.AES.enc client-payload, client-key
+
+      token = koa-jwt.sign payload, config.jwt-key, expires-in-seconds: 60 * 60 * 24
+
+      refresh = koa-jwt.sign payload, config.server-AES-key, expires-in-seconds: 60 * 60 * 24 * 30
       @body =
         token: token
         status:

@@ -7,7 +7,7 @@ require! {
   'path'
   'co-busboy'
   'bluebird'
-  'prelude-ls': _
+  'prelude-ls' : _
   './config'
   './core'
   "./db"
@@ -32,6 +32,7 @@ user = require './ctrls/user'
 params-validator =
   pid: (pid, next) ->*
     @params.pid = pid
+    # log {pid}, @req
     @check-params 'pid' .to-int! .ge 1
     return if @errors
     yield next
@@ -51,63 +52,49 @@ params-validator =
     return if @errors
     yield next
 
-priv-router = new koa-router!
-priv-router
-  .param 'pid', params-validator.pid
-  .param 'sid', params-validator.sid
-  .param 'rid', params-validator.rid
-  .param 'uid', params-validator.uid
-
-  .get    '/problem/next-count',        prob.next-count
-  .get    '/problem/:pid/brief',        prob.brief
-  .get    '/problem/:pid/total',        prob.total
-  .get    '/problem/:pid/repair',       prob.repair
-  .get    '/problem/:pid/stat',         prob.stat
-  .post   '/problem/:pid',              prob.save
-  .delete '/problem/:pid',              prob.delete
-
-  .get    '/data/:pid',                 data.show
-  .post   '/data/:pid/upload',          data.upload
-  .delete '/data/:pid/:file',           data.delete
-
-  .get    '/solution/:sid',             sol.show
-  .post   '/solution/submit',           sol.submit
-  .post   '/solution/:sid/toggle',      sol.toggle
-
-  .post   '/round/:rid',                rnd.save
-  .get    '/round/next-count',          rnd.next-count
-  .get    '/round/:rid/total',          rnd.total
-  .get    '/round/:rid/publish',        rnd.publish
-  .delete '/round/:rid',                rnd.delete
-
-  .get    '/user/:uid/profile',         user.profile
-  .post   '/user/:uid/modify',          user.save
-
-  # .post   '/image/upload',              image.upload
-
-pub-router = new koa-router!
-pub-router
+router = new koa-router!
+router
   .param 'pid', params-validator.pid
   .param 'sid', params-validator.sid
   .param 'rid', params-validator.rid
   .param 'uid', params-validator.uid
 
   .get    '/site/theme/:theme',         site.theme
-  .get    '/site/session',              site.session
+  # .get    '/site/session',              site.session
   .get    '/site/token',                site.token
   .post   '/site/login',                site.login
   .post   '/site/logout',               site.logout
 
-  .post   '/user/register/',            user.register
+  .post   '/user/register',             user.register
+  .get    '/user/:uid/profile',         user.profile
+  .post   '/user/:uid/modify',          user.save
 
   .get    '/round',                     rnd.list
+  .get    '/round/next-count',          rnd.next-count
   .get    '/round/:rid',                rnd.show
   .get    '/round/:rid/board',          rnd.board
+  .post   '/round/:rid',                rnd.save
+  .get    '/round/:rid/total',          rnd.total
+  .get    '/round/:rid/publish',        rnd.publish
+  .delete '/round/:rid',                rnd.delete
 
   .get    '/problem',                   prob.list
+  .get    '/problem/next-count',        prob.next-count
   .get    '/problem/:pid',              prob.show
+  .post   '/problem/:pid',              prob.save
+  .delete '/problem/:pid',              prob.delete
+  .get    '/problem/:pid/brief',        prob.brief
+  .get    '/problem/:pid/total',        prob.total
+  .get    '/problem/:pid/repair',       prob.repair
+  .get    '/problem/:pid/stat',         prob.stat
 
   .get    '/solution',                  sol.list
+  .get    '/solution/:sid',             sol.show
+  .post   '/solution/submit',           sol.submit
+  .post   '/solution/:sid/toggle',      sol.toggle
 
-export priv-router = priv-router.middleware!
-export pub-router  = pub-router.middleware!
+  .get    '/data/:pid',                 data.show
+  .post   '/data/:pid/upload',          data.upload
+  .delete '/data/:pid/:file',           data.delete
+
+export router = router.middleware!

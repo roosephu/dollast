@@ -6,6 +6,7 @@ require! {
 
 export
   upload: ->*
+    @acquire-privilege \login
     pid = @params.pid
     parts = co-busboy @, auto-fields: true
     while part = yield parts
@@ -14,12 +15,16 @@ export
     @body <<< status:
       type: "ok"
       msg: "upload successful"
+
   delete: ->* # validate
+    @acquire-privilege \login
     pid = @params.pid
     yield core.delete-test-data pid, @params.file
     @body = status:
       type: "ok"
       msg: "data has been deleted"
+
   show: ->*
+    @acquire-privilege \login
     data = yield db.prob.list-dataset @params.pid
     @body = data

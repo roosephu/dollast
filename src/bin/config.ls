@@ -18,10 +18,11 @@ export
   compile-fmt:
     'cpp': (src, dst) -> "g++ #src -o #dst"
   default:
-    theme: "dollast"
+    theme: "react"
     priv: {}
   bcrypt-cost: 10
-  secret: 'drdrdrd'
+  jwt-key: 'drdrdrd'
+  server-AES-key: 'da63af5c90e00d60aa3ddd0793a6e3ca6a8284b0fa8884bba72602ec3719c661' # len = 64 bytes
   sol-list-opts:
     skip: 0
     limit: 10

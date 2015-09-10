@@ -11,18 +11,25 @@ export
     log "prob-list #{@body}"
 
   next-count: ->*
+    @acquire-privilege \login
+    log "next-count"
     @body = _id: yield db.prob.next-count!
 
   show: ->*
+    log 'show'
+    @acquire-privilege \login
     @body = yield db.prob.show @params.pid, mode: "view"
 
   total: ->*
+    @acquire-privilege \login
     @body = yield db.prob.show @params.pid, mode: "total"
 
   brief: ->*
+    @acquire-privilege \login
     @body = yield db.prob.show @params.pid, mode: "brief"
 
   save: ->*
+    @acquire-privilege \login
     req = @request.body
     @check-body 'method' .in ['modify', 'create'], 'wrong method'
     @check-body 'outlook' .not-empty 'must exists'
@@ -49,10 +56,12 @@ export
     ...
 
   repair: ->*
+    @acquire-privilege \login
     yield db.prob.upd-data @params.pid
     @body = status:
       type: "ok"
       msg: "repaired all data"
 
   stat: ->*
+    @acquire-privilege \login
     @body = yield db.prob.stat @params.pid

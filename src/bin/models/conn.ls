@@ -1,6 +1,6 @@
 require! {
   'mongoose'
-  'mongoose-deep-populate'
+#   'mongoose-deep-populate'
   'mongoose-auto-increment'
   'moment'
   'bluebird'
@@ -8,7 +8,7 @@ require! {
 
 export conn = mongoose.create-connection 'mongodb://localhost/dollast'
 mongoose-auto-increment.initialize conn
-mongoose.plugin mongoose-deep-populate
+# mongoose.plugin mongoose-deep-populate
 
 export next-count = (model, count) ->
   ->*

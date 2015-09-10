@@ -1,115 +1,44 @@
-app = angular.module 'dollast-app', [
-  * "angular-jwt"
-  * "ngRoute"
-  * "dollast-msg-center"
-  * "dollast-filters"
-  * "dollast-user-app"
-  * "dollast-site-app"
-  * "dollast-prob-app"
-  * "dollast-sol-app"
-  * "dollast-rnd-app"
-]
+# @cjsx React.DOM
 
-app.config  [
-  "$httpProvider", "jwtInterceptorProvider",
-  ($http-provider, jwt-interceptor-provider) ->
-    jwt-interceptor-provider.token-getter = ->
-      local-storage.token
+require! {
+  \./custom
+  \co
+  \reflux
+  \react/addons : R
+  \react-router : T
+  \./components/elements : E
+  \./components/routes
+  \./components/site/navbar
+  \./components/site/footer
+  \./stores/sess
+}
 
-    $http-provider.interceptors.push ["$q", "msgCenter", ($q, msg-center) ->
-      response: ->
-        if it.data?.status? # JSON returned
-          info = that
-          if "object" == typeof info
-            msg-center.push info
-          else if "string" == typeof info
-            msg-center.push do
-              type: "ok"
-              msg: info
-          else
-            console.log "bad status returned", info
-        return it
-      response-error: (rejection) ->
-        if rejection.status == 400 and "object" == typeof rejection.data
-          data = rejection.data
-          console.log data
-          # if not angular.is-array data
-          #  data = [data]
-          for part in data
-            for param, msg of part
-              msg-center.push do
-                type: "err"
-                msg: "#param: #msg"
-        else if rejection.status == 401
-          msg-center.push do
-            type: "err"
-            msg: "unauthorized. login first. "
-        return $q.reject rejection
-    ]
+# events = require \./components/site/events
 
-    $http-provider.interceptors.push 'jwtInterceptor'
-]
+sess.actions.load-token!
 
-app.config ['$routeProvider', ($route-provider) ->
-  $route-provider
-    .when '/',
-      template-url: 'partials/index.html'
-      controller  : 'index-ctrl'
-    .when '/about',
-      template-url: 'partials/about.html'
-    .when '/problem',
-      template-url: 'partials/problem/list.html'
-      controller  : 'prob-list-ctrl'
-    .when '/problem/create',
-      template-url: 'partials/problem/modify.html'
-      controller  : 'prob-modify-ctrl'
-    .when '/problem/:pid',
-      template-url: 'partials/problem/show.html'
-      controller  : 'prob-show-ctrl'
-    .when '/problem/:pid/modify',
-      template-url: 'partials/problem/modify.html'
-      controller  : 'prob-modify-ctrl'
-    .when '/problem/:pid/stat',
-      template-url: 'partials/problem/stat.html'
-      controller  : 'prob-stat-ctrl'
-    .when '/submit/:pid',
-      template-url: 'partials/solution/submit.html'
-      controller  : 'sol-submit-ctrl'
-    .when '/login',
-      template-url: 'partials/login.html'
-      controller  : 'login-ctrl'
-    .when '/solution',
-      template-url: 'partials/solution/list.html'
-      controller  : 'sol-list-ctrl'
-    .when '/solution/user/:uid',
-      template-url: 'partials/solution/list.html'
-      controller  : 'sol-list-ctrl'
-    .when '/solution/:sid',
-      template-url: 'partials/solution/show.html'
-      controller  : 'sol-show-ctrl'
-    .when '/round',
-      template-url: 'partials/round/list.html'
-      controller  : 'rnd-list-ctrl'
-    .when '/round/create',
-      template-url: 'partials/round/modify.html'
-      controller  : 'rnd-modify-ctrl'
-    .when '/round/:rid',
-      template-url: 'partials/round/show.html'
-      controller  : 'rnd-show-ctrl'
-    .when '/round/:rid/modify',
-      template-url: 'partials/round/modify.html'
-      controller  : 'rnd-modify-ctrl'
-    .when '/round/:rid/board',
-      template-url: 'partials/round/board.html'
-      controller  : 'rnd-board-ctrl'
-    .when '/user/register',
-      template-url: 'partials/user/register.html'
-      controller  : 'user-reg-ctrl'
-    .when '/user/:uid',
-      template-url: 'partials/user/profile.html'
-      controller  : 'user-profile-ctrl'
-    .when '/user/:uid/modify',
-      template-url: 'partials/user/modify.html'
-      controller  : 'user-modify-ctrl'
-    .otherwise template-url: 'partials/404.html'
-]
+app = R.create-class do
+  mixins: [reflux.connect sess.store, \uid]
+  display-name: \dollast
+
+  render: ->
+    console.log @state
+
+    _div class-name: "ui grid",
+      _ navbar, @state.uid
+      _div class-name: "row",
+        _div class-name: "three wide column"
+        _div class-name: "ten wide column",
+          _ T.Route-handler
+        # _div class-name: "three wide column",
+        #   _ events
+      _div class-name: "row",
+        # _div class-name: "twelve wide column centered",
+        _ footer
+
+T.run do
+  routes app
+  (root) ->
+    R.render do
+      _ root
+      document.get-element-by-id \content

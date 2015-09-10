@@ -33,27 +33,27 @@ html(ng-app="dollast-app")
     link(type="text/css" rel="stylesheet" href="css/highlight/monokai_sublime.css")
     link(type="text/css" rel="stylesheet" href="semantic-ui/semantic.css")
     link(type="text/css" rel="stylesheet" href="css/default.css")
-    
+
   body.pusher
     .ui.page.grid
       .row(ng-controller="navbar-ctrl")
         .ui.large.fixed.page.grid.inverted.blue.menu
           .header.item dollast
-          
+
           .ui.buttons
             a.ui.item.labeled.button(href="#/")
               i.icon.home
               span home
-            a.ui.item.labeled.button(href="#/problem") 
+            a.ui.item.labeled.button(href="#/problem")
               i.icon.browser
               span problem
-            a.ui.item.labeled.button(href="#/solution") 
+            a.ui.item.labeled.button(href="#/solution")
               i.icon.info.circle
               span status
-            a.ui.item.labeled.button(href="#/round") 
+            a.ui.item.labeled.button(href="#/round")
               i.icon.users
               span contest
-            a.ui.item.labeled.button(href="#/about") 
+            a.ui.item.labeled.button(href="#/about")
               i.icon.help.circle
               span about
 
@@ -63,17 +63,17 @@ html(ng-app="dollast-app")
               input(placeholder="ID or Searching(unimp)")
 
           .buttons.ui(ng-hide="sess.uid")
-            a.ui.item.labeled.button(href="#/login") 
+            a.ui.item.labeled.button(href="#/login")
               i.icon.sign.in
               span login
-            a.ui.item.labeled.button(href="#/user/register" ng-hide="sess.uid") 
+            a.ui.item.labeled.button(href="#/user/register" ng-hide="sess.uid")
               i.icon.signup
               span register
           .buttons.ui(ng-show="sess.uid")
-            a.ui.item.labeled.button(ng-href="#/user/{{sess.uid}}") 
+            a.ui.item.labeled.button(ng-href="#/user/{{sess.uid}}")
               i.icon.user
               span {{sess.uid}}
-            a.ui.item.labeled.button(ng-click="logout()") 
+            a.ui.item.labeled.button(ng-click="logout()")
               i.icon.sign.out
               span logout
 
@@ -90,8 +90,8 @@ html(ng-app="dollast-app")
           .ui.button.fluid
             .ui.text.shape
               .sides
-                .ui.default.side.active 
+                .ui.default.side.active
                   | welcome to dollast online judge
-                .ui.default.side(ng-repeat="msg in shared.messages track by $index") 
+                .ui.default.side(ng-repeat="msg in shared.messages track by $index")
                   label.ui.label(ng-class="style(msg.type)")
                     | {{msg.msg}}

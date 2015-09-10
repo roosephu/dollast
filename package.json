@@ -3,20 +3,20 @@
   "version": "0.0.1",
   "description": "the online judge for CJ",
   "main": "server.js",
+  "lisense": "CC-BY-NC-ND",
   "repository": {
     "type": "git",
     "url": "https://github.com/roosephu/dollast.git"
   },
   "dependencies": {
     "koa": "latest",
-    "mongoose": "~3.9",
+    "mongoose": "~4.0.0",
     "koa-json": "latest",
     "koa-generic-session": "latest",
+    "mongoose-auto-increment": "latest",
     "koa-jwt": "latest",
     "koa-validate": "latest",
     "koa-router": "latest",
-    "mongoose-deep-populate": "latest",
-    "mongoose-auto-increment": "latest",
     "prelude-ls": "latest",
     "koa-send": "latest",
     "moment": "latest",
@@ -33,6 +33,9 @@
     "koa-jade": "latest",
     "koa-conditional-get": "latest",
     "koa-etag": "latest",
-    "node-forge": "latest"
+    "node-forge": "latest",
+    "react": "latest",
+    "semantic-ui": "latest",
+    "reflux": "@0.2.12"
   }
 }

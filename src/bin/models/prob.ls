@@ -123,5 +123,6 @@ export do
     return prob.config.dataset
 
   next-count: ->*
+    log "next-count"
     @acquire-privilege 'prob-all'
     return yield conn.next-count model, count
