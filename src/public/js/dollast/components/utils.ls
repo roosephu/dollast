@@ -34,8 +34,21 @@ export add-class-name = (obj, class-name) ->
 
 export to-server-fmt = (obj) ->
   outlook = obj{title, desc, in-fmt, out-fmt, sample-in, sample-out}
-  config  = obj{rid, judger, time-lmt, space-lmt, out-lmt, stk-lmt}
+  config  = obj{rid, pid, judger, time-lmt, space-lmt, out-lmt, stk-lmt}
+  if config.rid == ""
+    delete config.rid
+  else
+    config.rid |>= parse-int
+  
+  config.time-lmt  |>= parse-float
+  config.space-lmt |>= parse-float
+  config.out-lmt   |>= parse-float
+  config.stk-lmt   |>= parse-float
+  
   {outlook, config}
+
+export to-client-fmt = (obj) ->
+  flatten-object obj
 
 export flatten-object = (obj) ->
   ret = {}

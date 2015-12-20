@@ -37,7 +37,7 @@
   paramsValidator = {
     pid: function*(pid, next){
       this.params.pid = pid;
-      this.checkParams('pid').toInt().ge(1);
+      this.checkParams('pid').toInt().ge(0);
       if (this.errors) {
         return;
       }

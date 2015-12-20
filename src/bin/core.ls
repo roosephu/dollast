@@ -46,10 +46,11 @@ export upload = co.wrap (pid, part) ->*
     part.pipe fs.create-write-stream zip-file.name
     data-dir = path.join config.data-dir, "/#pid"
     [stdout, stderr] = yield child-process.exec "7z e #{zip-file.name} -o#{data-dir} -y"
-    log "output: #{stdout} #{stderr}"
+    #log "output: #{stdout} #{stderr}"
     flatten-dir data-dir # no need to flatten
   catch err
     ret = status: "decompressing error"
+    log err
   finally
     zip-file.remove-callback!
     ret = status: "OK"
@@ -108,6 +109,7 @@ judge-result = co.wrap (pid, in-file, out-file, ans-file, cfg) ->*
   try
     [stdout, stderr] = yield child-process.exec "#{judger} #{in-file} #{out-file} #{ans-file}"
   catch e
+    #log e
     messages = drop-first-line e.message
     return
       status: testlib-exitcodes[e.code]
@@ -132,6 +134,7 @@ run-atom = (pid, lang, exe-path, data, cfg) ->* # TODO if file not exists, throw
   log "inf #{inf} ans #{ans}"
   exec-cmd = "\"#{config.sandboxer}\" \"#{exe-path}\" #{cfg.time-lmt} #{cfg.space-lmt} #{cfg.stk-lmt} #{cfg.out-lmt} \"#{inf}\" \"#{ouf}\""
   [proc-out, proc-err] = yield child-process.exec exec-cmd, cwd: path.dirname config.sandboxer
+  log {proc-out, proc-err, exec-cmd}
   log "sandboxer result: #proc-err"
   exe-res = JSON.parse proc-err
 
@@ -141,7 +144,8 @@ run-atom = (pid, lang, exe-path, data, cfg) ->* # TODO if file not exists, throw
 
   judge-res = yield judge-result pid, inf, ouf, ans, cfg
   tmp-file.remove-callback!
-  return exe-res <<< judge-res <<< data
+
+  (exe-res <<< judge-res) <<< data
 
 calc-prob-score = (results) ->
   ret =
@@ -180,10 +184,7 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
   try
     dataset = delete config.dataset
 
-    results = []
-    for data in dataset
-      res = yield limit run-atom pid, lang, exe-path, data, config
-      results.push res
+    results = yield [limit run-atom pid, lang, exe-path, data.to-object!, config for data in dataset]
 
     log "starting modifying doc"
     doc.results = results

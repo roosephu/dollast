@@ -1,12 +1,27 @@
 require! {
-  \co
-  \react/addons : R
-  \../utils : U
-  \../elements : E
-  \../../stores/problem
+  \react/addons : {create-class}
+  \react-redux : {connect}
+  \immutable : I
+  \../../actions : {on-update-problem, on-get-problem, on-upload-files}
+  \../utils : {to-client-fmt}
+  \../elements : {field, icon-text, label-field, dropdown}
+  \react-dropzone : dropzone
 }
 
-module.exports = R.create-class do
+log = debug 'dollast:component:problem:modify'
+
+selector = (state) ->
+  problem: state.get-in [\problem, \update], I.Map do
+    outlook: 
+      {}
+    config:
+      time-lmt: 1
+      space-lmt: 512
+      stk-lmt: 4
+      out-lmt: 10
+      dataset: []
+
+module.exports = (connect selector) create-class do
   display-name: \prob-modify
 
   component-did-mount: ->
@@ -18,9 +33,9 @@ module.exports = R.create-class do
           identifier: \title
           rules:
             * type: 'minLength[2]'
-              prompt: 'minimum length is 2'
+              prompt: 'title minimum length is 2'
             * type: 'maxLength[63]'
-              prompt: 'length cannot exceed 63'
+              prompt: 'title length cannot exceed 63'
         rid:
           identifier: \rid
           optional: true
@@ -90,32 +105,53 @@ module.exports = R.create-class do
             ...
       on-success:
         @submit
-
-    if @pid == 'create'
-      co ->*
-        @pid = yield problem.actions.next-count!
-        console.log @pid
+    if @props.params.pid 
+      @props.dispatch on-get-problem @props.params.pid, \update, \total
+    pid = if @props.params.pid then parse-int that else 0
+    @set-state {pid}
+    #@update-forms @props.problem
 
   submit: (e) ->
     e.prevent-default!
     $form = $ '#problem-modify'
     all-values = $form.form 'get values'
-    problem.actions.update all-values <<<< {@pid}
+    
+    @props.dispatch on-update-problem @state.pid, all-values
+  
+  update-forms: (problem) ->
+    #log 'new states. setting new values for form...', to-client-fmt problem.to-JS!
+    $form = $ '#problem-modify'
+    $form.form 'set values', to-client-fmt problem.to-JS!
 
+  component-will-update: (next-props, next-states) ->
+    @update-forms next-props.problem
+  
+  on-drop: (files) ->
+    @set-state files: files
+  
+  upload: ->
+    files = @state.files
+    if files
+      @props.dispatch on-upload-files @state.pid, files
+    
   render: ->
-    @pid = @props.params.pid
-    @pid = "create" if !@pid
+    problem = @props.problem.to-JS!
+    problem-title = @props.problem.get-in [\outlook, \title]
+    title = if @props.params.pid then "Update Problem #{that}. #{problem-title}" else "Create Problem"
+    
     _div class-name: "ui form segment", id: 'problem-modify',
-      _h1 class-name: "ui centered", "problem: #{@pid}"
+      _h1 class-name: "ui centered", title
+      _div class-name: "ui error message"
       _div class-name: "ui three fields",
-        _ E.label-field, class-name: "eight wide", text: \title,
+        _ label-field, class-name: "eight wide", text: \title,
           _div class-name: "ui input",
             _input name: \title
-        _ E.label-field, class-name: "four wide", text: "round",
+        _ label-field, class-name: "four wide", text: "round",
           _div class-name: "ui input",
             _input name: \rid, type: \number, placeholder: "optional"
-        _ E.label-field, class-name: "four wide", text: \judger,
-          _ E.dropdown,
+        _ label-field, class-name: "four wide", text: \judger,
+          _ dropdown,
+            class-name: \selection
             name: \judger
             default: "Please choose a judger"
             options:
@@ -125,37 +161,90 @@ module.exports = R.create-class do
               custom: \custom
 
       _div class-name: "ui four fields",
-        _ E.label-field, text: "time limit (s)",
+        _ label-field, text: "time limit (s)",
           _div class-name: "ui input",
-            _input name: \timeLmt, type: \number, default-value: 1
-        _ E.label-field, text: "space limit (MB)",
+            _input name: \timeLmt, type: \number
+        _ label-field, text: "space limit (MB)",
           _div class-name: "ui input",
-            _input name: \spaceLmt, type: \number, default-value: 512
-        _ E.label-field, text: "stack limit (MB)",
+            _input name: \spaceLmt, type: \number
+        _ label-field, text: "stack limit (MB)",
           _div class-name: "ui input",
-            _input name: \stkLmt, type: \number, default-value: 4
-        _ E.label-field, text: "output limit (MB)",
+            _input name: \stkLmt, type: \number
+        _ label-field, text: "output limit (MB)",
           _div class-name: "ui input",
-            _input name: \outLmt, type: \number, default-value: 10
+            _input name: \outLmt, type: \number
 
-      _ E.field, null,
-        _ E.label-field, text: \description
+      _ field, null,
+        _ label-field, text: \description
           _textarea name: \desc
 
       _div class-name: "ui two fields",
-        _ E.label-field, text: "input format",
+        _ label-field, text: "input format",
           _textarea name: \inFmt
-        _ E.label-field, text: "output format",
+        _ label-field, text: "output format",
           _textarea name: \outFmt
       _div class-name: "ui two fields",
-        _ E.label-field, text: "sample input",
+        _ label-field, text: "sample input",
           _textarea name: \sampleIn
-        _ E.label-field, text: "sample output",
+        _ label-field, text: "sample output",
           _textarea name: \sampleOut
+          
+      _div class-name: "ui divider"
+      
+      _ field, null,
+        _ icon-text, 
+          icon: \file
+          text: \select
+          on-click: @select
+        _ icon-text,
+          class-name: \green
+          icon: \upload
+          text: \upload
+          on-click: @upload
+        _ icon-text,  
+          class-name: \teal
+          icon: \refresh
+          text: \refresh
+          on-click: @refresh
+        _ icon-text,
+          class-name: \purple
+          icon: \retweet
+          text: \repair
+          on-click: @repair
+      
+      _div class-name: "ui two fields",
+        _ field, class-name: "four wide",
+          _ dropzone, on-drop: @on-drop,
+            _div null,
+              "drop files here for click to select"
+        _ field, class-name: "twelve wide",
+          _table class-name: "ui table segment",
+            _thead null, 
+              _tr null, 
+                _th null, \input
+                _th null, \output
+                _th null, \weight
+                _th null, ""
+            _tbody null, 
+              for atom in problem.config?.dataset
+                _tr key: atom.input,
+                  _td null, atom.input
+                  _td null, atom.output
+                  _td null, atom.weight
+                  _td null,
+                    _ icon-text,
+                      class-name: "right floated mini"
+                      icon: \remove
+                      text: \remove
+                      on-click: @remove
 
-      _ E.field, null,
-        _ E.icon-text,
+      _ field, null,
+        _ icon-text,
           class-name: "primary floated submit"
-          text: \Submit
+          text: \Save
           icon: \save
-      _div class-name: "ui error message"
+        _ icon-text, 
+          class-name: "secondary floated"
+          text: \Back
+          icon: \reply
+          href: "#/problem/#{@props.params.pid}"

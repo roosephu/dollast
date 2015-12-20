@@ -55,13 +55,13 @@
       part.pipe(fs.createWriteStream(zipFile.name));
       dataDir = path.join(config.dataDir, "/" + pid);
       ref$ = (yield childProcess.exec("7z e " + zipFile.name + " -o" + dataDir + " -y")), stdout = ref$[0], stderr = ref$[1];
-      log("output: " + stdout + " " + stderr);
       flattenDir(dataDir);
     } catch (e$) {
       err = e$;
       ret = {
         status: "decompressing error"
       };
+      log(err);
     } finally {
       zipFile.removeCallback();
       ret = {
@@ -175,6 +175,11 @@
     ref$ = (yield childProcess.exec(execCmd, {
       cwd: path.dirname(config.sandboxer)
     })), procOut = ref$[0], procErr = ref$[1];
+    log({
+      procOut: procOut,
+      procErr: procErr,
+      execCmd: execCmd
+    });
     log("sandboxer result: " + procErr);
     exeRes = JSON.parse(procErr);
     if (exeRes.status !== 'OK') {
@@ -207,7 +212,7 @@
     return ret.score = score, ret;
   };
   out$.judge = judge = co.wrap(function*(lang, code, probConfig, doc){
-    var tmpDir, config, pid, exePath, err, message, dataset, ref$, results, i$, len$, data, res, ret;
+    var tmpDir, config, pid, exePath, err, message, dataset, ref$, results, data, ret;
     log("Start judging: lang: " + lang);
     tmpDir = tmp.dirSync({
       unsafeCleanup: true
@@ -233,12 +238,14 @@
     }
     try {
       dataset = (ref$ = config.dataset, delete config.dataset, ref$);
-      results = [];
-      for (i$ = 0, len$ = dataset.length; i$ < len$; ++i$) {
-        data = dataset[i$];
-        res = (yield limit(runAtom(pid, lang, exePath, data, config)));
-        results.push(res);
-      }
+      results = (yield (yield* (function*(){
+        var i$, ref$, len$, results$ = [];
+        for (i$ = 0, len$ = (ref$ = dataset).length; i$ < len$; ++i$) {
+          data = ref$[i$];
+          results$.push(limit(runAtom(pid, lang, exePath, data.toObject(), config)));
+        }
+        return results$;
+      }())));
       log("starting modifying doc");
       doc.results = results;
       doc.final = calcProbScore(_.zip(dataset, results));

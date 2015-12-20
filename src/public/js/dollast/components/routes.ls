@@ -1,36 +1,37 @@
-R = require \react/addons
-router = require \react-router
-# history = require \react-router/lib/History
-T = router.Route
-D = router.DefaultRoute
+require! {
+  \react/addons : R
+  \react-router : {Route, IndexRoute}
+}
+T = Route
+D = IndexRoute
 
 module.exports = (app) ->
-  _ T, handler: app,
-    _ D, handler: require(\./site/index)
-    _ T, path: \about, handler: require(\./site/about)
-    _ T, path: \login, handler: require(\./site/login)
+  _ T, path: \/, component: app,
+    _ D, component: require(\./site/index)
+    _ T, path: \about, component: require(\./site/about)
+    _ T, path: \login, component: require(\./site/login)
     _ T, path: \problem,
-      _ D, handler: require(\./problem/list)
-      _ T, path: \create, handler: require(\./problem/modify)
+      _ D, component: require(\./problem/list)
+      _ T, path: \create, component: require(\./problem/modify)
       _ T, path: ":pid",
-        _ D, handler: require(\./problem/show)
-        _ T, path: \modify, handler: require(\./problem/modify)
-        _ T, path: \stat, handler: require(\./problem/stat)
+        _ D, component: require(\./problem/show)
+        _ T, path: \modify, component: require(\./problem/modify)
+        _ T, path: \stat, component: require(\./problem/stat)
     _ T, path: \solution,
-      _ D, handler: require(\./solution/list)
-      _ T, path: "submit/:pid", handler: require(\./solution/submit)
-      _ T, path: "user/:uid", handler: require(\./solution/list)
-      _ T, path: ":sid", handler: require(\./solution/show)
+      _ D, component: require(\./solution/list)
+      _ T, path: "submit/:pid", component: require(\./solution/submit)
+      _ T, path: "user/:uid", component: require(\./solution/list)
+      _ T, path: ":sid", component: require(\./solution/show)
     _ T, path: \round,
-      _ D, handler: require(\./round/list)
-      _ T, path: \create, handler: require(\./round/modify)
+      _ D, component: require(\./round/list)
+      _ T, path: \create, component: require(\./round/modify)
       _ T, path: ":rid",
-        _ D, handler: require(\./round/show)
-        _ T, path: \modify, handler: require(\./round/modify)
-        _ T, path: \board, handler: require(\./round/board)
+        _ D, component: require(\./round/show)
+        _ T, path: \modify, component: require(\./round/modify)
+        _ T, path: \board, component: require(\./round/board)
     _ T, path: \user,
-      _ D, handler: require(\./user/show)
-      _ T, path: \register, handler: require(\./user/register)
+      _ D, component: require(\./user/show)
+      _ T, path: \register, component: require(\./user/register)
       _ T, path: ":uid",
-        _ D, handler: require(\./user/show)
-        _ T, path: \modify, handler: require(\./user/modify)
+        _ D, component: require(\./user/show)
+        _ T, path: \modify, component: require(\./user/modify)

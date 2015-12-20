@@ -1,6 +1,9 @@
 require! {
   "../db"
+  \debug
 }
+
+log = debug \dollast:ctrl:sol
 
 export
   submit:  ->*
@@ -10,7 +13,8 @@ export
     @check-body 'code' .len 1, 50000
     return if @errors
 
-    uid = @user._id
+    uid = @state.user.client.uid
+    log {uid}
     yield db.sol.submit @request.body, uid
     @body = status:
       type: "ok"

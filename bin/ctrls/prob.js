@@ -13,7 +13,10 @@
     this.acquirePrivilege('login');
     log("next-count");
     return this.body = {
-      _id: (yield db.prob.nextCount())
+      type: 'success',
+      payload: {
+        _id: (yield db.prob.nextCount())
+      }
     };
   };
   ref$.show = function*(){
@@ -39,15 +42,10 @@
     var req, ref$;
     this.acquirePrivilege('login');
     req = this.request.body;
-    this.checkBody('method')['in'](['modify', 'create'], 'wrong method');
     this.checkBody('outlook').notEmpty('must exists');
     this.checkBody('config').notEmpty('must exists');
     log(req.outlook.title);
     this.check(req.outlook, 'title').len(1, 63);
-    this.check(req.outlook, 'inFmt').notEmpty();
-    this.check(req.outlook, 'outFmt').notEmpty();
-    this.check(req.outlook, 'sampleIn').notEmpty();
-    this.check(req.outlook, 'sampleOut').notEmpty();
     this.check(req.config, 'timeLmt').toFloat().gt(0);
     this.check(req.config, 'spaceLmt').toFloat().gt(0);
     this.check(req.config, 'stkLmt').toFloat().gt(0);

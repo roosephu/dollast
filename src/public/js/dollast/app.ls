@@ -1,44 +1,25 @@
-# @cjsx React.DOM
-
 require! {
   \./custom
   \co
-  \reflux
-  \react/addons : R
-  \react-router : T
-  \./components/elements : E
+  \redux
+  \react/addons : {render}
+  \react-router : {Router}
+  \react-redux : {Provider}
+  \redux-devtools/lib/react : {DevTools, DebugPanel, LogMonitor}
   \./components/routes
-  \./components/site/navbar
-  \./components/site/footer
-  \./stores/sess
+  \./components/app
+  \./store : {configure-store}
+  \./actions
 }
 
-# events = require \./components/site/events
+log = debug 'dollast:app'
 
-sess.actions.load-token!
-
-app = R.create-class do
-  mixins: [reflux.connect sess.store, \uid]
-  display-name: \dollast
-
-  render: ->
-    console.log @state
-
-    _div class-name: "ui grid",
-      _ navbar, @state.uid
-      _div class-name: "row",
-        _div class-name: "three wide column"
-        _div class-name: "ten wide column",
-          _ T.Route-handler
-        # _div class-name: "three wide column",
-        #   _ events
-      _div class-name: "row",
-        # _div class-name: "twelve wide column centered",
-        _ footer
-
-T.run do
-  routes app
-  (root) ->
-    R.render do
-      _ root
-      document.get-element-by-id \content
+store = configure-store!
+render do
+  _div null, 
+    _ Provider, store: store, ->
+      _ Router, null,
+        routes app
+    _ DebugPanel, top: true, right: true, bottom: true,
+      _ DevTools, store: store, monitor: LogMonitor
+  document.get-element-by-id \content

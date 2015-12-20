@@ -104,7 +104,7 @@
     }),
     onRegister: co.wrap(function*(info){
       var ret;
-      ret = (yield $.post('/user/register', this.clientSign(encInfo)));
+      ret = (yield $.post('/user/register', this.clientSign(info)));
       return console.log("return:", ret);
     }),
     onLogout: function(){

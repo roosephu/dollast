@@ -2,7 +2,10 @@ require! {
   "../db"
   "../core"
   "co-busboy"
+  \debug
 }
+
+log = debug \dollast:ctrl:data
 
 export
   upload: ->*
@@ -10,6 +13,7 @@ export
     pid = @params.pid
     parts = co-busboy @, auto-fields: true
     while part = yield parts
+      log {part}
       @body = yield core.upload pid, part
     yield db.prob.upd-data pid
     @body <<< status:

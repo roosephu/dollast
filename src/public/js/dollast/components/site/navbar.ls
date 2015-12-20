@@ -1,31 +1,22 @@
 require! {
-  \react/addons : R
-  \../elements : E
-  \../../stores/sess
+  \react/addons : {create-class}
+  \../elements : {labeled-icon, icon-input}
 }
 
-labeled-icon = R.create-class do
-  display-name: \labeled-icon
-  render: ->
-    _a class-name: "item labeled", href: @props.href,
-      _i class-name: "icon #{@props.icon}"
-      @props.text
+log = debug \dollast:navbar
 
-navbar-user-state = R.create-class do
+navbar-user-state = create-class do
   display-name: \navbar-user-state
-
-  logout: ->
-    sess.actions.logout!
 
   render: ->
     uid = @props.uid
     search = _div class-name: \item,
-      _ E.icon-input,
+      _ icon-input,
         icon: "search link"
         input:
           placeholder: "ID or Search"
         class-name: "inverted small"
-    if uid != ""
+    if uid
       _div class-name: "right menu",
         search
         _ labeled-icon,
@@ -35,7 +26,9 @@ navbar-user-state = R.create-class do
         _ labeled-icon,
           icon: "sign out"
           text: "Logout"
-          href: '#'
+          on-click: (e) ~>
+            e.prevent-default!
+            @props.on-logout!
     else
       _div class-name: "right menu",
         search
@@ -48,8 +41,9 @@ navbar-user-state = R.create-class do
           text: \Register
           href: "#/user/register"
 
-module.exports = R.create-class do
+module.exports = create-class do
   display-name: \navbar
+
   render: ->
     _div class-name: "row",
       # _div class-name: "ui segment",
@@ -75,6 +69,8 @@ module.exports = R.create-class do
           icon: "help circle"
           text: \About
           href: "#/about"
-        _ navbar-user-state, uid: @props.uid
+        _ navbar-user-state, 
+          uid: @props.uid
+          on-logout: @props.on-logout
 
     # _p {}, @state.sess.uid

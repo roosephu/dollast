@@ -33,7 +33,7 @@ params-validator =
   pid: (pid, next) ->*
     @params.pid = pid
     # log {pid}, @req
-    @check-params 'pid' .to-int! .ge 1
+    @check-params 'pid' .to-int! .ge 0
     return if @errors
     yield next
   sid: (sid, next) ->*

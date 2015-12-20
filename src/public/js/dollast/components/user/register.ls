@@ -1,14 +1,14 @@
 require! {
-  \react/addons : R
-  \../elements : E
-  \../../stores/sess
+  \react/addons : {create-class}
+  \react-redux : {connect}
+  \../elements : {icon-text, icon-input}
+  \../../actions : A
 }
 
-module.exports = R.create-class do
-  display-name: \register
+log = debug 'dollast:component:login'
 
-  get-initial-state: ->
-    uid: ""
+module.exports = connect! create-class do
+  display-name: \register
 
   component-did-mount: ->
     $ '#register-form' .form do
@@ -41,21 +41,21 @@ module.exports = R.create-class do
     e.prevent-default!
     $form = $ '#register-form'
     all-values = $form.form 'get values'
-    sess.actions.register all-values
+    A.on-register all-values
 
   render: ->
     _div class-name: "ui",
       _h1 class-name: "ui dividing header", "Register"
       _form class-name: "ui form segment relaxed", id: "register-form",
-        _ E.field, null,
-          _ E.icon-input,
+        _div class-name: "ui field",
+          _ icon-input,
             class-name: "left"
             icon: \user
             input:
               placeholder: "user id"
               name: "uid"
-        _ E.field, null,
-          _ E.icon-input,
+        _div class-name: "ui field",
+          _ icon-input,
             class-name: "left"
             icon: \lock
             input:
@@ -63,14 +63,14 @@ module.exports = R.create-class do
               name: "pswd"
               type: \password
         _div class-name: "field",
-          _ E.icon-input,
+          _ icon-input,
             class-name: "left"
             icon: \mail
             input:
               placeholder: "abc@xyz"
               name: \email
               type: \email
-        _ E.icon-text,
+        _ icon-text,
           class-name: "left primary labeled submit"
           icon: "sign in"
           text: \Register

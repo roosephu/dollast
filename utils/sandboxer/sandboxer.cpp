@@ -139,7 +139,7 @@ void run_parent(pid_t pid) {
 			case SIGXFSZ: msg = "XFSZ"; break; // file-size-limit-exceeded
 			default     : msg = "UNKW"; break; // unknown-signal
 			}
-			// cerr("[runner]%s\n", msg);
+			cerr("[runner]%s\n", msg);
 			if (sig == SIGXCPU)
 				cerr("{\"score\": 0, \"status\": \"%s\", \"time\": %.6f}\n", msg, utm_lmt);
 			else
@@ -153,7 +153,7 @@ void run_parent(pid_t pid) {
 		memset(&reg, 0, sizeof(reg));
 		ptrace(PTRACE_GETREGS, pid, NULL, &reg);
 		int syscall = reg.orig_rax;
-		// cerr("[runner]catch syscall: %s\n", syscall_name[syscall]);
+		// cerr("[runner]catch syscall: %s\n", syscall_name[syscall].c_str());
 
 		if (maxcnt[syscall]-- == 0) {
 			cerr("{\"score\": 0, \"status\": \"invalid syscall %s\"}\n", syscall_name[syscall].c_str());
@@ -167,8 +167,8 @@ void run_parent(pid_t pid) {
 			} else {
 				// cerr("[runner]access: '%s' %llu\n", fn.c_str(), (unsigned long long)reg.rsi);
 			}
-			if (white_list.count(fn) == 0) {
-				// cerr("[runner]bad open...killed\n");
+			if (false && white_list.count(fn) == 0) {
+				cerr("[runner]bad open %s...killed\n", fn.c_str());
 				ptrace(PTRACE_KILL, pid, NULL, NULL);
 				break;
 			}

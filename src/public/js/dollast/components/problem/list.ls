@@ -1,32 +1,42 @@
 require! {
-  \react/addons : R
+  \react/addons : {create-class}
+  \react-redux : {connect}
+  \../../actions : {on-refresh-problem-list}
   \../elements : E
   \../utils : U
+  \immutable : I
 }
 
-link-list = R.create-class do
+log = debug 'dollast:component:problem:list'
+
+link-list = create-class do
   display-name: \link-list
   render: ->
     _div class-name: "ui very relaxed divided link list",
       for elem in @props.list
-        _a class-name: "item", href: elem.href, # "problem/#{prob._id}",
+        _a class-name: "item", href: elem.href, key: elem.href, # "problem/#{prob._id}",
           _div class-name: "ui left floated icon",
             _i class-name: "icon check"
             _i class-name: "icon remove"
           _div class-name: "ui right floated", elem.right #"stat: #{elem.stat}"
           _div class-name: \description, elem.desc # "#{prob._id}. #{prob.outlook.title}"
 
-module.exports = R.create-class do
+selector = (state) ->
+  prob-list: state.get-in [\problem, \list], I.from-JS []
+
+module.exports = (connect selector) create-class do
   display-name: \prob-list
+  
+  component-did-mount: ->
+    @props.dispatch on-refresh-problem-list!
 
   render: ->
-    prob-list =
-      * href: '#/problem/1'
-        right: 'stat: ac 1'
-        desc: 'A+B problem'
-      ...
+    prob-list = for prob in @props.prob-list.to-JS!
+      href: "#/problem/#{prob._id}"
+      right: ''
+      desc: prob.outlook.title
 
-    _ E.ui, {},
+    _div class-name: "ui",
       _h1 class-name: "ui header dividing", "problem list"
 
       _ E.tab-menu,
@@ -48,6 +58,6 @@ module.exports = R.create-class do
 
       _ E.icon-text,
         class-name: "right floated launch primary labeled"
-        href: '#/problem/create'
-        text: "create"
-        icon: "plus"
+        href: \#/problem/create
+        text: \create
+        icon: \plus

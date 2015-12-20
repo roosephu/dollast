@@ -47,13 +47,16 @@ export do
     yield doc.save!
 
   register: (user) ->*
+    log {user}
     old = yield model.find-by-id user._id, '_id' .lean! .exec!
     if old
       log "here", old
       @throw "duplicate user id"
     user.priv-list = []
     user = new model user
-    user.pswd = bcrypt.hash-sync user.pswd, config.bcrypt-cost
+    
+    salt = bcrypt.gen-salt-sync bcrypt.bcrypt-cost
+    user.pswd = bcrypt.hash-sync user.pswd, salt
     yield user.save!
 
     return status:

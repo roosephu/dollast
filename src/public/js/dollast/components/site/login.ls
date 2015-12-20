@@ -1,14 +1,14 @@
 require! {
-  \react/addons : R
+  \react/addons : {create-class}
+  \react-redux : {connect}
   \../elements : E
-  \../../stores/sess
+  \../../actions : A
 }
 
-module.exports = R.create-class do
-  display-name: \login
+log = debug 'dollast:component:login'
 
-  get-initial-state: ->
-    uid: ""
+module.exports = connect! create-class do
+  display-name: \login
 
   component-did-mount: ->
     $ '#login-form' .form do
@@ -34,7 +34,7 @@ module.exports = R.create-class do
   submit: (e) ->
     e.prevent-default!
     $form = $ '#login-form'
-    sess.actions.login $form.form 'get values'
+    @props.dispatch A.on-login $form.form 'get values'
 
   render: ->
     _div class-name: "ui",

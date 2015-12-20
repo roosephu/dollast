@@ -52,7 +52,10 @@
       return (yield doc.save());
     },
     register: function*(user){
-      var old;
+      var old, salt;
+      log({
+        user: user
+      });
       old = (yield model.findById(user._id, '_id').lean().exec());
       if (old) {
         log("here", old);
@@ -60,7 +63,8 @@
       }
       user.privList = [];
       user = new model(user);
-      user.pswd = bcrypt.hashSync(user.pswd, config.bcryptCost);
+      salt = bcrypt.genSaltSync(bcrypt.bcryptCost);
+      user.pswd = bcrypt.hashSync(user.pswd, salt);
       (yield user.save());
       return {
         status: {

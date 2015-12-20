@@ -63,8 +63,8 @@
         uid: user._id
       });
       payload = {
-        server: crypt.AES.enc(serverPayload, serverKey),
-        client: crypt.AES.enc(clientPayload, clientKey)
+        server: serverPayload,
+        client: clientPayload
       };
       token = koaJwt.sign(payload, config.jwtKey, {
         expiresInSeconds: 60 * 60 * 24

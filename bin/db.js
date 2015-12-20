@@ -16,10 +16,10 @@
     var i$, ref$, len$, obj, results$ = [], this$ = this;
     ctx.acquirePrivilege = function(priv){
       var i$, ref$, len$, ids, results$ = [];
-      log("checking privilege: " + priv, ctx.user.priv);
+      log("checking privilege: " + priv, ctx.state.user.priv);
       for (i$ = 0, len$ = (ref$ = priv.split(" ")).length; i$ < len$; ++i$) {
         ids = ref$[i$];
-        if (config.mode !== "debug" && !ctx.user.priv[priv]) {
+        if (config.mode !== "debug" && !ctx.state.user.priv[priv]) {
           throw new Error("failure on privilege checking, " + priv + " required. ");
         }
       }
@@ -33,7 +33,7 @@
     }
     return results$;
     function fn$(){
-      return ctx.user;
+      return ctx.state.user;
     }
   };
 }).call(this);

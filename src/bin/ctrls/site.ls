@@ -51,8 +51,8 @@ export
       client-payload = JSON.stringify do
         uid: user._id
       payload =
-        server: crypt.AES.enc server-payload, server-key
-        client: crypt.AES.enc client-payload, client-key
+        server: server-payload # crypt.AES.enc server-payload, server-key
+        client: client-payload # crypt.AES.enc client-payload, client-key
 
       token = koa-jwt.sign payload, config.jwt-key, expires-in-seconds: 60 * 60 * 24
 

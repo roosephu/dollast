@@ -54,32 +54,6 @@ app.use koa-bodyparser do
     json: ['application/x-javascript']
     multipart: ['multipart/form-data']
 
-app.use (next) ->*
-  # log @request.body
-  # log "server.user", @state.user
-  # log koa-jwt.verify @request.header.authorization.substr(7), config.jwt-key, ignore-expiration: false
-
-  # decode header
-  if @state?.user?.server
-    @state.user = JSON.parse crypt.AES.dec that, config.server-AES-key
-    log 'encrypted data in header.server', @state.user
-  else
-    @{}state.user = {}
-
-  content = @request.body.signed
-  if content
-    content = koa-jwt.decode content
-    data = crypt.RSA.dec content.content
-    if @state.user.user and @state.user.client-key != data.client-key
-      throw new Error 'wrong client-key'
-
-    @request.body = data
-    log 'verified encrypted data found in body.', @request.body
-  yield next
-
-  # if @state.user.server
-    # @body = encrypted: crypt.AES.enc JSON.stringf
-
 # ==== Logger ====
 app.use (next) ->*
   try
@@ -88,11 +62,53 @@ app.use (next) ->*
   catch e
     log "catched error:"
     log e
-    @status = e.status || 400
-    @body = [error: e.message]
+    @status = e.status || 200
+    #@body = [error: e.message]
+    @body = 
+      type: 'internal error'
+      payload:
+        message: e.message
+      error: true
   if @errors
-    @status = 400
-    @body = @errors
+    @status = 200
+    @body = 
+      type: 'invalid request'
+      payload: @errors
+      error: true
+
+app.use (next) ->*
+  log 'request body', @request.body
+  #log 'user state', @state.user
+  # log "server.user", @state.user
+  # log koa-jwt.verify @request.header.authorization.substr(7), config.jwt-key, ignore-expiration: false
+
+  # decode header
+  if @state?.user?.server
+    #@state.user = JSON.parse crypt.AES.dec that, config.server-AES-key
+    if @state.user.client
+      client-state = JSON.parse that
+      log "client info", client-state
+    else
+      client-state = {}
+    @state.user = JSON.parse @state?.user?.server
+    @state.user.client = client-state
+    log 'encrypted data in header.server', @state.user
+  else
+    @{}state.user = {}
+
+  #content = @request.body.signed
+  #if content
+    #content = koa-jwt.decode content
+    #data = crypt.RSA.dec content.content
+    #if @state.user.user and @state.user.client-key != data.client-key
+      #throw new Error 'wrong client-key'
+#
+    #@request.body = data
+    #log 'verified encrypted data found in body.', @request.body
+  yield next
+
+  # if @state.user.server
+    # @body = encrypted: crypt.AES.enc JSON.stringf
 
 app.use (next) ->*
   @check = (obj, key, err-msg) ->
@@ -150,5 +166,6 @@ app.use routers.router
 
 # ====================================
 
-console.log "Listening port 8888"
-app.listen 8888
+port = process.env.PORT
+console.log "Listening port #{port}"
+app.listen port

@@ -104,7 +104,7 @@ export store = reflux.create-store do
     actions.load-token!
 
   on-register: co.wrap (info) ->*
-    ret = yield $.post '/user/register', @client-sign enc-info
+    ret = yield $.post '/user/register', @client-sign info
     console.log "return:", ret
 
   on-logout: ->

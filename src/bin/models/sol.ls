@@ -121,7 +121,7 @@ export do
     if not sol.open and sol.user != @get-current-user!?._id # todo: open other source
       log sol.user, @get-current-user!
       @acquire-privilege 'sol-all'
-    if not sol.round.published and 'unpub-rnd-sol' not in @get-current-user.priv
+    if sol.round?.published? and (not sol.round?.published and 'unpub-rnd-sol' not in @get-current-user!.priv)
       sol.final = status: "private"
       delete sol.results
     return sol

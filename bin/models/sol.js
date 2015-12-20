@@ -130,14 +130,14 @@
       return solList;
     },
     show: function*(sid, opts){
-      var sol, ref$;
+      var sol, ref$, ref1$, ref2$;
       opts == null && (opts = {});
       sol = (yield model.findById(sid).populate('prob', 'outlook.title').populate('round', 'published').lean().exec());
       if (!sol.open && sol.user !== ((ref$ = this$.getCurrentUser()) != null ? ref$._id : void 8)) {
         log(sol.user, this$.getCurrentUser());
         this$.acquirePrivilege('sol-all');
       }
-      if (!sol.round.published && !in$('unpub-rnd-sol', this$.getCurrentUser.priv)) {
+      if (((ref1$ = sol.round) != null ? ref1$.published : void 8) != null && (!((ref2$ = sol.round) != null && ref2$.published) && !in$('unpub-rnd-sol', this$.getCurrentUser().priv))) {
         sol.final = {
           status: "private"
         };
