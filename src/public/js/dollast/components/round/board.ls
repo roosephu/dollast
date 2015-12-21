@@ -1,6 +1,6 @@
-R = require \react/addons
+R = require \react
 
 module.exports = R.create-class do
   display-name: \rnd-board
   render: ->
-    _p {}, "rnd-board"
+    _ \p, {}, "rnd-board"

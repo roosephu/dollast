@@ -1,5 +1,5 @@
 require! {
-  \react/addons : {create-class}
+  \react : {create-class}
   \react-redux : {connect}
   \../actions : {on-logout, on-load-from-token}
   \../components/elements : E
@@ -24,17 +24,17 @@ module.exports = (connect map-state-to-props) create-class do
     #log @props.session.get \uid
     {dispatch} = @props
 
-    _div class-name: "ui grid",
+    _ \div, class-name: "ui grid",
       _ navbar, 
         uid: @props.session.get \uid
         on-logout: ->
           dispatch on-logout!
-      _div class-name: "row",
-        _div class-name: "three wide column"
-        _div class-name: "ten wide column",
+      _ \div, class-name: "row",
+        _ \div, class-name: "three wide column"
+        _ \div, class-name: "ten wide column",
           @props.children
-        # _div class-name: "three wide column",
+        # _ \div, class-name: "three wide column",
         #   _ events
-      _div class-name: "row",
-        # _div class-name: "twelve wide column centered",
+      _ \div, class-name: "row",
+        # _ \div, class-name: "twelve wide column centered",
         _ footer

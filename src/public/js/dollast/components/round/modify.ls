@@ -1,5 +1,5 @@
 require! {
-  \react/addons : {create-class}
+  \react : {create-class}
   \../elements : {label-field, icon-text, icon-input}
   \react-redux : {connect}
   \immutable : I
@@ -36,47 +36,47 @@ module.exports = (connect selector) create-class do
 
   render: ->
     round = @props.round.to-JS!
-    _div class-name: "ui form segment", 
-      _h1 class-name: "ui header dividing", "Round"
-      _div class-name: "ui fields three",
+    _ \div, class-name: "ui form segment", 
+      _ \h1, class-name: "ui header dividing", "Round"
+      _ \div, class-name: "ui fields three",
         _ label-field, text: \title,
-          _div class-name: "ui input",
-            _input name: \title
+          _ \div, class-name: "ui input",
+            _ \input, name: \title
         _ label-field, text: "start from",
-          _div class-name: "ui input",
-            _input name: \begTime
+          _ \div, class-name: "ui input",
+            _ \input, name: \begTime
         _ label-field, text: "end at",
-          _div class-name: "ui input",
-            _input name: \endTime
-      _h2 class-name: "ui header dividing", \problemset
-      _div class-name: "ui two fields",
-        _div class-name: "field",
-          _table class-name: "ui table segment definition",
-            _thead null, 
-              _tr null, 
-                _th class-name: \collapsing, ""
-                _th null, \pid
-            _tbody null, 
+          _ \div, class-name: "ui input",
+            _ \input, name: \endTime
+      _ \h2, class-name: "ui header dividing", \problemset
+      _ \div, class-name: "ui two fields",
+        _ \div, class-name: "field",
+          _ \table, class-name: "ui table segment definition",
+            _ \thead, null, 
+              _ \tr, null, 
+                _ \th, class-name: \collapsing, ""
+                _ \th, null, \pid
+            _ \tbody, null, 
               for prob in round.probs
-                _tr key: prob,
-                  _td null,
-                    _div class-name: "ui icon button",
-                      _i class-name: "icon mini remove"
-                  _td null, 
-                    "#{prob._id}. #{prob.outlook.title}"
-            _tfoot null,
-              _tr null,
-                _th null, ""
-                _th null,
-                  _div class-name: "ui input action",
-                    _input name: \pid, id: \pid, on-change: @handle-input
+                _ \tr, key: prob,
+                  _ \td, null,
+                    _ \div, class-name: "ui icon button",
+                      _ \i, class-name: "icon mini remove"
+                  _ \td, null, 
+                    "#{prob._ \i,d}. #{prob.outlook.title}"
+            _ \tfoot, null,
+              _ \tr, null,
+                _ \th, null, ""
+                _ \th, null,
+                  _ \div, class-name: "ui input action",
+                    _ \input, name: \pid, id: \pid, on-change: @handle-input
                     _ icon-text,
                       class-name: "floated right"
                       icon: "chevron right"
                       text: \add
                       on-click: @on-add-prob
 
-      _div class-name: \field,
+      _ \div, class-name: \field,
         _ icon-text,
           class-name: "floated right red"
           text: \delete

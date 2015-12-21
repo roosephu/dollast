@@ -48,7 +48,7 @@ prob-app.controller 'prob-modify-ctrl', [
       method = "modify"
       pid = parse-int that
       $scope.prob = prob-serv.get pid: pid, mode: "total"
-        .._id = pid
+        .._ \i,d = pid
     else
       method = "create"
       $scope.prob = prob-serv.next-count ->
@@ -62,7 +62,7 @@ prob-app.controller 'prob-modify-ctrl', [
       name: ""
 
     $scope.del-data = (atom) ->
-      pid = $scope.prob._id
+      pid = $scope.prob._ \i,d
       data-serv.delete pid: pid, file: atom.input, ->
         data-serv.delete pid: pid, file: atom.output, ->
           prob-serv.repair pid: pid
@@ -75,16 +75,16 @@ prob-app.controller 'prob-modify-ctrl', [
     $scope.upload = ->
       console.log $scope.upload-file
       $upload.upload do
-        url: "/data/#{$scope.prob._id}/upload"
+        url: "/data/#{$scope.prob._ \i,d}/upload"
         file: $scope.upload-file
 
     $scope.update-dataset-list = ->
-      $scope.prob.config.dataset = data-serv.query pid: $scope.prob._id
+      $scope.prob.config.dataset = data-serv.query pid: $scope.prob._ \i,d
 
     $scope.select = (judger) ->
       $scope.prob.config.judger = judger
 
     $scope.repair = ->
-      prob-serv.repair pid: $scope.prob._id
+      prob-serv.repair pid: $scope.prob._ \i,d
 
 ]

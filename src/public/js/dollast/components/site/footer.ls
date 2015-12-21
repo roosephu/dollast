@@ -1,5 +1,5 @@
 require! {
-  \react/addons : R
+  \react : R
   \../elements : E
 }
 

@@ -1,23 +1,23 @@
 require! {
-  \react/addons : R
+  \react : R
   \prelude-ls : P
 }
 
 hidden-items = R.create-class do
   dispay-name: \hidden-items
   render: ->
-    _div {},
+    _ \div, {},
       for text in @props.text
-        _p key: text.id, text
+        _ \p, key: text.id, text
 
 faq-item = R.create-class do
   dispay-name: \faq-item
   render: ->
-    _div {},
-      _h3 {}, @props.question
-      _h4 {}, @props.answer
+    _ \div, {},
+      _ \h3, {}, @props.question
+      _ \h4, {}, @props.answer
       _ hidden-items, text: @props.hidden
-      _br {}
+      _ \br, {}
 
 module.exports = R.create-class do
   display-name: \about
@@ -30,9 +30,9 @@ module.exports = R.create-class do
       * "comment system(disqus)"
       * "test a program"
 
-    _div {},
-      _p {}, "Hi 小朋友们大家好，还记得我是谁吗，对了我就是青年理论计算机科学家 BBL ！（背景音乐：我可是世界上最厉害的……）"
-      _p {}, "为了答谢广大人民群众对我的厚爱，以及老师们拉着我非要我写一个 OJ 出来，我就花了几个星期码了这样一个网站出来 →_→ "
+    _ \div, {},
+      _ \p, {}, "Hi 小朋友们大家好，还记得我是谁吗，对了我就是青年理论计算机科学家 BBL ！（背景音乐：我可是世界上最厉害的……）"
+      _ \p, {}, "为了答谢广大人民群众对我的厚爱，以及老师们拉着我非要我写一个 OJ 出来，我就花了几个星期码了这样一个网站出来 →_→ "
 
       _ faq-item,
         question: "Q: 为何这网站如此具有朴素简洁美？"
@@ -69,7 +69,7 @@ module.exports = R.create-class do
           * "据说码代码的时间只要学习新姿势的一半，学习新姿势的时间只要调试的一半"
           ...
 
-      _h3 {}, "todo list"
-      _ul {},
+      _ \h3, {}, "todo list"
+      _ \ul, {},
         for todo in todos
-          _li key: todo.id, todo
+          _ \li, key: todo.id, todo

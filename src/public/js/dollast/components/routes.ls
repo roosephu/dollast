@@ -1,5 +1,5 @@
 require! {
-  \react/addons : R
+  \react : R
   \react-router : {Route, IndexRoute}
 }
 T = Route

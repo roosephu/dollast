@@ -1,5 +1,5 @@
 require! {
-  \react/addons : {create-class}
+  \react : {create-class}
   \react-redux : {connect}
   \../../actions : {on-submit-solution}
   \../elements : {field, label-field, dropdown, icon-text}
@@ -43,13 +43,13 @@ module.exports = (connect selector) create-class do
     @props.dispatch on-submit-solution data
   
   render: ->
-    _div class-name: "ui form segment relaxed", id: \solution-submit,
+    _ \div, class-name: "ui form segment relaxed", id: \solution-submit,
       _ field, null,
-        _h1 class-name: "header divided", "problem: #{@props.params.pid}"
-      _div class-name: "ui error message"
+        _ \h1, class-name: "header divided", "problem: #{@props.params.pid}"
+      _ \div, class-name: "ui error message"
       _ label-field, text: \code,
-        _textarea name: \code
-      _div class-name: "ui two fields",
+        _ \textarea, name: \code
+      _ \div, class-name: "ui two fields",
         _ label-field, text: \language, 
           _ dropdown, 
             class-name: \selection

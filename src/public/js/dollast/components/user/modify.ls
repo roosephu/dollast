@@ -1,6 +1,6 @@
-R = require \react/addons
+R = require \react
 
 module.exports = R.create-class do
   display-name: \user-modify
   render: ->
-    _p {}, "user-modify"
+    _ \p, {}, "user-modify"

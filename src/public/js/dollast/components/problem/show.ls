@@ -1,5 +1,5 @@
 require! {
-  \react/addons : {create-class}
+  \react : {create-class}
   \react-redux : {connect}
   \../elements : {icon-text}
   \../../actions : {on-get-problem}
@@ -18,8 +18,8 @@ segment-box = create-class do
   display-name: \segment-box
   
   render: ->
-    _div class-name: "ui segment",
-      _div class-name: "ui top left attached label teal", @props.desc
+    _ \div, class-name: "ui segment",
+      _ \div, class-name: "ui top left attached label teal", @props.desc
       @props.children
 
 module.exports = (connect selector) create-class do
@@ -40,28 +40,28 @@ module.exports = (connect selector) create-class do
     problem = @props.problem.to-JS!
     #log {problem}
     
-    _div class-name: "ui",
-      _h1 class-name: "ui centered", "Problem #{pid}. #{problem.outlook.title}"
-      _p null, "time limit: #{problem.{}config.time-lmt || ''} space limit: #{problem.{}config.space-lmt || ''}"
+    _ \div, class-name: "ui",
+      _ \h1, class-name: "ui centered", "Problem #{pid}. #{problem.outlook.title}"
+      _ \p, null, "time limit: #{problem.{}config.time-lmt || ''} space limit: #{problem.{}config.space-lmt || ''}"
       _ segment-box, desc: \description,
-        _p mathjax: true, problem.outlook?.desc
-      _div class-name: "ui two column grid",
-        _div class-name: \row,
-          _div class-name: \column,
+        _ \p, mathjax: true, problem.outlook?.desc
+      _ \div, class-name: "ui two column grid",
+        _ \div, class-name: \row,
+          _ \div, class-name: \column,
             _ segment-box, desc: "input format",
-              _p null, problem.outlook?.in-fmt # mathjax here
-          _div class-name: \column,
+              _ \p, null, problem.outlook?.in-fmt # mathjax here
+          _ \div, class-name: \column,
             _ segment-box, desc: "output format",
-              _p null, problem.outlook?.out-fmt # mathjax here
-        _div class-name: \row,
-          _div class-name: \column,
+              _ \p, null, problem.outlook?.out-fmt # mathjax here
+        _ \div, class-name: \row,
+          _ \div, class-name: \column,
             _ segment-box, desc: "sample input",
-              _pre null, problem.outlook?.sample-in
-          _div class-name: \column,
+              _ \pre, null, problem.outlook?.sample-in
+          _ \div, class-name: \column,
             _ segment-box, desc: "sample output",
-              _pre null, problem.outlook?.sample-out
+              _ \pre, null, problem.outlook?.sample-out
 
-      _div class-name: "ui divider"
+      _ \div, class-name: "ui divider"
 
       _ icon-text, 
         class-name: \primary

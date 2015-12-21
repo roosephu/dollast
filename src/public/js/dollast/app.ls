@@ -2,10 +2,10 @@ require! {
   \./custom
   \co
   \redux
-  \react/addons : {render}
+  \react : {render}
   \react-router : {Router}
   \react-redux : {Provider}
-  \redux-devtools/lib/react : {DevTools, DebugPanel, LogMonitor}
+  \redux-devtools # {DevTools, DebugPanel, LogMonitor}
   \./components/routes
   \./components/app
   \./store : {configure-store}
@@ -16,7 +16,7 @@ log = debug 'dollast:app'
 
 store = configure-store!
 render do
-  _div null, 
+  _ \div, null,
     _ Provider, store: store, ->
       _ Router, null,
         routes app

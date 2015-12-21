@@ -1,5 +1,5 @@
 require! {
-  \react/addons : {create-class}
+  \react : {create-class}
   \react-redux : {connect}
   \immutable : I
   \../../actions : {on-update-problem, on-get-problem, on-upload-files}
@@ -139,16 +139,16 @@ module.exports = (connect selector) create-class do
     problem-title = @props.problem.get-in [\outlook, \title]
     title = if @props.params.pid then "Update Problem #{that}. #{problem-title}" else "Create Problem"
     
-    _div class-name: "ui form segment", id: 'problem-modify',
-      _h1 class-name: "ui centered", title
-      _div class-name: "ui error message"
-      _div class-name: "ui three fields",
+    _ \div, class-name: "ui form segment", id: 'problem-modify',
+      _ \h1, class-name: "ui centered", title
+      _ \div, class-name: "ui error message"
+      _ \div, class-name: "ui three fields",
         _ label-field, class-name: "eight wide", text: \title,
-          _div class-name: "ui input",
-            _input name: \title
+          _ \div, class-name: "ui input",
+            _ \input, name: \title
         _ label-field, class-name: "four wide", text: "round",
-          _div class-name: "ui input",
-            _input name: \rid, type: \number, placeholder: "optional"
+          _ \div, class-name: "ui input",
+            _ \input, name: \rid, type: \number, placeholder: "optional"
         _ label-field, class-name: "four wide", text: \judger,
           _ dropdown,
             class-name: \selection
@@ -160,36 +160,36 @@ module.exports = (connect selector) create-class do
               strict: \strict
               custom: \custom
 
-      _div class-name: "ui four fields",
+      _ \div, class-name: "ui four fields",
         _ label-field, text: "time limit (s)",
-          _div class-name: "ui input",
-            _input name: \timeLmt, type: \number
+          _ \div, class-name: "ui input",
+            _ \input, name: \timeLmt, type: \number
         _ label-field, text: "space limit (MB)",
-          _div class-name: "ui input",
-            _input name: \spaceLmt, type: \number
+          _ \div, class-name: "ui input",
+            _ \input, name: \spaceLmt, type: \number
         _ label-field, text: "stack limit (MB)",
-          _div class-name: "ui input",
-            _input name: \stkLmt, type: \number
+          _ \div, class-name: "ui input",
+            _ \input, name: \stkLmt, type: \number
         _ label-field, text: "output limit (MB)",
-          _div class-name: "ui input",
-            _input name: \outLmt, type: \number
+          _ \div, class-name: "ui input",
+            _ \input, name: \outLmt, type: \number
 
       _ field, null,
         _ label-field, text: \description
-          _textarea name: \desc
+          _ \textarea, name: \desc
 
-      _div class-name: "ui two fields",
+      _ \div, class-name: "ui two fields",
         _ label-field, text: "input format",
-          _textarea name: \inFmt
+          _ \textarea, name: \inFmt
         _ label-field, text: "output format",
-          _textarea name: \outFmt
-      _div class-name: "ui two fields",
+          _ \textarea, name: \outFmt
+      _ \div, class-name: "ui two fields",
         _ label-field, text: "sample input",
-          _textarea name: \sampleIn
+          _ \textarea, name: \sampleIn
         _ label-field, text: "sample output",
-          _textarea name: \sampleOut
+          _ \textarea, name: \sampleOut
           
-      _div class-name: "ui divider"
+      _ \div, class-name: "ui divider"
       
       _ field, null,
         _ icon-text, 
@@ -212,26 +212,26 @@ module.exports = (connect selector) create-class do
           text: \repair
           on-click: @repair
       
-      _div class-name: "ui two fields",
+      _ \div, class-name: "ui two fields",
         _ field, class-name: "four wide",
           _ dropzone, on-drop: @on-drop,
-            _div null,
+            _ \div, null,
               "drop files here for click to select"
         _ field, class-name: "twelve wide",
-          _table class-name: "ui table segment",
-            _thead null, 
-              _tr null, 
-                _th null, \input
-                _th null, \output
-                _th null, \weight
-                _th null, ""
-            _tbody null, 
+          _ \table, class-name: "ui table segment",
+            _ \thead, null, 
+              _ \tr, null, 
+                _ \th, null, \input
+                _ \th, null, \output
+                _ \th, null, \weight
+                _ \th, null, ""
+            _ \tbody, null, 
               for atom in problem.config?.dataset
-                _tr key: atom.input,
-                  _td null, atom.input
-                  _td null, atom.output
-                  _td null, atom.weight
-                  _td null,
+                _ \tr, key: atom.input,
+                  _ \td, null, atom.input
+                  _ \td, null, atom.output
+                  _ \td, null, atom.weight
+                  _ \td, null,
                     _ icon-text,
                       class-name: "right floated mini"
                       icon: \remove

@@ -1,5 +1,5 @@
 require! {
-  \react/addons : {create-class}
+  \react : {create-class}
   \react-redux : {connect}
   \../elements : {icon-text}
   \../../actions : {on-get-solutions-list}
@@ -18,39 +18,39 @@ module.exports = (connect selector) create-class do
   render: ->
     sols = @props.sols.to-JS!
     
-    _div null, 
-      _h1 class-name: "ui dividing header", \status
-      _table class-name: "ui table segment large green selectable", 
-        _thead null, 
-          _tr null,
-            _th class-name: "collapsing right", "sol id"
-            _th null, \problem
-            _th null, \user
-            _th null, \status
-            _th null, \score
-            _th null, "time(s)"
-            _th null, "space(MB)"
-            _th class-name: "collapsing", \lang
-            _th class-name: "collapsing", \round
-        _tbody null,
+    _ \div, null, 
+      _ \h1, class-name: "ui dividing header", \status
+      _ \table, class-name: "ui table segment large green selectable", 
+        _ \thead, null, 
+          _ \tr, null,
+            _ \th, class-name: "collapsing right", "sol id"
+            _ \th, null, \problem
+            _ \th, null, \user
+            _ \th, null, \status
+            _ \th, null, \score
+            _ \th, null, "time(s)"
+            _ \th, null, "space(MB)"
+            _ \th, class-name: "collapsing", \lang
+            _ \th, class-name: "collapsing", \round
+        _ \tbody, null,
           for sol in sols
-            _tr class-name: \red, key: sol._id, 
-              _td null, 
+            _ \tr, class-name: \red, key: sol._ \i,d, 
+              _ \td, null, 
                 _ icon-text,
                   class-name: "mini green",
                   icon: \code
-                  text: sol._id
-                  href: "#/solution/#{sol._id}"
-              _td null,
-                _a href: "#/problem/#{sol.prob._id}", "#{sol.prob._id}. #{sol.prob.outlook.title}"
-              _td null, 
-                _a href: "#/user/#{sol.user}", sol.user
-              _td null, sol.final.status
-              _td null, sol.final.score
-              _td null, sol.final.time
-              _td null, sol.final.space
-              _td null, sol.lang
-              _td null, sol.round?._id
+                  text: sol._ \i,d
+                  href: "#/solution/#{sol._ \i,d}"
+              _ \td, null,
+                _ \a, href: "#/problem/#{sol.prob._ \i,d}", "#{sol.prob._ \i,d}. #{sol.prob.outlook.title}"
+              _ \td, null, 
+                _ \a, href: "#/user/#{sol.user}", sol.user
+              _ \td, null, sol.final.status
+              _ \td, null, sol.final.score
+              _ \td, null, sol.final.time
+              _ \td, null, sol.final.space
+              _ \td, null, sol.lang
+              _ \td, null, sol.round?._ \i,d
       _ icon-text, 
         class-name: "floated right primary"
         text: \refresh

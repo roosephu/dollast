@@ -1,6 +1,6 @@
-R = require \react/addons
+R = require \react
 
 module.exports = R.create-class do
   display-name: \user-show
   render: ->
-    _p {}, "user-show"
+    _ \p, {}, "user-show"

@@ -1,12 +1,12 @@
 require! {
-  \react/addons : R
+  \react : R
   \co
   \debug
 }
 
 window._ = R.create-element
-for key, value of R.DOM
-  window."_#key" = value
+# for key, value of R.DOM
+#   window."_#key" = value
 window.debug = debug
 debug.enable "dollast:*"
 

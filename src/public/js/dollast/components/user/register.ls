@@ -1,5 +1,5 @@
 require! {
-  \react/addons : {create-class}
+  \react : {create-class}
   \react-redux : {connect}
   \../elements : {icon-text, icon-input}
   \../../actions : A
@@ -44,17 +44,17 @@ module.exports = connect! create-class do
     A.on-register all-values
 
   render: ->
-    _div class-name: "ui",
-      _h1 class-name: "ui dividing header", "Register"
-      _form class-name: "ui form segment relaxed", id: "register-form",
-        _div class-name: "ui field",
+    _ \div, class-name: "ui",
+      _ \h1, class-name: "ui dividing header", "Register"
+      _ \form, class-name: "ui form segment relaxed", id: "register-form",
+        _ \div, class-name: "ui field",
           _ icon-input,
             class-name: "left"
             icon: \user
             input:
               placeholder: "user id"
               name: "uid"
-        _div class-name: "ui field",
+        _ \div, class-name: "ui field",
           _ icon-input,
             class-name: "left"
             icon: \lock
@@ -62,7 +62,7 @@ module.exports = connect! create-class do
               placeholder: \password
               name: "pswd"
               type: \password
-        _div class-name: "field",
+        _ \div, class-name: "field",
           _ icon-input,
             class-name: "left"
             icon: \mail
@@ -74,4 +74,4 @@ module.exports = connect! create-class do
           class-name: "left primary labeled submit"
           icon: "sign in"
           text: \Register
-        _div class-name: "ui error message"
+        _ \div, class-name: "ui error message"

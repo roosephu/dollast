@@ -1,5 +1,5 @@
 require! {
-  \react/addons : {create-class}
+  \react : {create-class}
   \react-redux : {connect}
   \../elements : E
   \../../actions : A
@@ -37,9 +37,9 @@ module.exports = connect! create-class do
     @props.dispatch A.on-login $form.form 'get values'
 
   render: ->
-    _div class-name: "ui",
-      _h1 class-name: "ui dividing header", "Login"
-      _form class-name: "ui form segment relaxed", id: "login-form",
+    _ \div, class-name: "ui",
+      _ \h1, class-name: "ui dividing header", "Login"
+      _ \form, class-name: "ui form segment relaxed", id: "login-form",
         _ E.field, null,
           _ E.icon-input,
             class-name: "left"
@@ -59,4 +59,4 @@ module.exports = connect! create-class do
           class-name: "left primary labeled submit"
           icon: "sign in"
           text: \Login
-        _div class-name: "ui error message"
+        _ \div, class-name: "ui error message"

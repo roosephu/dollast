@@ -1,5 +1,5 @@
 require! {
-  \react/addons : {create-class}
+  \react : {create-class}
   \react-redux : {connect}
   \immutable : I
   \../elements : {dropdown, icon-text}
@@ -23,8 +23,8 @@ module.exports = create-class do
   
   render: ->
     
-    _div class-name: \ui,
-      _h1 class-name: "ui header dividing", \rounds
+    _ \div, class-name: \ui,
+      _ \h1, class-name: "ui header dividing", \rounds
       _ dropdown,
         class-name: "floated pointing button labeled icon"
         name: \filter

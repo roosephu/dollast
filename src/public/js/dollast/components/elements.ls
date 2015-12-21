@@ -1,4 +1,4 @@
-R = require \react/addons
+R = require \react
 U = require \./utils
 
 export labeled-icon = R.create-class do
@@ -6,8 +6,8 @@ export labeled-icon = R.create-class do
   render: ->
     a-props = U.get-attr @props, [\href, \onClick, \className, \onValueChange]
     a-props = U.merge-prop a-props, class-name: "item labeled"
-    _a a-props,
-      _i class-name: "icon #{@props.icon}"
+    _ \a, a-props,
+      _ \i, class-name: "icon #{@props.icon}"
       @props.text
 
 export icon-text = R.create-class do
@@ -16,8 +16,8 @@ export icon-text = R.create-class do
     a-props = U.get-attr @props, [\href, \onClick, \className, \onValueChange]
     a-props = U.merge-prop a-props, class-name: "ui icon button labeled"
     # console.log "ap", a-props
-    _a a-props,
-      _i class-name: "icon #{@props.icon}"
+    _ \a, a-props,
+      _ \i, class-name: "icon #{@props.icon}"
       @props.text
 
 export icon-input = R.create-class do
@@ -26,22 +26,22 @@ export icon-input = R.create-class do
     div-props = U.get-attr @props, [\href, \onClick, \className]
     div-props = U.merge-prop div-props, class-name: "ui input icon"
     # console.log a-props, @props
-    _div div-props,
-      _i class-name: "icon #{@props.icon}"
-      _input @props.input
+    _ \div, div-props,
+      _ \i, class-name: "icon #{@props.icon}"
+      _ \input, @props.input
 
 export ui = R.create-class do
   display-name: \ui
   render: ->
     props = U.add-class-name @props, \ui
     # console.log props
-    _div props, @props.children
+    _ \div, props, @props.children
 
 export field = R.create-class do
   display-name: \field
   render: ->
     props = U.add-class-name @props, \field
-    _div props, @props.children
+    _ \div, props, @props.children
 
 export tab-menu = R.create-class do
   display-name: \tab-menu
@@ -54,7 +54,7 @@ export tab-menu = R.create-class do
     menu-props = U.add-class-name @props.menu-props, "filter menu"
     # console.log "menu props", menu-props
     menu =
-      _div class-name: "tab", key: \menu,
+      _ \div, class-name: "tab", key: \menu,
         _ ui, menu-props,
           for tab in @props.tabs
             tab-prop = U.add-class-name tab.prop, "item"
@@ -62,7 +62,7 @@ export tab-menu = R.create-class do
             if tab.tab-name == @props.active
               tab-prop = U.add-class-name tab-prop, "active"
             tab-prop.key = tab.tab-name
-            _a tab-prop, tab.text
+            _ \a, tab-prop, tab.text
 
     tabs = for tab in @props.tabs
       prop = class-name: "tab", "data-tab": tab.tab-name
@@ -80,7 +80,7 @@ export label-field = R.create-class do
   render: ->
     text = delete @props.text
     _ field, @props,
-      [_label {}, text] ++ @props.children
+      [_ \label, {}, text] ++ @props.children
 
 export dropdown = R.create-class do
   display-name: \dropdown
@@ -91,10 +91,10 @@ export dropdown = R.create-class do
   render: ->
     ui-props = U.add-class-name @props, "dropdown"
     _ ui, ui-props,
-      _input type: \hidden, name: @props.name
-      _div class-name: "default text", @props.default
-      _i class-name: "dropdown icon"
-      _div class-name: "menu",
+      _ \input, type: \hidden, name: @props.name
+      _ \div, class-name: "default text", @props.default
+      _ \i, class-name: "dropdown icon"
+      _ \div, class-name: "menu",
         for key, val of @props.options
-          _div class-name: "item", "data-value": key, key: key, 
+          _ \div, class-name: "item", "data-value": key, key: key, 
             val

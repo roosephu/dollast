@@ -20,7 +20,7 @@ app.controller 'login-ctrl', [
   "$scope", "site-serv", "user-session"
   ($scope, site-serv, user-session) ->
     $scope.submit = (user) ->
-      user-session.login $scope.user._id, $scope.user.pswd
+      user-session.login $scope.user._ \i,d, $scope.user.pswd
 ]
 
 app.controller 'msg-center-ctrl', [

@@ -1,5 +1,5 @@
 require! {
-  \react/addons : {create-class}
+  \react : {create-class}
   \../elements : {labeled-icon, icon-input}
 }
 
@@ -10,14 +10,14 @@ navbar-user-state = create-class do
 
   render: ->
     uid = @props.uid
-    search = _div class-name: \item,
+    search = _ \div, class-name: \item,
       _ icon-input,
         icon: "search link"
         input:
           placeholder: "ID or Search"
         class-name: "inverted small"
     if uid
-      _div class-name: "right menu",
+      _ \div, class-name: "right menu",
         search
         _ labeled-icon,
           icon: \user
@@ -30,7 +30,7 @@ navbar-user-state = create-class do
             e.prevent-default!
             @props.on-logout!
     else
-      _div class-name: "right menu",
+      _ \div, class-name: "right menu",
         search
         _ labeled-icon,
           icon: "sign in"
@@ -45,10 +45,10 @@ module.exports = create-class do
   display-name: \navbar
 
   render: ->
-    _div class-name: "row",
-      # _div class-name: "ui segment",
-      _div class-name: "ui blue inverted page grid borderless menu",
-        _div class-name: "header item", \dollast
+    _ \div, class-name: "row",
+      # _ \div, class-name: "ui segment",
+      _ \div, class-name: "ui blue inverted page grid borderless menu",
+        _ \div, class-name: "header item", \dollast
         _ labeled-icon,
           icon: \home
           text: \Home
@@ -73,4 +73,4 @@ module.exports = create-class do
           uid: @props.uid
           on-logout: @props.on-logout
 
-    # _p {}, @state.sess.uid
+    # _ \p, {}, @state.sess.uid
