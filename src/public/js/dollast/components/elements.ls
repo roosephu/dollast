@@ -1,7 +1,9 @@
-R = require \react
-U = require \./utils
+require! {
+  \react : {create-class}
+  \./utils : U
+}
 
-export labeled-icon = R.create-class do
+export labeled-icon = create-class do
   display-name: \labeled-icon
   render: ->
     a-props = U.get-attr @props, [\href, \onClick, \className, \onValueChange]
@@ -10,7 +12,7 @@ export labeled-icon = R.create-class do
       _ \i, class-name: "icon #{@props.icon}"
       @props.text
 
-export icon-text = R.create-class do
+export icon-text = create-class do
   display-name: "icon-button"
   render: ->
     a-props = U.get-attr @props, [\href, \onClick, \className, \onValueChange]
@@ -20,7 +22,7 @@ export icon-text = R.create-class do
       _ \i, class-name: "icon #{@props.icon}"
       @props.text
 
-export icon-input = R.create-class do
+export icon-input = create-class do
   display-name: \icon-input
   render: ->
     div-props = U.get-attr @props, [\href, \onClick, \className]
@@ -30,20 +32,20 @@ export icon-input = R.create-class do
       _ \i, class-name: "icon #{@props.icon}"
       _ \input, @props.input
 
-export ui = R.create-class do
+export ui = create-class do
   display-name: \ui
   render: ->
     props = U.add-class-name @props, \ui
     # console.log props
     _ \div, props, @props.children
 
-export field = R.create-class do
+export field = create-class do
   display-name: \field
   render: ->
     props = U.add-class-name @props, \field
     _ \div, props, @props.children
 
-export tab-menu = R.create-class do
+export tab-menu = create-class do
   display-name: \tab-menu
 
   component-did-mount: ->
@@ -75,14 +77,14 @@ export tab-menu = R.create-class do
 
     _ ui, {}, [menu] ++ tabs
 
-export label-field = R.create-class do
+export label-field = create-class do
   display-name: \label-field
   render: ->
     text = delete @props.text
     _ field, @props,
       [_ \label, {}, text] ++ @props.children
 
-export dropdown = R.create-class do
+export dropdown = create-class do
   display-name: \dropdown
 
   component-did-mount: ->
@@ -96,5 +98,5 @@ export dropdown = R.create-class do
       _ \i, class-name: "dropdown icon"
       _ \div, class-name: "menu",
         for key, val of @props.options
-          _ \div, class-name: "item", "data-value": key, key: key, 
+          _ \div, class-name: "item", "data-value": key, key: key,
             val

@@ -21,7 +21,7 @@ app.service "user-session", [
         try
           payload = jwt-helper.decode-token token
           console.log payload
-          sess.uid = payload._ \i,d
+          sess.uid = payload._id
           sess.priv = payload.priv
         catch e
           console.log e
@@ -35,7 +35,7 @@ app.service "user-session", [
           callback enc-pswd
       login: (uid, pswd) ->
         sess.enc pswd, ->
-          site-serv.login _ \i,d: uid, pswd: it, ->
+          site-serv.login _id: uid, pswd: it, ->
             console.log it
             local-storage.token = it.token
             sess.load-token!

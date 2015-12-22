@@ -14,14 +14,14 @@ module.exports = (connect selector) create-class do
 
   component-will-mount: ->
     @props.dispatch on-get-solutions-list!
-  
+
   render: ->
     sols = @props.sols.to-JS!
-    
-    _ \div, null, 
+
+    _ \div, null,
       _ \h1, class-name: "ui dividing header", \status
-      _ \table, class-name: "ui table segment large green selectable", 
-        _ \thead, null, 
+      _ \table, class-name: "ui table segment large green selectable",
+        _ \thead, null,
           _ \tr, null,
             _ \th, class-name: "collapsing right", "sol id"
             _ \th, null, \problem
@@ -34,24 +34,24 @@ module.exports = (connect selector) create-class do
             _ \th, class-name: "collapsing", \round
         _ \tbody, null,
           for sol in sols
-            _ \tr, class-name: \red, key: sol._ \i,d, 
-              _ \td, null, 
+            _ \tr, class-name: \red, key: sol._id,
+              _ \td, null,
                 _ icon-text,
                   class-name: "mini green",
                   icon: \code
-                  text: sol._ \i,d
-                  href: "#/solution/#{sol._ \i,d}"
+                  text: sol._id
+                  href: "#/solution/#{sol._id}"
               _ \td, null,
-                _ \a, href: "#/problem/#{sol.prob._ \i,d}", "#{sol.prob._ \i,d}. #{sol.prob.outlook.title}"
-              _ \td, null, 
+                _ \a, href: "#/problem/#{sol.prob._id}", "#{sol.prob._id}. #{sol.prob.outlook.title}"
+              _ \td, null,
                 _ \a, href: "#/user/#{sol.user}", sol.user
               _ \td, null, sol.final.status
               _ \td, null, sol.final.score
               _ \td, null, sol.final.time
               _ \td, null, sol.final.space
               _ \td, null, sol.lang
-              _ \td, null, sol.round?._ \i,d
-      _ icon-text, 
+              _ \td, null, sol.round?._id
+      _ icon-text,
         class-name: "floated right primary"
         text: \refresh
         icon: \refresh

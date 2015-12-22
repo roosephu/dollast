@@ -67,7 +67,7 @@ export store = reflux.create-store do
     # try
     #   payload = jwt-helper.decode-token token
     #   console.log payload
-    #   sess.uid = payload._ \i,d
+    #   sess.uid = payload._id
     #   sess.priv = payload.priv
     # catch e
     #   console.log e

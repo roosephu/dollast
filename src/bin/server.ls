@@ -64,14 +64,14 @@ app.use (next) ->*
     log e
     @status = e.status || 200
     #@body = [error: e.message]
-    @body = 
+    @body =
       type: 'internal error'
       payload:
         message: e.message
       error: true
   if @errors
     @status = 200
-    @body = 
+    @body =
       type: 'invalid request'
       payload: @errors
       error: true
@@ -166,6 +166,6 @@ app.use routers.router
 
 # ====================================
 
-port = process.env.PORT
+port = process.env.PORT || 3000
 console.log "Listening port #{port}"
 app.listen port

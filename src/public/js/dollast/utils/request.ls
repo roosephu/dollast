@@ -20,14 +20,14 @@ get-client-key = ->
 client-sign = (txt) ->
   txt
   #client-key = get-client-key!
-  #cipher-txt = AES-enc 
+  #cipher-txt = AES-enc
 #
   #h = forge.hmac.create!
   #h.start 'sha256', key
   #h.update txt
   #sig = forge.util.encode64 forge.util.hex-to-bytes h.digest!.to-hex!
   #
-  #payload = 
+  #payload =
     #key: forge.util.encode64 RSA-enc.encrypt client-key
     #sig: sig
 #
@@ -41,14 +41,20 @@ promise = @Promise || require \bluebird
 
 #module.exports = request
 
-#export class my-request extends (superagent-promise superagent, promise)
-  #end: ->
-    #log "find token", @token
-    #if @token
-      #@set \auth, @token
-    #super @, arguments
+default-headers = {}
 
-module.exports = superagent-promise superagent, promise
+request = (method, url) ->
+  agent = superagent-promise superagent, promise
+  agent method, url .set default-headers
+
+request.set-headers = (field, value) ->
+  if field == Object field
+    for key, val of field
+      default-headers[key] = val
+  else
+    default-headers[field] = value
+
+module.exports = request
 
 #export request = promise
 #
@@ -76,7 +82,7 @@ module.exports = superagent-promise superagent, promise
     #ret = yield $[method] url, signed-data
     #log {method, url, payload}
   #catch e
-    #ret = 
+    #ret =
       #type: "internal error"
       #payload: e
     #log 'request error', e

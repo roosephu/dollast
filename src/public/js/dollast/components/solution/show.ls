@@ -17,14 +17,14 @@ selector = (state) ->
 
 module.exports = (connect selector) create-class do
   display-name: \sol-show
-  
+
   component-will-mount: ->
     @props.dispatch on-get-solution @props.params.sid
 
   render: ->
     sol = @props.sol.to-JS!
 
-    _ \div, null, 
+    _ \div, null,
       _ \h3, class-name: "ui header", "author: #{sol.user}"
       _ \h3, class-name: "ui header", "lang: #{sol.lang}"
       _ \h3, class-name: "ui header", "problem:",
@@ -33,15 +33,15 @@ module.exports = (connect selector) create-class do
         | \private =>
           _ \p, null, "this code is private"
         | \CE =>
-          _ \div, null, 
+          _ \div, null,
             _ \p, null, "compile message:"
             _ \pre, null, sol.final.message
         | \running =>
           _ \div, class-name: \ui, \running
         | otherwise =>
-          _ \div, null, 
+          _ \div, null,
             _ \div, class-name: "ui toggle checkbox",
-              _ \input, type: \checkbox,
+              _ \input, type: \checkbox
               _ \label, "Current state: #{if open then \public else \private}"
             _ \div, class-name: \ui,
               _ \h1, class-name: "ui header dividing", \details
@@ -54,7 +54,7 @@ module.exports = (connect selector) create-class do
                     _ \th, null, \space
                     _ \th, null, \score
                     _ \th, null, \message
-                _ \tbody, null, 
+                _ \tbody, null,
                   for result in sol.results
                     _ \tr, class-name: \positive, key: result.input,
                       _ \td, null, result.input
@@ -63,7 +63,7 @@ module.exports = (connect selector) create-class do
                       _ \td, null, result.space
                       _ \td, null, result.score
                       _ \td, null, result.message
-                _ \tfoot, null, 
+                _ \tfoot, null,
                   _ \tr, null,
                     _ \th, null, 'final result'
                     _ \th, null, sol.final.status

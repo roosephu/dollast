@@ -1,21 +1,21 @@
 require! {
   \path
-  \webpack
+  # \webpack
 }
 
 vendors = [
-    \react/addons, 
+    \react,
     \redux,
-    \redux-actions, 
-    \react-redux, 
-    \immutable, 
-    \co, 
-    \debug, 
-    \superagent, 
-    \superagent-promise, 
-    \bluebird, 
-    \react-highlight, 
-    \react-router, 
+    \redux-actions,
+    \react-redux,
+    \immutable,
+    \co,
+    \debug,
+    \superagent,
+    \superagent-promise,
+    \bluebird,
+    \react-highlight,
+    \react-router,
     \redux-devtools/lib/react,
     \react-dropzone,
     \prelude-ls,
@@ -24,12 +24,12 @@ vendors = [
     \redux-devtools,
 ]
 
-module.exports = config = 
+module.exports = config =
   debug: true
   watch: true
-  entry: 
+  entry:
     app: \./public/js/dollast/app
-    vendors: vendors
+    # vendors: vendors
   output:
     path: path.join __dirname, \public/js
     filename: \app.js
@@ -38,7 +38,7 @@ module.exports = config =
     #library-target: \commonjs
   #externals: {[x, "require(\"#{x}\")"] for x in externals}
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin \vendors,  \vendors.js
+    # new webpack.optimize.CommonsChunkPlugin \vendors,  \vendors.js
     #new webpack.optimize.UglifyJsPlugin do
       #compress:
         #warnings: false

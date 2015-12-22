@@ -42,38 +42,38 @@ app.controller 'rnd-modify-ctrl', [
     else
       rnd-serv.next-count ->
         $scope.rnd =
-          _ \i,d: it._ \i,d
+          _id: it._id
           beg-time: new Date Date.now!
           end-time: new Date Date.now!
         $scope.probs = []
     $scope.submit = ->
       console.log $scope.rnd
-      rid = $scope.rnd._ \i,d
-      $scope.rnd.probs = _.map (._ \i,d), $scope.probs
+      rid = $scope.rnd._id
+      $scope.rnd.probs = _.map (._id), $scope.probs
       rnd-serv.save $scope.rnd
     $scope.insert = ->
       prob-serv.get pid: $scope.pid, mode: "brief", ->
         console.log it
-        if it._ \i,d
+        if it._id
           $scope.probs.push it
         else
           ...
     $scope.remove = (pid) ->
-      $scope.probs = _.reject (._ \i,d == pid), $scope.probs
+      $scope.probs = _.reject (._id == pid), $scope.probs
     $scope.delete = ->
-      rnd-serv.delete rid: $scope.rnd._ \i,d
+      rnd-serv.delete rid: $scope.rnd._id
 ]
 
 fmt-results = (sols) ->
   results = {}
   for sol in sols
-    {user, prob} = sol._ \i,d
+    {user, prob} = sol._id
     results[user] ||= {}
     results[user][prob] ||= {}
 
     cur = results[user][prob]
-    if not cur._ \i,d? or cur._ \i,d < sol.sid
-      cur <<< _ \i,d: sol.sid, score: sol.score
+    if not cur._id? or cur._id < sol.sid
+      cur <<< _id: sol.sid, score: sol.score
 
   for user, value of results
     results[user].total = value |> _.values |> _.map (.score) |> _.sum

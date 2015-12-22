@@ -63,7 +63,7 @@ module.exports = (connect selector) create-class do
                     _ \div, class-name: "ui icon button",
                       _ \i, class-name: "icon mini remove"
                   _ \td, null, 
-                    "#{prob._ \i,d}. #{prob.outlook.title}"
+                    "#{prob._id}. #{prob.outlook.title}"
             _ \tfoot, null,
               _ \tr, null,
                 _ \th, null, ""

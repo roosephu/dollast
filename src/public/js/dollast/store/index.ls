@@ -4,17 +4,18 @@ require! {
   \redux-thunk
   \redux-logger : create-logger
   \../reducers : {root-reducer}
-  \redux-devtools : {dev-tools, persist-state}
+  \redux-devtools : {persist-state}
+  \../components/devtools
   \immutable : I
-} 
+}
 
 log = debug 'dollast:store'
 
-error-middleware = (store) -> 
+error-middleware = (store) ->
   dispatch = store.dispatch
   get-state = store.get-state
 
-  (next) -> 
+  (next) ->
     (action) ->
       if action instanceof Function
         add-jwt = (request) ->
@@ -28,7 +29,8 @@ error-middleware = (store) ->
       payload = action.payload
       if payload instanceof Error
         action.error = true
-        
+        return
+
       if payload?.constructor?.name == \Response
         #log action.payload.constructor.name, action.payload
         action.payload .= body
@@ -42,11 +44,11 @@ export configure-store = (init-state) ->
   #promise-middleware = redux-promise.promise-middleware
   #log {root-reducer, create-logger, promise-middleware}
   logger = create-logger do
-    transformer: (state) ->
+    state-transformer: (state) ->
       #log 'transformer', state
       I.from-JS state .to-JS!
   final-create-store = compose do
     apply-middleware error-middleware, promise-middleware, logger
-    dev-tools!
+    devtools.instrument!
     persist-state window.location.href.match /[?&]debug_session=([^&]+)\b/
   store = (final-create-store create-store) root-reducer, init-state

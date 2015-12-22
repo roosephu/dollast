@@ -10,7 +10,7 @@ require! {
 log = debug 'dollast:action'
 
 set-jwt = (token) ->
-  #request.set-headers Authorization: "Bearer #{token}"
+  request.set-headers Authorization: "Bearer #{token}"
   #old-settings = $.ajax-setup!
   #$.ajax-setup old-settings <<<<
     #headers:
@@ -31,13 +31,13 @@ export on-load-from-token = create-action 'load-from-token', (token) ->
 export on-login = (info) ->
   co.wrap (add-jwt, dispatch) ->*
     log "store received", info
-    ret = yield request.post \/site/login .send info .use add-jwt .end!
+    ret = yield request \post, \/site/login .send info .use add-jwt .end!
     dispatch on-load-from-token ret.body.token
 
 export on-register = (info) ->
   co.wrap (add-jwt, dispatch) ->*
-    data = yield request.post \/user/register .send info .use add-jwt .end!
-    
+    data = yield request \post, \/user/register .send info .use add-jwt .end!
+
     dispatch do
       type: \register
       payload: data.body
@@ -49,7 +49,7 @@ export on-logout = create-action 'logout', ->
 export on-update-problem = (pid, info) ->
   co.wrap (add-jwt, dispatch) ->*
     log 'update problem', to-server-fmt info
-    yield request.post "/problem/#{pid}" .send to-server-fmt info .use add-jwt .end!
+    yield request \post, "/problem/#{pid}" .send to-server-fmt info .use add-jwt .end!
 
     dispatch do
       type: \problem/update,
@@ -57,7 +57,7 @@ export on-update-problem = (pid, info) ->
 
 export on-refresh-problem-list = ->
   co.wrap (add-jwt, dispatch) ->*
-    data = yield request.get \/problem .end!
+    data = yield request \get, \/problem .end!
 
     dispatch do
       type: \problem/refresh-list
@@ -65,16 +65,16 @@ export on-refresh-problem-list = ->
 
 export on-get-problem = (pid, load, mode = "") ->
   co.wrap (add-jwt, dispatch) ->*
-    data = yield request.get "/problem/#{pid}/#{mode}" .use add-jwt .end!
+    data = yield request \get, "/problem/#{pid}/#{mode}" .use add-jwt .end!
     data.body.load = load
-    
+
     dispatch do
       type: \problem/get
       payload: data.body
 
 export on-submit-solution = (data) ->
   co.wrap (add-jwt, dispatch) ->*
-    res = yield request.post \/solution/submit .send data .use add-jwt .end!
+    res = yield request \post, \/solution/submit .send data .use add-jwt .end!
 
     dispatch do
       type: \solution/submit
@@ -82,7 +82,7 @@ export on-submit-solution = (data) ->
 
 export on-get-solutions-list = ->
   co.wrap (add-jwt, dispatch) ->*
-    data = yield request.get \/solution .use add-jwt .end!
+    data = yield request \get, \/solution .use add-jwt .end!
 
     dispatch do
       type: \solution/list
@@ -90,7 +90,7 @@ export on-get-solutions-list = ->
 
 export on-get-solution = (sid) ->
   co.wrap (add-jwt, dispatch) ->*
-    data = yield request.get "/solution/#{sid}" .use add-jwt .end!
+    data = yield request \get, "/solution/#{sid}" .use add-jwt .end!
 
     dispatch do
       type: \solution/get
@@ -98,7 +98,7 @@ export on-get-solution = (sid) ->
 
 export on-get-round = (rid, load, mode = "") ->
   co.wrap (add-jwt, dispatch) ->*
-    data = yield request.get "/round/#{rid}/#{mode}" .use add-jwt .end!
+    data = yield request \get, "/round/#{rid}/#{mode}" .use add-jwt .end!
     data.body.load = load
 
     dispatch do
@@ -108,7 +108,7 @@ export on-get-round = (rid, load, mode = "") ->
 export on-upload-files = (pid, files) ->
   co.wrap (add-jwt, dispatch) ->*
     log {files}
-    req = request.post "/data/#{pid}/upload"
+    req = request \post, "/data/#{pid}/upload"
     for f in files
       req.attach f.name, f
     data = yield req.use add-jwt .end!
@@ -119,8 +119,8 @@ export on-upload-files = (pid, files) ->
 
 export on-add-prob-to-round = (pid) ->
   co.wrap (add-jwt, dispatch) ->*
-    prob-info = yield request.get "/problem/#{pid}/brief" .use add-jwt .end!
+    prob-info = yield request \get, "/problem/#{pid}/brief" .use add-jwt .end!
 
     dispatch do
-      type: \round/add-prob      
+      type: \round/add-prob
       payload: prob-info.body

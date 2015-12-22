@@ -17,7 +17,7 @@ crud.service "site-serv", [
 crud.service 'prob-serv', [
   "$resource"
   ($resource) ->
-    $resource '/problem/:pid/:mode/', pid: '@_ \i,d',
+    $resource '/problem/:pid/:mode/', pid: '@_id',
       next-count:
         params:
           pid: 'next-count'
@@ -32,7 +32,7 @@ crud.service 'prob-serv', [
 crud.service "rnd-serv", [
   "$resource",
   ($resource) ->
-    $resource "/round/:rid/:mode", rid: '@_ \i,d',
+    $resource "/round/:rid/:mode", rid: '@_id',
       next-count:
         params:
           rid: 'next-count'
@@ -45,7 +45,7 @@ crud.service "rnd-serv", [
 crud.service "sol-serv", [
   "$resource",
   ($resource) ->
-    $resource "/solution/:sid/:mode", sid: '@_ \i,d',
+    $resource "/solution/:sid/:mode", sid: '@_id',
       submit:
         method: 'POST'
       toggle:
@@ -57,13 +57,13 @@ crud.service "sol-serv", [
 crud.service "data-serv", [
   "$resource",
   ($resource) ->
-    $resource "/data/:pid/:file", sid: '@_ \i,d'
+    $resource "/data/:pid/:file", sid: '@_id'
 ]
 
 crud.service "user-serv", [
   "$resource"
   ($resource) ->
-    $resource "/user/:uid/:mode", uid: '@_ \i,d',
+    $resource "/user/:uid/:mode", uid: '@_id',
       save:
         method: 'POST'
         params:

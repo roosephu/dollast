@@ -14,12 +14,12 @@ link-list = create-class do
   render: ->
     _ \div, class-name: "ui very relaxed divided link list",
       for elem in @props.list
-        _ \a, class-name: "item", href: elem.href, key: elem.href, # "problem/#{prob._ \i,d}",
+        _ \a, class-name: "item", href: elem.href, key: elem.href, # "problem/#{prob._id}",
           _ \div, class-name: "ui left floated icon",
             _ \i, class-name: "icon check"
             _ \i, class-name: "icon remove"
           _ \div, class-name: "ui right floated", elem.right #"stat: #{elem.stat}"
-          _ \div, class-name: \description, elem.desc # "#{prob._ \i,d}. #{prob.outlook.title}"
+          _ \div, class-name: \description, elem.desc # "#{prob._id}. #{prob.outlook.title}"
 
 selector = (state) ->
   prob-list: state.get-in [\problem, \list], I.from-JS []
@@ -32,7 +32,7 @@ module.exports = (connect selector) create-class do
 
   render: ->
     prob-list = for prob in @props.prob-list.to-JS!
-      href: "#/problem/#{prob._ \i,d}"
+      href: "#/problem/#{prob._id}"
       right: ''
       desc: prob.outlook.title
 

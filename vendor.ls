@@ -5,7 +5,7 @@ require! {
 }
 
 vendors = [
-  \react/addons, 
+  \react, 
   \redux,
   \redux-actions, 
   \react-redux, 
@@ -27,24 +27,24 @@ vendors = [
 ]
 
 mk_ven = "browserify "
-mk_app = "browserify -v "
+mk_ \a,pp = "browserify -v "
 
 for x in vendors
   mk_ven += " -r " + x
-  mk_app += " -x " + x
+  mk_ \a,pp += " -x " + x
 
 mk_ven += " > public/js/vendors.js"
-mk_app += " public/js/dollast/app.js -o public/js/app.js"
+mk_ \a,pp += " public/js/dollast/app.js -o public/js/app.js"
 
 console.log mk_ven
 exec mk_ven, ->
   log "vendors successful"
-console.log mk_app
+console.log mk_ \a,pp
 
 log = debug \vendors
 
 callback = ->
-  exec mk_app, ->
+  exec mk_ \a,pp, ->
     log moment!.format!
     set-timeout callback, 10000
 #set-interval callback, 3000

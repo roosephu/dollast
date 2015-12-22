@@ -5,7 +5,7 @@ app.controller 'sol-submit-ctrl', [
   ($scope, sol-serv, $route-params, $location, $timeout) ->
     $scope.languages = ["cpp", "java"]
     $scope.sol =
-      _ \i,d: 'submit'
+      _id: 'submit'
       pid: parse-int $route-params.pid
       lang: 'cpp'
       code: ''
