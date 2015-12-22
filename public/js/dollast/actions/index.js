@@ -28,135 +28,114 @@
       return new Error("no given token");
     }
   });
-  out$.onLogin = onLogin = function(info){
-    return co.wrap(function*(addJwt, dispatch){
-      var ret;
-      log("store received", info);
-      ret = yield request('post', '/site/login').send(info).use(addJwt).end();
-      dispatch(onLoadFromToken(ret.body.token));
-    });
-  };
-  out$.onRegister = onRegister = function(info){
-    return co.wrap(function*(addJwt, dispatch){
-      var data;
-      data = yield request('post', '/user/register').send(info).use(addJwt).end();
-      dispatch({
-        type: 'register',
-        payload: data.body
-      });
-    });
-  };
+  out$.onLogin = onLogin = co.wrap(function*(info){
+    var ret;
+    log("store received", info);
+    ret = yield request('post', '/site/login').send(info).end();
+    onLoadFromToken(ret.body.token);
+  });
+  out$.onRegister = onRegister = co.wrap(function*(info){
+    var data;
+    data = yield request('post', '/user/register').send(info).end();
+    return {
+      type: 'register',
+      payload: data.body
+    };
+  });
   out$.onLogout = onLogout = createAction('logout', function(){
     delete localStorage.token;
+    setJwt("");
     return null;
   });
-  out$.onUpdateProblem = onUpdateProblem = function(pid, info){
-    return co.wrap(function*(addJwt, dispatch){
-      log('update problem', toServerFmt(info));
-      yield request('post', "/problem/" + pid).send(toServerFmt(info)).use(addJwt).end();
-      dispatch({
-        type: 'problem/update',
-        payload: info
-      });
-    });
-  };
-  out$.onRefreshProblemList = onRefreshProblemList = function(){
-    return co.wrap(function*(addJwt, dispatch){
-      var data;
-      data = yield request('get', '/problem').end();
-      dispatch({
-        type: 'problem/refresh-list',
-        payload: data.body
-      });
-    });
-  };
-  out$.onGetProblem = onGetProblem = function(pid, load, mode){
+  out$.onUpdateProblem = onUpdateProblem = co.wrap(function*(pid, info){
+    log('update problem', toServerFmt(info));
+    yield request('post', "/problem/" + pid).send(toServerFmt(info)).end();
+    return {
+      type: 'problem/update',
+      payload: info
+    };
+  });
+  out$.onRefreshProblemList = onRefreshProblemList = co.wrap(function*(){
+    var data;
+    data = yield request('get', '/problem').end();
+    return {
+      type: 'problem/refresh-list',
+      payload: data.body
+    };
+  });
+  out$.onGetProblem = onGetProblem = co.wrap(function*(pid, load, mode){
+    var data;
     mode == null && (mode = "");
-    return co.wrap(function*(addJwt, dispatch){
-      var data;
-      data = yield request('get', "/problem/" + pid + "/" + mode).use(addJwt).end();
-      data.body.load = load;
-      dispatch({
-        type: 'problem/get',
-        payload: data.body
-      });
-    });
-  };
-  out$.onSubmitSolution = onSubmitSolution = function(data){
-    return co.wrap(function*(addJwt, dispatch){
-      var res;
-      res = yield request('post', '/solution/submit').send(data).use(addJwt).end();
-      dispatch({
-        type: 'solution/submit',
-        payload: res.body
-      });
-    });
-  };
-  out$.onGetSolutionsList = onGetSolutionsList = function(){
-    return co.wrap(function*(addJwt, dispatch){
-      var data;
-      data = yield request('get', '/solution').use(addJwt).end();
-      dispatch({
-        type: 'solution/list',
-        payload: data.body
-      });
-    });
-  };
-  out$.onGetSolution = onGetSolution = function(sid){
-    return co.wrap(function*(addJwt, dispatch){
-      var data;
-      data = yield request('get', "/solution/" + sid).use(addJwt).end();
-      dispatch({
-        type: 'solution/get',
-        payload: data.body
-      });
-    });
-  };
-  out$.onGetRound = onGetRound = function(rid, load, mode){
+    data = yield request('get', "/problem/" + pid + "/" + mode).end();
+    data.body.load = load;
+    return {
+      type: 'problem/get',
+      payload: data.body
+    };
+  });
+  out$.onSubmitSolution = onSubmitSolution = co.wrap(function*(data){
+    var res;
+    res = yield request('post', '/solution/submit').send(data).end();
+    return {
+      type: 'solution/submit',
+      payload: res.body
+    };
+  });
+  out$.onGetSolutionsList = onGetSolutionsList = co.wrap(function*(){
+    var data;
+    data = yield request('get', '/solution').end();
+    return {
+      type: 'solution/list',
+      payload: data.body
+    };
+  });
+  out$.onGetSolution = onGetSolution = co.wrap(function*(sid){
+    var data;
+    data = yield request('get', "/solution/" + sid).end();
+    return {
+      type: 'solution/get',
+      payload: data.body
+    };
+  });
+  out$.onGetRound = onGetRound = co.wrap(function*(rid, load, mode){
+    var data;
     mode == null && (mode = "");
-    return co.wrap(function*(addJwt, dispatch){
-      var data;
-      data = yield request('get', "/round/" + rid + "/" + mode).use(addJwt).end();
-      data.body.load = load;
-      dispatch({
-        type: 'round/get',
-        payload: data.body
-      });
+    data = yield request('get', "/round/" + rid + "/" + mode).end();
+    data.body.load = load;
+    return {
+      type: 'round/get',
+      payload: data.body
+    };
+  });
+  out$.onUploadFiles = onUploadFiles = co.wrap(function*(pid, files){
+    var req, i$, len$, f, data;
+    log({
+      files: files
     });
-  };
-  out$.onUploadFiles = onUploadFiles = function(pid, files){
-    return co.wrap(function*(addJwt, dispatch){
-      var req, i$, ref$, len$, f, data;
-      log({
-        files: files
-      });
-      req = request('post', "/data/" + pid + "/upload");
-      for (i$ = 0, len$ = (ref$ = files).length; i$ < len$; ++i$) {
-        f = ref$[i$];
-        req.attach(f.name, f);
-      }
-      data = yield req.use(addJwt).end();
-      dispatch({
-        type: 'problem/upload',
-        payload: (function(){
-          var i$, ref$, len$, results$ = [];
-          for (i$ = 0, len$ = (ref$ = files).length; i$ < len$; ++i$) {
-            f = ref$[i$];
-            results$.push(f.name);
-          }
-          return results$;
-        }())
-      });
-    });
-  };
-  out$.onAddProbToRound = onAddProbToRound = function(pid){
-    return co.wrap(function*(addJwt, dispatch){
-      var probInfo;
-      probInfo = yield request('get', "/problem/" + pid + "/brief").use(addJwt).end();
-      dispatch({
-        type: 'round/add-prob',
-        payload: probInfo.body
-      });
-    });
-  };
+    req = request('post', "/data/" + pid + "/upload");
+    for (i$ = 0, len$ = files.length; i$ < len$; ++i$) {
+      f = files[i$];
+      req.attach(f.name, f);
+    }
+    data = yield req.end();
+    return {
+      type: 'problem/upload',
+      payload: (function(){
+        var i$, ref$, len$, results$ = [];
+        for (i$ = 0, len$ = (ref$ = files).length; i$ < len$; ++i$) {
+          f = ref$[i$];
+          results$.push(f.name);
+        }
+        return results$;
+      }())
+    };
+  });
+  out$.onAddProbToRound = onAddProbToRound = co.wrap(function*(pid){
+    var probInfo;
+    probInfo = yield request('get', "/problem/" + pid + "/brief").end();
+    return {
+      type: 'round/add-prob',
+      payload: probInfo.body
+    };
+  });
 }).call(this);

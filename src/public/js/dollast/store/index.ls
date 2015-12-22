@@ -1,6 +1,7 @@
 require! {
+  \co
   \redux : {create-store, apply-middleware, compose}
-  \redux-promise : promise-middleware
+  # \redux-promise : promise-middleware
   \redux-thunk
   \redux-logger : create-logger
   \../reducers : {root-reducer}
@@ -17,6 +18,13 @@ error-middleware = (store) ->
 
   (next) ->
     (action) ->
+      # log {action}
+      if action instanceof Promise
+        co ->*
+          data = yield action
+          dispatch data
+        return
+
       if action instanceof Function
         add-jwt = (request) ->
           token = get-state!.get-in [\session, \token], null
@@ -48,7 +56,7 @@ export configure-store = (init-state) ->
       #log 'transformer', state
       I.from-JS state .to-JS!
   final-create-store = compose do
-    apply-middleware error-middleware, promise-middleware, logger
+    apply-middleware error-middleware, logger
     devtools.instrument!
     persist-state window.location.href.match /[?&]debug_session=([^&]+)\b/
   store = (final-create-store create-store) root-reducer, init-state

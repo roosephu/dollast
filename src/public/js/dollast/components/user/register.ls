@@ -2,7 +2,7 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \../elements : {icon-text, icon-input}
-  \../../actions : A
+  \../../actions : {on-register}
 }
 
 log = debug 'dollast:component:login'
@@ -41,7 +41,7 @@ module.exports = connect! create-class do
     e.prevent-default!
     $form = $ '#register-form'
     all-values = $form.form 'get values'
-    A.on-register all-values
+    @props.dispatch on-register all-values
 
   render: ->
     _ \div, class-name: "ui",
