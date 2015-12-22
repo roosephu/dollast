@@ -7,7 +7,7 @@ require! {
   'koa-conditional-get'
   'koa-validate'
   'koa-router'
-  'koa-jade'
+  # 'koa-jade'
   'koa-send'
   'koa-etag'
   'koa-jwt'
@@ -15,7 +15,7 @@ require! {
   'path'
   'fs'
   'debug'
-  'prelude-ls': _
+  'prelude-ls' : _
   './config'
   './db'
   \./crypt

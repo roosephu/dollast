@@ -53,7 +53,7 @@
     },
     rid: function*(rid, next){
       this.params.rid = rid;
-      this.checkParams('rid').toInt().ge(1);
+      this.checkParams('rid').toInt().ge(0);
       if (this.errors) {
         return;
       }
@@ -69,6 +69,6 @@
     }
   };
   router = new koaRouter();
-  router.param('pid', paramsValidator.pid).param('sid', paramsValidator.sid).param('rid', paramsValidator.rid).param('uid', paramsValidator.uid).get('/site/theme/:theme', site.theme).get('/site/token', site.token).post('/site/login', site.login).post('/site/logout', site.logout).post('/user/register', user.register).get('/user/:uid/profile', user.profile).post('/user/:uid/modify', user.save).get('/round', rnd.list).get('/round/next-count', rnd.nextCount).get('/round/:rid', rnd.show).get('/round/:rid/board', rnd.board).post('/round/:rid', rnd.save).get('/round/:rid/total', rnd.total).get('/round/:rid/publish', rnd.publish)['delete']('/round/:rid', rnd['delete']).get('/problem', prob.list).get('/problem/next-count', prob.nextCount).get('/problem/:pid', prob.show).post('/problem/:pid', prob.save)['delete']('/problem/:pid', prob['delete']).get('/problem/:pid/brief', prob.brief).get('/problem/:pid/total', prob.total).get('/problem/:pid/repair', prob.repair).get('/problem/:pid/stat', prob.stat).get('/solution', sol.list).get('/solution/:sid', sol.show).post('/solution/submit', sol.submit).post('/solution/:sid/toggle', sol.toggle).get('/data/:pid', data.show).post('/data/:pid/upload', data.upload)['delete']('/data/:pid/:file', data['delete']);
+  router.param('pid', paramsValidator.pid).param('sid', paramsValidator.sid).param('rid', paramsValidator.rid).param('uid', paramsValidator.uid).get('/site/theme/:theme', site.theme).get('/site/token', site.token).post('/site/login', site.login).post('/site/logout', site.logout).post('/user/register', user.register).get('/user/:uid/profile', user.profile).post('/user/:uid/modify', user.save).get('/round', rnd.list).get('/round/next-count', rnd.nextCount).get('/round/:rid', rnd.show).get('/round/:rid/board', rnd.board).post('/round/:rid', rnd.save).get('/round/:rid/total', rnd.total).get('/round/:rid/publish', rnd.publish)['delete']('/round/:rid', rnd.remove).get('/problem', prob.list).get('/problem/next-count', prob.nextCount).get('/problem/:pid', prob.show).post('/problem/:pid', prob.save)['delete']('/problem/:pid', prob['delete']).get('/problem/:pid/brief', prob.brief).get('/problem/:pid/total', prob.total).get('/problem/:pid/repair', prob.repair).get('/problem/:pid/stat', prob.stat).get('/solution', sol.list).get('/solution/:sid', sol.show).post('/solution/submit', sol.submit).post('/solution/:sid/toggle', sol.toggle).get('/data/:pid', data.show).post('/data/:pid/upload', data.upload)['delete']('/data/:pid/:file', data['delete']);
   out$.router = router = router.middleware();
 }).call(this);

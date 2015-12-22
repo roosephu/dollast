@@ -1,6 +1,9 @@
 require! {
   "../db"
+  \debug
 }
+
+log = debug \dollast:ctrl:round
 
 export
   list: ->*
@@ -15,6 +18,7 @@ export
 
   save: ->*
     @acquire-privilege \login
+    log {body: @request.body}
     yield db.rnd.modify @params.rid, @request.body
     @body = status:
       type: "ok"
@@ -24,7 +28,7 @@ export
     @acquire-privilege \login
     @body = yield db.rnd.show @params.rid, mode: "total"
 
-  delete: ->*
+  remove: ->*
     @acquire-privilege \login
     yield db.rnd.delete @params.rid
     @body = status:

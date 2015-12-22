@@ -3,7 +3,6 @@ require! {
   \react-redux : {connect}
   \../elements : {icon-text}
   \../../actions : {on-get-solution}
-  \../utils : U
   \immutable : I
   \react-highlight : highlight
 }
@@ -14,6 +13,8 @@ selector = (state) ->
   sol: state.get-in [\solution, \show], I.from-JS do
     final: {}
     results: []
+    prob:
+      _id: 0
 
 module.exports = (connect selector) create-class do
   display-name: \sol-show
@@ -23,12 +24,12 @@ module.exports = (connect selector) create-class do
 
   render: ->
     sol = @props.sol.to-JS!
+    pid = sol.prob._id
 
     _ \div, null,
       _ \h3, class-name: "ui header", "author: #{sol.user}"
       _ \h3, class-name: "ui header", "lang: #{sol.lang}"
-      _ \h3, class-name: "ui header", "problem:",
-        _ \span, null, sol.prob
+      _ \h3, class-name: "ui header", "problem: #{pid}"
       switch sol.final.status
         | \private =>
           _ \p, null, "this code is private"

@@ -43,7 +43,7 @@ params-validator =
     yield next
   rid: (rid, next) ->*
     @params.rid = rid
-    @check-params 'rid' .to-int! .ge 1
+    @check-params 'rid' .to-int! .ge 0
     return if @errors
     yield next
   uid: (uid, next) ->*
@@ -76,7 +76,7 @@ router
   .post   '/round/:rid',                rnd.save
   .get    '/round/:rid/total',          rnd.total
   .get    '/round/:rid/publish',        rnd.publish
-  .delete '/round/:rid',                rnd.delete
+  .delete '/round/:rid',                rnd.remove
 
   .get    '/problem',                   prob.list
   .get    '/problem/next-count',        prob.next-count

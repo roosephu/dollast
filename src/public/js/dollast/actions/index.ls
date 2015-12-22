@@ -119,3 +119,10 @@ export on-add-prob-to-round = co.wrap (pid) ->*
   return
     type: \round/add-prob
     payload: prob-info.body
+
+export on-round-modify = co.wrap (rnd) ->*
+  ret = yield request \post, "/round/#{rnd.rid}" .send rnd .end!
+
+  return
+    type: \round/modify
+    payload: null

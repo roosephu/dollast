@@ -13,12 +13,12 @@ selector = (state) ->
 
 module.exports = (connect selector) create-class do
   display-name: \sol-submit
-  
+
   component-did-mount: ->
-    $form = $ \#solution-submit
+    $form = $ '#solution-submit'
     $form.form do
       on: \blur
-      fields: 
+      fields:
         code:
           identifier: \code
           rules:
@@ -38,10 +38,10 @@ module.exports = (connect selector) create-class do
     e.prevent-default!
     $form = $ \#solution-submit
     all-values = $form.form 'get values'
-    
+
     data = all-values <<<< pid: @props.params.pid, uid: @props.uid
     @props.dispatch on-submit-solution data
-  
+
   render: ->
     _ \div, class-name: "ui form segment relaxed", id: \solution-submit,
       _ field, null,
@@ -50,8 +50,8 @@ module.exports = (connect selector) create-class do
       _ label-field, text: \code,
         _ \textarea, name: \code
       _ \div, class-name: "ui two fields",
-        _ label-field, text: \language, 
-          _ dropdown, 
+        _ label-field, text: \language,
+          _ dropdown,
             class-name: \selection
             name: \lang
             default: "please select your language"

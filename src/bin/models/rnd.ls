@@ -37,80 +37,89 @@ unlock-prob = co.wrap (rid, state, probs) ->*
 
 model = conn.conn.model 'round', schema
 count = 0
+func-next-count = conn.make-next-count model, count
 
-export do
-  modify: (rid, rnd) ~>*
+export next-count = ->*
+  @acquire-privilege 'rnd-all'
+  return yield func-next-count!
+
+export modify = (rid, rnd) ~>*
+  if rnd._id
+    delete rnd._id
+  if rid == 0
+    rid = yield next-count.bind(@)!
+    rnd._id = rid
+    log {rid}
+
+  @acquire-privilege 'rnd-all'
+  rnd.beg-time = new Date that if rnd.beg-time
+  rnd.end-time = new Date that if rnd.end-time
+  doc = yield model.find-by-id rid .exec!
+  if not doc
+    doc = new model
+
+  if rnd.probs
+    old-probs = doc.probs || []
+    new-probs = rnd.probs
+    log old-probs, new-probs
+    yield unlock-prob rid, false, _.difference old-probs, new-probs
+    yield   lock-prob rid,  true, _.difference new-probs, old-probs
+
+  doc <<< rnd
+  log doc
+  yield doc.save!
+  return true
+
+export show = (rid, opts = {}) ~>*
+  opts.mode ||= "view"
+  if opts.mode == "total"
     @acquire-privilege 'rnd-all'
-    rnd.beg-time = new Date that if rnd.beg-time
-    rnd.end-time = new Date that if rnd.end-time
-    doc = yield model.find-by-id rid .exec!
-    doc ||= new model
 
-    if rnd.probs
-      old-probs = if doc.probs then that else []
-      new-probs = rnd.probs
-      log old-probs, new-probs
-      yield unlock-prob rid, false, _.difference old-probs, new-probs
-      yield   lock-prob rid,  true, _.difference new-probs, old-probs
+  rnd = yield model.find-by-id rid, '-__v' .populate 'probs', '_id outlook.title' .lean! .exec!
+  if opts.mode == "view" and moment!.is-before rnd.beg-time
+    rnd.probs = []
+    rnd.started = false
+  else
+    rnd.started = true
+  return rnd
 
-    doc <<< rnd
-    yield doc.save!
-    return true
+export board = (rid, opts = {}) ->*
+  rnd = yield model.find-by-id rid, "published" .exec!
+  if not rnd?.published
+    @acquire-privilege "rnd-all"
 
-  show: (rid, opts = {}) ~>*
-    opts.mode ||= "view"
-    if opts.mode == "total"
-      @acquire-privilege 'rnd-all'
+  query = db.sol.model.aggregate do
+    * $match: round: rid
+    * $sort: prob: 1, user: 1, _id: -1
+    * $group:
+        _id:
+          prob: "$prob"
+          user: "$user"
+        score:
+          $first: '$final.score'
+        sid:
+          $first: '$_id'
+  results = yield query.exec!
+  return results
 
-    rnd = yield model.find-by-id rid, '-__v' .populate 'probs', '_id outlook.title' .lean! .exec!
-    if opts.mode == "view" and moment!.is-before rnd.beg-time
-      rnd.probs = []
-      rnd.started = false
-    else
-      rnd.started = true
-    return rnd
+export list = ~>*
+  return yield model.find {}, 'title begTime endTime' .lean! .exec!
 
-  board: (rid, opts = {}) ->*
-    rnd = yield model.find-by-id rid, "published" .exec!
-    if not rnd?.published
-      @acquire-privilege "rnd-all"
+export remove = (rid) ~>*
+  @acquire-privilege 'rnd-all'
+  return yield model.find-by-id-and-remove rid .lean! .exec!
 
-    query = db.sol.model.aggregate do
-      * $match: round: rid
-      * $sort: prob: 1, user: 1, _id: -1
-      * $group:
-          _id:
-            prob: "$prob"
-            user: "$user"
-          score:
-            $first: '$final.score'
-          sid:
-            $first: '$_id'
-    results = yield query.exec!
-    return results
+export publish = (rid) ->*
+  @acquire-privilege 'rnd-all'
+  doc = yield model.find-by-id rid .exec!
+  if not doc
+    throw new Error "no such round"
+  if moment!.is-before doc.end-time
+    throw new Error "round is running"
+  yield unlock-prob rid, false, doc.probs
+  doc.published = true
+  yield doc.save!
 
-  list: ~>*
-    return yield model.find {}, 'title begTime endTime' .lean! .exec!
-
-  delete: (rid) ~>*
-    @acquire-privilege 'rnd-all'
-    return yield model.find-by-id-and-remove rid .lean! .exec!
-
-  publish: (rid) ->*
-    @acquire-privilege 'rnd-all'
-    doc = yield model.find-by-id rid .exec!
-    if not doc
-      throw new Error "no such round"
-    if moment!.is-before doc.end-time
-      throw new Error "round is running"
-    yield unlock-prob rid, false, doc.probs
-    doc.published = true
-    yield doc.save!
-
-    return status:
-      type: "ok"
-      msg: "published all problems"
-
-  next-count: ->*
-    @acquire-privilege 'rnd-all'
-    return yield conn.next-count model, count
+  return status:
+    type: "ok"
+    msg: "published all problems"
