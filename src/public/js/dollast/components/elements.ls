@@ -1,6 +1,7 @@
 require! {
   \react : {create-class}
   \./utils : U
+  \classnames
 }
 
 export labeled-icon = create-class do
@@ -100,3 +101,47 @@ export dropdown = create-class do
         for key, val of @props.options
           _ \div, class-name: "item", "data-value": key, key: key,
             val
+
+export code-link = create-class do
+  display-name: \code
+
+  render: ->
+    class-name = classnames @props.class-name, 'green'
+    _ icon-text,
+      class-name: class-name
+      icon: \code
+      text: "#{@props.sid}"
+      href: "#/solution/#{@props.sid}"
+
+export prob-link = create-class do
+  display-name: \problem
+
+  render: ->
+    class-name = classnames @props.class-name, 'olive'
+    _ icon-text,
+      class-name: class-name
+      icon: \puzzle
+      text: "#{@props.pid}. #{@props.title}"
+      href: "#/problem/#{@props.pid}"
+
+export rnd-link = create-class do
+  display-name: \round
+
+  render: ->
+    class-name = classnames @props.class-name, 'teal'
+    _ icon-text,
+      class-name: class-name
+      icon: \idea
+      text: "#{@props.rid}. #{@props.title}"
+      href: "#/round/#{@props.rid}"
+
+export user-link = create-class do
+  display-name: \user
+
+  render: ->
+    class-name = classnames @props.class-name, ''
+    _ icon-text,
+      class-name: class-name
+      icon: \user
+      text: "#{@props.user}"
+      href: "#/user/#{@props.user}"

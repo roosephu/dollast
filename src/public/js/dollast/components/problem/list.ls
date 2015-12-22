@@ -2,7 +2,7 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \../../actions : {on-refresh-problem-list}
-  \../elements : E
+  \../elements : {icon-text, tab-menu}
   \../utils : U
   \immutable : I
 }
@@ -26,7 +26,7 @@ selector = (state) ->
 
 module.exports = (connect selector) create-class do
   display-name: \prob-list
-  
+
   component-did-mount: ->
     @props.dispatch on-refresh-problem-list!
 
@@ -39,7 +39,7 @@ module.exports = (connect selector) create-class do
     _ \div, class-name: "ui",
       _ \h1, class-name: "ui header dividing", "problem list"
 
-      _ E.tab-menu,
+      _ tab-menu,
         menu-props: class-name: "secondary pointing"
         active: \all
         tabs:
@@ -56,7 +56,7 @@ module.exports = (connect selector) create-class do
             prop: class-name: \red
             dom: _ link-list, list: prob-list
 
-      _ E.icon-text,
+      _ icon-text,
         class-name: "right floated launch primary labeled"
         href: \#/problem/create
         text: \create

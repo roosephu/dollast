@@ -1,6 +1,5 @@
 require! {
   'koa-router'
-  'koa-jwt'
   'koa-validate'
   'debug'
   'util'

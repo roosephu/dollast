@@ -18,7 +18,7 @@ export
 
   save: ->*
     @acquire-privilege \login
-    log {body: @request.body}
+    # log {body: @request.body}
     yield db.rnd.modify @params.rid, @request.body
     @body = status:
       type: "ok"

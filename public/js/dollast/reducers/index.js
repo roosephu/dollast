@@ -89,6 +89,9 @@
         probs == null && (probs = I.List());
         return probs.push(action.payload);
       });
+    }),
+    'round/list': useDefaultThrow(function(state, action){
+      return state.setIn(['round', 'list'], I.fromJS(action.payload));
     })
   }, initState);
 }).call(this);

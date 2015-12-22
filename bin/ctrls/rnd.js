@@ -21,9 +21,6 @@
   };
   ref$.save = function*(){
     this.acquirePrivilege('login');
-    log({
-      body: this.request.body
-    });
     yield db.rnd.modify(this.params.rid, this.request.body);
     this.body = {
       status: {

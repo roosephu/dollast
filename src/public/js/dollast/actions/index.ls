@@ -126,3 +126,10 @@ export on-round-modify = co.wrap (rnd) ->*
   return
     type: \round/modify
     payload: null
+
+export on-get-rounds-list = co.wrap ->*
+  ret = yield request \get, "/round" .end!
+
+  return
+    type: \round/list
+    payload: ret.body

@@ -1,7 +1,7 @@
 require! {
   \react : {create-class}
   \react-redux : {connect}
-  \../elements : {icon-text}
+  \../elements : {icon-text, code-link, prob-link, user-link}
   \../../actions : {on-get-solutions-list}
   \immutable : I
 }
@@ -36,15 +36,11 @@ module.exports = (connect selector) create-class do
           for sol in sols
             _ \tr, class-name: \red, key: sol._id,
               _ \td, null,
-                _ icon-text,
-                  class-name: "mini green",
-                  icon: \code
-                  text: sol._id
-                  href: "#/solution/#{sol._id}"
+                _ code-link, sid: sol._id
               _ \td, null,
-                _ \a, href: "#/problem/#{sol.prob._id}", "#{sol.prob._id}. #{sol.prob.outlook.title}"
+                _ prob-link, pid: sol.prob._id, title: sol.prob.outlook.title
               _ \td, null,
-                _ \a, href: "#/user/#{sol.user}", sol.user
+                _ user-link, user: sol.user
               _ \td, null, sol.final.status
               _ \td, null, sol.final.score
               _ \td, null, sol.final.time
