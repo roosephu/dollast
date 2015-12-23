@@ -2,6 +2,7 @@ require! {
   \react : {create-class}
   \./utils : U
   \classnames
+  \moment
 }
 
 export labeled-icon = create-class do
@@ -117,7 +118,7 @@ export prob-link = create-class do
   display-name: \problem
 
   render: ->
-    class-name = classnames @props.class-name, 'olive'
+    class-name = classnames @props.class-name, 'brown'
     _ icon-text,
       class-name: class-name
       icon: \puzzle
@@ -145,3 +146,22 @@ export user-link = create-class do
       icon: \user
       text: "#{@props.user}"
       href: "#/user/#{@props.user}"
+
+export round-time = create-class do
+  display-name: \round-time
+
+  render: ->
+    style =
+      if moment!.is-before @props.beg-time
+        \green
+      else if moment!.is-after @props.end-time
+        \grey
+      else
+        \red
+    _ \div, null,
+      " from "
+      _ \div, class-name: "ui label #{style}",
+        moment @props.beg-time .format 'YYYY-MM-DD hh:mm:ss'
+      " to "
+      _ \div, class-name: "ui label #{style}",
+        moment @props.end-time .format 'YYYY-MM-DD hh:mm:ss'

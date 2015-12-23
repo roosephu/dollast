@@ -2,9 +2,8 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \immutable : I
-  \../elements : {dropdown, icon-text, rnd-link}
+  \../elements : {dropdown, icon-text, rnd-link, round-time}
   \../../actions : {on-get-rounds-list}
-  \moment
 }
 
 log = debug \dollast:component:round:list
@@ -30,6 +29,7 @@ module.exports = (connect selector) create-class do
     $filter.dropdown 'set text', \all
 
   render: ->
+    log @props.rounds
     rounds = @props.rounds.to-JS!
 
     _ \div, null,
@@ -46,26 +46,14 @@ module.exports = (connect selector) create-class do
           text: \create
           icon: \plus
           href: '#/round/create'
-      _ \div, class-name: \ui,
+      _ \div, class-name: "ui segment",
         _ \div, class-name: "ui very relaxed divided link list",
           for rnd in rounds
-            style =
-              if moment!.is-before rnd.beg-time
-                \green
-              else if moment!.is-after rnd.end-time
-                \grey
-              else
-                \red
             _ \div, class-name: "item", href: rnd.href, key: "round/#{rnd._id}",
               # _ \div, class-name: "ui left floated icon",
               #   _ \i, class-name: "icon remove"
               _ \div, class-name: "ui right floated",
-                " from "
-                _ \div, class-name: "ui label #{style}",
-                  moment rnd.beg-time .format 'YYYY-MM-DD hh:mm:ss'
-                " to "
-                _ \div, class-name: "ui label #{style}",
-                  moment rnd.end-time .format 'YYYY-MM-DD hh:mm:ss'
+                _ round-time, rnd{beg-time, end-time}
                 # 'Registered: '
               _ \div, class-name: \description,
                 _ rnd-link, rid: rnd._id, title: rnd.title

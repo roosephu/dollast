@@ -2,6 +2,7 @@ require! {
   \./custom
   \co
   \redux
+  \react : {create-class}
   \react-dom : {render}
   \react-router : {Router}
   \react-redux : {Provider}
@@ -15,6 +16,7 @@ require! {
 log = debug 'dollast:app'
 
 store = configure-store!
+
 render do
   _ \div, null,
     _ Provider, store: store,

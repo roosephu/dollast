@@ -92,6 +92,9 @@
     }),
     'round/list': useDefaultThrow(function(state, action){
       return state.setIn(['round', 'list'], I.fromJS(action.payload));
+    }),
+    'round/show': useDefaultThrow(function(state, action){
+      return state.setIn(['round', 'show'], I.fromJS(action.payload));
     })
   }, initState);
 }).call(this);

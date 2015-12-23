@@ -147,11 +147,15 @@
     };
   });
   out$.onGetRoundsList = onGetRoundsList = co.wrap(function*(){
-    var ret;
-    ret = yield request('get', "/round").end();
     return {
       type: 'round/list',
-      payload: ret.body
+      payload: yield request('get', "/round").end()
+    };
+  });
+  out$.onGetRound = onGetRound = co.wrap(function*(rid){
+    return {
+      type: 'round/show',
+      payload: yield request('get', "/round/" + rid).end()
     };
   });
 }).call(this);

@@ -79,4 +79,7 @@ export root-reducer =
     \round/list : use-default-throw (state, action) ->
       state.set-in [\round, \list], I.from-JS action.payload
 
+    \round/show : use-default-throw (state, action) ->
+      state.set-in [\round, \show], I.from-JS action.payload
+
     init-state

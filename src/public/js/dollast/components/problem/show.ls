@@ -3,7 +3,6 @@ require! {
   \react-redux : {connect}
   \../elements : {icon-text}
   \../../actions : {on-get-problem}
-  \../utils : U
   \immutable : I
 }
 
@@ -16,7 +15,7 @@ selector = (state) ->
 
 segment-box = create-class do
   display-name: \segment-box
-  
+
   render: ->
     _ \div, class-name: "ui segment",
       _ \div, class-name: "ui top left attached label teal", @props.desc
@@ -24,22 +23,22 @@ segment-box = create-class do
 
 module.exports = (connect selector) create-class do
   display-name: \prob-show
-  
+
   refresh-mathjax: (root) ->
     MathJax.Hub.Queue [\Typeset, MathJax.Hub]
-  
-  component-will-mount: (root) ->
+
+  component-did-mount: (root) ->
     @props.dispatch on-get-problem @props.params.pid, \show
     @refresh-mathjax root
-  
+
   component-did-update: (props, states, root) ->
     @refresh-mathjax root
-  
+
   render: ->
     pid = @props.params.pid
     problem = @props.problem.to-JS!
     #log {problem}
-    
+
     _ \div, class-name: "ui",
       _ \h1, class-name: "ui centered", "Problem #{pid}. #{problem.outlook.title}"
       _ \p, null, "time limit: #{problem.{}config.time-lmt || ''} space limit: #{problem.{}config.space-lmt || ''}"
@@ -63,7 +62,7 @@ module.exports = (connect selector) create-class do
 
       _ \div, class-name: "ui divider"
 
-      _ icon-text, 
+      _ icon-text,
         class-name: \primary
         href: "#/solution/submit/#{pid}"
         text: \submit
