@@ -17,19 +17,18 @@ module.exports = (connect selector) create-class do
   filter: (value, text, $choice) ->
     log {value, text, $choice}
 
-  component-will-mount: ->
+  component-did-mount: ->
     @props.dispatch on-get-rounds-list!
 
-  component-did-mount: ->
     $filter = $ '.dropdown'
-    log $filter
+    # log $filter
     $filter.dropdown do
       on: \hover
       on-change: @filter
     $filter.dropdown 'set text', \all
 
   render: ->
-    log @props.rounds
+    # log @props.rounds
     rounds = @props.rounds.to-JS!
 
     _ \div, null,

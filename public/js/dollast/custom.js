@@ -13,9 +13,6 @@
     return 0 < parseFloat(text);
   };
   $.fn.form.settings.rules.isTime = function(text){
-    log({
-      text: text
-    });
     return moment(text, 'YYYY-MM-DD HH:mm:ss').isValid();
   };
   $.ajaxSetup({

@@ -119,9 +119,9 @@
   out$.board = board = function*(rid, opts){
     var rnd, query, results;
     opts == null && (opts = {});
-    rnd = yield model.findById(rid, "published").exec();
+    rnd = yield model.findById(rid, 'published').exec();
     if (!(rnd != null && rnd.published)) {
-      this.acquirePrivilege("rnd-all");
+      this.acquirePrivilege('rnd-all');
     }
     query = db.sol.model.aggregate({
       $match: {
@@ -136,8 +136,8 @@
     }, {
       $group: {
         _id: {
-          prob: "$prob",
-          user: "$user"
+          prob: '$prob',
+          user: '$user'
         },
         score: {
           $first: '$final.score'

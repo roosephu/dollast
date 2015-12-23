@@ -21,7 +21,7 @@
     componentDidMount: function(){
       var rid;
       rid = this.props.params.rid;
-      return this.props.dispatch(onGetRound(rid));
+      return this.props.dispatch(onGetRound(rid, 'show'));
     },
     render: function(){
       var rnd, prob;

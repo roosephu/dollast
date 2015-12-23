@@ -151,7 +151,7 @@
       return _(iconText, {
         className: className,
         icon: 'code',
-        text: this.props.sid + "",
+        text: this.props.text || this.props.sid + "",
         href: "#/solution/" + this.props.sid
       });
     }

@@ -84,21 +84,21 @@ export show = (rid, opts = {}) ~>*
   return rnd
 
 export board = (rid, opts = {}) ->*
-  rnd = yield model.find-by-id rid, "published" .exec!
+  rnd = yield model.find-by-id rid, \published .exec!
   if not rnd?.published
-    @acquire-privilege "rnd-all"
+    @acquire-privilege \rnd-all
 
   query = db.sol.model.aggregate do
     * $match: round: rid
     * $sort: prob: 1, user: 1, _id: -1
     * $group:
         _id:
-          prob: "$prob"
-          user: "$user"
+          prob: \$prob
+          user: \$user
         score:
           $first: '$final.score'
         sid:
-          $first: '$_id'
+          $first: \$_id
   results = yield query.exec!
   return results
 

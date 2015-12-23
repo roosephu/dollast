@@ -17,11 +17,10 @@ selector = (state) ->
 module.exports = (connect selector) create-class do
   display-name: \rnd-modify
 
-  component-will-mount: ->
-    if @props.params.rid
-      @props.dispatch on-get-round @props.params.rid, \update, \total
-
   component-did-mount: ->
+    if @props.params.rid
+      @props.dispatch on-get-round @props.params.rid, \update
+
     $form = $ '#form-round'
     $form.form do
       on: \blur
@@ -61,6 +60,18 @@ module.exports = (connect selector) create-class do
     $input = $ '#pid'
     @insert-prob $input[0].value
 
+  update-forms: (round) ->
+    #log 'new states. setting new values for form...', to-client-fmt problem.to-JS!
+    $form = $ '#form-round'
+    {title, beg-time, end-time} = round.to-JS!
+    $form.form 'set values',
+      title: title
+      beg-time: moment beg-time .format 'YYYY-MM-DD hh:mm:ss'
+      end-time: moment end-time .format 'YYYY-MM-DD hh:mm:ss'
+
+  component-will-update: (next-props, next-states) ->
+    @update-forms next-props.round
+
   submit: ->
     $form = $ '#form-round'
     {title, beg-time, end-time} = $form.form 'get values'
@@ -74,13 +85,14 @@ module.exports = (connect selector) create-class do
     round = @props.round.to-JS!
     @rid = @props.params.rid
     if @rid
-      title = "Round #{rid}"
+      title = "Round #{@rid}"
     else
       title = "Create new round"
       @rid = 0
 
     _ \div, class-name: "ui form segment", id: 'form-round',
       _ \h1, class-name: "ui header dividing", title
+      _ \div, class-name: "ui error message"
       _ \div, class-name: "ui fields three",
         _ label-field, text: \title,
           _ \div, class-name: "ui input",
@@ -133,4 +145,4 @@ module.exports = (connect selector) create-class do
           class-name: "floated right primary submit"
           text: \save
           icon: \save
-          on-click: @submit
+          # on-click: @submit

@@ -18,13 +18,11 @@
   };
   module.exports = connect(selector)(createClass({
     displayName: 'rnd-modify',
-    componentWillMount: function(){
-      if (this.props.params.rid) {
-        return this.props.dispatch(onGetRound(this.props.params.rid, 'update', 'total'));
-      }
-    },
     componentDidMount: function(){
       var $form;
+      if (this.props.params.rid) {
+        this.props.dispatch(onGetRound(this.props.params.rid, 'update'));
+      }
       $form = $('#form-round');
       return $form.form({
         on: 'blur',
@@ -75,6 +73,19 @@
       $input = $('#pid');
       return this.insertProb($input[0].value);
     },
+    updateForms: function(round){
+      var $form, ref$, title, begTime, endTime;
+      $form = $('#form-round');
+      ref$ = round.toJS(), title = ref$.title, begTime = ref$.begTime, endTime = ref$.endTime;
+      return $form.form('set values', {
+        title: title,
+        begTime: moment(begTime).format('YYYY-MM-DD hh:mm:ss'),
+        endTime: moment(endTime).format('YYYY-MM-DD hh:mm:ss')
+      });
+    },
+    componentWillUpdate: function(nextProps, nextStates){
+      return this.updateForms(nextProps.round);
+    },
     submit: function(){
       var $form, ref$, title, begTime, endTime, probs;
       $form = $('#form-round');
@@ -99,7 +110,7 @@
       round = this.props.round.toJS();
       this.rid = this.props.params.rid;
       if (this.rid) {
-        title = "Round " + rid;
+        title = "Round " + this.rid;
       } else {
         title = "Create new round";
         this.rid = 0;
@@ -110,6 +121,8 @@
       }, _('h1', {
         className: "ui header dividing"
       }, title), _('div', {
+        className: "ui error message"
+      }), _('div', {
         className: "ui fields three"
       }, _(labelField, {
         text: 'title'
@@ -179,8 +192,7 @@
       }), _(iconText, {
         className: "floated right primary submit",
         text: 'save',
-        icon: 'save',
-        onClick: this.submit
+        icon: 'save'
       })));
     }
   }));

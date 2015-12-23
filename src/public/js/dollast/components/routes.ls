@@ -1,9 +1,7 @@
 require! {
   \react : R
-  \react-router : {Route, IndexRoute}
+  \react-router : {Route : T, IndexRoute : D}
 }
-T = Route
-D = IndexRoute
 
 module.exports = (app) ->
   _ T, path: \/, component: app,

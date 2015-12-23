@@ -17,7 +17,7 @@ $.fn.form.settings.rules.positive = (text) ->
   0 < parse-float text
 
 $.fn.form.settings.rules.is-time = (text) ->
-  log {text}
+  # log {text}
   moment text, 'YYYY-MM-DD HH:mm:ss' .is-valid!
 
 $.ajax-setup do

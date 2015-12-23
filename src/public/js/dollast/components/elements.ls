@@ -111,7 +111,7 @@ export code-link = create-class do
     _ icon-text,
       class-name: class-name
       icon: \code
-      text: "#{@props.sid}"
+      text: @props.text || "#{@props.sid}"
       href: "#/solution/#{@props.sid}"
 
 export prob-link = create-class do

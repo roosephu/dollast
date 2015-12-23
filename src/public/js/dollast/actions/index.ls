@@ -132,7 +132,7 @@ export on-get-rounds-list = co.wrap ->*
     type: \round/list
     payload: yield request \get, "/round" .end!
 
-export on-get-round = co.wrap (rid) ->*
+export on-get-round-board = co.wrap (rid) ->*
   return
-    type: \round/show
-    payload: yield request \get, "/round/#{rid}" .end!
+    type: \round/board
+    payload: yield request \get, "/round/#{rid}/board" .end!

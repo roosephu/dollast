@@ -19,7 +19,7 @@ module.exports = (connect selector) create-class do
 
   component-did-mount: ->
     rid = @props.params.rid
-    @props.dispatch on-get-round rid
+    @props.dispatch on-get-round rid, \show
 
   render: ->
     rnd = @props.round.to-JS!

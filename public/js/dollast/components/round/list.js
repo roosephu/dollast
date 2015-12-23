@@ -21,13 +21,10 @@
         $choice: $choice
       });
     },
-    componentWillMount: function(){
-      return this.props.dispatch(onGetRoundsList());
-    },
     componentDidMount: function(){
       var $filter;
+      this.props.dispatch(onGetRoundsList());
       $filter = $('.dropdown');
-      log($filter);
       $filter.dropdown({
         on: 'hover',
         onChange: this.filter
@@ -36,7 +33,6 @@
     },
     render: function(){
       var rounds, rnd;
-      log(this.props.rounds);
       rounds = this.props.rounds.toJS();
       return _('div', null, _('div', {
         className: 'ui'
