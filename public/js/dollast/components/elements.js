@@ -110,9 +110,9 @@
     render: function(){
       var text, ref$, ref1$;
       text = (ref1$ = (ref$ = this.props).text, delete ref$.text, ref1$);
-      return _(field, this.props, _('label', {
+      return _(field, this.props, [_('label', {
         key: 'label'
-      }, text), this.props.children);
+      }, text)].concat(this.props.children));
     }
   });
   out$.dropdown = dropdown = createClass({

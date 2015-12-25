@@ -86,8 +86,7 @@ export label-field = create-class do
   render: ->
     text = delete @props.text
     _ field, @props,
-      _ \label, key: \label, text
-      @props.children
+      [_ \label, key: \label, text] ++ @props.children
 
 export dropdown = create-class do
   display-name: \dropdown

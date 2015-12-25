@@ -4,12 +4,11 @@
   When we create a `round`, we must take care of these problems.
 */
 (function(){
-  var mongoose, util, debug, _, sanitizeHtml, conn, core, config, db, log, schema, model, count, show, stat, list, updData, listDataset, funcNextCount, nextCount, modify, out$ = typeof exports != 'undefined' && exports || this;
+  var mongoose, util, debug, _, conn, core, config, db, log, schema, model, count, show, stat, list, updData, listDataset, funcNextCount, nextCount, modify, out$ = typeof exports != 'undefined' && exports || this;
   mongoose = require('mongoose');
   util = require('util');
   debug = require('debug');
   _ = require('prelude-ls');
-  sanitizeHtml = require('sanitize-html');
   conn = require('./conn');
   core = require('../core');
   config = require('../config');
@@ -158,7 +157,6 @@
     return yield funcNextCount();
   };
   out$.modify = modify = function*(pid, prob){
-    var ref$;
     this.acquirePrivilege('prob-all');
     if (prob._id) {
       delete prob._id;
@@ -168,9 +166,6 @@
       log({
         pid: pid
       });
-    }
-    if (prob.outlook.desc) {
-      (ref$ = prob.outlook).desc = sanitizeHtml(ref$.desc);
     }
     return yield model.update({
       _id: pid

@@ -47,12 +47,9 @@
         className: "ui centered"
       }, "Problem " + pid + ". " + problem.outlook.title), _('p', null, "time limit: " + ((problem.config || (problem.config = {})).timeLmt || '') + " space limit: " + ((problem.config || (problem.config = {})).spaceLmt || '')), _(segmentBox, {
         desc: 'description'
-      }, _('div', {
-        mathjax: true,
-        dangerouslySetInnerHTML: {
-          __html: (ref$ = problem.outlook) != null ? ref$.desc : void 8
-        }
-      })), _('div', {
+      }, _('p', {
+        mathjax: true
+      }, (ref$ = problem.outlook) != null ? ref$.desc : void 8)), _('div', {
         className: "ui two column grid"
       }, _('div', {
         className: 'row'

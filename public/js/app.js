@@ -39555,9 +39555,9 @@
 	    render: function(){
 	      var text, ref$, ref1$;
 	      text = (ref1$ = (ref$ = this.props).text, delete ref$.text, ref1$);
-	      return _(field, this.props, _('label', {
+	      return _(field, this.props, [_('label', {
 	        key: 'label'
-	      }, text), this.props.children);
+	      }, text)].concat(this.props.children));
 	    }
 	  });
 	  out$.dropdown = dropdown = createClass({
@@ -52711,7 +52711,7 @@
 	    render: function(){
 	      var problem, problemTitle, title, that, atom;
 	      problem = this.props.problem.toJS();
-	      problemTitle = problem.outlook.title;
+	      problemTitle = this.props.problem.getIn(['outlook', 'title']);
 	      title = (that = this.props.params.pid) ? "Update Problem " + that + ". " + problemTitle : "Create Problem";
 	      return _('div', {
 	        className: "ui form segment",
@@ -53210,12 +53210,9 @@
 	        className: "ui centered"
 	      }, "Problem " + pid + ". " + problem.outlook.title), _('p', null, "time limit: " + ((problem.config || (problem.config = {})).timeLmt || '') + " space limit: " + ((problem.config || (problem.config = {})).spaceLmt || '')), _(segmentBox, {
 	        desc: 'description'
-	      }, _('div', {
-	        mathjax: true,
-	        dangerouslySetInnerHTML: {
-	          __html: (ref$ = problem.outlook) != null ? ref$.desc : void 8
-	        }
-	      })), _('div', {
+	      }, _('p', {
+	        mathjax: true
+	      }, (ref$ = problem.outlook) != null ? ref$.desc : void 8)), _('div', {
 	        className: "ui two column grid"
 	      }, _('div', {
 	        className: 'row'

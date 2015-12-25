@@ -4,15 +4,14 @@
 */
 
 require! {
-  \mongoose
-  \util
-  \debug
-  \prelude-ls : _
-  \sanitize-html
-  \./conn
-  \../core
-  \../config
-  \../db
+  'mongoose'
+  "util"
+  "debug"
+  "prelude-ls": _
+  "./conn"
+  "../core"
+  "../config"
+  "../db"
 }
 
 log = debug "dollast:prob"
@@ -136,7 +135,4 @@ export modify = (pid, prob) ->*
   if pid == 0
     pid = yield next-count.bind(@)!
     log {pid}
-  if prob.outlook.desc
-    prob.outlook.desc |>= sanitize-html
-
   return yield model.update(_id: pid, {$set: prob}, upsert: true, overwrite: true).exec!
