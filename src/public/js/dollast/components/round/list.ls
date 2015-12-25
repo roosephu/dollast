@@ -55,4 +55,4 @@ module.exports = (connect selector) create-class do
                 _ round-time, rnd{beg-time, end-time}
                 # 'Registered: '
               _ \div, class-name: \description,
-                _ rnd-link, rid: rnd._id, title: rnd.title
+                _ rnd-link, {rnd}

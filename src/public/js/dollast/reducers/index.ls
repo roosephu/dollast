@@ -85,4 +85,7 @@ export root-reducer =
     \user/privileges : use-default-throw (state, action) ->
       state.set-in [\user, \privileges], I.from-JS action.payload
 
+    \problem/repair : use-default-throw (state, action) ->
+      state.set-in [\problem, \update, \config, \dataset], I.from-JS action.payload.payload
+
     init-state

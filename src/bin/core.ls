@@ -145,7 +145,7 @@ run-atom = (pid, lang, exe-path, data, cfg) ->* # TODO if file not exists, throw
   judge-res = yield judge-result pid, inf, ouf, ans, cfg
   tmp-file.remove-callback!
 
-  (exe-res <<< judge-res) <<< data
+  return (exe-res <<< judge-res) <<< data
 
 calc-prob-score = (results) ->
   ret =
@@ -154,6 +154,7 @@ calc-prob-score = (results) ->
 
   [sum, ws] = [0, 0]
   for [data, result] in results
+    log {data, result}
     if result.time
       ret.time  >?= result.time
     if result.space

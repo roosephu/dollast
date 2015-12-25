@@ -31,7 +31,7 @@ export on-load-from-token = create-action 'load-from-token', (token) ->
 export on-login = co.wrap (info) ->*
   log "store received", info
   ret = yield request \post, \/site/login .send info .end!
-  on-load-from-token ret.body.token
+  return on-load-from-token ret.body.token
 
 export on-register = co.wrap (info) ->*
   data = yield request \post, \/user/register .send info .end!
@@ -146,3 +146,8 @@ export on-update-user = co.wrap (uid, updated) ->*
   return
     type: \user/update
     payload: yield request \post, "/user/#{uid}" .send updated .end!
+
+export on-repair-problem = co.wrap (pid) ->*
+  return
+    type: \problem/repair
+    payload: yield request \get, "/problem/#{pid}/repair" .end!

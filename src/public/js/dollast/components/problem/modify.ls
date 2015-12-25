@@ -2,7 +2,7 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \immutable : I
-  \../../actions : {on-update-problem, on-get-problem, on-upload-files}
+  \../../actions : {on-update-problem, on-get-problem, on-upload-files, on-repair-problem}
   \../utils : {to-client-fmt}
   \../elements : {field, icon-text, label-field, dropdown}
   \react-dropzone : dropzone
@@ -12,7 +12,7 @@ log = debug 'dollast:component:problem:modify'
 
 selector = (state) ->
   problem: state.get-in [\problem, \update], I.Map do
-    outlook: 
+    outlook:
       {}
     config:
       time-lmt: 1
@@ -105,7 +105,7 @@ module.exports = (connect selector) create-class do
             ...
       on-success:
         @submit
-    if @props.params.pid 
+    if @props.params.pid
       @props.dispatch on-get-problem @props.params.pid, \update, \total
     pid = if @props.params.pid then parse-int that else 0
     @set-state {pid}
@@ -115,9 +115,9 @@ module.exports = (connect selector) create-class do
     e.prevent-default!
     $form = $ '#problem-modify'
     all-values = $form.form 'get values'
-    
+
     @props.dispatch on-update-problem @state.pid, all-values
-  
+
   update-forms: (problem) ->
     #log 'new states. setting new values for form...', to-client-fmt problem.to-JS!
     $form = $ '#problem-modify'
@@ -125,20 +125,24 @@ module.exports = (connect selector) create-class do
 
   component-will-update: (next-props, next-states) ->
     @update-forms next-props.problem
-  
+
   on-drop: (files) ->
-    @set-state files: files
-  
+    # @set-state files:
+
+  repair: ->
+    # log \repairing
+    @props.dispatch on-repair-problem @state.pid
+
   upload: ->
     files = @state.files
     if files
       @props.dispatch on-upload-files @state.pid, files
-    
+
   render: ->
     problem = @props.problem.to-JS!
     problem-title = @props.problem.get-in [\outlook, \title]
     title = if @props.params.pid then "Update Problem #{that}. #{problem-title}" else "Create Problem"
-    
+
     _ \div, class-name: "ui form segment", id: 'problem-modify',
       _ \h1, class-name: "ui centered", title
       _ \div, class-name: "ui error message"
@@ -188,11 +192,11 @@ module.exports = (connect selector) create-class do
           _ \textarea, name: \sampleIn
         _ label-field, text: "sample output",
           _ \textarea, name: \sampleOut
-          
+
       _ \div, class-name: "ui divider"
-      
+
       _ field, null,
-        _ icon-text, 
+        _ icon-text,
           icon: \file
           text: \select
           on-click: @select
@@ -201,7 +205,7 @@ module.exports = (connect selector) create-class do
           icon: \upload
           text: \upload
           on-click: @upload
-        _ icon-text,  
+        _ icon-text,
           class-name: \teal
           icon: \refresh
           text: \refresh
@@ -211,7 +215,7 @@ module.exports = (connect selector) create-class do
           icon: \retweet
           text: \repair
           on-click: @repair
-      
+
       _ \div, class-name: "ui two fields",
         _ field, class-name: "four wide",
           _ dropzone, on-drop: @on-drop,
@@ -219,14 +223,14 @@ module.exports = (connect selector) create-class do
               "drop files here for click to select"
         _ field, class-name: "twelve wide",
           _ \table, class-name: "ui table segment",
-            _ \thead, null, 
-              _ \tr, null, 
+            _ \thead, null,
+              _ \tr, null,
                 _ \th, null, \input
                 _ \th, null, \output
                 _ \th, null, \weight
                 _ \th, null, ""
-            _ \tbody, null, 
-              for atom in problem.config?.dataset
+            _ \tbody, null,
+              for atom in problem.{}config.[]dataset
                 _ \tr, key: atom.input,
                   _ \td, null, atom.input
                   _ \td, null, atom.output
@@ -243,7 +247,7 @@ module.exports = (connect selector) create-class do
           class-name: "primary floated submit"
           text: \Save
           icon: \save
-        _ icon-text, 
+        _ icon-text,
           class-name: "secondary floated"
           text: \Back
           icon: \reply

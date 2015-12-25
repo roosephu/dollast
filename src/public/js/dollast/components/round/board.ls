@@ -44,7 +44,7 @@ module.exports = (connect selector) create-class do
             _ \th, null, \total
             for prob in probs
               _ \th, null,
-                _ prob-link, pid: prob._id, title: prob.outlook.title
+                _ prob-link, {prob}
         _ \tbody, null,
           for [user, score] in board
             _ \tr, null,

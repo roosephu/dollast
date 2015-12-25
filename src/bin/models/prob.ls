@@ -112,7 +112,9 @@ export upd-data = (pid) ->*
   prob = yield model.find-by-id pid, 'config.dataset' .exec!
   pairs = yield core.gen-data-pairs pid
   prob.config.dataset = _.map (<<< weight: 1), pairs
-  return yield prob.save!
+  yield prob.save!
+
+  return pairs
 
 export list-dataset = (pid) ->*
   @acquire-privilege 'prob-all'

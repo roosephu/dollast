@@ -73,8 +73,7 @@
           })), _('div', {
             className: 'description'
           }, _(rndLink, {
-            rid: rnd._id,
-            title: rnd.title
+            rnd: rnd
           }))));
         }
         return results$;

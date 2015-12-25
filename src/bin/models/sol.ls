@@ -1,11 +1,12 @@
 require! {
-  "mongoose"
-  "mongoose-auto-increment"
-  "debug"
-  "./conn"
-  "../db"
-  "../core"
-  "../config"
+  \mongoose
+  \mongoose-auto-increment
+  \debug
+  \moment
+  \./conn
+  \../db
+  \../core
+  \../config
 }
 
 atom-result-schema = new mongoose.Schema do
@@ -91,7 +92,7 @@ export do
 
     query = model.find {}, '-code -results'
       .populate 'prob', 'outlook.title'
-      .populate 'round', 'published'
+      .populate 'round', 'title begTime'
       .sort '-_id'
       .skip opts.skip
       .limit opts.limit
@@ -106,10 +107,11 @@ export do
     user = @get-current-user!
     log "user", user
     if 'unpub-rnd-sol' not in user.priv
+      current-time = moment!
       for sol in sol-list
-        if sol.round and not sol.round.published
+        if sol.round and current-time.is-before sol.round.beg-time
           sol.final = status: "hidden"
-          delete sol.prob
+          sol.prob = _id: 0
 
     return sol-list
 

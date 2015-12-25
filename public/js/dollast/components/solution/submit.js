@@ -75,9 +75,9 @@
         name: 'lang',
         'default': "please select your language",
         options: {
-          cpp: cpp,
-          pas: pas,
-          java: java
+          'cpp': 'cpp',
+          'pas': 'pas',
+          'java': 'java'
         }
       }))), _(field, null, _(iconText, {
         className: "primary floated submit",

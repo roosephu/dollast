@@ -1,8 +1,8 @@
 require! {
   \react : {create-class}
   \react-redux : {connect}
-  \../elements : E
-  \../../actions : A
+  \../elements : {field, icon-text, icon-input}
+  \../../actions : {on-login}
 }
 
 log = debug 'dollast:component:login'
@@ -34,28 +34,28 @@ module.exports = connect! create-class do
   submit: (e) ->
     e.prevent-default!
     $form = $ '#login-form'
-    @props.dispatch A.on-login $form.form 'get values'
+    @props.dispatch on-login $form.form 'get values'
 
   render: ->
     _ \div, class-name: "ui",
       _ \h1, class-name: "ui dividing header", "Login"
       _ \form, class-name: "ui form segment relaxed", id: "login-form",
-        _ E.field, null,
-          _ E.icon-input,
+        _ field, null,
+          _ icon-input,
             class-name: "left"
             icon: \user
             input:
               placeholder: "user id"
               name: "uid"
-        _ E.field, null,
-          _ E.icon-input,
+        _ field, null,
+          _ icon-input,
             class-name: "left"
             icon: \lock
             input:
               placeholder: \password
               name: "pswd"
               type: \password
-        _ E.icon-text,
+        _ icon-text,
           class-name: "left primary labeled submit"
           icon: "sign in"
           text: \Login

@@ -164,24 +164,37 @@
     render: function(){
       var className;
       className = classnames(this.props.className, 'brown');
-      return _(iconText, {
-        className: className,
-        icon: 'puzzle',
-        text: this.props.pid + ". " + this.props.title,
-        href: "#/problem/" + this.props.pid
-      });
+      if (this.props.prob._id > 0) {
+        return _(iconText, {
+          className: className,
+          icon: 'puzzle',
+          text: this.props.prob._id + ". " + this.props.prob.outlook.title,
+          href: "#/problem/" + this.props.prob._id
+        });
+      } else {
+        return _(iconText, {
+          className: className,
+          icon: 'puzzle',
+          text: 'hidden'
+        });
+      }
     }
   });
   out$.rndLink = rndLink = createClass({
     displayName: 'round',
     render: function(){
-      var className;
+      var className, text;
       className = classnames(this.props.className, 'teal');
+      if (this.props.noTitle === true) {
+        text = this.props.rnd._id + "";
+      } else {
+        text = this.props.rnd._id + ". " + this.props.rnd.title;
+      }
       return _(iconText, {
         className: className,
         icon: 'idea',
-        text: this.props.rid + ". " + this.props.title,
-        href: "#/round/" + this.props.rid
+        text: text,
+        href: "#/round/" + this.props.rnd._id
       });
     }
   });

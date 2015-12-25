@@ -1,10 +1,12 @@
 require! {
   \react : {create-class}
   \react-redux : {connect}
-  \../elements : {icon-text, code-link, prob-link, user-link}
+  \../elements : {icon-text, code-link, prob-link, user-link, rnd-link}
   \../../actions : {on-get-solutions-list}
   \immutable : I
 }
+
+log = debug \dollast:component:solution:list
 
 selector = (state) ->
   sols: state.get-in [\solution, \list], I.from-JS []
@@ -38,7 +40,7 @@ module.exports = (connect selector) create-class do
               _ \td, null,
                 _ code-link, sid: sol._id
               _ \td, null,
-                _ prob-link, pid: sol.prob._id, title: sol.prob.outlook.title
+                _ prob-link, {sol.prob}
               _ \td, null,
                 _ user-link, user: sol.user
               _ \td, null, sol.final.status
@@ -46,7 +48,11 @@ module.exports = (connect selector) create-class do
               _ \td, null, sol.final.time
               _ \td, null, sol.final.space
               _ \td, null, sol.lang
-              _ \td, null, sol.round?._id
+              _ \td, null,
+                if sol.round?
+                  _ rnd-link, rnd: sol.round, no-title: true
+                else
+                  null
       _ icon-text,
         class-name: "floated right primary"
         text: \refresh

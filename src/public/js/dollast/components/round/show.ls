@@ -26,7 +26,7 @@ module.exports = (connect selector) create-class do
     log rnd
 
     _ \div, null,
-      _ \h1, null, "Round #{rnd._id}. #{rnd.title}"
+      _ \h1, class-name: "ui dividing header", "Round #{rnd._id}. #{rnd.title}"
       _ round-time, rnd{beg-time, end-time}
 
       if rnd.started
@@ -46,7 +46,7 @@ module.exports = (connect selector) create-class do
                 #     moment rnd.end-time .format 'YYYY-MM-DD hh:mm:ss'
                   # 'Registered: '
                 _ \div, class-name: \description,
-                  _ prob-link, pid: prob._id, title: prob.outlook.title
+                  _ prob-link, {prob}
 
       else
         _ \p, "Sorry, this round has not started."

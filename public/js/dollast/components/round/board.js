@@ -52,8 +52,7 @@
         for (i$ = 0, len$ = (ref$ = probs).length; i$ < len$; ++i$) {
           prob = ref$[i$];
           results$.push(_('th', null, _(probLink, {
-            pid: prob._id,
-            title: prob.outlook.title
+            prob: prob
           })));
         }
         return results$;

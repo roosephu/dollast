@@ -187,7 +187,7 @@
     }
     judgeRes = yield judgeResult(pid, inf, ouf, ans, cfg);
     tmpFile.removeCallback();
-    import$(import$(exeRes, judgeRes), data);
+    return import$(import$(exeRes, judgeRes), data);
   };
   calcProbScore = function(results){
     var ret, ref$, sum, ws, i$, len$, data, result, score;
@@ -198,6 +198,10 @@
     ref$ = [0, 0], sum = ref$[0], ws = ref$[1];
     for (i$ = 0, len$ = results.length; i$ < len$; ++i$) {
       ref$ = results[i$], data = ref$[0], result = ref$[1];
+      log({
+        data: data,
+        result: result
+      });
       if (result.time) {
         ret.time >= (ref$ = result.time) || (ret.time = ref$);
       }

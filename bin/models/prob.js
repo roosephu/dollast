@@ -141,7 +141,8 @@
     prob.config.dataset = _.map((function(it){
       return it.weight = 1, it;
     }), pairs);
-    return yield prob.save();
+    yield prob.save();
+    return pairs;
   };
   out$.listDataset = listDataset = function*(pid){
     var prob;

@@ -13,7 +13,7 @@ export
   next-count: ->*
     @acquire-privilege \login
     log "next-count"
-    @body = 
+    @body =
       type: \success
       payload:
         _id: yield db.prob.next-count!
@@ -60,10 +60,10 @@ export
 
   repair: ->*
     @acquire-privilege \login
-    yield db.prob.upd-data @params.pid
-    @body = status:
-      type: "ok"
-      msg: "repaired all data"
+    new-pairs = yield db.prob.upd-data @params.pid
+    @body =
+      type: 'server/success'
+      payload: new-pairs
 
   stat: ->*
     @acquire-privilege \login

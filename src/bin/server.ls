@@ -3,7 +3,7 @@ require! {
   'koa-json'
   'koa-static'
   'koa-bodyparser'
-  'koa-generic-session'
+  # 'koa-generic-session'
   'koa-conditional-get'
   'koa-validate'
   'koa-router'
@@ -78,7 +78,7 @@ app.use (next) ->*
 
 app.use (next) ->*
   log 'request body', @request.body
-  #log 'user state', @state.user
+  log 'user state', @state.user
   # log "server.user", @state.user
   # log koa-jwt.verify @request.header.authorization.substr(7), config.jwt-key, ignore-expiration: false
 

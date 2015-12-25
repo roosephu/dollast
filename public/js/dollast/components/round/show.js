@@ -27,7 +27,9 @@
       var rnd, prob;
       rnd = this.props.round.toJS();
       log(rnd);
-      return _('div', null, _('h1', null, "Round " + rnd._id + ". " + rnd.title), _(roundTime, {
+      return _('div', null, _('h1', {
+        className: "ui dividing header"
+      }, "Round " + rnd._id + ". " + rnd.title), _(roundTime, {
         begTime: rnd.begTime,
         endTime: rnd.endTime
       }), rnd.started
@@ -45,8 +47,7 @@
             }, _('div', {
               className: 'description'
             }, _(probLink, {
-              pid: prob._id,
-              title: prob.outlook.title
+              prob: prob
             }))));
           }
           return results$;

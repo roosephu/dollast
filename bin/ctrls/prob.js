@@ -64,13 +64,12 @@
     throw Error('unimplemented');
   };
   ref$.repair = function*(){
+    var newPairs;
     this.acquirePrivilege('login');
-    yield db.prob.updData(this.params.pid);
+    newPairs = yield db.prob.updData(this.params.pid);
     this.body = {
-      status: {
-        type: "ok",
-        msg: "repaired all data"
-      }
+      type: 'server/success',
+      payload: newPairs
     };
   };
   ref$.stat = function*(){

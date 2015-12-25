@@ -98,6 +98,9 @@
     }),
     'user/privileges': useDefaultThrow(function(state, action){
       return state.setIn(['user', 'privileges'], I.fromJS(action.payload));
+    }),
+    'problem/repair': useDefaultThrow(function(state, action){
+      return state.setIn(['problem', 'update', 'config', 'dataset'], I.fromJS(action.payload.payload));
     })
   }, initState);
 }).call(this);

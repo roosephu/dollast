@@ -121,22 +121,34 @@ export prob-link = create-class do
 
   render: ->
     class-name = classnames @props.class-name, 'brown'
-    _ icon-text,
-      class-name: class-name
-      icon: \puzzle
-      text: "#{@props.pid}. #{@props.title}"
-      href: "#/problem/#{@props.pid}"
+
+    if @props.prob._id > 0
+      _ icon-text,
+        class-name: class-name
+        icon: \puzzle
+        text: "#{@props.prob._id}. #{@props.prob.outlook.title}"
+        href: "#/problem/#{@props.prob._id}"
+    else
+      _ icon-text,
+        class-name: class-name
+        icon: \puzzle
+        text: \hidden
 
 export rnd-link = create-class do
   display-name: \round
 
   render: ->
     class-name = classnames @props.class-name, 'teal'
+    if @props.no-title == true
+      text = "#{@props.rnd._id}"
+    else
+      text = "#{@props.rnd._id}. #{@props.rnd.title}"
+
     _ icon-text,
       class-name: class-name
       icon: \idea
-      text: "#{@props.rid}. #{@props.title}"
-      href: "#/round/#{@props.rid}"
+      text: text
+      href: "#/round/#{@props.rnd._id}"
 
 export user-link = create-class do
   display-name: \user
