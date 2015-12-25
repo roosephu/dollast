@@ -1,3 +1,8 @@
+/*
+  A `problem` may belong to some `round`.
+  When we create a `round`, we must take care of these problems.
+*/
+
 require! {
   'mongoose'
   "util"
@@ -21,6 +26,7 @@ schema = new mongoose.Schema do
     sample-in: String
     sample-out: String
   config:
+    author: type: String, ref: \user
     round: type: Number, ref: "round"
     time-lmt: Number
     space-lmt: Number
@@ -96,7 +102,7 @@ export stat = (pid, opts = {}) ->*
 export list = (opts) ->*
   opts = config.prob-list-opts with opts
   return yield model
-    .find "config.round": $exists: false, 'outlook.title stat'
+    .find null, 'outlook.title' # "config.round": $exists: true,
     .skip opts.skip
     .limit opts.limit
     .exec!

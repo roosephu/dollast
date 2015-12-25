@@ -95,6 +95,9 @@
     }),
     'round/board': useDefaultThrow(function(state, action){
       return state.setIn(['round', 'board'], I.fromJS(action.payload));
+    }),
+    'user/privileges': useDefaultThrow(function(state, action){
+      return state.setIn(['user', 'privileges'], I.fromJS(action.payload));
     })
   }, initState);
 }).call(this);

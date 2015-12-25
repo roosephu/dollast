@@ -12,11 +12,12 @@ log = debug "dollast:rnd-model"
 
 schema = new mongoose.Schema do
   _id: Number
+  author: type: String, ref: \user
   title: String
   beg-time: Date
   end-time: Date
   published: Boolean
-  probs: [type: Number, ref: "problem"]
+  probs: [type: Number, ref: \problem]
   # groups: [type: Number, ref: ]
 
 schema.methods.is-started = ->

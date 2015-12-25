@@ -82,4 +82,7 @@ export root-reducer =
     \round/board : use-default-throw (state, action) ->
       state.set-in [\round, \board], I.from-JS action.payload
 
+    \user/privileges : use-default-throw (state, action) ->
+      state.set-in [\user, \privileges], I.from-JS action.payload
+
     init-state

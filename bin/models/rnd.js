@@ -11,13 +11,17 @@
   log = debug("dollast:rnd-model");
   schema = new mongoose.Schema({
     _id: Number,
+    author: {
+      type: String,
+      ref: 'user'
+    },
     title: String,
     begTime: Date,
     endTime: Date,
     published: Boolean,
     probs: [{
       type: Number,
-      ref: "problem"
+      ref: 'problem'
     }]
   });
   schema.methods.isStarted = function(){

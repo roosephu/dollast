@@ -2,7 +2,7 @@
 (function(){
   var path, vendors, config;
   path = require('path');
-  vendors = ['react/addons', 'redux', 'redux-actions', 'react-redux', 'immutable', 'co', 'debug', 'superagent', 'superagent-promise', 'bluebird', 'react-highlight', 'react-router', 'redux-devtools/lib/react', 'react-dropzone', 'prelude-ls', 'redux-promise', 'redux-logger', 'redux-devtools'];
+  vendors = ['react', 'redux', 'redux-actions', 'react-redux', 'immutable', 'co', 'debug', 'superagent', 'superagent-promise', 'bluebird', 'react-highlight', 'react-router', 'redux-devtools/lib/react', 'react-dropzone', 'prelude-ls', 'redux-promise', 'redux-logger', 'redux-devtools'];
   module.exports = config = {
     debug: true,
     watch: true,

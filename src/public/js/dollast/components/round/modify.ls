@@ -145,4 +145,3 @@ module.exports = (connect selector) create-class do
           class-name: "floated right primary submit"
           text: \save
           icon: \save
-          # on-click: @submit

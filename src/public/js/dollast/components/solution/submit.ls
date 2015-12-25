@@ -55,10 +55,7 @@ module.exports = (connect selector) create-class do
             class-name: \selection
             name: \lang
             default: "please select your language"
-            options:
-              cpp: \cpp
-              pas: \pas
-              java: \java
+            options: {cpp, pas, java}
       _ field, null,
         _ icon-text,
           class-name: "primary floated submit"

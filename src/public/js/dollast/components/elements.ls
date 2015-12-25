@@ -1,15 +1,17 @@
 require! {
   \react : {create-class}
-  \./utils : U
+  \./utils : {get-attr, merge-prop, add-class-name}
   \classnames
   \moment
 }
 
+log = debug \dollast:elements
+
 export labeled-icon = create-class do
   display-name: \labeled-icon
   render: ->
-    a-props = U.get-attr @props, [\href, \onClick, \className, \onValueChange]
-    a-props = U.merge-prop a-props, class-name: "item labeled"
+    a-props = get-attr @props, [\href, \onClick, \className, \onValueChange]
+    a-props = merge-prop a-props, class-name: "item labeled"
     _ \a, a-props,
       _ \i, class-name: "icon #{@props.icon}"
       @props.text
@@ -17,8 +19,8 @@ export labeled-icon = create-class do
 export icon-text = create-class do
   display-name: "icon-button"
   render: ->
-    a-props = U.get-attr @props, [\href, \onClick, \className, \onValueChange]
-    a-props = U.merge-prop a-props, class-name: "ui icon button labeled"
+    a-props = get-attr @props, [\href, \onClick, \className, \onValueChange]
+    a-props = merge-prop a-props, class-name: "ui icon button labeled"
     # console.log "ap", a-props
     _ \a, a-props,
       _ \i, class-name: "icon #{@props.icon}"
@@ -27,8 +29,8 @@ export icon-text = create-class do
 export icon-input = create-class do
   display-name: \icon-input
   render: ->
-    div-props = U.get-attr @props, [\href, \onClick, \className]
-    div-props = U.merge-prop div-props, class-name: "ui input icon"
+    div-props = get-attr @props, [\href, \onClick, \className]
+    div-props = merge-prop div-props, class-name: "ui input icon"
     # console.log a-props, @props
     _ \div, div-props,
       _ \i, class-name: "icon #{@props.icon}"
@@ -37,14 +39,14 @@ export icon-input = create-class do
 export ui = create-class do
   display-name: \ui
   render: ->
-    props = U.add-class-name @props, \ui
+    props = add-class-name @props, \ui
     # console.log props
     _ \div, props, @props.children
 
 export field = create-class do
   display-name: \field
   render: ->
-    props = U.add-class-name @props, \field
+    props = add-class-name @props, \field
     _ \div, props, @props.children
 
 export tab-menu = create-class do
@@ -55,23 +57,23 @@ export tab-menu = create-class do
     # console.log $ '.filter.menu .item'
 
   render: ->
-    menu-props = U.add-class-name @props.menu-props, "filter menu"
+    menu-props = add-class-name @props.menu-props, "filter menu"
     # console.log "menu props", menu-props
     menu =
       _ \div, class-name: "tab", key: \menu,
         _ ui, menu-props,
           for tab in @props.tabs
-            tab-prop = U.add-class-name tab.prop, "item"
-            tab-prop = U.merge-prop tab-prop, "data-tab": tab.tab-name
+            tab-prop = add-class-name tab.prop, "item"
+            tab-prop = merge-prop tab-prop, "data-tab": tab.tab-name
             if tab.tab-name == @props.active
-              tab-prop = U.add-class-name tab-prop, "active"
+              tab-prop = add-class-name tab-prop, "active"
             tab-prop.key = tab.tab-name
             _ \a, tab-prop, tab.text
 
     tabs = for tab in @props.tabs
       prop = class-name: "tab", "data-tab": tab.tab-name
       if tab.tab-name == @props.active
-        prop = U.add-class-name prop, "active"
+        prop = add-class-name prop, "active"
       prop.key = tab.tab-name
       _ ui, prop, tab.dom
 
@@ -84,7 +86,7 @@ export label-field = create-class do
   render: ->
     text = delete @props.text
     _ field, @props,
-      [_ \label, {}, text] ++ @props.children
+      [_ \label, key: \label, text] ++ @props.children
 
 export dropdown = create-class do
   display-name: \dropdown
@@ -93,7 +95,7 @@ export dropdown = create-class do
     $ ".dropdown.ui" .dropdown!
 
   render: ->
-    ui-props = U.add-class-name @props, "dropdown"
+    ui-props = add-class-name @props, "dropdown"
     _ ui, ui-props,
       _ \input, type: \hidden, name: @props.name
       _ \div, class-name: "default text", @props.default

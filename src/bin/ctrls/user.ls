@@ -11,7 +11,7 @@ export
   save: ->*
     @acquire-privilege \login
     @check-body '_id' .len config.uid-min-len, config.uid-max-len
-    delete @request.body.pswd
+    delete @request.body.pswd # should check once here
     return if @errors
 
     yield db.user.modify @request.body
@@ -28,3 +28,6 @@ export
 
   profile: ->*
     @body = yield db.user.profile @params.uid
+
+  get-privileges: ->*
+    @body = yield db.user.get-privileges @params.uid

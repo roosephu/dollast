@@ -11,14 +11,7 @@ To make live easier, you can install some other packages:
 1. `LiveScript`: to compile the LiveScript code to JavaScript code. then run `lsc -wco . src` to watch and compile the LiveScript codes.
 2. `nodemon`: to automatically restart server. run `nodemon --harmony bin/server.js` instead of `node --harmony bin/server.js`
 
-# Todo List
-1. user profile(done)
-2. parameter cheking(done)
-3. error message(done)
-4. expire
-5. statistics on problems
-6. toggle solution
-
-# Known bugs
-1. relaxed problem list
-2. problem content
+## useful commands
+1. `DEBUG=dollast:* nodemon --harmony -w bin bin/server.js` to run server
+2. `lsc -c src -o . -w` to watch all LiveScript files
+3. `lsc -c webpack.ls && mv webpack.js webpack.config.js && webpack` to watch JS files in client side

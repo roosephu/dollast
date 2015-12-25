@@ -33,4 +33,7 @@
   ref$.profile = function*(){
     this.body = yield db.user.profile(this.params.uid);
   };
+  ref$.getPrivileges = function*(){
+    this.body = yield db.user.getPrivileges(this.params.uid);
+  };
 }).call(this);

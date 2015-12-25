@@ -26,15 +26,10 @@
           },
           pswd: {
             identifier: 'pswd',
-            rules: [
-              {
-                type: 'minLength[3]',
-                prompt: 'password length must be longer than 5'
-              }, {
-                type: 'maxLength[16]',
-                prompt: 'password length must be shorter than 15'
-              }
-            ]
+            rules: [{
+              type: 'isPassword',
+              prompt: 'password length must be longer than 5'
+            }]
           },
           email: {
             identifier: 'email',

@@ -136,3 +136,13 @@ export on-get-round-board = co.wrap (rid) ->*
   return
     type: \round/board
     payload: yield request \get, "/round/#{rid}/board" .end!
+
+export on-get-user-privileges = co.wrap (uid) ->*
+  return
+    type: \user/privileges
+    payload: yield request \get, "/user/#{uid}/privileges" .end!
+
+export on-update-user = co.wrap (uid, updated) ->*
+  return
+    type: \user/update
+    payload: yield request \post, "/user/#{uid}" .send updated .end!

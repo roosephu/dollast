@@ -24,10 +24,9 @@ module.exports = connect! create-class do
         pswd:
           identifier: \pswd
           rules:
-            * type: 'minLength[3]'
+            * type: 'isPassword'
               prompt: 'password length must be longer than 5'
-            * type: 'maxLength[16]'
-              prompt: 'password length must be shorter than 15'
+            ...
         email:
           identifier: \email
           rules:
