@@ -161,7 +161,7 @@
     render: function(){
       var problem, problemTitle, title, that, atom;
       problem = this.props.problem.toJS();
-      problemTitle = this.props.problem.getIn(['outlook', 'title']);
+      problemTitle = problem.outlook.title;
       title = (that = this.props.params.pid) ? "Update Problem " + that + ". " + problemTitle : "Create Problem";
       return _('div', {
         className: "ui form segment",

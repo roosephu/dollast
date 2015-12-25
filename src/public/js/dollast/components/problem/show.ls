@@ -43,7 +43,7 @@ module.exports = (connect selector) create-class do
       _ \h1, class-name: "ui centered", "Problem #{pid}. #{problem.outlook.title}"
       _ \p, null, "time limit: #{problem.{}config.time-lmt || ''} space limit: #{problem.{}config.space-lmt || ''}"
       _ segment-box, desc: \description,
-        _ \p, mathjax: true, problem.outlook?.desc
+        _ \div, mathjax: true, dangerously-set-inner-HTML: __html: problem.outlook?.desc
       _ \div, class-name: "ui two column grid",
         _ \div, class-name: \row,
           _ \div, class-name: \column,
