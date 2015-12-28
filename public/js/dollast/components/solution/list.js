@@ -9,7 +9,7 @@
   log = debug('dollast:component:solution:list');
   selector = function(state){
     return {
-      sols: state.getIn(['solution', 'list'], I.fromJS([]))
+      sols: state.getIn(['db', 'solution', 'get'], I.fromJS([]))
     };
   };
   module.exports = connect(selector)(createClass({

@@ -18,9 +18,10 @@ generate-board = (sols) ->
     board[user].total += sol.score
   board
 
-selector = (state) ->
-  sols: state.get-in [\round, \board], I.from-JS []
-  probs: state.get-in [\round, \show, \probs], I.from-JS []
+selector = (state, props) ->
+  rid = props.params.rid
+  sols: state.get-in [\db, \round, rid, \board, \get], I.from-JS []
+  probs: state.get-in [\db, \round, rid, \get], I.from-JS []
 
 module.exports = (connect selector) create-class do
   display-name: \rnd-board

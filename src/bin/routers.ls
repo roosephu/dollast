@@ -70,7 +70,7 @@ router
   .get    '/user/:uid/privileges',      user.get-privileges
 
   .get    '/round',                     rnd.list
-  .get    '/round/next-count',          rnd.next-count
+  # .get    '/round/next-count',          rnd.next-count
   .get    '/round/:rid',                rnd.show
   .get    '/round/:rid/board',          rnd.board
   .post   '/round/:rid',                rnd.save
@@ -79,7 +79,7 @@ router
   .delete '/round/:rid',                rnd.remove
 
   .get    '/problem',                   prob.list
-  .get    '/problem/next-count',        prob.next-count
+  # .get    '/problem/next-count',        prob.next-count
   .get    '/problem/:pid',              prob.show
   .post   '/problem/:pid',              prob.save
   .delete '/problem/:pid',              prob.delete

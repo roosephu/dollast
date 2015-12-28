@@ -8,8 +8,8 @@ require! {
 
 log = debug \dollast:component:problem:show
 
-selector = (state) ->
-  problem: state.get-in [\problem, \show], I.from-JS do
+selector = (state, props) ->
+  problem: state.get-in [\db, \problem, props.params.pid, \get], I.from-JS do
     outlook: {}
     config: {}
 
@@ -28,7 +28,7 @@ module.exports = (connect selector) create-class do
     MathJax.Hub.Queue [\Typeset, MathJax.Hub]
 
   component-did-mount: (root) ->
-    @props.dispatch on-get-problem @props.params.pid, \show
+    @props.dispatch on-get-problem @props.params.pid
     @refresh-mathjax root
 
   component-did-update: (props, states, root) ->

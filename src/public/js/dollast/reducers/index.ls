@@ -1,6 +1,7 @@
 require! {
   \redux : {combine-reducers}
   \redux-actions : {handle-actions}
+  \redux-simple-router : {UPDATE_PATH}
   \immutable : I
   \../utils/auth
   \../actions : A
@@ -33,7 +34,7 @@ use-default-throw = (next) ->
   next: next
   throw: default-throw
 
-export root-reducer =
+reducer =
   handle-actions do
     \load-from-token : load-from-token-reducer
 
@@ -54,38 +55,42 @@ export root-reducer =
     \logout : use-default-throw (state, action) ->
       state.set \session, I.from-JS guest: true
 
-    \problem/refresh-list : use-default-throw (state, action) ->
-      state.set-in [\problem, \list], I.from-JS action.payload
-
-    \problem/get : use-default-throw (state, action) ->
-      state.set-in [\problem, action.payload.load], I.from-JS action.payload
-
     \problem/update : use-default-throw (state, action) ->
       state.set-in [\problem, \update], I.from-JS action.payload
-
-    \solution/list : use-default-throw (state, action) ->
-      state.set-in [\solution, \list], I.from-JS action.payload
-
-    \solution/get : use-default-throw (state, action) ->
-      state.set-in [\solution, \show] I.from-JS action.payload
-
-    \round/get : use-default-throw (state, action) ->
-      state.set-in [\round, action.payload.load], I.from-JS action.payload
 
     \round/add-prob : use-default-throw (state, action) ->
       state.update-in [\round, \update, \probs], (probs = I.List!) ->
         probs.push action.payload
 
-    \round/list : use-default-throw (state, action) ->
-      state.set-in [\round, \list], I.from-JS action.payload
-
-    \round/board : use-default-throw (state, action) ->
-      state.set-in [\round, \board], I.from-JS action.payload
-
-    \user/privileges : use-default-throw (state, action) ->
-      state.set-in [\user, \privileges], I.from-JS action.payload
-
     \problem/repair : use-default-throw (state, action) ->
       state.set-in [\problem, \update, \config, \dataset], I.from-JS action.payload.payload
 
+    \fetch : use-default-throw (state, action) ->
+      {endpoint, body} = action.payload
+      endpoint = "db" + endpoint + "/get"
+      path = endpoint.split '/'
+      state.set-in path, I.from-JS body
+
+    \send : use-default-throw (state, action) ->
+      {endpoint, body} = action.payload
+
     init-state
+#
+# route-initial-state = I.from-JS do
+#   url:
+#     changeId: 1
+#     path: undefined
+#     state: undefined
+#     replace: false
+#
+# route-reducer = (state=route-initial-state, action) ->
+#   if action.type == UPDATE_PATH
+#     state.set \url,
+#       path: payload.path,
+#       change-id: state.change-id + (payload.avoid-router-update ? 0 : 1),
+#       replace: payload.replace
+#       state: payload.state,
+#   return state
+
+# export root-reducer = combine-reducers Object.assign {}, reducer, routing: route-reducer
+export root-reducer = reducer

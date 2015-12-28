@@ -11,9 +11,9 @@ app.controller "user-modify-ctrl", [
     $scope.submit = ->
       user-serv.save $scope.user
     $scope.insert = ->
-      $scope.user.priv-list.push $scope.priv
+      $scope.user.groups.push $scope.priv
     $scope.remove = (priv) ->
-      $scope.user.priv-list = _.reject (== priv), $scope.user.priv-list
+      $scope.user.groups = _.reject (== priv), $scope.user.groups
     $scope.delete = ->
       ...
 ]

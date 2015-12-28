@@ -1,7 +1,6 @@
 require! {
   \co
   \redux : {create-store, apply-middleware, compose}
-  # \redux-promise : promise-middleware
   \redux-thunk
   \redux-logger : create-logger
   \../reducers : {root-reducer}

@@ -9,9 +9,9 @@
   connect = require('react-redux').connect;
   ref$ = require('../../actions'), onGetRound = ref$.onGetRound, onAddProbToRound = ref$.onAddProbToRound, onRoundModify = ref$.onRoundModify;
   log = debug('dollast:component:round:modify');
-  selector = function(state){
+  selector = function(state, props){
     return {
-      round: state.getIn(['round', 'update'], I.Map({
+      round: state.getIn(['db', 'round', props.params.rid, 'get'], I.Map({
         probs: []
       }))
     };
@@ -21,7 +21,7 @@
     componentDidMount: function(){
       var $form;
       if (this.props.params.rid) {
-        this.props.dispatch(onGetRound(this.props.params.rid, 'update'));
+        this.props.dispatch(onGetRound(this.props.params.rid));
       }
       $form = $('#form-round');
       return $form.form({

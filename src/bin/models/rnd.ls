@@ -4,7 +4,8 @@ require! {
   "debug"
   "co"
   "prelude-ls": _
-  "./conn"
+  \./conn
+  \./permit : {schema: permit-schema, can-access}
   "../db"
 }
 
@@ -12,7 +13,7 @@ log = debug "dollast:rnd-model"
 
 schema = new mongoose.Schema do
   _id: Number
-  author: type: String, ref: \user
+  permit: permit-schema
   title: String
   beg-time: Date
   end-time: Date
@@ -51,8 +52,9 @@ export modify = (rid, rnd) ~>*
     rid = yield next-count.bind(@)!
     rnd._id = rid
     log {rid}
+  else
+    @ensure-access model, rid, \w
 
-  @acquire-privilege 'rnd-all'
   rnd.beg-time = new Date that if rnd.beg-time
   rnd.end-time = new Date that if rnd.end-time
   doc = yield model.find-by-id rid .exec!
@@ -74,7 +76,7 @@ export modify = (rid, rnd) ~>*
 export show = (rid, opts = {}) ~>*
   opts.mode ||= "view"
   if opts.mode == "total"
-    @acquire-privilege 'rnd-all'
+    @ensure-access model, rid, \r
 
   rnd = yield model.find-by-id rid, '-__v' .populate 'probs', '_id outlook.title' .lean! .exec!
   if opts.mode == "view" and moment!.is-before rnd.beg-time
@@ -85,9 +87,7 @@ export show = (rid, opts = {}) ~>*
   return rnd
 
 export board = (rid, opts = {}) ->*
-  rnd = yield model.find-by-id rid, \published .exec!
-  if not rnd?.published
-    @acquire-privilege \rnd-all
+  @ensure-access model, rid, \r
 
   query = db.sol.model.aggregate do
     * $match: round: rid
@@ -107,11 +107,12 @@ export list = ~>*
   return yield model.find {}, 'title begTime endTime' .lean! .exec!
 
 export remove = (rid) ~>*
-  @acquire-privilege 'rnd-all'
-  return yield model.find-by-id-and-remove rid .lean! .exec!
+  @ensure-access model, rid, \w
+  yield model.find-by-id-and-remove rid .lean! .exec!
 
 export publish = (rid) ->*
-  @acquire-privilege 'rnd-all'
+  @ensure-access model, rid, \w
+
   doc = yield model.find-by-id rid .exec!
   if not doc
     throw new Error "no such round"

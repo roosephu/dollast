@@ -1,17 +1,12 @@
-/*
-  A `problem` may belong to some `round`.
-  When we create a `round`, we must take care of these problems.
-*/
-
 require! {
   \mongoose
-  \util
   \debug
-  \prelude-ls : _
+  \prelude-ls : {map}
   \sanitize-html
   \./conn
-  \../core
-  \../config
+  \./permit : {schema: permit-schema}
+  \../core : {gen-data-pairs}
+  \../config : {prob-list-opts}
   \../db
 }
 
@@ -27,7 +22,6 @@ schema = new mongoose.Schema do
     sample-in: String
     sample-out: String
   config:
-    author: type: String, ref: \user
     round: type: Number, ref: "round"
     time-lmt: Number
     space-lmt: Number
@@ -41,6 +35,7 @@ schema = new mongoose.Schema do
       weight: Number
     ]
   stat: {}
+  permit: permit-schema
 
 export model = conn.conn.model 'problem', schema
 count = 0
@@ -52,8 +47,9 @@ export show = (pid, opts = {}) ->*
     | "total"   => undefined
     | "brief"   => "outlook.title config.round"
     | otherwise => ...
-  if opts.mode == "total"
-    @acquire-privilege 'prob-all'
+  if opts.mode in ["total", "view"]
+    # @acquire-privilege 'prob-all'
+    @ensure-access model, pid, \r
 
   prob = yield model .find-by-id pid, fields
     .populate "config.round", "begTime"
@@ -62,8 +58,9 @@ export show = (pid, opts = {}) ->*
     throw new Error "no such problem"
 
   if prob?.config?.round?
-    if not that.is-started!
-      @acquire-privilege 'prob-all'
+    # needn't to check it since the round has settled it up
+    # if not that.is-started!
+      # @acquire-privilege 'prob-all'
     prob .= to-object!
     prob.config.round .= _id
   else
@@ -71,15 +68,15 @@ export show = (pid, opts = {}) ->*
   return prob
 
 export stat = (pid, opts = {}) ->*
-  prob = yield model.find-by-id pid, 'config.round'
+  prob = yield model.find-by-id pid, 'config.round outlook.title'
     .populate 'config.round', 'published'
+    .lean!
     .exec!
   if not prob
     throw new Error "no such problem"
 
-  if prob.config?.round?
-    if not that.published
-      @acquire-privilege 'rnd-all'
+  # log {@ensure-access, @acquire-privilege}
+  @ensure-access model, pid, \r
 
   query = db.sol.model.aggregate do
     * $match: prob: pid
@@ -98,10 +95,11 @@ export stat = (pid, opts = {}) ->*
           $sum: 1
 
   stat = yield query .exec!
-  return sols: stat
+  delete prob.config
+  return sols: stat, prob: prob
 
 export list = (opts) ->*
-  opts = config.prob-list-opts with opts
+  opts = prob-list-opts with opts
   return yield model
     .find null, 'outlook.title' # "config.round": $exists: true,
     .skip opts.skip
@@ -111,8 +109,8 @@ export list = (opts) ->*
 export upd-data = (pid) ->*
   @acquire-privilege 'prob-all'
   prob = yield model.find-by-id pid, 'config.dataset' .exec!
-  pairs = yield core.gen-data-pairs pid
-  prob.config.dataset = _.map (<<< weight: 1), pairs
+  pairs = yield gen-data-pairs pid
+  prob.config.dataset = map (<<< weight: 1), pairs
   yield prob.save!
 
   return pairs
@@ -124,13 +122,12 @@ export list-dataset = (pid) ->*
 
 func-next-count = conn.make-next-count model, count
 
-export next-count = ->*
+next-count = ->*
   log "next-count"
-  @acquire-privilege 'prob-all'
   return yield func-next-count!
 
 export modify = (pid, prob) ->*
-  @acquire-privilege 'prob-all'
+  @ensure-access model, pid, \w
   if prob._id
     delete prob._id
   if pid == 0

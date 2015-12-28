@@ -7,9 +7,9 @@
   ref$ = require('../elements'), dropdown = ref$.dropdown, iconText = ref$.iconText, rndLink = ref$.rndLink, roundTime = ref$.roundTime;
   onGetRoundsList = require('../../actions').onGetRoundsList;
   log = debug('dollast:component:round:list');
-  selector = function(state){
+  selector = function(state, props){
     return {
-      rounds: state.getIn(['round', 'list'], I.fromJS([]))
+      rounds: state.getIn(['db', 'round', 'get'], I.fromJS([]))
     };
   };
   module.exports = connect(selector)(createClass({

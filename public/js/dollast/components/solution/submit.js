@@ -9,7 +9,12 @@
   log = debug('dollast:component:solution:submit');
   selector = function(state){
     return {
-      uid: state.getIn(['session', 'uid'], "guest")
+      uid: state.getIn(['session', 'uid'], "guest"),
+      permit: {
+        owner: state.getIn(['session', 'uid']),
+        group: 'solutions',
+        access: 420
+      }
     };
   };
   module.exports = connect(selector)(createClass({
@@ -38,7 +43,10 @@
               type: 'empty',
               prompt: 'language cannot be empty'
             }]
-          }
+          },
+          owner: 'isUserId',
+          group: 'isUserId',
+          access: 'isAccess'
         },
         onSuccess: this.submit
       });
@@ -79,7 +87,34 @@
           'pas': 'pas',
           'java': 'java'
         }
-      }))), _(field, null, _(iconText, {
+      }))), _('h2', {
+        className: "ui dividing header"
+      }, 'permission'), _('div', {
+        className: "ui four fields"
+      }, _(labelField, {
+        text: 'owner'
+      }, _('div', {
+        className: "ui input"
+      }, _('input', {
+        name: 'owner',
+        type: 'string'
+      }))), _(labelField, {
+        text: 'group'
+      }, _('div', {
+        className: "ui input"
+      }, _('input', {
+        name: 'group',
+        type: 'string'
+      }))), _(labelField, {
+        text: 'access'
+      }, _('div', {
+        className: "ui input"
+      }, _('input', {
+        name: 'access',
+        type: 'string'
+      })))), _('div', {
+        className: "ui field"
+      }, _(iconText, {
         className: "primary floated submit",
         text: 'Submit',
         icon: 'rocket'

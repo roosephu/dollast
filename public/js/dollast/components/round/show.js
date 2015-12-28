@@ -7,9 +7,9 @@
   onGetRound = require('../../actions').onGetRound;
   I = require('immutable');
   log = debug('dollast:component:round:show');
-  selector = function(state){
+  selector = function(state, props){
     return {
-      round: state.getIn(['round', 'show'], I.fromJS({
+      round: state.getIn(['db', 'round', props.params.rid, 'get'], I.fromJS({
         probs: [],
         begTime: "1960-01-01 00:00:00",
         endTime: "1960-01-01 00:00:00"

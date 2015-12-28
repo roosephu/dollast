@@ -72,7 +72,6 @@
   app.use(function*(next){
     var ref$, ref1$, that, clientState, ref2$, ref3$;
     log('request body', this.request.body);
-    log('user state', this.state.user);
     if ((ref$ = this.state) != null && ((ref1$ = ref$.user) != null && ref1$.server)) {
       if (that = this.state.user.client) {
         clientState = JSON.parse(that);
@@ -84,8 +83,12 @@
       this.state.user.client = clientState;
       log('encrypted data in header.server', this.state.user);
     } else {
-      (this.state || (this.state = {})).user = {};
+      this.state.user = {
+        _id: '__guest__',
+        groups: []
+      };
     }
+    log('user state', this.state.user);
     yield next;
   });
   app.use(function*(next){

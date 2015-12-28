@@ -13,12 +13,12 @@
         return userServ.save($scope.user);
       };
       $scope.insert = function(){
-        return $scope.user.privList.push($scope.priv);
+        return $scope.user.groups.push($scope.priv);
       };
       $scope.remove = function(priv){
-        return $scope.user.privList = _.reject((function(it){
+        return $scope.user.groups = _.reject((function(it){
           return it === priv;
-        }), $scope.user.privList);
+        }), $scope.user.groups);
       };
       return $scope['delete'] = function(){
         throw Error('unimplemented');

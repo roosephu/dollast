@@ -8,8 +8,8 @@ require! {
 
 log = debug \dollast:component:round:list
 
-selector = (state) ->
-  rounds: state.get-in [\round, \list], I.from-JS []
+selector = (state, props) ->
+  rounds: state.get-in [\db, \round, \get], I.from-JS []
 
 module.exports = (connect selector) create-class do
   display-name: \rnd-list

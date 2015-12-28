@@ -27,7 +27,7 @@
     };
   };
   ref$.login = function*(){
-    var post, pswd, user, privList, i, clientKey, serverKey, serverPayload, clientPayload, payload, token, refresh;
+    var post, pswd, user, groups, i, clientKey, serverKey, serverPayload, clientPayload, payload, token, refresh;
     post = this.request.body;
     pswd = post.pswd;
     if (this.errors) {
@@ -42,11 +42,11 @@
         }
       };
     } else {
-      privList = user.privList;
-      privList.push('login');
-      this.state.user.priv = _.listsToObj(privList, (function(){
+      groups = user.groups;
+      groups.push('login');
+      this.state.user.priv = _.listsToObj(groups, (function(){
         var i$, to$, results$ = [];
-        for (i$ = 1, to$ = privList.length; i$ <= to$; ++i$) {
+        for (i$ = 1, to$ = groups.length; i$ <= to$; ++i$) {
           i = i$;
           results$.push(true);
         }

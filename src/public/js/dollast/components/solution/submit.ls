@@ -10,6 +10,10 @@ log = debug \dollast:component:solution:submit
 
 selector = (state) ->
   uid: state.get-in [\session, \uid], "guest"
+  permit:
+    owner: state.get-in [\session, \uid]
+    group: \solutions
+    access: 8~644
 
 module.exports = (connect selector) create-class do
   display-name: \sol-submit
@@ -32,6 +36,9 @@ module.exports = (connect selector) create-class do
             * type: 'empty'
               prompt: 'language cannot be empty'
             ...
+        owner: \isUserId
+        group: \isUserId
+        access: \isAccess
       on-success: @submit
 
   submit: (e) ->
@@ -56,7 +63,20 @@ module.exports = (connect selector) create-class do
             name: \lang
             default: "please select your language"
             options: {\cpp, \pas, \java}
-      _ field, null,
+
+      _ \h2, class-name: "ui dividing header", \permission
+      _ \div, class-name: "ui four fields",
+        _ label-field, text: \owner,
+          _ \div, class-name: "ui input",
+            _ \input, name: \owner, type: \string
+        _ label-field, text: \group,
+          _ \div, class-name: "ui input",
+            _ \input, name: \group, type: \string
+        _ label-field, text: \access,
+          _ \div, class-name: "ui input",
+            _ \input, name: \access, type: \string
+
+      _ \div, class-name: "ui field",
         _ icon-text,
           class-name: "primary floated submit"
           text: \Submit

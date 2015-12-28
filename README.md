@@ -15,3 +15,22 @@ To make live easier, you can install some other packages:
 1. `DEBUG=dollast:* nodemon --harmony -w bin bin/server.js` to run server
 2. `lsc -c src -o . -w` to watch all LiveScript files
 3. `lsc -c webpack.ls && mv webpack.js webpack.config.js && webpack` to watch JS files in client side
+
+# usage
+## how to make a round
+
+1. create an empty round without any problems; keep the round id in this step.
+2. create problems as you like; remember to set round id when creating;
+3. that's it!
+
+## how to reuse a problem
+I give up. The solution is... to create the same problem twice!
+
+The problem is that we don't know when to cancel a problem, i.e., when to delete the `rid` attribute of this problem. And I think there should be duplicated problems, even if I add the feature that we can reuse problems in different rounds.
+
+If you want, you can delete this attribute (the `rid` attr for each problem) manually, and then you can reuse it. To make it more handy, there is one API named `round.publish` which releases all problems in this round.
+
+## some general settings
+
+### permission manage
+Each resource is managed by a binary code `ABC`, while A indicates the permission of the owner, and B indicates that of the users in this group, and C is that of everyone. 

@@ -7,9 +7,9 @@
   onGetProblem = require('../../actions').onGetProblem;
   I = require('immutable');
   log = debug('dollast:component:problem:show');
-  selector = function(state){
+  selector = function(state, props){
     return {
-      problem: state.getIn(['problem', 'show'], I.fromJS({
+      problem: state.getIn(['db', 'problem', props.params.pid, 'get'], I.fromJS({
         outlook: {},
         config: {}
       }))
@@ -31,7 +31,7 @@
       return MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
     },
     componentDidMount: function(root){
-      this.props.dispatch(onGetProblem(this.props.params.pid, 'show'));
+      this.props.dispatch(onGetProblem(this.props.params.pid));
       return this.refreshMathjax(root);
     },
     componentDidUpdate: function(props, states, root){

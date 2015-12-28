@@ -180,3 +180,14 @@ export round-time = create-class do
       " to "
       _ \div, class-name: "ui label #{style}",
         moment @props.end-time .format 'YYYY-MM-DD hh:mm:ss'
+
+export statistics = create-class do
+  display-name: \statistics
+
+  render: ->
+    class-name = classnames @props.class-name, "ui statistics"
+    _ \div, {class-name},
+      for key, val of @props.stat
+        _ \div, class-name: \statistic, key: key,
+          _ \div, class-name: \value, val
+          _ \div, class-name: \label, key

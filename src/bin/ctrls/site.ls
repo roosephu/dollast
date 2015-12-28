@@ -38,9 +38,9 @@ export
         type: "err"
         msg: "bad user/password combination"
     else
-      priv-list = user.priv-list
-      priv-list.push 'login'
-      @state.user.priv = _.lists-to-obj priv-list, [true for i from 1 to priv-list.length]
+      groups = user.groups
+      groups.push 'login'
+      @state.user.priv = _.lists-to-obj groups, [true for i from 1 to groups.length]
 
       client-key = @request.body.client-key
       server-key = config.server-AES-key

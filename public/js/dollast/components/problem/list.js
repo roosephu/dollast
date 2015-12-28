@@ -40,7 +40,7 @@
   });
   selector = function(state){
     return {
-      probList: state.getIn(['problem', 'list'], I.fromJS([]))
+      probList: state.getIn(['db', 'problem', 'get'], I.fromJS([]))
     };
   };
   module.exports = connect(selector)(createClass({

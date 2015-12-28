@@ -18,6 +18,16 @@
     },
     isPassword: function(text){
       return 4 <= text.length && text.length <= 15;
+    },
+    isUserId: function(text){
+      if (4 > text.length || text.length > 15) {
+        return false;
+      } else {
+        return /^[a-zA-Z0-9._]$/.test(text);
+      }
+    },
+    isAccess: function(text){
+      return /^[0-7]{3}$/.test(text);
     }
   };
   for (key in extraRules) {

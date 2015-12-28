@@ -9,7 +9,7 @@ require! {
 log = debug \dollast:component:solution:list
 
 selector = (state) ->
-  sols: state.get-in [\solution, \list], I.from-JS []
+  sols: state.get-in [\db, \solution, \get], I.from-JS []
 
 module.exports = (connect selector) create-class do
   display-name: \sol-list

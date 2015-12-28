@@ -9,8 +9,8 @@ require! {
 
 log = debug \dollast:component:solution:show
 
-selector = (state) ->
-  sol: state.get-in [\solution, \show], I.from-JS do
+selector = (state, props) ->
+  sol: state.get-in [\db, \solution, props.params.sid, \get], I.from-JS do
     final: {}
     results: []
     prob:
@@ -25,17 +25,22 @@ module.exports = (connect selector) create-class do
   render: ->
     sol = @props.sol.to-JS!
     pid = sol.prob._id
+    state = if sol.open then \public else \private
 
     _ \div, null,
       _ \h3, class-name: "ui header", "author: #{sol.user}"
       _ \h3, class-name: "ui header", "lang: #{sol.lang}"
       _ \h3, class-name: "ui header", "problem: #{pid}"
+
+      _ \h1, class-name: "ui header dividing", \code
+      _ \pre, null,
+        _ highlight, class-name: sol.lang, sol.code
       switch sol.final.status
         | \private =>
           _ \p, null, "this code is private"
         | \CE =>
-          _ \div, null,
-            _ \p, null, "compile message:"
+          _ \div, class-name: "ui segment",
+            _ \div, class-name: "ui top attached label", "Error Message"
             _ \pre, null, sol.final.message
         | \running =>
           _ \div, class-name: \ui, \running
@@ -43,7 +48,7 @@ module.exports = (connect selector) create-class do
           _ \div, null,
             _ \div, class-name: "ui toggle checkbox",
               _ \input, type: \checkbox
-              _ \label, "Current state: #{if open then \public else \private}"
+              _ \label, "Current state: #state"
             _ \div, class-name: \ui,
               _ \h1, class-name: "ui header dividing", \details
               _ \table, class-name: "ui table segment",
@@ -72,6 +77,3 @@ module.exports = (connect selector) create-class do
                     _ \th, null, sol.final.space
                     _ \th, null, sol.final.score
                     _ \th, null, sol.final.message
-      _ \h1, class-name: "ui header dividing", \code
-      _ \pre, null,
-        _ highlight, class-name: sol.lang, sol.code

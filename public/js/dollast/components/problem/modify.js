@@ -9,9 +9,9 @@
   ref$ = require('../elements'), field = ref$.field, iconText = ref$.iconText, labelField = ref$.labelField, dropdown = ref$.dropdown;
   dropzone = require('react-dropzone');
   log = debug('dollast:component:problem:modify');
-  selector = function(state){
+  selector = function(state, props){
     return {
-      problem: state.getIn(['problem', 'update'], I.Map({
+      problem: state.getIn(['db', 'problem', props.params.pid, 'get'], I.Map({
         outlook: {},
         config: {
           timeLmt: 1,
@@ -19,6 +19,11 @@
           stkLmt: 4,
           outLmt: 10,
           dataset: []
+        },
+        permit: {
+          owner: state.getIn(['session', 'uid']),
+          group: 'problems',
+          access: 420
         }
       }))
     };
@@ -120,7 +125,10 @@
               type: "maxLength[65535]",
               prompt: "sample output cannot be longer than 65535"
             }]
-          }
+          },
+          owner: 'isUserId',
+          group: 'isUserId',
+          access: 'isAccess'
         },
         onSuccess: this.submit
       });
@@ -141,8 +149,10 @@
     },
     updateForms: function(problem){
       var $form;
+      problem = toClientFmt(problem.toJS());
       $form = $('#problem-modify');
-      return $form.form('set values', toClientFmt(problem.toJS()));
+      problem.access = problem.access.toString(8);
+      return $form.form('set values', problem);
     },
     componentWillUpdate: function(nextProps, nextStates){
       return this.updateForms(nextProps.problem);
@@ -170,7 +180,9 @@
         className: "ui centered"
       }, title), _('div', {
         className: "ui error message"
-      }), _('div', {
+      }), _('h2', {
+        className: "ui dividing header"
+      }, 'configuration'), _('div', {
         className: "ui three fields"
       }, _(labelField, {
         className: "eight wide",
@@ -231,7 +243,9 @@
       }, _('input', {
         name: 'outLmt',
         type: 'number'
-      })))), _(field, null, _(labelField, {
+      })))), _('h2', {
+        className: "ui dividing header"
+      }, 'description'), _(field, null, _(labelField, {
         text: 'description'
       }), _('textarea', {
         name: 'desc'
@@ -255,9 +269,9 @@
         text: "sample output"
       }, _('textarea', {
         name: 'sampleOut'
-      }))), _('div', {
-        className: "ui divider"
-      }), _(field, null, _(iconText, {
+      }))), _('h2', {
+        className: "ui dividing header"
+      }, "dataset management"), _(field, null, _(iconText, {
         icon: 'file',
         text: 'select',
         onClick: this.select
@@ -300,7 +314,32 @@
           }))));
         }
         return results$;
-      }.call(this)))))), _(field, null, _(iconText, {
+      }.call(this)))))), _('h2', {
+        className: "ui dividing header"
+      }, 'permission'), _('div', {
+        className: "ui four fields"
+      }, _(labelField, {
+        text: 'owner'
+      }, _('div', {
+        className: "ui input"
+      }, _('input', {
+        name: 'owner',
+        type: 'string'
+      }))), _(labelField, {
+        text: 'group'
+      }, _('div', {
+        className: "ui input"
+      }, _('input', {
+        name: 'group',
+        type: 'string'
+      }))), _(labelField, {
+        text: 'access'
+      }, _('div', {
+        className: "ui input"
+      }, _('input', {
+        name: 'access',
+        type: 'string'
+      })))), _(field, null, _(iconText, {
         className: "primary floated submit",
         text: 'Save',
         icon: 'save'

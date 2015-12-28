@@ -8,8 +8,8 @@ require! {
 
 log = debug \dollast:component:round:show
 
-selector = (state) ->
-  round: state.get-in [\round, \show], I.from-JS do
+selector = (state, props) ->
+  round: state.get-in [\db, \round, props.params.rid, \get], I.from-JS do
     probs: []
     beg-time: "1960-01-01 00:00:00"
     end-time: "1960-01-01 00:00:00"

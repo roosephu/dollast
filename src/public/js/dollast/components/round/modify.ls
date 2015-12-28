@@ -10,8 +10,8 @@ require! {
 
 log = debug \dollast:component:round:modify
 
-selector = (state) ->
-  round: state.get-in [\round, \update], I.Map do
+selector = (state, props) ->
+  round: state.get-in [\db, \round, props.params.rid, \get], I.Map do
     probs: []
 
 module.exports = (connect selector) create-class do
@@ -19,7 +19,7 @@ module.exports = (connect selector) create-class do
 
   component-did-mount: ->
     if @props.params.rid
-      @props.dispatch on-get-round @props.params.rid, \update
+      @props.dispatch on-get-round @props.params.rid
 
     $form = $ '#form-round'
     $form.form do

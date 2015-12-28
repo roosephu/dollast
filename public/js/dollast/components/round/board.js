@@ -25,10 +25,12 @@
     }
     return board;
   };
-  selector = function(state){
+  selector = function(state, props){
+    var rid;
+    rid = props.params.rid;
     return {
-      sols: state.getIn(['round', 'board'], I.fromJS([])),
-      probs: state.getIn(['round', 'show', 'probs'], I.fromJS([]))
+      sols: state.getIn(['db', 'round', rid, 'board', 'get'], I.fromJS([])),
+      probs: state.getIn(['db', 'round', rid, 'get'], I.fromJS([]))
     };
   };
   module.exports = connect(selector)(createClass({

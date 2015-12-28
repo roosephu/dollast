@@ -1,10 +1,9 @@
 require! {
-  "mongoose"
-  "debug"
-  "bcrypt"
-  "prelude-ls": _
-  "./conn"
-  "../config"
+  \mongoose
+  \debug
+  \bcrypt
+  \prelude-ls : {difference}
+  \./conn
 }
 
 log = debug "dollast:user"
@@ -13,7 +12,7 @@ schema = new mongoose.Schema do
   _id: String
   pswd: String
   desc: String
-  priv-list: [String]
+  groups: [String]
 
 schema.methods.check-password = (candidate) ->
   return bcrypt.compare-sync candidate, @pswd
@@ -38,8 +37,8 @@ export modify = (user) ->*
   doc = yield model.find-by-id user._id .exec!
   if not doc
     @throw "no such user exists"
-  priv-diff = _.difference doc?.priv-list, user?.priv-list
-  log doc?.priv-list, user?.priv-list
+  priv-diff = difference doc?.groups, user?.groups
+  log doc?.groups, user?.groups
   if priv-diff? and priv-diff.length > 0
     @acquire-privilege 'user-all'
   doc <<< user
@@ -51,7 +50,7 @@ export register = (user) ->*
   if old
     log "here", old
     @throw "duplicate user id"
-  user.priv-list = []
+  user.groups = []
   user = new model user
 
   salt = bcrypt.gen-salt-sync bcrypt.bcrypt-cost
@@ -67,7 +66,7 @@ export profile = (uid) ->*
   return user
 
 export get-privileges = (uid) ->*
-  user = yield model.find-by-id uid, \privList .lean! .exec!
+  user = yield model.find-by-id uid, \groups .lean! .exec!
   return user
 
 # CSRF

@@ -34,7 +34,7 @@
     });
   };
   out$.toServerFmt = toServerFmt = function(obj){
-    var outlook, config;
+    var outlook, config, permit;
     outlook = {
       title: obj.title,
       desc: obj.desc,
@@ -52,6 +52,11 @@
       outLmt: obj.outLmt,
       stkLmt: obj.stkLmt
     };
+    permit = {
+      owner: obj.owner,
+      group: obj.group,
+      access: obj.access
+    };
     if (config.rid === "") {
       delete config.rid;
     } else {
@@ -61,9 +66,11 @@
     config.spaceLmt = parseFloat(config.spaceLmt);
     config.outLmt = parseFloat(config.outLmt);
     config.stkLmt = parseFloat(config.stkLmt);
+    permit.access = parseInt(permit.access, 8);
     return {
       outlook: outlook,
-      config: config
+      config: config,
+      permit: permit
     };
   };
   out$.toClientFmt = toClientFmt = function(obj){

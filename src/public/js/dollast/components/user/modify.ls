@@ -10,10 +10,10 @@ require! {
 
 log = debug \dollast:components:user:modify
 
-selector = (state) ->
-  user: state.get-in [\user, \privileges], I.from-JS do
+selector = (state, props) ->
+  user: state.get-in [\db, \user, props.params.uid, \get], I.from-JS do
     _id: ''
-    priv-list: []
+    groups: []
 
 module.exports = (connect selector) create-class do
   display-name: \user-modify
@@ -22,14 +22,14 @@ module.exports = (connect selector) create-class do
     e.prevent-default!
     $form = $ '#form-user'
     {privileges, old-password, new-password, confirm-password} = $form.form 'get values'
-    priv-list = privileges.split ','
+    groups = privileges.split ','
     _id = @props.params.uid
     log {old-password, new-password}
 
     if old-password == "" or new-password == ""
-      updated = {_id, priv-list}
+      updated = {_id, groups}
     else
-      updated = {_id, priv-list, old-password, new-password}
+      updated = {_id, groups, old-password, new-password}
 
     @props.dispatch on-update-user @props.params.uid, updated
 
@@ -57,7 +57,7 @@ module.exports = (connect selector) create-class do
     user = next-props.user.to-JS!
 
     $form = $ '#form-user'
-    $form.form 'set values', privileges: user.priv-list
+    $form.form 'set values', privileges: user.groups
 
   render: ->
     user = @props.user.to-JS!

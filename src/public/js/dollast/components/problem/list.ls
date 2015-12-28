@@ -22,7 +22,7 @@ link-list = create-class do
           _ \div, class-name: \description, elem.desc # "#{prob._id}. #{prob.outlook.title}"
 
 selector = (state) ->
-  prob-list: state.get-in [\problem, \list], I.from-JS []
+  prob-list: state.get-in [\db, \problem, \get], I.from-JS []
 
 module.exports = (connect selector) create-class do
   display-name: \prob-list

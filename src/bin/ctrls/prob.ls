@@ -11,28 +11,21 @@ export
     log "prob-list #{@body}"
 
   next-count: ->*
-    @acquire-privilege \login
-    log "next-count"
     @body =
       type: \success
       payload:
         _id: yield db.prob.next-count!
 
   show: ->*
-    log 'show'
-    @acquire-privilege \login
     @body = yield db.prob.show @params.pid, mode: "view"
 
   total: ->*
-    @acquire-privilege \login
     @body = yield db.prob.show @params.pid, mode: "total"
 
   brief: ->*
-    @acquire-privilege \login
     @body = yield db.prob.show @params.pid, mode: "brief"
 
   save: ->*
-    @acquire-privilege \login
     req = @request.body
     #@check-body 'method' .in ['modify', 'create'], 'wrong method'
     @check-body 'outlook' .not-empty 'must exists'
@@ -58,13 +51,11 @@ export
   delete: ->*
     ...
 
-  repair: ->*
-    @acquire-privilege \login
     new-pairs = yield db.prob.upd-data @params.pid
+  repair: ->*
     @body =
       type: 'server/success'
       payload: new-pairs
 
   stat: ->*
-    @acquire-privilege \login
     @body = yield db.prob.stat @params.pid

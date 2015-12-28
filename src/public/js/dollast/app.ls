@@ -6,6 +6,8 @@ require! {
   \react-dom : {render}
   \react-router : {Router}
   \react-redux : {Provider}
+  # \history : {create-history}
+  # \redux-simple-router : {sync-redux-and-router}
   \./components/routes
   \./components/app
   \./components/devtools
@@ -16,6 +18,9 @@ require! {
 log = debug 'dollast:app'
 
 store = configure-store!
+
+# history = create-history!
+# sync-redux-and-router history, store
 
 render do
   _ \div, null,

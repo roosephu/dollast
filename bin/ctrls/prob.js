@@ -10,8 +10,6 @@
     log("prob-list " + this.body);
   };
   ref$.nextCount = function*(){
-    this.acquirePrivilege('login');
-    log("next-count");
     this.body = {
       type: 'success',
       payload: {
@@ -20,27 +18,22 @@
     };
   };
   ref$.show = function*(){
-    log('show');
-    this.acquirePrivilege('login');
     this.body = yield db.prob.show(this.params.pid, {
       mode: "view"
     });
   };
   ref$.total = function*(){
-    this.acquirePrivilege('login');
     this.body = yield db.prob.show(this.params.pid, {
       mode: "total"
     });
   };
   ref$.brief = function*(){
-    this.acquirePrivilege('login');
     this.body = yield db.prob.show(this.params.pid, {
       mode: "brief"
     });
   };
   ref$.save = function*(){
     var req;
-    this.acquirePrivilege('login');
     req = this.request.body;
     this.checkBody('outlook').notEmpty('must exists');
     this.checkBody('config').notEmpty('must exists');
@@ -61,19 +54,17 @@
     };
   };
   ref$['delete'] = function*(){
+    var newPairs;
     throw Error('unimplemented');
+    newPairs = yield db.prob.updData(this.params.pid);
   };
   ref$.repair = function*(){
-    var newPairs;
-    this.acquirePrivilege('login');
-    newPairs = yield db.prob.updData(this.params.pid);
     this.body = {
       type: 'server/success',
       payload: newPairs
     };
   };
   ref$.stat = function*(){
-    this.acquirePrivilege('login');
     this.body = yield db.prob.stat(this.params.pid);
   };
 }).call(this);

@@ -9,22 +9,22 @@
   privileges = require('../../utils/privileges');
   ref$ = require('../../actions'), onGetUserPrivileges = ref$.onGetUserPrivileges, onUpdateUser = ref$.onUpdateUser;
   log = debug('dollast:components:user:modify');
-  selector = function(state){
+  selector = function(state, props){
     return {
-      user: state.getIn(['user', 'privileges'], I.fromJS({
+      user: state.getIn(['db', 'user', props.params.uid, 'get'], I.fromJS({
         _id: '',
-        privList: []
+        groups: []
       }))
     };
   };
   module.exports = connect(selector)(createClass({
     displayName: 'user-modify',
     submit: function(e){
-      var $form, ref$, privileges, oldPassword, newPassword, confirmPassword, privList, _id, updated;
+      var $form, ref$, privileges, oldPassword, newPassword, confirmPassword, groups, _id, updated;
       e.preventDefault();
       $form = $('#form-user');
       ref$ = $form.form('get values'), privileges = ref$.privileges, oldPassword = ref$.oldPassword, newPassword = ref$.newPassword, confirmPassword = ref$.confirmPassword;
-      privList = privileges.split(',');
+      groups = privileges.split(',');
       _id = this.props.params.uid;
       log({
         oldPassword: oldPassword,
@@ -33,12 +33,12 @@
       if (oldPassword === "" || newPassword === "") {
         updated = {
           _id: _id,
-          privList: privList
+          groups: groups
         };
       } else {
         updated = {
           _id: _id,
-          privList: privList,
+          groups: groups,
           oldPassword: oldPassword,
           newPassword: newPassword
         };
@@ -76,7 +76,7 @@
       user = nextProps.user.toJS();
       $form = $('#form-user');
       return $form.form('set values', {
-        privileges: user.privList
+        privileges: user.groups
       });
     },
     render: function(){
