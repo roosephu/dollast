@@ -126,9 +126,27 @@
               prompt: "sample output cannot be longer than 65535"
             }]
           },
-          owner: 'isUserId',
-          group: 'isUserId',
-          access: 'isAccess'
+          owner: {
+            identifier: 'owner',
+            rules: [{
+              type: 'isUserId',
+              prompt: 'owner should be valid'
+            }]
+          },
+          group: {
+            identifier: 'group',
+            rules: [{
+              type: 'isUserId',
+              prompt: 'group should be valid'
+            }]
+          },
+          access: {
+            identifier: 'access',
+            rules: [{
+              type: 'isAccess',
+              prompt: 'access code should be /^[0-7]{3}$/'
+            }]
+          }
         },
         onSuccess: this.submit
       });
@@ -151,7 +169,9 @@
       var $form;
       problem = toClientFmt(problem.toJS());
       $form = $('#problem-modify');
-      problem.access = problem.access.toString(8);
+      if (problem.access) {
+        problem.access = problem.access.toString(8);
+      }
       return $form.form('set values', problem);
     },
     componentWillUpdate: function(nextProps, nextStates){

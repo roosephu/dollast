@@ -42,6 +42,7 @@ count = 0
 
 export show = (pid, opts = {}) ->*
   opts.mode ||= "view"
+  opts.mode = \total
   fields = switch opts.mode
     | "view"    => "outlook config.timeLmt config.spaceLmt config.round"
     | "total"   => undefined

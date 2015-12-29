@@ -47,6 +47,7 @@
     var fields, ref$, prob, ref1$;
     opts == null && (opts = {});
     opts.mode || (opts.mode = "view");
+    opts.mode = 'total';
     fields = (function(){
       switch (opts.mode) {
       case "view":

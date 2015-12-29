@@ -12,7 +12,12 @@
   selector = function(state, props){
     return {
       round: state.getIn(['db', 'round', props.params.rid, 'get'], I.Map({
-        probs: []
+        probs: [],
+        permit: {
+          owner: state.getIn(['session', 'uid']),
+          group: 'rounds',
+          access: 420
+        }
       }))
     };
   };
@@ -26,6 +31,7 @@
       $form = $('#form-round');
       return $form.form({
         on: 'blur',
+        onSuccess: this.submit,
         fields: {
           title: {
             identifier: 'title',
@@ -52,6 +58,27 @@
               type: 'isTime',
               prompt: 'start time should be valid'
             }]
+          },
+          owner: {
+            identifier: 'owner',
+            rules: [{
+              type: 'isUserId',
+              prompt: 'owner should be valid'
+            }]
+          },
+          group: {
+            identifier: 'group',
+            rules: [{
+              type: 'isUserId',
+              prompt: 'group should be valid'
+            }]
+          },
+          access: {
+            identifier: 'access',
+            rules: [{
+              type: 'isAccess',
+              prompt: 'access code should be /^[0-7]{3}$/'
+            }]
           }
         }
       });
@@ -74,36 +101,49 @@
       return this.insertProb($input[0].value);
     },
     updateForms: function(round){
-      var $form, ref$, title, begTime, endTime;
+      var $form, ref$, title, begTime, endTime, permit;
       $form = $('#form-round');
-      ref$ = round.toJS(), title = ref$.title, begTime = ref$.begTime, endTime = ref$.endTime;
-      return $form.form('set values', {
+      ref$ = round.toJS(), title = ref$.title, begTime = ref$.begTime, endTime = ref$.endTime, permit = ref$.permit;
+      if (permit != null && permit.access) {
+        permit.access = permit.access.toString(8);
+      }
+      $form.form('set values', {
         title: title,
         begTime: moment(begTime).format('YYYY-MM-DD hh:mm:ss'),
         endTime: moment(endTime).format('YYYY-MM-DD hh:mm:ss')
+      });
+      $form.form('set values', permit);
+      return log({
+        permit: permit
       });
     },
     componentWillUpdate: function(nextProps, nextStates){
       return this.updateForms(nextProps.round);
     },
     submit: function(){
-      var $form, ref$, title, begTime, endTime, probs;
+      var $form, values, permit, probs, data;
       $form = $('#form-round');
-      ref$ = $form.form('get values'), title = ref$.title, begTime = ref$.begTime, endTime = ref$.endTime;
+      values = $form.form('get values');
+      permit = {
+        owner: values.owner,
+        group: values.group,
+        access: values.access
+      };
+      permit.access = parseInt(permit.access, 8);
       probs = this.props.round.get('probs').toJS();
       probs = P.map(function(it){
         return it._id;
       }, probs);
-      log({
-        probs: probs
-      });
-      return this.props.dispatch(onRoundModify({
+      data = Object.assign({
+        title: values.title,
+        begTime: values.begTime,
+        endTime: values.endTime
+      }, {
         rid: this.rid,
-        title: title,
-        begTime: begTime,
-        endTime: endTime,
-        probs: probs
-      }));
+        probs: probs,
+        permit: permit
+      });
+      return this.props.dispatch(onRoundModify(data));
     },
     render: function(){
       var round, title, prob;
@@ -122,7 +162,9 @@
         className: "ui header dividing"
       }, title), _('div', {
         className: "ui error message"
-      }), _('div', {
+      }), _('h2', {
+        className: "ui dividing header"
+      }, 'configuration'), _('div', {
         className: "ui fields three"
       }, _(labelField, {
         text: 'title'
@@ -144,6 +186,31 @@
       }, _('input', {
         name: 'endTime',
         placeholder: "YYYY-MM-DD HH:mm:ss"
+      })))), _('h2', {
+        className: "ui header dividing"
+      }, 'permission'), _('div', {
+        className: "ui three fields"
+      }, _(labelField, {
+        text: 'owner'
+      }, _('div', {
+        className: "ui input"
+      }, _('input', {
+        name: 'owner',
+        type: 'string'
+      }))), _(labelField, {
+        text: 'group'
+      }, _('div', {
+        className: "ui input"
+      }, _('input', {
+        name: 'group',
+        type: 'string'
+      }))), _(labelField, {
+        text: 'access'
+      }, _('div', {
+        className: "ui input"
+      }, _('input', {
+        name: 'access',
+        type: 'string'
       })))), _('h2', {
         className: "ui header dividing"
       }, 'problemset'), _('div', {
@@ -179,18 +246,18 @@
         text: 'add',
         onClick: this.onAddProb
       })))))))), _('div', {
-        className: 'field'
+        className: "ui field"
       }, _(iconText, {
-        className: "floated right red",
+        className: "floated red",
         text: 'delete',
         icon: 'delete',
         onClick: this['delete']
       }), _(iconText, {
-        className: "floated right secondary",
+        className: "floated secondary",
         text: 'cancel',
-        icon: 'cancel'
+        icon: 'undo'
       }), _(iconText, {
-        className: "floated right primary submit",
+        className: "floated primary submit",
         text: 'save',
         icon: 'save'
       })));

@@ -20,9 +20,9 @@
   module.exports = connect(selector)(createClass({
     displayName: 'sol-submit',
     componentDidMount: function(){
-      var $form;
+      var $form, ref$;
       $form = $('#solution-submit');
-      return $form.form({
+      $form.form({
         on: 'blur',
         fields: {
           code: {
@@ -50,15 +50,31 @@
         },
         onSuccess: this.submit
       });
+      $form.form('set values', {
+        owner: (ref$ = this.props.permit).owner,
+        group: ref$.group
+      });
+      return $form.form('set values', {
+        access: this.props.permit.access.toString(8)
+      });
     },
     submit: function(e){
-      var $form, allValues, data;
+      var $form, allValues, permit, data;
       e.preventDefault();
       $form = $('#solution-submit');
       allValues = $form.form('get values');
-      data = importAll$(allValues, {
+      permit = {
+        owner: allValues.owner,
+        group: allValues.group,
+        acces: allValues.acces
+      };
+      permit.access = parseInt(permit.access, 8);
+      data = Object.assign({
         pid: this.props.params.pid,
         uid: this.props.uid
+      }, {
+        code: allValues.code,
+        lang: allValues.lang
       });
       return this.props.dispatch(onSubmitSolution(data));
     },
@@ -121,8 +137,4 @@
       })));
     }
   }));
-  function importAll$(obj, src){
-    for (var key in src) obj[key] = src[key];
-    return obj;
-  }
 }).call(this);

@@ -51,7 +51,7 @@
     return {
       type: 'send',
       payload: {
-        endpont: endpont,
+        endpoint: endpoint,
         body: data.body
       }
     };

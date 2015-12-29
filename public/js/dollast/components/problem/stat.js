@@ -12,8 +12,8 @@
     var pid;
     pid = props.params.pid;
     return {
-      sols: state.getIn(['db', 'problem', pid, 'stat', 'get'], I.fromJS([])),
-      prob: state.getIn(['db', 'problem', pid, 'get'], I.fromJS({
+      sols: state.getIn(['db', 'problem', pid, 'stat', 'get', 'sols'], I.fromJS([])),
+      prob: state.getIn(['db', 'problem', pid, 'stat', 'get', 'prob'], I.fromJS({
         _id: 0
       }))
     };

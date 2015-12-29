@@ -107,15 +107,24 @@ module.exports = (connect selector) create-class do
             * type: "maxLength[65535]"
               prompt: "sample output cannot be longer than 65535"
             ...
-        owner: \isUserId
-            # * type:
-            #   prompt: "owner should be a valid user id"
-            # * type:
-            #   prompt: "owner should be a valid user id"
-        group:  \isUserId
-          # rules:
-            # * type: "minLength[4]"
-        access: \isAccess
+        owner:
+          identifier: \owner
+          rules:
+            * type: \isUserId
+              prompt: 'owner should be valid'
+            ...
+        group:
+          identifier: \group
+          rules:
+            * type: \isUserId
+              prompt: 'group should be valid'
+            ...
+        access:
+          identifier: \access
+          rules:
+            * type: \isAccess
+              prompt: 'access code should be /^[0-7]{3}$/'
+            ...
       on-success:
         @submit
     if @props.params.pid
@@ -135,7 +144,8 @@ module.exports = (connect selector) create-class do
     # log 'new states. setting new values for form...', problem.to-JS!
     problem = to-client-fmt problem.to-JS!
     $form = $ '#problem-modify'
-    problem.access .= to-string 8
+    if problem.access
+      problem.access .= to-string 8
     $form.form 'set values', problem
 
   component-will-update: (next-props, next-states) ->

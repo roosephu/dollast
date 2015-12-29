@@ -40,13 +40,20 @@ module.exports = (connect selector) create-class do
         group: \isUserId
         access: \isAccess
       on-success: @submit
+    $form.form 'set values', @props.permit{owner, group}
+    $form.form 'set values', access: @props.permit.access.to-string 8
 
   submit: (e) ->
     e.prevent-default!
     $form = $ \#solution-submit
     all-values = $form.form 'get values'
+    permit = all-values{owner, group, acces}
+    permit.access = parse-int permit.access, 8
 
-    data = all-values <<<< pid: @props.params.pid, uid: @props.uid
+    data = Object.assign do
+      pid: @props.params.pid
+      uid: @props.uid
+      all-values{code, lang}
     @props.dispatch on-submit-solution data
 
   render: ->

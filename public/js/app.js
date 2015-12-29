@@ -96,7 +96,7 @@
 	      if (4 > text.length || text.length > 15) {
 	        return false;
 	      } else {
-	        return /^[a-zA-Z0-9._]$/.test(text);
+	        return /^[a-zA-Z0-9._]*$/.test(text);
 	      }
 	    },
 	    isAccess: function(text){
@@ -39537,7 +39537,7 @@
 	    return {
 	      type: 'send',
 	      payload: {
-	        endpont: endpont,
+	        endpoint: endpoint,
 	        body: data.body
 	      }
 	    };
@@ -52291,9 +52291,27 @@
 	              prompt: "sample output cannot be longer than 65535"
 	            }]
 	          },
-	          owner: 'isUserId',
-	          group: 'isUserId',
-	          access: 'isAccess'
+	          owner: {
+	            identifier: 'owner',
+	            rules: [{
+	              type: 'isUserId',
+	              prompt: 'owner should be valid'
+	            }]
+	          },
+	          group: {
+	            identifier: 'group',
+	            rules: [{
+	              type: 'isUserId',
+	              prompt: 'group should be valid'
+	            }]
+	          },
+	          access: {
+	            identifier: 'access',
+	            rules: [{
+	              type: 'isAccess',
+	              prompt: 'access code should be /^[0-7]{3}$/'
+	            }]
+	          }
 	        },
 	        onSuccess: this.submit
 	      });
@@ -52316,7 +52334,9 @@
 	      var $form;
 	      problem = toClientFmt(problem.toJS());
 	      $form = $('#problem-modify');
-	      problem.access = problem.access.toString(8);
+	      if (problem.access) {
+	        problem.access = problem.access.toString(8);
+	      }
 	      return $form.form('set values', problem);
 	    },
 	    componentWillUpdate: function(nextProps, nextStates){
@@ -52932,8 +52952,8 @@
 	    var pid;
 	    pid = props.params.pid;
 	    return {
-	      sols: state.getIn(['db', 'problem', pid, 'stat', 'get'], I.fromJS([])),
-	      prob: state.getIn(['db', 'problem', pid, 'get'], I.fromJS({
+	      sols: state.getIn(['db', 'problem', pid, 'stat', 'get', 'sols'], I.fromJS([])),
+	      prob: state.getIn(['db', 'problem', pid, 'stat', 'get', 'prob'], I.fromJS({
 	        _id: 0
 	      }))
 	    };
@@ -53088,9 +53108,9 @@
 	  module.exports = connect(selector)(createClass({
 	    displayName: 'sol-submit',
 	    componentDidMount: function(){
-	      var $form;
+	      var $form, ref$;
 	      $form = $('#solution-submit');
-	      return $form.form({
+	      $form.form({
 	        on: 'blur',
 	        fields: {
 	          code: {
@@ -53118,15 +53138,31 @@
 	        },
 	        onSuccess: this.submit
 	      });
+	      $form.form('set values', {
+	        owner: (ref$ = this.props.permit).owner,
+	        group: ref$.group
+	      });
+	      return $form.form('set values', {
+	        access: this.props.permit.access.toString(8)
+	      });
 	    },
 	    submit: function(e){
-	      var $form, allValues, data;
+	      var $form, allValues, permit, data;
 	      e.preventDefault();
 	      $form = $('#solution-submit');
 	      allValues = $form.form('get values');
-	      data = importAll$(allValues, {
+	      permit = {
+	        owner: allValues.owner,
+	        group: allValues.group,
+	        acces: allValues.acces
+	      };
+	      permit.access = parseInt(permit.access, 8);
+	      data = Object.assign({
 	        pid: this.props.params.pid,
 	        uid: this.props.uid
+	      }, {
+	        code: allValues.code,
+	        lang: allValues.lang
 	      });
 	      return this.props.dispatch(onSubmitSolution(data));
 	    },
@@ -53189,10 +53225,6 @@
 	      })));
 	    }
 	  }));
-	  function importAll$(obj, src){
-	    for (var key in src) obj[key] = src[key];
-	    return obj;
-	  }
 	}).call(this);
 
 
@@ -67716,7 +67748,12 @@
 	  selector = function(state, props){
 	    return {
 	      round: state.getIn(['db', 'round', props.params.rid, 'get'], I.Map({
-	        probs: []
+	        probs: [],
+	        permit: {
+	          owner: state.getIn(['session', 'uid']),
+	          group: 'rounds',
+	          access: 420
+	        }
 	      }))
 	    };
 	  };
@@ -67730,6 +67767,7 @@
 	      $form = $('#form-round');
 	      return $form.form({
 	        on: 'blur',
+	        onSuccess: this.submit,
 	        fields: {
 	          title: {
 	            identifier: 'title',
@@ -67756,6 +67794,27 @@
 	              type: 'isTime',
 	              prompt: 'start time should be valid'
 	            }]
+	          },
+	          owner: {
+	            identifier: 'owner',
+	            rules: [{
+	              type: 'isUserId',
+	              prompt: 'owner should be valid'
+	            }]
+	          },
+	          group: {
+	            identifier: 'group',
+	            rules: [{
+	              type: 'isUserId',
+	              prompt: 'group should be valid'
+	            }]
+	          },
+	          access: {
+	            identifier: 'access',
+	            rules: [{
+	              type: 'isAccess',
+	              prompt: 'access code should be /^[0-7]{3}$/'
+	            }]
 	          }
 	        }
 	      });
@@ -67778,36 +67837,49 @@
 	      return this.insertProb($input[0].value);
 	    },
 	    updateForms: function(round){
-	      var $form, ref$, title, begTime, endTime;
+	      var $form, ref$, title, begTime, endTime, permit;
 	      $form = $('#form-round');
-	      ref$ = round.toJS(), title = ref$.title, begTime = ref$.begTime, endTime = ref$.endTime;
-	      return $form.form('set values', {
+	      ref$ = round.toJS(), title = ref$.title, begTime = ref$.begTime, endTime = ref$.endTime, permit = ref$.permit;
+	      if (permit != null && permit.access) {
+	        permit.access = permit.access.toString(8);
+	      }
+	      $form.form('set values', {
 	        title: title,
 	        begTime: moment(begTime).format('YYYY-MM-DD hh:mm:ss'),
 	        endTime: moment(endTime).format('YYYY-MM-DD hh:mm:ss')
+	      });
+	      $form.form('set values', permit);
+	      return log({
+	        permit: permit
 	      });
 	    },
 	    componentWillUpdate: function(nextProps, nextStates){
 	      return this.updateForms(nextProps.round);
 	    },
 	    submit: function(){
-	      var $form, ref$, title, begTime, endTime, probs;
+	      var $form, values, permit, probs, data;
 	      $form = $('#form-round');
-	      ref$ = $form.form('get values'), title = ref$.title, begTime = ref$.begTime, endTime = ref$.endTime;
+	      values = $form.form('get values');
+	      permit = {
+	        owner: values.owner,
+	        group: values.group,
+	        access: values.access
+	      };
+	      permit.access = parseInt(permit.access, 8);
 	      probs = this.props.round.get('probs').toJS();
 	      probs = P.map(function(it){
 	        return it._id;
 	      }, probs);
-	      log({
-	        probs: probs
-	      });
-	      return this.props.dispatch(onRoundModify({
+	      data = Object.assign({
+	        title: values.title,
+	        begTime: values.begTime,
+	        endTime: values.endTime
+	      }, {
 	        rid: this.rid,
-	        title: title,
-	        begTime: begTime,
-	        endTime: endTime,
-	        probs: probs
-	      }));
+	        probs: probs,
+	        permit: permit
+	      });
+	      return this.props.dispatch(onRoundModify(data));
 	    },
 	    render: function(){
 	      var round, title, prob;
@@ -67826,7 +67898,9 @@
 	        className: "ui header dividing"
 	      }, title), _('div', {
 	        className: "ui error message"
-	      }), _('div', {
+	      }), _('h2', {
+	        className: "ui dividing header"
+	      }, 'configuration'), _('div', {
 	        className: "ui fields three"
 	      }, _(labelField, {
 	        text: 'title'
@@ -67848,6 +67922,31 @@
 	      }, _('input', {
 	        name: 'endTime',
 	        placeholder: "YYYY-MM-DD HH:mm:ss"
+	      })))), _('h2', {
+	        className: "ui header dividing"
+	      }, 'permission'), _('div', {
+	        className: "ui three fields"
+	      }, _(labelField, {
+	        text: 'owner'
+	      }, _('div', {
+	        className: "ui input"
+	      }, _('input', {
+	        name: 'owner',
+	        type: 'string'
+	      }))), _(labelField, {
+	        text: 'group'
+	      }, _('div', {
+	        className: "ui input"
+	      }, _('input', {
+	        name: 'group',
+	        type: 'string'
+	      }))), _(labelField, {
+	        text: 'access'
+	      }, _('div', {
+	        className: "ui input"
+	      }, _('input', {
+	        name: 'access',
+	        type: 'string'
 	      })))), _('h2', {
 	        className: "ui header dividing"
 	      }, 'problemset'), _('div', {
@@ -67883,18 +67982,18 @@
 	        text: 'add',
 	        onClick: this.onAddProb
 	      })))))))), _('div', {
-	        className: 'field'
+	        className: "ui field"
 	      }, _(iconText, {
-	        className: "floated right red",
+	        className: "floated red",
 	        text: 'delete',
 	        icon: 'delete',
 	        onClick: this['delete']
 	      }), _(iconText, {
-	        className: "floated right secondary",
+	        className: "floated secondary",
 	        text: 'cancel',
-	        icon: 'cancel'
+	        icon: 'undo'
 	      }), _(iconText, {
-	        className: "floated right primary submit",
+	        className: "floated primary submit",
 	        text: 'save',
 	        icon: 'save'
 	      })));
@@ -68519,14 +68618,13 @@
 
 	// Generated by LiveScript 1.3.1
 	(function(){
-	  var R, E;
-	  R = __webpack_require__(2);
-	  E = __webpack_require__(331);
-	  module.exports = R.createClass({
+	  var createClass;
+	  createClass = __webpack_require__(2).createClass;
+	  module.exports = createClass({
 	    displayName: 'footer',
 	    render: function(){
-	      return _(E.ui, {
-	        className: "divider grid horizontal"
+	      return _('div', {
+	        className: "ui divider horizontal"
 	      }, "Yuping Luo @ 2015");
 	    }
 	  });
@@ -79248,10 +79346,9 @@
 
 	// Generated by LiveScript 1.3.1
 	(function(){
-	  var combineReducers, handleActions, UPDATE_PATH, I, auth, A, log, initState, loadFromTokenReducer, defaultThrow, useDefaultThrow, reducer, rootReducer, out$ = typeof exports != 'undefined' && exports || this;
+	  var combineReducers, handleActions, I, auth, A, log, initState, loadFromTokenReducer, defaultThrow, useDefaultThrow, reducer, rootReducer, out$ = typeof exports != 'undefined' && exports || this;
 	  combineReducers = __webpack_require__(251).combineReducers;
 	  handleActions = __webpack_require__(335).handleActions;
-	  UPDATE_PATH = __webpack_require__(822).UPDATE_PATH;
 	  I = __webpack_require__(356);
 	  auth = __webpack_require__(347);
 	  A = __webpack_require__(334);
@@ -79424,352 +79521,6 @@
 		return encodeURIComponent(str).replace(/[!'()*]/g, function (c) {
 			return '%' + c.charCodeAt(0).toString(16);
 		});
-	};
-
-
-/***/ },
-/* 817 */,
-/* 818 */,
-/* 819 */,
-/* 820 */,
-/* 821 */,
-/* 822 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.routeReducer = exports.UPDATE_PATH = undefined;
-	exports.pushPath = pushPath;
-	exports.replacePath = replacePath;
-	exports.syncReduxAndRouter = syncReduxAndRouter;
-
-	var _deepEqual = __webpack_require__(823);
-
-	var _deepEqual2 = _interopRequireDefault(_deepEqual);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// Constants
-
-	var INIT_PATH = '@@router/INIT_PATH';
-	var UPDATE_PATH = exports.UPDATE_PATH = '@@router/UPDATE_PATH';
-	var SELECT_STATE = function SELECT_STATE(state) {
-	  return state.routing;
-	};
-
-	// Action creators
-
-	function initPath(path, state) {
-	  return {
-	    type: INIT_PATH,
-	    payload: {
-	      path: path,
-	      state: state,
-	      replace: false,
-	      avoidRouterUpdate: true
-	    }
-	  };
-	}
-
-	function pushPath(path, state) {
-	  var _ref = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-
-	  var _ref$avoidRouterUpdat = _ref.avoidRouterUpdate;
-	  var avoidRouterUpdate = _ref$avoidRouterUpdat === undefined ? false : _ref$avoidRouterUpdat;
-
-	  return {
-	    type: UPDATE_PATH,
-	    payload: {
-	      path: path,
-	      state: state,
-	      replace: false,
-	      avoidRouterUpdate: !!avoidRouterUpdate
-	    }
-	  };
-	}
-
-	function replacePath(path, state) {
-	  var _ref2 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-
-	  var _ref2$avoidRouterUpda = _ref2.avoidRouterUpdate;
-	  var avoidRouterUpdate = _ref2$avoidRouterUpda === undefined ? false : _ref2$avoidRouterUpda;
-
-	  return {
-	    type: UPDATE_PATH,
-	    payload: {
-	      path: path,
-	      state: state,
-	      replace: true,
-	      avoidRouterUpdate: !!avoidRouterUpdate
-	    }
-	  };
-	}
-
-	// Reducer
-
-	var initialState = {
-	  changeId: 1,
-	  path: undefined,
-	  state: undefined,
-	  replace: false
-	};
-
-	function update() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	  var _ref3 = arguments[1];
-	  var type = _ref3.type;
-	  var payload = _ref3.payload;
-
-	  if (type === INIT_PATH || type === UPDATE_PATH) {
-	    return _extends({}, state, {
-	      path: payload.path,
-	      changeId: state.changeId + (payload.avoidRouterUpdate ? 0 : 1),
-	      state: payload.state,
-	      replace: payload.replace
-	    });
-	  }
-	  return state;
-	}
-
-	// Syncing
-
-	function locationsAreEqual(a, b) {
-	  return a != null && b != null && a.path === b.path && (0, _deepEqual2.default)(a.state, b.state);
-	}
-
-	function createPath(location) {
-	  var pathname = location.pathname;
-	  var search = location.search;
-	  var hash = location.hash;
-
-	  var result = pathname;
-	  if (search) result += search;
-	  if (hash) result += hash;
-	  return result;
-	}
-
-	function syncReduxAndRouter(history, store) {
-	  var selectRouterState = arguments.length <= 2 || arguments[2] === undefined ? SELECT_STATE : arguments[2];
-
-	  var getRouterState = function getRouterState() {
-	    return selectRouterState(store.getState());
-	  };
-
-	  // To properly handle store updates we need to track the last route.
-	  // This route contains a `changeId` which is updated on every
-	  // `pushPath` and `replacePath`. If this id changes we always
-	  // trigger a history update. However, if the id does not change, we
-	  // check if the location has changed, and if it is we trigger a
-	  // history update. It's possible for this to happen when something
-	  // reloads the entire app state such as redux devtools.
-	  var lastRoute = undefined;
-
-	  if (!getRouterState()) {
-	    throw new Error('Cannot sync router: route state does not exist. Did you ' + 'install the routing reducer?');
-	  }
-
-	  var unsubscribeHistory = history.listen(function (location) {
-	    var route = {
-	      path: createPath(location),
-	      state: location.state
-	    };
-
-	    if (!lastRoute) {
-	      // `initialState` *should* represent the current location when
-	      // the app loads, but we cannot get the current location when it
-	      // is defined. What happens is `history.listen` is called
-	      // immediately when it is registered, and it updates the app
-	      // state with an UPDATE_PATH action. This causes problem when
-	      // users are listening to UPDATE_PATH actions just for
-	      // *changes*, and with redux devtools because "revert" will use
-	      // `initialState` and it won't revert to the original URL.
-	      // Instead, we specialize the first route notification and do
-	      // different things based on it.
-	      initialState = {
-	        changeId: 1,
-	        path: route.path,
-	        state: route.state,
-	        replace: false
-	      };
-
-	      // Also set `lastRoute` so that the store subscriber doesn't
-	      // trigger an unnecessary `pushState` on load
-	      lastRoute = initialState;
-
-	      store.dispatch(initPath(route.path, route.state));
-	    } else if (!locationsAreEqual(getRouterState(), route)) {
-	      // The above check avoids dispatching an action if the store is
-	      // already up-to-date
-	      var method = location.action === 'REPLACE' ? replacePath : pushPath;
-	      store.dispatch(method(route.path, route.state, { avoidRouterUpdate: true }));
-	    }
-	  });
-
-	  var unsubscribeStore = store.subscribe(function () {
-	    var routing = getRouterState();
-
-	    // Only trigger history update if this is a new change or the
-	    // location has changed.
-	    if (lastRoute.changeId !== routing.changeId || !locationsAreEqual(lastRoute, routing)) {
-
-	      lastRoute = routing;
-	      var method = routing.replace ? 'replaceState' : 'pushState';
-	      history[method](routing.state, routing.path);
-	    }
-	  });
-
-	  return function unsubscribe() {
-	    unsubscribeHistory();
-	    unsubscribeStore();
-	  };
-	}
-
-	exports.routeReducer = update;
-
-
-/***/ },
-/* 823 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var pSlice = Array.prototype.slice;
-	var objectKeys = __webpack_require__(824);
-	var isArguments = __webpack_require__(825);
-
-	var deepEqual = module.exports = function (actual, expected, opts) {
-	  if (!opts) opts = {};
-	  // 7.1. All identical values are equivalent, as determined by ===.
-	  if (actual === expected) {
-	    return true;
-
-	  } else if (actual instanceof Date && expected instanceof Date) {
-	    return actual.getTime() === expected.getTime();
-
-	  // 7.3. Other pairs that do not both pass typeof value == 'object',
-	  // equivalence is determined by ==.
-	  } else if (!actual || !expected || typeof actual != 'object' && typeof expected != 'object') {
-	    return opts.strict ? actual === expected : actual == expected;
-
-	  // 7.4. For all other Object pairs, including Array objects, equivalence is
-	  // determined by having the same number of owned properties (as verified
-	  // with Object.prototype.hasOwnProperty.call), the same set of keys
-	  // (although not necessarily the same order), equivalent values for every
-	  // corresponding key, and an identical 'prototype' property. Note: this
-	  // accounts for both named and indexed properties on Arrays.
-	  } else {
-	    return objEquiv(actual, expected, opts);
-	  }
-	}
-
-	function isUndefinedOrNull(value) {
-	  return value === null || value === undefined;
-	}
-
-	function isBuffer (x) {
-	  if (!x || typeof x !== 'object' || typeof x.length !== 'number') return false;
-	  if (typeof x.copy !== 'function' || typeof x.slice !== 'function') {
-	    return false;
-	  }
-	  if (x.length > 0 && typeof x[0] !== 'number') return false;
-	  return true;
-	}
-
-	function objEquiv(a, b, opts) {
-	  var i, key;
-	  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
-	    return false;
-	  // an identical 'prototype' property.
-	  if (a.prototype !== b.prototype) return false;
-	  //~~~I've managed to break Object.keys through screwy arguments passing.
-	  //   Converting to array solves the problem.
-	  if (isArguments(a)) {
-	    if (!isArguments(b)) {
-	      return false;
-	    }
-	    a = pSlice.call(a);
-	    b = pSlice.call(b);
-	    return deepEqual(a, b, opts);
-	  }
-	  if (isBuffer(a)) {
-	    if (!isBuffer(b)) {
-	      return false;
-	    }
-	    if (a.length !== b.length) return false;
-	    for (i = 0; i < a.length; i++) {
-	      if (a[i] !== b[i]) return false;
-	    }
-	    return true;
-	  }
-	  try {
-	    var ka = objectKeys(a),
-	        kb = objectKeys(b);
-	  } catch (e) {//happens when one is a string literal and the other isn't
-	    return false;
-	  }
-	  // having the same number of owned properties (keys incorporates
-	  // hasOwnProperty)
-	  if (ka.length != kb.length)
-	    return false;
-	  //the same set of keys (although not necessarily the same order),
-	  ka.sort();
-	  kb.sort();
-	  //~~~cheap key test
-	  for (i = ka.length - 1; i >= 0; i--) {
-	    if (ka[i] != kb[i])
-	      return false;
-	  }
-	  //equivalent values for every corresponding key, and
-	  //~~~possibly expensive deep test
-	  for (i = ka.length - 1; i >= 0; i--) {
-	    key = ka[i];
-	    if (!deepEqual(a[key], b[key], opts)) return false;
-	  }
-	  return typeof a === typeof b;
-	}
-
-
-/***/ },
-/* 824 */
-/***/ function(module, exports) {
-
-	exports = module.exports = typeof Object.keys === 'function'
-	  ? Object.keys : shim;
-
-	exports.shim = shim;
-	function shim (obj) {
-	  var keys = [];
-	  for (var key in obj) keys.push(key);
-	  return keys;
-	}
-
-
-/***/ },
-/* 825 */
-/***/ function(module, exports) {
-
-	var supportsArgumentsClass = (function(){
-	  return Object.prototype.toString.call(arguments)
-	})() == '[object Arguments]';
-
-	exports = module.exports = supportsArgumentsClass ? supported : unsupported;
-
-	exports.supported = supported;
-	function supported(object) {
-	  return Object.prototype.toString.call(object) == '[object Arguments]';
-	};
-
-	exports.unsupported = unsupported;
-	function unsupported(object){
-	  return object &&
-	    typeof object == 'object' &&
-	    typeof object.length == 'number' &&
-	    Object.prototype.hasOwnProperty.call(object, 'callee') &&
-	    !Object.prototype.propertyIsEnumerable.call(object, 'callee') ||
-	    false;
 	};
 
 

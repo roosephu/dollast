@@ -1,7 +1,7 @@
 require! {
   \redux : {combine-reducers}
   \redux-actions : {handle-actions}
-  \redux-simple-router : {UPDATE_PATH}
+  # \redux-simple-router : {UPDATE_PATH}
   \immutable : I
   \../utils/auth
   \../actions : A

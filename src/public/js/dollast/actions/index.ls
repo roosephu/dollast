@@ -43,7 +43,7 @@ export send = co.wrap (endpoint, info) ->*
   data = yield request \post, endpoint .send info .end!
   return
     type: \send
-    payload: {endpont, data.body}
+    payload: {endpoint, data.body}
 
 export on-register = (info) ->
   return send \/user/register, info

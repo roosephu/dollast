@@ -23,7 +23,7 @@
       if (4 > text.length || text.length > 15) {
         return false;
       } else {
-        return /^[a-zA-Z0-9._]$/.test(text);
+        return /^[a-zA-Z0-9._]*$/.test(text);
       }
     },
     isAccess: function(text){

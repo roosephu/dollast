@@ -82,7 +82,7 @@ router
   # .get    '/problem/next-count',        prob.next-count
   .get    '/problem/:pid',              prob.show
   .post   '/problem/:pid',              prob.save
-  .delete '/problem/:pid',              prob.delete
+  .delete '/problem/:pid',              prob.remove
   .get    '/problem/:pid/brief',        prob.brief
   .get    '/problem/:pid/total',        prob.total
   .get    '/problem/:pid/repair',       prob.repair

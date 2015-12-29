@@ -11,9 +11,9 @@ log = debug \dollast:component:problem:stat
 
 selector = (state, props) ->
   pid = props.params.pid
-  sols: state.get-in [\db, \problem, pid, \stat, \get], I.from-JS do
+  sols: state.get-in [\db, \problem, pid, \stat, \get, \sols], I.from-JS do
     []
-  prob: state.get-in [\db, \problem, pid, \get], I.from-JS do
+  prob: state.get-in [\db, \problem, pid, \stat, \get, \prob], I.from-JS do
     _id: 0
 
 generate-stat = (sols) ->

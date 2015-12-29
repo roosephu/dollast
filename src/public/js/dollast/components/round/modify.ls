@@ -13,6 +13,10 @@ log = debug \dollast:component:round:modify
 selector = (state, props) ->
   round: state.get-in [\db, \round, props.params.rid, \get], I.Map do
     probs: []
+    permit:
+      owner: state.get-in [\session, \uid]
+      group: \rounds
+      access: 8~644
 
 module.exports = (connect selector) create-class do
   display-name: \rnd-modify
@@ -24,6 +28,7 @@ module.exports = (connect selector) create-class do
     $form = $ '#form-round'
     $form.form do
       on: \blur
+      on-success: @submit
       fields:
         title:
           identifier: \title
@@ -44,6 +49,25 @@ module.exports = (connect selector) create-class do
             * type: \isTime
               prompt: 'start time should be valid'
             ...
+        owner:
+          identifier: \owner
+          rules:
+            * type: \isUserId
+              prompt: 'owner should be valid'
+            ...
+        group:
+          identifier: \group
+          rules:
+            * type: \isUserId
+              prompt: 'group should be valid'
+            ...
+        access:
+          identifier: \access
+          rules:
+            * type: \isAccess
+              prompt: 'access code should be /^[0-7]{3}$/'
+            ...
+
 
   insert-prob: (pid) ->
     pid = parse-int pid
@@ -63,23 +87,32 @@ module.exports = (connect selector) create-class do
   update-forms: (round) ->
     #log 'new states. setting new values for form...', to-client-fmt problem.to-JS!
     $form = $ '#form-round'
-    {title, beg-time, end-time} = round.to-JS!
+    {title, beg-time, end-time, permit} = round.to-JS!
+    if permit?.access
+      permit.access .= to-string 8
     $form.form 'set values',
       title: title
       beg-time: moment beg-time .format 'YYYY-MM-DD hh:mm:ss'
       end-time: moment end-time .format 'YYYY-MM-DD hh:mm:ss'
+    $form.form 'set values', permit
+    log {permit}
 
   component-will-update: (next-props, next-states) ->
     @update-forms next-props.round
 
   submit: ->
     $form = $ '#form-round'
-    {title, beg-time, end-time} = $form.form 'get values'
+    values = $form.form 'get values'
+    permit = values{owner, group, access}
+    permit.access = parse-int permit.access, 8
+
     probs = @props.round.get \probs .to-JS!
     probs = P.map (._id), probs
-    log {probs}
 
-    @props.dispatch on-round-modify {@rid, title, beg-time, end-time, probs}
+    data = Object.assign values{title, beg-time, end-time},
+      {@rid, probs, permit}
+
+    @props.dispatch on-round-modify data
 
   render: ->
     round = @props.round.to-JS!
@@ -93,6 +126,8 @@ module.exports = (connect selector) create-class do
     _ \div, class-name: "ui form segment", id: 'form-round',
       _ \h1, class-name: "ui header dividing", title
       _ \div, class-name: "ui error message"
+
+      _ \h2, class-name: "ui dividing header", \configuration
       _ \div, class-name: "ui fields three",
         _ label-field, text: \title,
           _ \div, class-name: "ui input",
@@ -103,6 +138,19 @@ module.exports = (connect selector) create-class do
         _ label-field, text: "end at",
           _ \div, class-name: "ui input",
             _ \input, name: \endTime, placeholder: "YYYY-MM-DD HH:mm:ss"
+
+      _ \h2, class-name: "ui header dividing", \permission
+        _ \div, class-name: "ui three fields",
+          _ label-field, text: \owner,
+            _ \div, class-name: "ui input",
+              _ \input, name: \owner, type: \string
+          _ label-field, text: \group,
+            _ \div, class-name: "ui input",
+              _ \input, name: \group, type: \string
+          _ label-field, text: \access,
+            _ \div, class-name: "ui input",
+              _ \input, name: \access, type: \string
+
       _ \h2, class-name: "ui header dividing", \problemset
       _ \div, class-name: "ui two fields",
         _ \div, class-name: "field",
@@ -131,17 +179,17 @@ module.exports = (connect selector) create-class do
                       text: \add
                       on-click: @on-add-prob
 
-      _ \div, class-name: \field,
+      _ \div, class-name: "ui field",
         _ icon-text,
-          class-name: "floated right red"
+          class-name: "floated red"
           text: \delete
           icon: \delete
           on-click: @delete
         _ icon-text,
-          class-name: "floated right secondary"
+          class-name: "floated secondary"
           text: \cancel
-          icon: \cancel
+          icon: \undo
         _ icon-text,
-          class-name: "floated right primary submit"
+          class-name: "floated primary submit"
           text: \save
           icon: \save
