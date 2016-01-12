@@ -63,7 +63,6 @@
           rnd = ref$[i$];
           results$.push(_('div', {
             className: "item",
-            href: rnd.href,
             key: "round/" + rnd._id
           }, _('div', {
             className: "ui right floated"

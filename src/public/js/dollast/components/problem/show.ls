@@ -40,7 +40,7 @@ module.exports = (connect selector) create-class do
     #log {problem}
 
     _ \div, class-name: "ui",
-      _ \h1, class-name: "ui centered", "Problem #{pid}. #{problem.outlook.title}"
+      _ \h1, class-name: "ui dividing header", "Problem #{pid}. #{problem.outlook.title}"
       _ \p, null, "time limit: #{problem.{}config.time-lmt || ''} space limit: #{problem.{}config.space-lmt || ''}"
       _ segment-box, desc: \description,
         _ \div, mathjax: true, dangerously-set-inner-HTML: __html: problem.outlook?.desc

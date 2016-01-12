@@ -87,7 +87,8 @@
     }),
     'send': useDefaultThrow(function(state, action){
       var ref$, endpoint, body;
-      return ref$ = action.payload, endpoint = ref$.endpoint, body = ref$.body, ref$;
+      ref$ = action.payload, endpoint = ref$.endpoint, body = ref$.body;
+      return state;
     })
   }, initState);
   out$.rootReducer = rootReducer = reducer;

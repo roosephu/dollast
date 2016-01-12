@@ -66,8 +66,8 @@ router
 
   .post   '/user/register',             user.register
   .post   '/user/:uid',                 user.save
-  .get    '/user/:uid/profile',         user.profile
-  .get    '/user/:uid/privileges',      user.get-privileges
+  .get    '/user/:uid',                 user.profile
+  # .get    '/user/:uid/privileges',      user.get-privileges
 
   .get    '/round',                     rnd.list
   # .get    '/round/next-count',          rnd.next-count

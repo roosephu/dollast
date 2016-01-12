@@ -73,6 +73,7 @@ reducer =
 
     \send : use-default-throw (state, action) ->
       {endpoint, body} = action.payload
+      state
 
     init-state
 #

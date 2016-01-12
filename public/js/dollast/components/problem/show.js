@@ -44,7 +44,7 @@
       return _('div', {
         className: "ui"
       }, _('h1', {
-        className: "ui centered"
+        className: "ui dividing header"
       }, "Problem " + pid + ". " + problem.outlook.title), _('p', null, "time limit: " + ((problem.config || (problem.config = {})).timeLmt || '') + " space limit: " + ((problem.config || (problem.config = {})).spaceLmt || '')), _(segmentBox, {
         desc: 'description'
       }, _('div', {

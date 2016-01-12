@@ -89,19 +89,7 @@ export show = (rid, opts = {}) ~>*
 export board = (rid, opts = {}) ->*
   @ensure-access model, rid, \r
 
-  query = db.sol.model.aggregate do
-    * $match: round: rid
-    * $sort: prob: 1, user: 1, _id: -1
-    * $group:
-        _id:
-          prob: \$prob
-          user: \$user
-        score:
-          $first: '$final.score'
-        sid:
-          $first: \$_id
-  results = yield query.exec!
-  return results
+  return yield db.sol.get-solutions-in-a-round rid
 
 export list = ~>*
   return yield model.find {}, 'title begTime endTime' .lean! .exec!
@@ -125,3 +113,6 @@ export publish = (rid) ->*
   return status:
     type: "ok"
     msg: "published all problems"
+
+export get-user-owned-rounds = (uid) ->*
+  return yield model.find 'permit.owner': uid, '_id title begTime endTime' .exec!

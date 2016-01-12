@@ -5,6 +5,7 @@ require! {
   \../../actions : {on-update-problem, on-get-problem, on-upload-files, on-repair-problem}
   \../utils : {to-client-fmt}
   \../elements : {field, icon-text, label-field, dropdown}
+  \../loading : {loading}
   \react-dropzone : dropzone
 }
 
@@ -12,6 +13,7 @@ log = debug 'dollast:component:problem:modify'
 
 selector = (state, props) ->
   problem: state.get-in [\db, \problem, props.params.pid, \get], I.Map do
+    # loading: true
     outlook:
       {}
     config:
@@ -165,6 +167,8 @@ module.exports = (connect selector) create-class do
 
   render: ->
     problem = @props.problem.to-JS!
+    return _ loading if user.loading
+
     problem-title = problem.outlook.title
     title = if @props.params.pid then "Update Problem #{that}. #{problem-title}" else "Create Problem"
 

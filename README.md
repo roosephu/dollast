@@ -33,4 +33,8 @@ If you want, you can delete this attribute (the `rid` attr for each problem) man
 ## some general settings
 
 ### permission manage
-Each resource is managed by a binary code `ABC`, while A indicates the permission of the owner, and B indicates that of the users in this group, and C is that of everyone. 
+Each resource is managed by a binary code `ABC`, while A indicates the permission of the owner, and B indicates that of the users in this group, and C is that of everyone.
+
+`r`: get descriptions
+`w`: change descriptions
+`x`: submit

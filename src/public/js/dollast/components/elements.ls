@@ -122,13 +122,15 @@ export prob-link = create-class do
 
   render: ->
     class-name = classnames @props.class-name, 'brown'
+    id = @props.prob._id
+    title = @props.prob.outlook.title
 
-    if @props.prob._id > 0
+    if id > 0
       _ icon-text,
         class-name: class-name
         icon: \puzzle
-        text: "#{@props.prob._id}. #{@props.prob.outlook.title}"
-        href: "#/problem/#{@props.prob._id}"
+        text: "#{id}. #{title}"
+        href: "#/problem/#{id}"
     else
       _ icon-text,
         class-name: class-name
@@ -191,3 +193,12 @@ export statistics = create-class do
         _ \div, class-name: \statistic, key: key,
           _ \div, class-name: \value, val
           _ \div, class-name: \label, key
+
+export label-segment = create-class do
+  display-name: \label-segment
+
+  render: ->
+    class-name = classnames @props.class-name, "ui segment"
+    _ \div, class-name: "ui segment",
+      _ \div, class-name: "ui top attached label large", @props.text
+      @props.children

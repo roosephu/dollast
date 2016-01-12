@@ -65,14 +65,14 @@
     }))), _(T, {
       path: 'user'
     }, _(D, {
-      component: require('./user/show')
+      component: require('./user/profile')
     }), _(T, {
       path: 'register',
       component: require('./user/register')
     }), _(T, {
       path: ":uid"
     }, _(D, {
-      component: require('./user/show')
+      component: require('./user/profile')
     }), _(T, {
       path: 'modify',
       component: require('./user/modify')

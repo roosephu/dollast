@@ -8,7 +8,7 @@ hidden-items = R.create-class do
   render: ->
     _ \div, {},
       for text in @props.text
-        _ \p, key: text.id, text
+        _ \p, key: text, text
 
 faq-item = R.create-class do
   dispay-name: \faq-item
@@ -64,7 +64,12 @@ module.exports = R.create-class do
 
       _ faq-item,
         question: "Q: 那么具体说来你用的是怎样一个架构？"
-        answer: "A: M(ongoDB)A(ngularjs)N(odejs)K(oa) ，外加一个 cpp 作为沙盒。目前发现没什么代码量……"
+        answer:
+          _ \div, null,
+            "A: "
+            _ \del, null, "M(ongoDB)A(ngularjs)N(odejs)K(oa) ，外加一个 cpp 作为沙盒。目前发现没什么代码量……"
+            "I used months to refactor the code from Angular.js to React.js. The backend remains to be Koa.js"
+
         hidden:
           * "据说码代码的时间只要学习新姿势的一半，学习新姿势的时间只要调试的一半"
           ...
@@ -72,4 +77,4 @@ module.exports = R.create-class do
       _ \h3, {}, "todo list"
       _ \ul, {},
         for todo in todos
-          _ \li, key: todo.id, todo
+          _ \li, key: todo, todo

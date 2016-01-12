@@ -61,7 +61,7 @@ count = 0
 log = debug 'dollast:sol'
 
 export submit = (req, uid) ->*
-  @ensure-access model, 0, \x # sol = 0 => submision
+  # @ensure-access model, 0, \x # sol = 0 => submision
   sol = new model do
     code: req.code
     lang: req.lang
@@ -133,3 +133,26 @@ export toggle = (sid) ->*
   # todo: change permission here
   yield sol.save!
   return open: sol.open
+
+export get-user-solved-problems = (uid) ->*
+  # log {uid, model.aggregate}
+  query = model.aggregate do
+    * $match: user: uid, 'final.score': 1
+    * $sort: prob: 1
+    * $group:
+        _id: \$prob
+  return yield query.exec!
+
+export get-solutions-in-a-round = (rid) ->*
+  query = model.aggregate do
+    * $match: round: rid
+    * $sort: prob: 1, user: 1, _id: -1
+    * $group:
+        _id:
+          prob: \$prob
+          user: \$user
+        score:
+          $first: '$final.score'
+        sid:
+          $first: \$_id
+  return yield query.exec!

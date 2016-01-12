@@ -4,6 +4,7 @@ require! {
   \bcrypt
   \prelude-ls : {difference}
   \./conn
+  \../db
 }
 
 log = debug "dollast:user"
@@ -12,6 +13,7 @@ schema = new mongoose.Schema do
   _id: String
   pswd: String
   desc: String
+  register: Date
   groups: [String]
 
 schema.methods.check-password = (candidate) ->
@@ -62,8 +64,11 @@ export register = (user) ->*
     msg: "register successful"
 
 export profile = (uid) ->*
-  user = yield model.find-by-id uid, '-pswd' .lean! .exec!
-  return user
+  profile = yield model.find-by-id uid, '-pswd' .lean! .exec!
+  solved-problems = yield db.sol.get-user-solved-problems uid
+  owned-problems = yield db.prob.get-user-owned-problems uid
+  owned-rounds = yield db.rnd.get-user-owned-rounds uid
+  return {profile, solved-problems, owned-problems, owned-rounds}
 
 export get-privileges = (uid) ->*
   user = yield model.find-by-id uid, \groups .lean! .exec!

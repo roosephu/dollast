@@ -48,7 +48,7 @@ module.exports = (connect selector) create-class do
       _ \div, class-name: "ui segment",
         _ \div, class-name: "ui very relaxed divided link list",
           for rnd in rounds
-            _ \div, class-name: "item", href: rnd.href, key: "round/#{rnd._id}",
+            _ \div, class-name: "item", key: "round/#{rnd._id}",
               # _ \div, class-name: "ui left floated icon",
               #   _ \i, class-name: "icon remove"
               _ \div, class-name: "ui right floated",

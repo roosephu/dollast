@@ -138,3 +138,6 @@ export modify = (pid, prob) ->*
     prob.outlook.desc |>= sanitize-html
 
   return yield model.update(_id: pid, {$set: prob}, upsert: true, overwrite: true).exec!
+
+export get-user-owned-problems = (uid) ->*
+  return yield model.find 'permit.owner': uid, '_id outlook.title' .exec!

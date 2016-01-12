@@ -103,9 +103,6 @@ export on-get-rounds-list = ->
 export on-get-round-board = (rid) ->
   return fetch "/round/#{rid}/board"
 
-export on-get-user-privileges = (uid) ->
-  return fetch "/user/#{uid}/privileges"
-
 export on-update-user = (uid, updated) ->
   return send "/user/#{uid}", updated
 
@@ -114,3 +111,6 @@ export on-repair-problem = (pid) ->
 
 export on-get-problem-stat = (pid) ->
   return fetch "/problem/#{pid}/stat"
+
+export on-get-user-profile = (uid) ->
+  return fetch "/user/#{uid}"
