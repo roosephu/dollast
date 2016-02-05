@@ -13,7 +13,7 @@ log = debug 'dollast:component:problem:modify'
 
 selector = (state, props) ->
   problem: state.get-in [\db, \problem, props.params.pid, \get], I.Map do
-    # loading: true
+    loading: true
     outlook:
       {}
     config:
@@ -26,6 +26,8 @@ selector = (state, props) ->
       owner: state.get-in [\session, \uid]
       group: \problems
       access: 8~644
+  # response: state.get-in [\db, \problem, props.params.pid, \post], I.Map do
+  #
 
 module.exports = (connect selector) create-class do
   display-name: \prob-modify
@@ -143,7 +145,7 @@ module.exports = (connect selector) create-class do
     @props.dispatch on-update-problem @state.pid, all-values
 
   update-forms: (problem) ->
-    # log 'new states. setting new values for form...', problem.to-JS!
+    log 'new states. setting new values for form...', problem.to-JS!
     problem = to-client-fmt problem.to-JS!
     $form = $ '#problem-modify'
     if problem.access
@@ -167,7 +169,7 @@ module.exports = (connect selector) create-class do
 
   render: ->
     problem = @props.problem.to-JS!
-    return _ loading if user.loading
+    # return _ loading if user.loading
 
     problem-title = problem.outlook.title
     title = if @props.params.pid then "Update Problem #{that}. #{problem-title}" else "Create Problem"
@@ -277,13 +279,13 @@ module.exports = (connect selector) create-class do
       _ \div, class-name: "ui four fields",
         _ label-field, text: \owner,
           _ \div, class-name: "ui input",
-            _ \input, name: \owner, type: \string
+            _ \input, name: \owner
         _ label-field, text: \group,
           _ \div, class-name: "ui input",
-            _ \input, name: \group, type: \string
+            _ \input, name: \group
         _ label-field, text: \access,
           _ \div, class-name: "ui input",
-            _ \input, name: \access, type: \string
+            _ \input, name: \access
 
       _ field, null,
         _ icon-text,

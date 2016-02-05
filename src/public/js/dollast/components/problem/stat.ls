@@ -2,7 +2,8 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \immutable : I
-  \../elements : {statistics, icon-text, prob-link}
+  \../elements : {statistics, icon-text}
+  \../format : {prob-link}
   \../../actions : {on-get-problem-stat}
   \prelude-ls : {sort-with, average, map}
 }

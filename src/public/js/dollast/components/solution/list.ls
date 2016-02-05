@@ -1,7 +1,8 @@
 require! {
   \react : {create-class}
   \react-redux : {connect}
-  \../elements : {icon-text, code-link, prob-link, user-link, rnd-link}
+  \../elements : {icon-text}
+  \../format : {code-link, prob-link, user-link, rnd-link}
   \../../actions : {on-get-solutions-list}
   \immutable : I
 }

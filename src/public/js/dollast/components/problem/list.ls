@@ -2,8 +2,8 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \../../actions : {on-refresh-problem-list}
-  \../elements : {icon-text, tab-menu, prob-link, dropdown}
-  \../utils : U
+  \../elements : {icon-text, tab-menu, dropdown}
+  \../format : {prob-link}
   \immutable : I
 }
 
@@ -12,7 +12,7 @@ log = debug 'dollast:component:problem:list'
 link-list = create-class do
   display-name: \link-list
   render: ->
-    _ \div, class-name: "ui very relaxed divided link list",
+    _ \div, class-name: "ui divided link list",
       for elem in @props.list
         _ \a, class-name: "item", href: elem.href, key: elem.href, # "problem/#{prob._id}",
           _ \div, class-name: "ui left floated icon",

@@ -31,6 +31,7 @@ export on-load-from-token = create-action 'load-from-token', (token) ->
 export on-login = co.wrap (info) ->*
   log "store received", info
   ret = yield request \post, \/site/login .send info .end!
+  log {ret}
   return on-load-from-token ret.body.token
 
 export fetch = co.wrap (endpoint) ->*
@@ -45,6 +46,11 @@ export send = co.wrap (endpoint, info) ->*
     type: \send
     payload: {endpoint, data.body}
 
+export on-set-ui = (endpoint, data) ->
+  return
+    type: \ui
+    payload: {endpoint, data}
+
 export on-register = (info) ->
   return send \/user/register, info
 
@@ -56,11 +62,11 @@ export on-logout = create-action 'logout', ->
 export on-update-problem = co.wrap (pid, info) ->*
   info |>= to-server-fmt
   log 'update problem', info
-  yield request \post, "/problem/#{pid}" .send info .end!
+  return yield send "/problem/#{pid}", info
 
-  return
-    type: \problem/update,
-    payload: info
+  # return
+  #   type: \problem/update,
+  #   payload: info
 
 export on-refresh-problem-list = ->
   return fetch \/problem

@@ -2,7 +2,8 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \immutable : I
-  \../elements : {icon-text, round-time, rnd-link, prob-link, label-segment}
+  \../elements : {icon-text, label-segment}
+  \../format : {round-time, rnd-link, prob-link}
   \../../actions : {on-get-user-profile}
   \../../utils/privileges
 }

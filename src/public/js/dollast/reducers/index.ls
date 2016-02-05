@@ -73,7 +73,15 @@ reducer =
 
     \send : use-default-throw (state, action) ->
       {endpoint, body} = action.payload
-      state
+      endpoint = "db" + endpoint + "/post"
+      path = endpoint.split '/'
+      state.set-in path, I.from-JS body
+
+    \ui : use-default-throw (state, action) ->
+      {endpoint, data} = action.payload
+      endpoint = "ui" + endpoint
+      path = endpoint.split '/'
+      state.set-in path, I.from-JS data
 
     init-state
 #

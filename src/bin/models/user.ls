@@ -48,10 +48,14 @@ export modify = (user) ->*
 
 export register = (user) ->*
   log {user}
-  old = yield model.find-by-id user._id, '_id' .lean! .exec!
-  if old
+  exists = yield model.find-by-id user._id, '_id' .lean! .exec!
+  if exists
     log "here", old
-    @throw "duplicate user id"
+    return
+      type: \register
+      error: true
+      payload: "duplicate user id"
+
   user.groups = []
   user = new model user
 
@@ -59,9 +63,9 @@ export register = (user) ->*
   user.pswd = bcrypt.hash-sync user.pswd, salt
   yield user.save!
 
-  return status:
-    type: "ok"
-    msg: "register successful"
+  return
+    type: \register
+    payload: "register successful"
 
 export profile = (uid) ->*
   profile = yield model.find-by-id uid, '-pswd' .lean! .exec!
