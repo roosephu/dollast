@@ -1,14 +1,4 @@
 require! {
-<<<<<<< HEAD
-  'mongoose'
-  "util"
-  "debug"
-  "prelude-ls": _
-  "./conn"
-  "../core"
-  "../config"
-  "../db"
-=======
   \mongoose
   \debug
   \prelude-ls : {map}
@@ -18,7 +8,6 @@ require! {
   \../core : {gen-data-pairs}
   \../config : {prob-list-opts}
   \../db
->>>>>>> local
 }
 
 log = debug "dollast:prob"

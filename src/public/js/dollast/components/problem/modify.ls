@@ -169,13 +169,6 @@ module.exports = (connect selector) create-class do
 
   render: ->
     problem = @props.problem.to-JS!
-<<<<<<< HEAD
-    problem-title = @props.problem.get-in [\outlook, \title]
-=======
-    # return _ loading if user.loading
-
-    problem-title = problem.outlook.title
->>>>>>> local
     title = if @props.params.pid then "Update Problem #{that}. #{problem-title}" else "Create Problem"
 
     _ \div, class-name: "ui form segment", id: 'problem-modify',
