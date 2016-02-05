@@ -2,14 +2,15 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \immutable : I
-  \../elements : {dropdown, icon-text, rnd-link, round-time}
+  \../elements : {dropdown, icon-text}
+  \../format : {rnd-link, round-time}
   \../../actions : {on-get-rounds-list}
 }
 
 log = debug \dollast:component:round:list
 
-selector = (state) ->
-  rounds: state.get-in [\round, \list], I.from-JS []
+selector = (state, props) ->
+  rounds: state.get-in [\db, \round, \get], I.from-JS []
 
 module.exports = (connect selector) create-class do
   display-name: \rnd-list
@@ -46,9 +47,9 @@ module.exports = (connect selector) create-class do
           icon: \plus
           href: '#/round/create'
       _ \div, class-name: "ui segment",
-        _ \div, class-name: "ui very relaxed divided link list",
+        _ \div, class-name: "ui divided link list",
           for rnd in rounds
-            _ \div, class-name: "item", href: rnd.href, key: "round/#{rnd._id}",
+            _ \div, class-name: "item", key: "round/#{rnd._id}",
               # _ \div, class-name: "ui left floated icon",
               #   _ \i, class-name: "icon remove"
               _ \div, class-name: "ui right floated",

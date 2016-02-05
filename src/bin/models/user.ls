@@ -1,10 +1,10 @@
 require! {
-  "mongoose"
-  "debug"
-  "bcrypt"
-  "prelude-ls": _
-  "./conn"
-  "../config"
+  \mongoose
+  \debug
+  \bcrypt
+  \prelude-ls : {difference}
+  \./conn
+  \../db
 }
 
 log = debug "dollast:user"
@@ -13,7 +13,8 @@ schema = new mongoose.Schema do
   _id: String
   pswd: String
   desc: String
-  priv-list: [String]
+  register: Date
+  groups: [String]
 
 schema.methods.check-password = (candidate) ->
   return bcrypt.compare-sync candidate, @pswd
@@ -38,8 +39,8 @@ export modify = (user) ->*
   doc = yield model.find-by-id user._id .exec!
   if not doc
     @throw "no such user exists"
-  priv-diff = _.difference doc?.priv-list, user?.priv-list
-  log doc?.priv-list, user?.priv-list
+  priv-diff = difference doc?.groups, user?.groups
+  log doc?.groups, user?.groups
   if priv-diff? and priv-diff.length > 0
     @acquire-privilege 'user-all'
   doc <<< user
@@ -47,27 +48,34 @@ export modify = (user) ->*
 
 export register = (user) ->*
   log {user}
-  old = yield model.find-by-id user._id, '_id' .lean! .exec!
-  if old
+  exists = yield model.find-by-id user._id, '_id' .lean! .exec!
+  if exists
     log "here", old
-    @throw "duplicate user id"
-  user.priv-list = []
+    return
+      type: \register
+      error: true
+      payload: "duplicate user id"
+
+  user.groups = []
   user = new model user
 
   salt = bcrypt.gen-salt-sync bcrypt.bcrypt-cost
   user.pswd = bcrypt.hash-sync user.pswd, salt
   yield user.save!
 
-  return status:
-    type: "ok"
-    msg: "register successful"
+  return
+    type: \register
+    payload: "register successful"
 
 export profile = (uid) ->*
-  user = yield model.find-by-id uid, '-pswd' .lean! .exec!
-  return user
+  profile = yield model.find-by-id uid, '-pswd' .lean! .exec!
+  solved-problems = yield db.sol.get-user-solved-problems uid
+  owned-problems = yield db.prob.get-user-owned-problems uid
+  owned-rounds = yield db.rnd.get-user-owned-rounds uid
+  return {profile, solved-problems, owned-problems, owned-rounds}
 
 export get-privileges = (uid) ->*
-  user = yield model.find-by-id uid, \privList .lean! .exec!
+  user = yield model.find-by-id uid, \groups .lean! .exec!
   return user
 
 # CSRF

@@ -2,7 +2,6 @@ require! {
   \react : {create-class}
   \./utils : {get-attr, merge-prop, add-class-name}
   \classnames
-  \moment
 }
 
 log = debug \dollast:elements
@@ -95,8 +94,8 @@ export dropdown = create-class do
     $ ".dropdown.ui" .dropdown!
 
   render: ->
-    ui-props = add-class-name @props, "dropdown"
-    _ ui, ui-props,
+    classes = add-class-name @props, "dropdown"
+    _ ui, classes,
       _ \input, type: \hidden, name: @props.name
       _ \div, class-name: "default text", @props.default
       _ \i, class-name: "dropdown icon"
@@ -105,77 +104,22 @@ export dropdown = create-class do
           _ \div, class-name: "item", "data-value": key, key: key,
             val
 
-export code-link = create-class do
-  display-name: \code
+export statistics = create-class do
+  display-name: \statistics
 
   render: ->
-    class-name = classnames @props.class-name, 'green'
-    _ icon-text,
-      class-name: class-name
-      icon: \code
-      text: @props.text || "#{@props.sid}"
-      href: "#/solution/#{@props.sid}"
+    class-name = classnames @props.class-name, "ui statistics"
+    _ \div, {class-name},
+      for key, val of @props.stat
+        _ \div, class-name: \statistic, key: key,
+          _ \div, class-name: \value, val
+          _ \div, class-name: \label, key
 
-export prob-link = create-class do
-  display-name: \problem
-
-  render: ->
-    class-name = classnames @props.class-name, 'brown'
-
-    if @props.prob._id > 0
-      _ icon-text,
-        class-name: class-name
-        icon: \puzzle
-        text: "#{@props.prob._id}. #{@props.prob.outlook.title}"
-        href: "#/problem/#{@props.prob._id}"
-    else
-      _ icon-text,
-        class-name: class-name
-        icon: \puzzle
-        text: \hidden
-
-export rnd-link = create-class do
-  display-name: \round
+export label-segment = create-class do
+  display-name: \label-segment
 
   render: ->
-    class-name = classnames @props.class-name, 'teal'
-    if @props.no-title == true
-      text = "#{@props.rnd._id}"
-    else
-      text = "#{@props.rnd._id}. #{@props.rnd.title}"
-
-    _ icon-text,
-      class-name: class-name
-      icon: \idea
-      text: text
-      href: "#/round/#{@props.rnd._id}"
-
-export user-link = create-class do
-  display-name: \user
-
-  render: ->
-    class-name = classnames @props.class-name, ''
-    _ icon-text,
-      class-name: class-name
-      icon: \user
-      text: "#{@props.user}"
-      href: "#/user/#{@props.user}"
-
-export round-time = create-class do
-  display-name: \round-time
-
-  render: ->
-    style =
-      if moment!.is-before @props.beg-time
-        \green
-      else if moment!.is-after @props.end-time
-        \grey
-      else
-        \red
-    _ \div, null,
-      " from "
-      _ \div, class-name: "ui label #{style}",
-        moment @props.beg-time .format 'YYYY-MM-DD hh:mm:ss'
-      " to "
-      _ \div, class-name: "ui label #{style}",
-        moment @props.end-time .format 'YYYY-MM-DD hh:mm:ss'
+    class-name = classnames @props.class-name, "ui segment"
+    _ \div, class-name: "ui segment",
+      _ \div, class-name: "ui top attached label large", @props.text
+      @props.children

@@ -9,7 +9,7 @@ log = debug 'dollast:ctrl:user'
 
 export
   save: ->*
-    @acquire-privilege \login
+    # @acquire-privilege \login
     @check-body '_id' .len config.uid-min-len, config.uid-max-len
     delete @request.body.pswd # should check once here
     return if @errors

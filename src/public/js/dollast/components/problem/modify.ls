@@ -5,13 +5,15 @@ require! {
   \../../actions : {on-update-problem, on-get-problem, on-upload-files, on-repair-problem}
   \../utils : {to-client-fmt}
   \../elements : {field, icon-text, label-field, dropdown}
+  \../loading : {loading}
   \react-dropzone : dropzone
 }
 
 log = debug 'dollast:component:problem:modify'
 
-selector = (state) ->
-  problem: state.get-in [\problem, \update], I.Map do
+selector = (state, props) ->
+  problem: state.get-in [\db, \problem, props.params.pid, \get], I.Map do
+    loading: true
     outlook:
       {}
     config:
@@ -20,6 +22,12 @@ selector = (state) ->
       stk-lmt: 4
       out-lmt: 10
       dataset: []
+    permit:
+      owner: state.get-in [\session, \uid]
+      group: \problems
+      access: 8~644
+  # response: state.get-in [\db, \problem, props.params.pid, \post], I.Map do
+  #
 
 module.exports = (connect selector) create-class do
   display-name: \prob-modify
@@ -103,6 +111,24 @@ module.exports = (connect selector) create-class do
             * type: "maxLength[65535]"
               prompt: "sample output cannot be longer than 65535"
             ...
+        owner:
+          identifier: \owner
+          rules:
+            * type: \isUserId
+              prompt: 'owner should be valid'
+            ...
+        group:
+          identifier: \group
+          rules:
+            * type: \isUserId
+              prompt: 'group should be valid'
+            ...
+        access:
+          identifier: \access
+          rules:
+            * type: \isAccess
+              prompt: 'access code should be /^[0-7]{3}$/'
+            ...
       on-success:
         @submit
     if @props.params.pid
@@ -119,9 +145,12 @@ module.exports = (connect selector) create-class do
     @props.dispatch on-update-problem @state.pid, all-values
 
   update-forms: (problem) ->
-    #log 'new states. setting new values for form...', to-client-fmt problem.to-JS!
+    log 'new states. setting new values for form...', problem.to-JS!
+    problem = to-client-fmt problem.to-JS!
     $form = $ '#problem-modify'
-    $form.form 'set values', to-client-fmt problem.to-JS!
+    if problem.access
+      problem.access .= to-string 8
+    $form.form 'set values', problem
 
   component-will-update: (next-props, next-states) ->
     @update-forms next-props.problem
@@ -140,12 +169,20 @@ module.exports = (connect selector) create-class do
 
   render: ->
     problem = @props.problem.to-JS!
+<<<<<<< HEAD
     problem-title = @props.problem.get-in [\outlook, \title]
+=======
+    # return _ loading if user.loading
+
+    problem-title = problem.outlook.title
+>>>>>>> local
     title = if @props.params.pid then "Update Problem #{that}. #{problem-title}" else "Create Problem"
 
     _ \div, class-name: "ui form segment", id: 'problem-modify',
       _ \h1, class-name: "ui centered", title
       _ \div, class-name: "ui error message"
+
+      _ \h2, class-name: "ui dividing header", \configuration
       _ \div, class-name: "ui three fields",
         _ label-field, class-name: "eight wide", text: \title,
           _ \div, class-name: "ui input",
@@ -178,6 +215,7 @@ module.exports = (connect selector) create-class do
           _ \div, class-name: "ui input",
             _ \input, name: \outLmt, type: \number
 
+      _ \h2, class-name: "ui dividing header", \description
       _ field, null,
         _ label-field, text: \description
           _ \textarea, name: \desc
@@ -193,8 +231,7 @@ module.exports = (connect selector) create-class do
         _ label-field, text: "sample output",
           _ \textarea, name: \sampleOut
 
-      _ \div, class-name: "ui divider"
-
+      _ \h2, class-name: "ui dividing header", "dataset management"
       _ field, null,
         _ icon-text,
           icon: \file
@@ -241,6 +278,18 @@ module.exports = (connect selector) create-class do
                       icon: \remove
                       text: \remove
                       on-click: @remove
+
+      _ \h2, class-name: "ui dividing header", \permission
+      _ \div, class-name: "ui four fields",
+        _ label-field, text: \owner,
+          _ \div, class-name: "ui input",
+            _ \input, name: \owner
+        _ label-field, text: \group,
+          _ \div, class-name: "ui input",
+            _ \input, name: \group
+        _ label-field, text: \access,
+          _ \div, class-name: "ui input",
+            _ \input, name: \access
 
       _ field, null,
         _ icon-text,

@@ -10,6 +10,10 @@ log = debug \dollast:component:solution:submit
 
 selector = (state) ->
   uid: state.get-in [\session, \uid], "guest"
+  permit:
+    owner: state.get-in [\session, \uid]
+    group: \solutions
+    access: 8~644
 
 module.exports = (connect selector) create-class do
   display-name: \sol-submit
@@ -32,14 +36,24 @@ module.exports = (connect selector) create-class do
             * type: 'empty'
               prompt: 'language cannot be empty'
             ...
+        owner: \isUserId
+        group: \isUserId
+        access: \isAccess
       on-success: @submit
+    $form.form 'set values', @props.permit{owner, group}
+    $form.form 'set values', access: @props.permit.access.to-string 8
 
   submit: (e) ->
     e.prevent-default!
     $form = $ \#solution-submit
     all-values = $form.form 'get values'
+    permit = all-values{owner, group, acces}
+    permit.access = parse-int permit.access, 8
 
-    data = all-values <<<< pid: @props.params.pid, uid: @props.uid
+    data = Object.assign do
+      pid: @props.params.pid
+      uid: @props.uid
+      all-values{code, lang}
     @props.dispatch on-submit-solution data
 
   render: ->
@@ -56,7 +70,20 @@ module.exports = (connect selector) create-class do
             name: \lang
             default: "please select your language"
             options: {\cpp, \pas, \java}
-      _ field, null,
+
+      _ \h2, class-name: "ui dividing header", \permission
+      _ \div, class-name: "ui four fields",
+        _ label-field, text: \owner,
+          _ \div, class-name: "ui input",
+            _ \input, name: \owner, type: \string
+        _ label-field, text: \group,
+          _ \div, class-name: "ui input",
+            _ \input, name: \group, type: \string
+        _ label-field, text: \access,
+          _ \div, class-name: "ui input",
+            _ \input, name: \access, type: \string
+
+      _ \div, class-name: "ui field",
         _ icon-text,
           class-name: "primary floated submit"
           text: \Submit

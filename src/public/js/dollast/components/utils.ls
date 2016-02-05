@@ -32,20 +32,23 @@ export add-class-name = (obj, class-name) ->
   # else
   #   obj with class-name: obj.class-name + " " + class-name
 
+
 export to-server-fmt = (obj) ->
   outlook = obj{title, desc, in-fmt, out-fmt, sample-in, sample-out}
   config  = obj{rid, pid, judger, time-lmt, space-lmt, out-lmt, stk-lmt}
+  permit  = obj{owner, group, access}
   if config.rid == ""
     delete config.rid
   else
     config.rid |>= parse-int
-  
+
   config.time-lmt  |>= parse-float
   config.space-lmt |>= parse-float
   config.out-lmt   |>= parse-float
   config.stk-lmt   |>= parse-float
-  
-  {outlook, config}
+  permit.access      = parse-int permit.access, 8
+
+  {outlook, config, permit}
 
 export to-client-fmt = (obj) ->
   flatten-object obj

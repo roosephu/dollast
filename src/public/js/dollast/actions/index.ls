@@ -31,14 +31,28 @@ export on-load-from-token = create-action 'load-from-token', (token) ->
 export on-login = co.wrap (info) ->*
   log "store received", info
   ret = yield request \post, \/site/login .send info .end!
+  log {ret}
   return on-load-from-token ret.body.token
 
-export on-register = co.wrap (info) ->*
-  data = yield request \post, \/user/register .send info .end!
-
+export fetch = co.wrap (endpoint) ->*
+  data = yield request \get, endpoint .end!
   return
-    type: \register
-    payload: data.body
+    type: \fetch
+    payload: {endpoint, data.body}
+
+export send = co.wrap (endpoint, info) ->*
+  data = yield request \post, endpoint .send info .end!
+  return
+    type: \send
+    payload: {endpoint, data.body}
+
+export on-set-ui = (endpoint, data) ->
+  return
+    type: \ui
+    payload: {endpoint, data}
+
+export on-register = (info) ->
+  return send \/user/register, info
 
 export on-logout = create-action 'logout', ->
   delete local-storage.token
@@ -46,61 +60,31 @@ export on-logout = create-action 'logout', ->
   null
 
 export on-update-problem = co.wrap (pid, info) ->*
-  log 'update problem', to-server-fmt info
-  yield request \post, "/problem/#{pid}" .send to-server-fmt info .end!
+  info |>= to-server-fmt
+  log 'update problem', info
+  return yield send "/problem/#{pid}", info
 
-  return
-    type: \problem/update,
-    payload: info
+  # return
+  #   type: \problem/update,
+  #   payload: info
 
-export on-refresh-problem-list = co.wrap ->*
-  data = yield request \get, \/problem .end!
+export on-refresh-problem-list = ->
+  return fetch \/problem
 
-  return
-    type: \problem/refresh-list
-    payload: data.body
+export on-get-problem = (pid) ->
+  return fetch "/problem/#{pid}"
 
-export on-get-problem = co.wrap (pid, load, mode = "") ->*
-  data = yield request \get, "/problem/#{pid}/#{mode}" .end!
-  data.body.load = load
+export on-submit-solution = (data) ->
+  return send \/solution/submit, data
 
-  return
-    type: \problem/get
-    payload: data.body
+export on-get-solutions-list = ->
+  return fetch \/solution
 
-export on-submit-solution = co.wrap (data) ->*
-  res = yield request \post, \/solution/submit .send data .end!
+export on-get-solution = (sid) ->
+  return fetch "/solution/#{sid}"
 
-  return
-    type: \solution/submit
-    payload: res.body
-
-export on-get-solutions-list = co.wrap ->*
-  data = yield request \get, \/solution .end!
-
-  return
-    type: \solution/list
-    payload: data.body
-
-export on-get-solution = co.wrap (sid) ->*
-  data = yield request \get, "/solution/#{sid}" .end!
-  return
-    type: \solution/get
-    payload: data.body
-
-  # co.wrap (add-jwt, dispatch) ->*
-  #   data = yield request \get, "/solution/#{sid}" .end!
-  #
-  #   dispatch do
-  #     type: \solution/get
-  #     payload: data.body
-
-export on-get-round = co.wrap (rid, load, mode = "") ->*
-  data = yield request \get, "/round/#{rid}/#{mode}" .end!
-  data.body.load = load
-  return
-    type: \round/get
-    payload: data.body
+export on-get-round = (rid) ->
+  return fetch "/round/#{rid}"
 
 export on-upload-files = co.wrap (pid, files) ->*
   log {files}
@@ -113,41 +97,26 @@ export on-upload-files = co.wrap (pid, files) ->*
     type: \problem/upload
     payload: [f.name for f in files]
 
-export on-add-prob-to-round = co.wrap (pid) ->*
-  prob-info = yield request \get, "/problem/#{pid}/brief" .end!
+export on-add-prob-to-round = (pid) ->
+  return fetch "/problem/#{pid}/brief"
 
-  return
-    type: \round/add-prob
-    payload: prob-info.body
+export on-round-modify = (rnd) ->
+  return send "/round/#{rnd.rid}", rnd
 
-export on-round-modify = co.wrap (rnd) ->*
-  ret = yield request \post, "/round/#{rnd.rid}" .send rnd .end!
+export on-get-rounds-list = ->
+  return fetch \/round
 
-  return
-    type: \round/modify
-    payload: null
+export on-get-round-board = (rid) ->
+  return fetch "/round/#{rid}/board"
 
-export on-get-rounds-list = co.wrap ->*
-  return
-    type: \round/list
-    payload: yield request \get, "/round" .end!
+export on-update-user = (uid, updated) ->
+  return send "/user/#{uid}", updated
 
-export on-get-round-board = co.wrap (rid) ->*
-  return
-    type: \round/board
-    payload: yield request \get, "/round/#{rid}/board" .end!
+export on-repair-problem = (pid) ->
+  return fetch "/problem/#{pid}/repair"
 
-export on-get-user-privileges = co.wrap (uid) ->*
-  return
-    type: \user/privileges
-    payload: yield request \get, "/user/#{uid}/privileges" .end!
+export on-get-problem-stat = (pid) ->
+  return fetch "/problem/#{pid}/stat"
 
-export on-update-user = co.wrap (uid, updated) ->*
-  return
-    type: \user/update
-    payload: yield request \post, "/user/#{uid}" .send updated .end!
-
-export on-repair-problem = co.wrap (pid) ->*
-  return
-    type: \problem/repair
-    payload: yield request \get, "/problem/#{pid}/repair" .end!
+export on-get-user-profile = (uid) ->
+  return fetch "/user/#{uid}"

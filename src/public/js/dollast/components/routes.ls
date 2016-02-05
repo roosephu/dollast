@@ -28,8 +28,8 @@ module.exports = (app) ->
         _ T, path: \modify, component: require(\./round/modify)
         _ T, path: \board, component: require(\./round/board)
     _ T, path: \user,
-      _ D, component: require(\./user/show)
+      _ D, component: require(\./user/profile)
       _ T, path: \register, component: require(\./user/register)
       _ T, path: ":uid",
-        _ D, component: require(\./user/show)
+        _ D, component: require(\./user/profile)
         _ T, path: \modify, component: require(\./user/modify)

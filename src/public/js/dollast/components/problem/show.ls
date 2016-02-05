@@ -8,8 +8,8 @@ require! {
 
 log = debug \dollast:component:problem:show
 
-selector = (state) ->
-  problem: state.get-in [\problem, \show], I.from-JS do
+selector = (state, props) ->
+  problem: state.get-in [\db, \problem, props.params.pid, \get], I.from-JS do
     outlook: {}
     config: {}
 
@@ -28,7 +28,7 @@ module.exports = (connect selector) create-class do
     MathJax.Hub.Queue [\Typeset, MathJax.Hub]
 
   component-did-mount: (root) ->
-    @props.dispatch on-get-problem @props.params.pid, \show
+    @props.dispatch on-get-problem @props.params.pid
     @refresh-mathjax root
 
   component-did-update: (props, states, root) ->
@@ -40,7 +40,7 @@ module.exports = (connect selector) create-class do
     #log {problem}
 
     _ \div, class-name: "ui",
-      _ \h1, class-name: "ui centered", "Problem #{pid}. #{problem.outlook.title}"
+      _ \h1, class-name: "ui dividing header", "Problem #{pid}. #{problem.outlook.title}"
       _ \p, null, "time limit: #{problem.{}config.time-lmt || ''} space limit: #{problem.{}config.space-lmt || ''}"
       _ segment-box, desc: \description,
         _ \p, mathjax: true, problem.outlook?.desc

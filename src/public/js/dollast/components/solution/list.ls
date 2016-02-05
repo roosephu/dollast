@@ -1,7 +1,8 @@
 require! {
   \react : {create-class}
   \react-redux : {connect}
-  \../elements : {icon-text, code-link, prob-link, user-link, rnd-link}
+  \../elements : {icon-text}
+  \../format : {code-link, prob-link, user-link, rnd-link}
   \../../actions : {on-get-solutions-list}
   \immutable : I
 }
@@ -9,7 +10,7 @@ require! {
 log = debug \dollast:component:solution:list
 
 selector = (state) ->
-  sols: state.get-in [\solution, \list], I.from-JS []
+  sols: state.get-in [\db, \solution, \get], I.from-JS []
 
 module.exports = (connect selector) create-class do
   display-name: \sol-list

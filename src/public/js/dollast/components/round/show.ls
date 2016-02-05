@@ -1,15 +1,16 @@
 require! {
   \react : {create-class}
   \react-redux : {connect}
-  \../elements : {prob-link, icon-text, round-time}
+  \../elements : {icon-text}
+  \../format : {prob-link, round-time}
   \../../actions : {on-get-round}
   \immutable : I
 }
 
 log = debug \dollast:component:round:show
 
-selector = (state) ->
-  round: state.get-in [\round, \show], I.from-JS do
+selector = (state, props) ->
+  round: state.get-in [\db, \round, props.params.rid, \get], I.from-JS do
     probs: []
     beg-time: "1960-01-01 00:00:00"
     end-time: "1960-01-01 00:00:00"
@@ -23,7 +24,6 @@ module.exports = (connect selector) create-class do
 
   render: ->
     rnd = @props.round.to-JS!
-    log rnd
 
     _ \div, null,
       _ \h1, class-name: "ui dividing header", "Round #{rnd._id}. #{rnd.title}"
@@ -32,7 +32,7 @@ module.exports = (connect selector) create-class do
       if rnd.started
         _ \div, class-name: "ui segment",
           _ \h2, null, \Problemset
-          _ \div, class-name: "ui very relaxed divided link list",
+          _ \div, class-name: "ui relaxed divided link list",
             for prob in rnd.probs
               _ \div, class-name: "item", key: "problem/#{prob._id}",
                 # _ \div, class-name: "ui left floated icon",
@@ -45,6 +45,7 @@ module.exports = (connect selector) create-class do
                 #   _ \div, class-name: "ui label #{style}",
                 #     moment rnd.end-time .format 'YYYY-MM-DD hh:mm:ss'
                   # 'Registered: '
+                _ \div, class-name: "ui right floated", "??"
                 _ \div, class-name: \description,
                   _ prob-link, {prob}
 

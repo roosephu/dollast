@@ -1,10 +1,9 @@
 require! {
-  \react : R
-  \../elements : E
+  \react : {create-class}
 }
 
-module.exports = R.create-class do
+module.exports = create-class do
   display-name: \footer
   render: ->
-    _ E.ui, class-name: "divider grid horizontal",
+    _ \div, class-name: "ui divider horizontal",
       "Yuping Luo @ 2015"
