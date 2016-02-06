@@ -40,7 +40,7 @@ module.exports = (connect selector) create-class do
       # _ \h4, null, "description"
       _ \div, class-name: "ui segment",
         _ \div, class-name: "ui large top attached label", "description"
-        _ \div, null, user.profile.desc
+        _ \div, null, user.profile?.desc
 
       # _ \h4, null, "groups"
       _ label-segment, text: "Groups",

@@ -28,23 +28,42 @@ export on-load-from-token = create-action 'load-from-token', (token) ->
   else
     new Error "no given token"
 
-export on-login = co.wrap (info) ->*
-  log "store received", info
-  ret = yield request \post, \/site/login .send info .end!
-  log {ret}
-  return on-load-from-token ret.body.token
+export fetch = (endpoint) ->
+  co.wrap (dispatch) ->*
+    dispatch do
+      type: \loading
+      payload: endpoint + "/get"
+    data = yield request \get, endpoint .end!
+    dispatch do
+      type: \fetch
+      payload: {endpoint, data.body}
+    # dispatch do
+    #   type: \loading
+    #   payload:
+    #     endpoint: endpoint
+    #     loading: \done
 
-export fetch = co.wrap (endpoint) ->*
-  data = yield request \get, endpoint .end!
-  return
-    type: \fetch
-    payload: {endpoint, data.body}
+export send = (endpoint, info) ->
+  co.wrap (dispatch) ->*
+    dispatch do
+      type: \loading
+      payload: endpoint + "/post"
+    data = yield request \post, endpoint .send info .end!
+    dispatch do
+      type: \send
+      payload: {endpoint, data.body}
+    # dispatch do
+    #   type: \loading
+    #   payload:
+    #     endpoint: endpoint
+    #     loading: \done
 
-export send = co.wrap (endpoint, info) ->*
-  data = yield request \post, endpoint .send info .end!
-  return
-    type: \send
-    payload: {endpoint, data.body}
+export on-login = (info) ->
+  co.wrap (dispatch, get-state) ->*
+    thunk = send \/site/login, info
+    yield thunk dispatch
+    token = get-state!.get-in [\db, \site, \login, \post, \payload, \token]
+    dispatch on-load-from-token token
 
 export on-set-ui = (endpoint, data) ->
   return
@@ -59,14 +78,10 @@ export on-logout = create-action 'logout', ->
   set-jwt ""
   null
 
-export on-update-problem = co.wrap (pid, info) ->*
+export on-update-problem = (pid, info) ->
   info |>= to-server-fmt
   log 'update problem', info
-  return yield send "/problem/#{pid}", info
-
-  # return
-  #   type: \problem/update,
-  #   payload: info
+  return send "/problem/#{pid}", info
 
 export on-refresh-problem-list = ->
   return fetch \/problem

@@ -25,12 +25,12 @@ error-middleware = (store) ->
         return
 
       if action instanceof Function
-        add-jwt = (request) ->
-          token = get-state!.get-in [\session, \token], null
-          if token
-            request .= set \Authorization, "Bearer #{token}"
+        # add-jwt = (request) ->
+        #   token = get-state!.get-in [\session, \token], null
+        #   if token
+        #     request .= set \Authorization, "Bearer #{token}"
 
-        action add-jwt, dispatch, get-state
+        action dispatch, get-state
         return
 
       payload = action.payload

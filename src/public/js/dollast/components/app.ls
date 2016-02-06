@@ -2,7 +2,6 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \../actions : {on-logout, on-load-from-token}
-  \../components/elements : E
   \../components/site/navbar
   \../components/site/footer
 }
@@ -10,13 +9,12 @@ require! {
 log = debug \dollast:component:app
 
 map-state-to-props = (state) ->
-  session:
-    state.get \session
+  session: state.get \session
 
 module.exports = (connect map-state-to-props) create-class do
   # mixins: [reflux.connect sess.store, \uid]
   display-name: \dollast
-  
+
   component-will-mount: ->
     @props.dispatch on-load-from-token local-storage.token
 
@@ -25,7 +23,7 @@ module.exports = (connect map-state-to-props) create-class do
     {dispatch} = @props
 
     _ \div, class-name: "ui grid",
-      _ navbar, 
+      _ navbar,
         uid: @props.session.get \uid
         on-logout: ->
           dispatch on-logout!

@@ -16,7 +16,7 @@
     getState = store.getState;
     return function(next){
       return function(action){
-        var addJwt, payload, ref$, e;
+        var payload, ref$, e;
         if (action instanceof Promise) {
           co(function*(){
             var data;
@@ -26,14 +26,7 @@
           return;
         }
         if (action instanceof Function) {
-          addJwt = function(request){
-            var token;
-            token = getState().getIn(['session', 'token'], null);
-            if (token) {
-              return request = request.set('Authorization', "Bearer " + token);
-            }
-          };
-          action(addJwt, dispatch, getState);
+          action(dispatch, getState);
           return;
         }
         payload = action.payload;

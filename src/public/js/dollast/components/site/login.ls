@@ -3,11 +3,17 @@ require! {
   \react-redux : {connect}
   \../elements : {field, icon-text, icon-input}
   \../../actions : {on-login}
+  \classnames
+  \immutable : {from-JS}
 }
 
 log = debug 'dollast:component:login'
 
-module.exports = connect! create-class do
+selector = (state) ->
+  user: state.get-in [\db, \site, \login, \post], from-JS do
+    status: \init
+
+module.exports = (connect selector) create-class do
   display-name: \login
 
   component-did-mount: ->
@@ -37,9 +43,18 @@ module.exports = connect! create-class do
     @props.dispatch on-login $form.form 'get values'
 
   render: ->
+    user = @props.user.to-JS!
+    classes = classnames "ui form segment",
+      loading: user.status == \wait
+      success: user.payload?.token? && user.status == \done
+      # error:
+
     _ \div, class-name: "ui",
       _ \h1, class-name: "ui dividing header", "Login"
-      _ \form, class-name: "ui form segment relaxed", id: "login-form",
+      _ \form, class-name: classes, id: "login-form",
+        _ \div, class-name: "ui error message"
+        _ \div, class-name: "ui success message",
+          "Login successfully."
         _ field, null,
           _ icon-input,
             class-name: "left"
@@ -59,4 +74,3 @@ module.exports = connect! create-class do
           class-name: "left primary labeled submit"
           icon: "sign in"
           text: \Login
-        _ \div, class-name: "ui error message"

@@ -73,10 +73,9 @@
         expiresInSeconds: 60 * 60 * 24 * 30
       });
       return this.body = {
-        token: token,
-        status: {
-          type: "ok",
-          msg: "login successfully"
+        type: "ok",
+        payload: {
+          token: token
         }
       };
     }

@@ -58,9 +58,8 @@ export
 
       refresh = koa-jwt.sign payload, config.server-AES-key, expires-in-seconds: 60 * 60 * 24 * 30
       @body =
-        token: token
-        status:
-          type: "ok"
-          msg: "login successfully"
+        type: "ok"
+        payload:
+          {token}
   logout: ->*
     ...

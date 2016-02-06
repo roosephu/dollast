@@ -32,7 +32,7 @@
       return this.props.dispatch(onGetUserProfile(this.props.uid));
     },
     render: function(){
-      var uid, user, group, prob, rnd;
+      var uid, user, ref$, group, prob, rnd;
       uid = this.props.uid;
       user = this.props.user.toJS();
       return _('div', null, _('h1', {
@@ -43,7 +43,7 @@
         className: "ui segment"
       }, _('div', {
         className: "ui large top attached label"
-      }, "description"), _('div', null, user.profile.desc)), _(labelSegment, {
+      }, "description"), _('div', null, (ref$ = user.profile) != null ? ref$.desc : void 8)), _(labelSegment, {
         text: "Groups"
       }, _('div', {
         className: "ui relaxed ivided link list"
