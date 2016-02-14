@@ -56,6 +56,7 @@ module.exports = (connect selector) create-class do
     $form = $ '#form-round'
     $form.form do
       on: \blur
+      inline: true
       on-success: @submit
       fields:
         title:
@@ -163,8 +164,9 @@ module.exports = (connect selector) create-class do
 
     _ \div, class-name: "ui form segment", id: 'form-round',
       _ \h1, class-name: "ui header dividing", title
-      _ \div, class-name: "ui error message"
-
+      _ \div, class-name: "ui success message",
+        _ \div, class-name: "header",
+          "Changes saved."
       _ \h2, class-name: "ui dividing header", \configuration
       _ \div, class-name: "ui fields three",
         _ label-field, text: \title,

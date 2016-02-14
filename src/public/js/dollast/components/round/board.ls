@@ -2,7 +2,7 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \../../actions : {on-get-round-board, on-get-round}
-  \../elements : {prob-link, user-link, code-link}
+  \../format : {prob-link, user-link, code-link}
   \immutable : I
   \prelude-ls : {sort, obj-to-pairs, reverse}
 }
@@ -44,11 +44,11 @@ module.exports = (connect selector) create-class do
             _ \th, null, \user
             _ \th, null, \total
             for prob in probs
-              _ \th, null,
+              _ \th, key: prob,
                 _ prob-link, {prob}
         _ \tbody, null,
           for [user, score] in board
-            _ \tr, null,
+            _ \tr, key: user,
               _ \td, null,
                 _ user-link, user: user
               _ \td, null,

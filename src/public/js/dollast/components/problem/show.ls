@@ -1,7 +1,7 @@
 require! {
   \react : {create-class}
   \react-redux : {connect}
-  \../elements : {icon-text}
+  \../elements : {icon-text, loading-segment}
   \../../actions : {on-get-problem}
   \immutable : I
 }
@@ -11,7 +11,13 @@ log = debug \dollast:component:problem:show
 selector = (state, props) ->
   problem: state.get-in [\db, \problem, props.params.pid, \get], I.from-JS do
     outlook: {}
-    config: {}
+    config:
+      time-lmt: 0
+      space-lmt: 0
+    permit:
+      owner: ''
+      group: ''
+  status: state.get-in [\status, \problem, props.params.pid, \get], \init
 
 segment-box = create-class do
   display-name: \segment-box
@@ -39,26 +45,41 @@ module.exports = (connect selector) create-class do
     problem = @props.problem.to-JS!
     #log {problem}
 
-    _ \div, class-name: "ui",
+    _ \div, null,
       _ \h1, class-name: "ui dividing header", "Problem #{pid}. #{problem.outlook.title}"
-      _ \p, null, "time limit: #{problem.{}config.time-lmt || ''} space limit: #{problem.{}config.space-lmt || ''}"
-      _ segment-box, desc: \description,
-        _ \p, mathjax: true, problem.outlook?.desc
-      _ \div, class-name: "ui two column grid",
-        _ \div, class-name: \row,
-          _ \div, class-name: \column,
-            _ segment-box, desc: "input format",
-              _ \p, null, problem.outlook?.in-fmt # mathjax here
-          _ \div, class-name: \column,
-            _ segment-box, desc: "output format",
-              _ \p, null, problem.outlook?.out-fmt # mathjax here
-        _ \div, class-name: \row,
-          _ \div, class-name: \column,
-            _ segment-box, desc: "sample input",
-              _ \pre, null, problem.outlook?.sample-in
-          _ \div, class-name: \column,
-            _ segment-box, desc: "sample output",
-              _ \pre, null, problem.outlook?.sample-out
+
+      _ loading-segment, @props{status},
+        # _ \p, null, "time limit: #{problem.{}config.time-lmt || ''} space limit: #{problem.{}config.space-lmt || ''}"
+        _ \div, class-name: "ui olive labels",
+          _ \div, class-name: "ui label",
+            "#{problem.config.time-lmt} s"
+            _ \div, class-name: "detail", "time limit"
+          _ \div, class-name: "ui label",
+            "#{problem.config.space-lmt} MB"
+            _ \div, class-name: "detail", "space limit"
+          _ \div, class-name: "ui label",
+            problem.permit.owner
+            _ \div, class-name: \detail, \owner
+          _ \div, class-name: "ui label",
+            problem.permit.group
+            _ \div, class-name: \detail, \group
+        _ segment-box, desc: \description,
+          _ \p, mathjax: true, problem.outlook?.desc
+        _ \div, class-name: "ui two column grid",
+          _ \div, class-name: \row,
+            _ \div, class-name: \column,
+              _ segment-box, desc: "input format",
+                _ \p, null, problem.outlook?.in-fmt # mathjax here
+            _ \div, class-name: \column,
+              _ segment-box, desc: "output format",
+                _ \p, null, problem.outlook?.out-fmt # mathjax here
+          _ \div, class-name: \row,
+            _ \div, class-name: \column,
+              _ segment-box, desc: "sample input",
+                _ \pre, null, problem.outlook?.sample-in
+            _ \div, class-name: \column,
+              _ segment-box, desc: "sample output",
+                _ \pre, null, problem.outlook?.sample-out
 
       _ \div, class-name: "ui divider"
 

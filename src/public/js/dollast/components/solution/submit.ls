@@ -40,6 +40,7 @@ module.exports = (connect selector) create-class do
         group: \isUserId
         access: \isAccess
       on-success: @submit
+      inline: true
     $form.form 'set values', @props.permit{owner, group}
     $form.form 'set values', access: @props.permit.access.to-string 8
 
@@ -54,13 +55,18 @@ module.exports = (connect selector) create-class do
       pid: @props.params.pid
       uid: @props.uid
       all-values{code, lang}
-    @props.dispatch on-submit-solution data
+
+    callback = ~>
+      @props.history.push '#/solution'
+    @props.dispatch on-submit-solution data, callback
 
   render: ->
     _ \div, class-name: "ui form segment relaxed", id: \solution-submit,
       _ field, null,
         _ \h1, class-name: "header divided", "problem: #{@props.params.pid}"
-      _ \div, class-name: "ui error message"
+      _ \div, class-name: "ui success message",
+        _ \div, class-name: "header",
+          "Submit successful. Redirect to status in 3 seconds..."
       _ label-field, text: \code,
         _ \textarea, name: \code
       _ \div, class-name: "ui two fields",

@@ -32,16 +32,20 @@
     return co.wrap(function*(dispatch){
       var data;
       dispatch({
-        type: 'loading',
+        type: 'requesting',
         payload: endpoint + "/get"
       });
       data = (yield request('get', endpoint).end());
-      return dispatch({
+      dispatch({
         type: 'fetch',
         payload: {
           endpoint: endpoint,
           body: data.body
         }
+      });
+      return dispatch({
+        type: 'requested',
+        payload: endpoint + "/get"
       });
     });
   };
@@ -49,26 +53,34 @@
     return co.wrap(function*(dispatch){
       var data;
       dispatch({
-        type: 'loading',
+        type: 'requesting',
         payload: endpoint + "/post"
       });
       data = (yield request('post', endpoint).send(info).end());
-      return dispatch({
+      dispatch({
         type: 'send',
         payload: {
           endpoint: endpoint,
           body: data.body
         }
       });
+      return dispatch({
+        type: 'requested',
+        payload: {
+          endpoint: endpoint + "/post",
+          status: 'done'
+        }
+      });
     });
   };
-  out$.onLogin = onLogin = function(info){
+  out$.onLogin = onLogin = function(info, callback){
     return co.wrap(function*(dispatch, getState){
       var thunk, token;
       thunk = send('/site/login', info);
       (yield thunk(dispatch));
       token = getState().getIn(['db', 'site', 'login', 'post', 'payload', 'token']);
-      return dispatch(onLoadFromToken(token));
+      dispatch(onLoadFromToken(token));
+      return callback();
     });
   };
   out$.onSetUi = onSetUi = function(endpoint, data){
@@ -83,11 +95,13 @@
   out$.onRegister = onRegister = function(info){
     return send('/user/register', info);
   };
-  out$.onLogout = onLogout = createAction('logout', function(){
+  out$.onLogout = onLogout = function(){
     delete localStorage.token;
     setJwt("");
-    return null;
-  });
+    return {
+      type: 'logout'
+    };
+  };
   out$.onUpdateProblem = onUpdateProblem = function(pid, info){
     info = toServerFmt(info);
     log('update problem', info);

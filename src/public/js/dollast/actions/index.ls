@@ -31,39 +31,38 @@ export on-load-from-token = create-action 'load-from-token', (token) ->
 export fetch = (endpoint) ->
   co.wrap (dispatch) ->*
     dispatch do
-      type: \loading
+      type: \requesting
       payload: endpoint + "/get"
     data = yield request \get, endpoint .end!
     dispatch do
       type: \fetch
       payload: {endpoint, data.body}
-    # dispatch do
-    #   type: \loading
-    #   payload:
-    #     endpoint: endpoint
-    #     loading: \done
+    dispatch do
+      type: \requested
+      payload: endpoint + "/get"
 
 export send = (endpoint, info) ->
   co.wrap (dispatch) ->*
     dispatch do
-      type: \loading
+      type: \requesting
       payload: endpoint + "/post"
     data = yield request \post, endpoint .send info .end!
     dispatch do
       type: \send
       payload: {endpoint, data.body}
-    # dispatch do
-    #   type: \loading
-    #   payload:
-    #     endpoint: endpoint
-    #     loading: \done
+    dispatch do
+      type: \requested
+      payload:
+        endpoint: endpoint + "/post"
+        status: \done
 
-export on-login = (info) ->
+export on-login = (info, callback) ->
   co.wrap (dispatch, get-state) ->*
     thunk = send \/site/login, info
     yield thunk dispatch
     token = get-state!.get-in [\db, \site, \login, \post, \payload, \token]
     dispatch on-load-from-token token
+    callback!
 
 export on-set-ui = (endpoint, data) ->
   return
@@ -73,10 +72,11 @@ export on-set-ui = (endpoint, data) ->
 export on-register = (info) ->
   return send \/user/register, info
 
-export on-logout = create-action 'logout', ->
+export on-logout = ->
   delete local-storage.token
   set-jwt ""
-  null
+  return
+    type: \logout
 
 export on-update-problem = (pid, info) ->
   info |>= to-server-fmt

@@ -123,3 +123,11 @@ export label-segment = create-class do
     _ \div, class-name: "ui segment",
       _ \div, class-name: "ui top attached label large", @props.text
       @props.children
+
+export loading-segment = create-class do
+  display-name: \loading-segment
+
+  render: ->
+    classes = classnames \ui, \segment, loading: @props.status == \wait
+    _ \div, class-name: classes,
+      @props.children

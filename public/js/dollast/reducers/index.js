@@ -62,29 +62,15 @@
       return state;
     }),
     'logout': useDefaultThrow(function(state, action){
-      state.set('session', fromJS({
+      return state.setIn(['session'], fromJS({
         guest: true
-      }));
-      return state.setIn(['db', 'site', 'login', 'post', 'status'], 'init');
-    }),
-    'problem/update': useDefaultThrow(function(state, action){
-      return state.setIn(['problem', 'update'], fromJS(action.payload));
-    }),
-    'round/add-prob': useDefaultThrow(function(state, action){
-      return state.updateIn(['round', 'update', 'probs'], function(probs){
-        probs == null && (probs = fromJS([]));
-        return probs.push(action.payload);
-      });
-    }),
-    'problem/repair': useDefaultThrow(function(state, action){
-      return state.setIn(['problem', 'update', 'config', 'dataset'], fromJS(action.payload.payload));
+      })).setIn(['status', 'site', 'login', 'post'], null);
     }),
     'fetch': useDefaultThrow(function(state, action){
       var ref$, endpoint, body, path;
       ref$ = action.payload, endpoint = ref$.endpoint, body = ref$.body;
       endpoint = "db" + endpoint + "/get";
       path = endpoint.split('/');
-      body.status = 'done';
       return state.setIn(path, fromJS(body));
     }),
     'send': useDefaultThrow(function(state, action){
@@ -92,7 +78,6 @@
       ref$ = action.payload, endpoint = ref$.endpoint, body = ref$.body;
       endpoint = "db" + endpoint + "/post";
       path = endpoint.split('/');
-      body.status = 'done';
       return state.setIn(path, fromJS(body));
     }),
     'ui': useDefaultThrow(function(state, action){
@@ -102,11 +87,17 @@
       path = endpoint.split('/');
       return state.setIn(path, fromJS(data));
     }),
-    'loading': useDefaultThrow(function(state, action){
+    'requesting': useDefaultThrow(function(state, action){
       var endpoint, path;
-      endpoint = "db" + action.payload + "/status";
+      endpoint = "status" + action.payload;
       path = endpoint.split('/');
       return state.setIn(path, 'wait');
+    }),
+    'requested': useDefaultThrow(function(state, action){
+      var endpoint, path;
+      endpoint = "status" + action.payload;
+      path = endpoint.split('/');
+      return state.setIn(path, 'done');
     })
   }, initState);
   out$.rootReducer = rootReducer = reducer;

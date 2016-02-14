@@ -10,12 +10,13 @@ navbar-user-state = create-class do
 
   render: ->
     uid = @props.uid
-    search = _ \div, class-name: \item,
-      _ icon-input,
-        icon: "search link"
-        input:
-          placeholder: "ID or Search"
-        class-name: "inverted small"
+    search =
+      _ \div, class-name: \item,
+        _ icon-input,
+          icon: "search link"
+          input:
+            placeholder: "ID or Search"
+          class-name: "inverted small"
     if uid
       _ \div, class-name: "right menu",
         search
@@ -47,6 +48,7 @@ module.exports = create-class do
   render: ->
     _ \div, class-name: "row",
       # _ \div, class-name: "ui segment",
+      # _ \div, class-name: "ui", id: \form-search,
       _ \div, class-name: "ui blue inverted page grid borderless menu",
         _ \div, class-name: "header item", \dollast
         _ labeled-icon,
@@ -69,7 +71,7 @@ module.exports = create-class do
           icon: "help circle"
           text: \About
           href: "#/about"
-        _ navbar-user-state, 
+        _ navbar-user-state,
           uid: @props.uid
           on-logout: @props.on-logout
 

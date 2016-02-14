@@ -2,9 +2,10 @@ require! {
   \react : {create-class}
   \react-redux : {connect}
   \../../actions : {on-refresh-problem-list}
-  \../elements : {icon-text, tab-menu, dropdown}
+  \../elements : {icon-text, tab-menu, dropdown, loading-segment}
   \../format : {prob-link}
-  \immutable : I
+  \immutable : {from-JS}
+  \classnames
 }
 
 log = debug 'dollast:component:problem:list'
@@ -22,7 +23,8 @@ link-list = create-class do
           _ \div, class-name: \description, elem.desc # "#{prob._id}. #{prob.outlook.title}"
 
 selector = (state) ->
-  problems: state.get-in [\db, \problem, \get], I.from-JS []
+  problems: state.get-in [\db, \problem, \get], from-JS []
+  status: state.get-in [\form, \problem, \get], \init
 
 module.exports = (connect selector) create-class do
   display-name: \prob-list
@@ -58,7 +60,7 @@ module.exports = (connect selector) create-class do
         text: \create
         icon: \plus
 
-      _ \div, class-name: "ui segment",
+      _ loading-segment, @props{status},
         _ \div, class-name: "ui very relaxed divided link list",
           for prob in problems
             # log {prob}

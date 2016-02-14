@@ -35,7 +35,8 @@ module.exports = (connect selector) create-class do
     _ \div, null,
       _ \h1, class-name: "ui dividing header", "Details of #{uid}"
 
-      _ label-segment, text: "registered since"
+      _ label-segment, text: "registered since",
+        "unimplemented"
 
       # _ \h4, null, "description"
       _ \div, class-name: "ui segment",
@@ -47,12 +48,13 @@ module.exports = (connect selector) create-class do
         _ \div, class-name: "ui relaxed ivided link list",
           for group in user.profile.groups
             _ \div, class-name: \item, key: group,
-              _ \div, class-name: \description, privileges[group]
+              _ \div, class-name: \description, group
           # _ \div, null, "#{user.profile.groups}"
 
       # _ \h4, null, "problems solved"
       _ label-segment, text: "Problems solved",
         _ \div, null, "#{JSON.stringify user.solved-problems}"
+        _ \p, null, "unimplemented"
 
       # _ \h4, null, "problems owned"
       _ label-segment, text: "Problems owned",

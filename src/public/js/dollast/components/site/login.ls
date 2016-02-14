@@ -19,6 +19,7 @@ module.exports = (connect selector) create-class do
   component-did-mount: ->
     $ '#login-form' .form do
       on: \blur
+      inline: true
       fields:
         uid:
           identifier: \uid
@@ -40,7 +41,12 @@ module.exports = (connect selector) create-class do
   submit: (e) ->
     e.prevent-default!
     $form = $ '#login-form'
-    @props.dispatch on-login $form.form 'get values'
+
+    callback = ~>
+      set-timeout do
+        ~> @props.history.push '/problem'
+        3000
+    @props.dispatch on-login $form.form('get values'), callback
 
   render: ->
     user = @props.user.to-JS!
@@ -54,7 +60,8 @@ module.exports = (connect selector) create-class do
       _ \form, class-name: classes, id: "login-form",
         _ \div, class-name: "ui error message"
         _ \div, class-name: "ui success message",
-          "Login successfully."
+          _ \div, class-name: "header",
+            "Login successfully. Redirect to problem list in 3 seconds. "
         _ field, null,
           _ icon-input,
             class-name: "left"

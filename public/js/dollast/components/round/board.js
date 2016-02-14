@@ -4,7 +4,7 @@
   createClass = require('react').createClass;
   connect = require('react-redux').connect;
   ref$ = require('../../actions'), onGetRoundBoard = ref$.onGetRoundBoard, onGetRound = ref$.onGetRound;
-  ref$ = require('../elements'), probLink = ref$.probLink, userLink = ref$.userLink, codeLink = ref$.codeLink;
+  ref$ = require('../format'), probLink = ref$.probLink, userLink = ref$.userLink, codeLink = ref$.codeLink;
   I = require('immutable');
   ref$ = require('prelude-ls'), sort = ref$.sort, objToPairs = ref$.objToPairs, reverse = ref$.reverse;
   log = debug('dollast:component:round:board');
@@ -53,7 +53,9 @@
         var i$, ref$, len$, results$ = [];
         for (i$ = 0, len$ = (ref$ = probs).length; i$ < len$; ++i$) {
           prob = ref$[i$];
-          results$.push(_('th', null, _(probLink, {
+          results$.push(_('th', {
+            key: prob
+          }, _(probLink, {
             prob: prob
           })));
         }
@@ -62,7 +64,9 @@
         var i$, ref$, len$, ref1$, results$ = [];
         for (i$ = 0, len$ = (ref$ = board).length; i$ < len$; ++i$) {
           ref1$ = ref$[i$], user = ref1$[0], score = ref1$[1];
-          results$.push(_('tr', null, _('td', null, _(userLink, {
+          results$.push(_('tr', {
+            key: user
+          }, _('td', null, _(userLink, {
             user: user
           })), _('td', null, score.total), (fn$())));
         }

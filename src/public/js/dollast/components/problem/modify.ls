@@ -1,18 +1,18 @@
 require! {
   \react : {create-class}
   \react-redux : {connect}
-  \immutable : I
+  \immutable : {from-JS}
   \../../actions : {on-update-problem, on-get-problem, on-upload-files, on-repair-problem}
   \../utils : {to-client-fmt}
   \../elements : {field, icon-text, label-field, dropdown}
-  \../loading : {loading}
+  \../format : {prob-fmt}
   \react-dropzone : dropzone
 }
 
 log = debug 'dollast:component:problem:modify'
 
 selector = (state, props) ->
-  problem: state.get-in [\db, \problem, props.params.pid, \get], I.Map do
+  problem: state.get-in [\db, \problem, props.params.pid, \get], from-JS do
     loading: true
     outlook:
       {}
@@ -22,10 +22,12 @@ selector = (state, props) ->
       stk-lmt: 4
       out-lmt: 10
       dataset: []
+      judger: \string
     permit:
       owner: state.get-in [\session, \uid]
       group: \problems
       access: 8~644
+  status: state.get-in [\status, \problem, props.params.pid, \get], \init
   # response: state.get-in [\db, \problem, props.params.pid, \post], I.Map do
   #
 
@@ -36,6 +38,7 @@ module.exports = (connect selector) create-class do
     $form = $ '#problem-modify'
     $form.form do
       on: \blur
+      inline: true
       fields:
         title:
           identifier: \title
@@ -145,7 +148,7 @@ module.exports = (connect selector) create-class do
     @props.dispatch on-update-problem @state.pid, all-values
 
   update-forms: (problem) ->
-    log 'new states. setting new values for form...', problem.to-JS!
+    # log 'new states. setting new values for form...', problem.to-JS!
     problem = to-client-fmt problem.to-JS!
     $form = $ '#problem-modify'
     if problem.access
@@ -169,7 +172,8 @@ module.exports = (connect selector) create-class do
 
   render: ->
     problem = @props.problem.to-JS!
-    title = if @props.params.pid then "Update Problem #{that}. #{problem-title}" else "Create Problem"
+    problem-title = prob-fmt problem
+    title = if @props.params.pid then "Update Problem #{problem-title}" else "Create Problem"
 
     _ \div, class-name: "ui form segment", id: 'problem-modify',
       _ \h1, class-name: "ui centered", title
@@ -249,7 +253,7 @@ module.exports = (connect selector) create-class do
       _ \div, class-name: "ui two fields",
         _ field, class-name: "four wide",
           _ dropzone, on-drop: @on-drop,
-            _ \div, null,
+            _ \div, class-name: "ui segment",
               "drop files here for click to select"
         _ field, class-name: "twelve wide",
           _ \table, class-name: "ui table segment",

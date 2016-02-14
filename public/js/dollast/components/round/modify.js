@@ -82,6 +82,7 @@
       $form = $('#form-round');
       $form.form({
         on: 'blur',
+        inline: true,
         onSuccess: this.submit,
         fields: {
           title: {
@@ -198,8 +199,10 @@
       }, _('h1', {
         className: "ui header dividing"
       }, title), _('div', {
-        className: "ui error message"
-      }), _('h2', {
+        className: "ui success message"
+      }, _('div', {
+        className: "header"
+      }, "Changes saved.")), _('h2', {
         className: "ui dividing header"
       }, 'configuration'), _('div', {
         className: "ui fields three"

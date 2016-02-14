@@ -53,31 +53,20 @@ reducer =
       state
 
     \logout : use-default-throw (state, action) ->
-      state.set \session, from-JS guest: true
-      state.set-in [\db, \site, \login, \post, \status], \init
-
-    \problem/update : use-default-throw (state, action) ->
-      state.set-in [\problem, \update], from-JS action.payload
-
-    \round/add-prob : use-default-throw (state, action) ->
-      state.update-in [\round, \update, \probs], (probs = from-JS []) ->
-        probs.push action.payload
-
-    \problem/repair : use-default-throw (state, action) ->
-      state.set-in [\problem, \update, \config, \dataset], from-JS action.payload.payload
+      state
+        .set-in [\session], from-JS guest: true
+        .set-in [\status, \site, \login, \post], null
 
     \fetch : use-default-throw (state, action) ->
       {endpoint, body} = action.payload
       endpoint = "db" + endpoint + "/get"
       path = endpoint.split '/'
-      body.status = \done
       state.set-in path, from-JS body
 
     \send : use-default-throw (state, action) ->
       {endpoint, body} = action.payload
       endpoint = "db" + endpoint + "/post"
       path = endpoint.split '/'
-      body.status = \done
       state.set-in path, from-JS body
 
     \ui : use-default-throw (state, action) ->
@@ -86,10 +75,15 @@ reducer =
       path = endpoint.split '/'
       state.set-in path, from-JS data
 
-    \loading : use-default-throw (state, action) ->
-      endpoint = "db" + action.payload + "/status"
+    \requesting : use-default-throw (state, action) ->
+      endpoint = "status" + action.payload
       path = endpoint.split \/
       state.set-in path, \wait
+
+    \requested : use-default-throw (state, action) ->
+      endpoint = "status" + action.payload
+      path = endpoint.split \/
+      state.set-in path, \done
 
     init-state
 #

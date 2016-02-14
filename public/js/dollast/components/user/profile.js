@@ -39,7 +39,7 @@
         className: "ui dividing header"
       }, "Details of " + uid), _(labelSegment, {
         text: "registered since"
-      }), _('div', {
+      }, "unimplemented"), _('div', {
         className: "ui segment"
       }, _('div', {
         className: "ui large top attached label"
@@ -56,12 +56,12 @@
             key: group
           }, _('div', {
             className: 'description'
-          }, privileges[group])));
+          }, group)));
         }
         return results$;
       }()))), _(labelSegment, {
         text: "Problems solved"
-      }, _('div', null, JSON.stringify(user.solvedProblems) + "")), _(labelSegment, {
+      }, _('div', null, JSON.stringify(user.solvedProblems) + ""), _('p', null, "unimplemented")), _(labelSegment, {
         text: "Problems owned"
       }, _('div', {
         className: "ui very relaxed divided link list"

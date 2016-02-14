@@ -20,6 +20,7 @@
     componentDidMount: function(){
       return $('#login-form').form({
         on: 'blur',
+        inline: true,
         fields: {
           uid: {
             identifier: 'uid',
@@ -51,10 +52,15 @@
       });
     },
     submit: function(e){
-      var $form;
+      var $form, callback, this$ = this;
       e.preventDefault();
       $form = $('#login-form');
-      return this.props.dispatch(onLogin($form.form('get values')));
+      callback = function(){
+        return setTimeout(function(){
+          return this$.props.history.push('/problem');
+        }, 3000);
+      };
+      return this.props.dispatch(onLogin($form.form('get values'), callback));
     },
     render: function(){
       var user, classes, ref$;
@@ -74,7 +80,9 @@
         className: "ui error message"
       }), _('div', {
         className: "ui success message"
-      }, "Login successfully."), _(field, null, _(iconInput, {
+      }, _('div', {
+        className: "header"
+      }, "Login successfully. Redirect to problem list in 3 seconds. ")), _(field, null, _(iconInput, {
         className: "left",
         icon: 'user',
         input: {

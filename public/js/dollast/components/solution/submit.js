@@ -48,7 +48,8 @@
           group: 'isUserId',
           access: 'isAccess'
         },
-        onSuccess: this.submit
+        onSuccess: this.submit,
+        inline: true
       });
       $form.form('set values', {
         owner: (ref$ = this.props.permit).owner,
@@ -59,7 +60,7 @@
       });
     },
     submit: function(e){
-      var $form, allValues, permit, data;
+      var $form, allValues, permit, data, callback, this$ = this;
       e.preventDefault();
       $form = $('#solution-submit');
       allValues = $form.form('get values');
@@ -76,7 +77,10 @@
         code: allValues.code,
         lang: allValues.lang
       });
-      return this.props.dispatch(onSubmitSolution(data));
+      callback = function(){
+        return this$.props.history.push('#/solution');
+      };
+      return this.props.dispatch(onSubmitSolution(data, callback));
     },
     render: function(){
       return _('div', {
@@ -85,8 +89,10 @@
       }, _(field, null, _('h1', {
         className: "header divided"
       }, "problem: " + this.props.params.pid)), _('div', {
-        className: "ui error message"
-      }), _(labelField, {
+        className: "ui success message"
+      }, _('div', {
+        className: "header"
+      }, "Submit successful. Redirect to status in 3 seconds...")), _(labelField, {
         text: 'code'
       }, _('textarea', {
         name: 'code'

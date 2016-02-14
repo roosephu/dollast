@@ -5,7 +5,7 @@ require! {
   \../elements : {statistics, icon-text}
   \../format : {prob-link}
   \../../actions : {on-get-problem-stat}
-  \prelude-ls : {sort-with, average, map}
+  \prelude-ls : {sort-with, average, map, filter}
 }
 
 log = debug \dollast:component:problem:stat
@@ -28,11 +28,12 @@ generate-stat = (sols) ->
     sol.doc.final.score || 0
 
   mean = average scores
-  median = scores[scores.length / 2]
+  median = scores[Math.floor scores.length / 2]
   variance = (average map (-> it * it), scores) - mean * mean
   stddev = Math.sqrt variance
+  solved = scores |> filter (== 1) |> (.length)
 
-  return {solved: sols.length, mean, median, stddev}
+  return {solved, mean, median, stddev}
 
 module.exports = (connect selector) create-class do
   display-name: \prob-stat
