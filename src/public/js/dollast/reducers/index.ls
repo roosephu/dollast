@@ -76,14 +76,15 @@ reducer =
       state.set-in path, from-JS data
 
     \requesting : use-default-throw (state, action) ->
-      endpoint = "status" + action.payload
+      endpoint = "db" + action.payload + \/status
       path = endpoint.split \/
       state.set-in path, \wait
 
     \requested : use-default-throw (state, action) ->
-      endpoint = "status" + action.payload
-      path = endpoint.split \/
-      state.set-in path, \done
+      state
+      # endpoint = "status" + action.payload + \/status
+      # path = endpoint.split \/
+      # state.set-in path, \done
 
     init-state
 #

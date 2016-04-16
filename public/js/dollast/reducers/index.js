@@ -89,15 +89,12 @@
     }),
     'requesting': useDefaultThrow(function(state, action){
       var endpoint, path;
-      endpoint = "status" + action.payload;
+      endpoint = "db" + action.payload + '/status';
       path = endpoint.split('/');
       return state.setIn(path, 'wait');
     }),
     'requested': useDefaultThrow(function(state, action){
-      var endpoint, path;
-      endpoint = "status" + action.payload;
-      path = endpoint.split('/');
-      return state.setIn(path, 'done');
+      return state;
     })
   }, initState);
   out$.rootReducer = rootReducer = reducer;

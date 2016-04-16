@@ -3,21 +3,24 @@ require! {
   \react-redux : {connect}
   \../elements : {icon-text, loading-segment}
   \../../actions : {on-get-problem}
-  \immutable : I
+  \immutable : {from-JS}
 }
 
 log = debug \dollast:component:problem:show
 
+
 selector = (state, props) ->
-  problem: state.get-in [\db, \problem, props.params.pid, \get], I.from-JS do
-    outlook: {}
-    config:
-      time-lmt: 0
-      space-lmt: 0
-    permit:
-      owner: ''
-      group: ''
-  status: state.get-in [\status, \problem, props.params.pid, \get], \init
+  default-prop = from-JS do
+    status: \init
+    data:
+      outlook: {}
+      config:
+        time-lmt: 0
+        space-lmt: 0
+      permit:
+        owner: ''
+        group: ''
+  problem: default-prop.merge-deep state.get-in [\db, \problem, props.params.pid, \get]
 
 segment-box = create-class do
   display-name: \segment-box
@@ -42,13 +45,13 @@ module.exports = (connect selector) create-class do
 
   render: ->
     pid = @props.params.pid
-    problem = @props.problem.to-JS!
+    {status, data: problem} = @props.problem.to-JS!
     #log {problem}
 
     _ \div, null,
       _ \h1, class-name: "ui dividing header", "Problem #{pid}. #{problem.outlook.title}"
 
-      _ loading-segment, @props{status},
+      _ loading-segment, {status},
         # _ \p, null, "time limit: #{problem.{}config.time-lmt || ''} space limit: #{problem.{}config.space-lmt || ''}"
         _ \div, class-name: "ui olive labels",
           _ \div, class-name: "ui label",
@@ -56,7 +59,7 @@ module.exports = (connect selector) create-class do
             _ \div, class-name: "detail", "time limit"
           _ \div, class-name: "ui label",
             "#{problem.config.space-lmt} MB"
-            _ \div, class-name: "detail", "space limit"
+            _ \div, class-name: "detail", "Space Limit"
           _ \div, class-name: "ui label",
             problem.permit.owner
             _ \div, class-name: \detail, \owner

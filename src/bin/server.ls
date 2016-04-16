@@ -65,16 +65,14 @@ app.use (next) ->*
     @status = e.status || 200
     #@body = [error: e.message]
     @body =
-      type: 'internal error'
-      payload:
+      status: 'internal error'
+      data:
         message: e.message
-      error: true
   if @errors
     @status = 200
     @body =
-      type: 'invalid request'
-      payload: @errors
-      error: true
+      status: 'invalid request'
+      data: @errors
 
 app.use (next) ->*
   log 'request body', @request.body
@@ -156,6 +154,17 @@ app.use (next) ->*
 # ========= Router ===============
 
 routers = require './routers'
+
+app.use (next) ->*
+  try
+    yield next
+    @body =
+      status: \ok
+      data: @body
+  catch
+    @body =
+      status: \error
+      data: e
 
 app.use routers.router
 

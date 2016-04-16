@@ -23,8 +23,10 @@ link-list = create-class do
           _ \div, class-name: \description, elem.desc # "#{prob._id}. #{prob.outlook.title}"
 
 selector = (state) ->
-  problems: state.get-in [\db, \problem, \get], from-JS []
-  status: state.get-in [\form, \problem, \get], \init
+  default-prop = from-JS do
+    status: \ok
+    data: []
+  problems: default-prop.merge-deep state.get-in [\db, \problem, \get]
 
 module.exports = (connect selector) create-class do
   display-name: \prob-list
@@ -45,7 +47,8 @@ module.exports = (connect selector) create-class do
     #   href: "#/problem/#{prob._id}"
     #   right: ''
     #   desc: prob.outlook.title
-    problems = @props.problems.to-JS!
+    {status, data: problems} = @props.problems.to-JS!
+    log {status, problems}
 
     _ \div, class-name: "ui",
       _ \h1, class-name: "ui header dividing", "problem list"
@@ -60,7 +63,7 @@ module.exports = (connect selector) create-class do
         text: \create
         icon: \plus
 
-      _ loading-segment, @props{status},
+      _ loading-segment, status,
         _ \div, class-name: "ui very relaxed divided link list",
           for prob in problems
             # log {prob}

@@ -53,19 +53,17 @@
       log(e);
       this.status = e.status || 200;
       this.body = {
-        type: 'internal error',
-        payload: {
+        status: 'internal error',
+        data: {
           message: e.message
-        },
-        error: true
+        }
       };
     }
     if (this.errors) {
       this.status = 200;
       return this.body = {
-        type: 'invalid request',
-        payload: this.errors,
-        error: true
+        status: 'invalid request',
+        data: this.errors
       };
     }
   });
@@ -125,6 +123,22 @@
     return (yield next);
   });
   routers = require('./routers');
+  app.use(function*(next){
+    var e;
+    try {
+      (yield next);
+      return this.body = {
+        status: 'ok',
+        data: this.body
+      };
+    } catch (e$) {
+      e = e$;
+      return this.body = {
+        status: 'error',
+        data: e
+      };
+    }
+  });
   app.use(routers.router);
   port = process.env.PORT || 3000;
   console.log("Listening port " + port);

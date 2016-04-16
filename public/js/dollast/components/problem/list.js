@@ -40,9 +40,13 @@
     }
   });
   selector = function(state){
+    var defaultProp;
+    defaultProp = fromJS({
+      status: 'ok',
+      data: []
+    });
     return {
-      problems: state.getIn(['db', 'problem', 'get'], fromJS([])),
-      status: state.getIn(['form', 'problem', 'get'], 'init')
+      problems: defaultProp.mergeDeep(state.getIn(['db', 'problem', 'get']))
     };
   };
   module.exports = connect(selector)(createClass({
@@ -65,8 +69,12 @@
       return $filter.dropdown('set text', 'all');
     },
     render: function(){
-      var problems, prob, id;
-      problems = this.props.problems.toJS();
+      var ref$, status, problems, prob, id;
+      ref$ = this.props.problems.toJS(), status = ref$.status, problems = ref$.data;
+      log({
+        status: status,
+        problems: problems
+      });
       return _('div', {
         className: "ui"
       }, _('h1', {
@@ -86,9 +94,7 @@
         href: '#/problem/create',
         text: 'create',
         icon: 'plus'
-      }), _(loadingSegment, {
-        status: this.props.status
-      }, _('div', {
+      }), _(loadingSegment, status, _('div', {
         className: "ui very relaxed divided link list"
       }, (function(){
         var i$, ref$, len$, results$ = [];
