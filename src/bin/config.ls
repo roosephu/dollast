@@ -18,7 +18,7 @@ export
   compile-fmt:
     'cpp': (src, dst) -> "g++ #src -o #dst"
   default:
-    theme: "react"
+    theme: "vue"
     priv: {}
   bcrypt-cost: 10
   jwt-key: 'drdrdrd'

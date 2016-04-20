@@ -22,7 +22,7 @@
     }
   };
   ref$['default'] = {
-    theme: "react",
+    theme: "vue",
     priv: {}
   };
   ref$.bcryptCost = 10;

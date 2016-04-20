@@ -1,0 +1,59 @@
+<template lang="jade">
+  h1.ui.header.dividing Statistics for Problem {{problem._id}}
+  problem(:prob="problem")
+
+  h3.ui.header.dividing numbers
+  .ui.statistics
+    .statistic(v-for="(key, val) in stat")
+      .value {{val}}
+      .label {{key}}
+</template>
+
+<script lang="vue-livescript">
+require! {
+  \vue
+  \debug
+  \co
+  \../format
+  \prelude-ls : {average, map, filter}
+}
+
+log = debug \dollast:component:problem:stat
+
+generate-stat = (sols) ->
+  if sols.length == 0
+    return
+      solved: 0
+      mean: 0
+      median: 0
+      stddev: 0
+  scores = for sol in sols
+    sol.doc.final.score || 0
+
+  mean = average scores
+  median = scores[Math.floor scores.length / 2]
+  variance = (average map (-> it * it), scores) - mean * mean
+  stddev = Math.sqrt variance
+  solved = scores |> filter (== 1) |> (.length)
+
+  return {solved, mean, median, stddev}
+
+module.exports =
+  data: ->
+    stat: []
+    problem: {}
+  route:
+    data: co.wrap (to: params: {pid}) ->*
+      {data: {sols, prob}} = yield vue.http.get "/problem/#{pid}/stat"
+      stat = generate-stat sols
+      stat:
+        "accepted users": stat.solved
+        # "accepted programs": "???"
+        mean: stat.mean
+        median: stat.median
+        "standard deviation": stat.stddev
+      problem: prob
+  components:
+    format{problem}
+
+</script>

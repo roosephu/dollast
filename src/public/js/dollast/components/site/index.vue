@@ -1,0 +1,5 @@
+<template lang="jade">
+  div
+    h1.ui.dividing.header welcome
+    h3.ui this is dollast, an buggy online judge.
+</template>
