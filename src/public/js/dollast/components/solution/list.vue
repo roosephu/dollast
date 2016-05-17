@@ -1,5 +1,5 @@
 <template lang="jade">
-  h1.ui.dividing.header status
+  h1.ui.dividing.header Status
   .ui.segment(:class="{loading: false}")
     table.ui.table.large.green.selectable.very.basic
       thead
@@ -50,7 +50,6 @@ module.exports =
   route:
     data: co.wrap ~>*
       {data} = yield vue.http.get \/solution
-      log {data, prob: data.0.prob}
       solutions: data
   components:
     format

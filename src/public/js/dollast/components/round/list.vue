@@ -1,0 +1,52 @@
+<template lang="jade">
+  h1.ui.header.dividing Rounds
+  .ui.dropdown.floated.pointing.button.labeled.icon
+    input(type="hidden", name="filter")
+    .default.text please select filter
+    i.dropdown.icon
+    .menu
+      .item(v-for="item in options", data-value="{{item}}") {{item}}
+  a.ui.icon.labeled.button.launch.primary.right.floated(href="#/round/create")
+    i.icon.plus
+    | create
+  .ui.segment(:class="{loading: $loadingRouteData}")
+    .ui.very.relxed.divided.link.list
+      .item(v-for="round in rounds")
+        .ui.right.floated {{round.begTime, round.endTime}}
+        .description
+          round(:rnd="round")
+</template>
+
+<script lang="vue-livescript">
+require! {
+  \vue
+  \debug
+  \co
+  \../format
+}
+
+log = debug \dollast:component:round:list
+
+module.exports =
+  components:
+    format{round}
+
+  data: ->
+    options: {\all, \past, \running, \pending}
+    rounds: []
+
+  route:
+    data: co.wrap ->*
+      {data} = yield vue.http.get "/round"
+      rounds: data
+
+  ready: ->
+    $filter = $ '.dropdown'
+    # log $filter
+    $filter.dropdown do
+      on: \hover
+      on-change: (value, text, $choice) ->
+        log {value, text, $choice}
+    $filter.dropdown 'set text', \all
+
+</script>

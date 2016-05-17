@@ -16,10 +16,15 @@ require! {
   \./site/navbar
   \vue-router
   \vue
+  \../actions : {load-from-token}
 }
 
 module.exports =
+  vuex:
+    actions: {load-from-token}
   components:
     {navbar, foot}
+  ready: ->
+    @load-from-token!
 
 </script>

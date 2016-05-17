@@ -3,7 +3,7 @@
   var path, webpack, vendors, config;
   path = require('path');
   webpack = require('webpack');
-  vendors = ['co', 'debug', 'vue', 'vuex', 'vue-router', 'vue-resource', 'prelude-ls'];
+  vendors = ['co', 'debug', 'vue', 'vuex', 'vue-router', 'vue-resource', 'prelude-ls', 'moment'];
   module.exports = config = {
     debug: true,
     watch: true,

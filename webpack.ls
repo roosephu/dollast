@@ -11,6 +11,7 @@ vendors = [
     \vue-router
     \vue-resource
     \prelude-ls
+    \moment
 ]
 
 module.exports = config =

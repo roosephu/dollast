@@ -28,7 +28,7 @@
         a.item.labeled(v-if="uid != undefined", @click="logout")
           i.icon.sign.out
           | Logout
-        a.item.labeled(v-else, href="#/register")
+        a.item.labeled(v-else, href="#/user/register")
           i.icon.signup
           | Register
 </template>

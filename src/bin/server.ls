@@ -1,24 +1,25 @@
 require! {
-  'koa'
-  'koa-json'
-  'koa-static'
-  'koa-bodyparser'
+  \koa
+  \koa-compress
+  \koa-json
+  \koa-static
+  \koa-bodyparser
   # 'koa-generic-session'
-  'koa-conditional-get'
-  'koa-validate'
-  'koa-router'
+  \koa-conditional-get
+  \koa-validate
+  \koa-router
   # 'koa-jade'
-  'koa-send'
-  'koa-etag'
-  'koa-jwt'
-  'util'
-  'path'
-  'fs'
-  'debug'
-  'prelude-ls' : _
-  './config'
-  './db'
+  \koa-send
+  \koa-etag
+  \koa-jwt
+  \util
+  \path
+  \fs
+  \debug
+  \./config
+  \./db
   \./crypt
+  \prelude-ls : _
 }
 
 export app = koa!
@@ -29,10 +30,11 @@ log = debug 'dollast:server'
 
 log "No Database found" if !db
 
+app.use koa-compress!
 app.use koa-conditional-get!
 app.use koa-etag!
 app.use koa-json!
-app.use koa-validate!
+koa-validate app
 
 # ==== Session ====
 
@@ -113,6 +115,7 @@ app.use (next) ->*
 
 app.use (next) ->*
   @check = (obj, key, err-msg) ->
+    return true
     if not obj
       if not @errors
         @errors = []

@@ -10,11 +10,12 @@
     a.ui.icon.labeled.button.right.floated.primary(href="#/problem/create")
       i.icon.plus
       | create
-    .ui.very.relaxed.divided.link.list
-      .item(v-for="prob in problems")
-        .ui.right.floated ??
-        .ui.description
-          problem(:prob="prob")
+    .ui.segment
+      .ui.very.relaxed.divided.link.list
+        .item(v-for="prob in problems")
+          .ui.right.floated ??
+          .ui.description
+            problem(:prob="prob")
 </template>
 
 <script lang="vue-livescript">
