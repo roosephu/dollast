@@ -20,12 +20,12 @@
   };
   model = conn.conn.model('user', schema);
   out$.query = query = function*(uid, pswd){
-    var usr;
-    usr = (yield model.findById(uid).exec());
-    if (!usr || !usr.checkPassword(pswd)) {
+    var user;
+    user = (yield model.findById(uid).exec());
+    if (!user || !user.checkPassword(pswd)) {
       return null;
     }
-    return usr;
+    return user;
   };
   out$.show = show = function*(uid){
     log("uid: " + uid, this.getCurrentUser());
@@ -58,7 +58,6 @@
     });
     exists = (yield model.findById(user._id, '_id').lean().exec());
     if (exists) {
-      log("here", old);
       return {
         type: 'register',
         error: true,
@@ -69,6 +68,7 @@
     user = new model(user);
     salt = bcrypt.genSaltSync(bcrypt.bcryptCost);
     user.pswd = bcrypt.hashSync(user.pswd, salt);
+    user.register = new Date();
     (yield user.save());
     return {
       type: 'register',

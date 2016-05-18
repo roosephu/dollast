@@ -1,9 +1,9 @@
 <template lang="jade">
   .ui.form.segment#problem-modify
-    h1.ui.centered {{problem.outlook.title}}
+    h2.ui.dividing.header {{problem._id}}. {{problem.outlook.title}}
     .ui.error.message
 
-    h2.ui.dividing.header Configuration
+    h3.ui.dividing.header Configuration
     .ui.three.fields
       .ui.field.eight.wide
         label title
@@ -21,6 +21,7 @@
           i.dropdown.icon
           .menu
             .item(v-for="item in judgers", data-value="{{item}}") {{item}}
+
     .ui.four.fields
       .ui.field
         label time limit (s)
@@ -39,7 +40,7 @@
         .ui.input
           input(name="outLmt", type="number")
 
-    h2.ui.dividing.header description
+    h3.ui.dividing.header Description
     .ui.field
       .ui.field
         label description
@@ -60,7 +61,7 @@
         textarea(name="sampleOut")
 
 
-    h2.ui.dividing.header dataset management
+    h3.ui.dividing.header Dataset Management
     .ui.field
       a.ui.icon.button.labeled(:click="select")
         i.icon.file
@@ -95,7 +96,7 @@
                   i.icon.remove
                   | remove
 
-    h2.ui.dividing.header permission
+    h3.ui.dividing.header Permission
     .ui.four.fields
       .ui.field
         label owner

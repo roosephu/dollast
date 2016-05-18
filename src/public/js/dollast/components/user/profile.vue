@@ -2,11 +2,11 @@
   h1.ui.dividing.header Details of {{uid}}
   .ui.segment
     .ui.top.attached.label.large registered since
-    | unimplemented
+    p unimplemented
 
   .ui.segment
     .ui.large.top.attached.label description
-    | {{profile.desc}}
+    p {{profile.desc}}
 
   .ui.segment
     .ui.top.attached.label.large Groups

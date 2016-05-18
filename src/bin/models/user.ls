@@ -22,10 +22,10 @@ schema.methods.check-password = (candidate) ->
 model = conn.conn.model 'user', schema
 
 export query = (uid, pswd) ->*
-  usr = yield model.find-by-id uid .exec!
-  if not usr or not usr.check-password pswd
+  user = yield model.find-by-id uid .exec!
+  if not user or not user.check-password pswd
     return null
-  return usr
+  return user
 
 export show = (uid) ->*
   log "uid: #uid", @get-current-user!
@@ -50,7 +50,6 @@ export register = (user) ->*
   log {user}
   exists = yield model.find-by-id user._id, '_id' .lean! .exec!
   if exists
-    log "here", old
     return
       type: \register
       error: true
@@ -61,6 +60,7 @@ export register = (user) ->*
 
   salt = bcrypt.gen-salt-sync bcrypt.bcrypt-cost
   user.pswd = bcrypt.hash-sync user.pswd, salt
+  user.register = new Date!
   yield user.save!
 
   return

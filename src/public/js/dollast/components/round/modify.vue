@@ -1,10 +1,10 @@
 <template lang="jade">
   .ui.form.segment#form-round
-    h1.ui.dividing.header Round{{rnd._id}}. {{rnd.title}}
+    h2.ui.dividing.header Round{{rnd._id}}. {{rnd.title}}
     .ui.success.message
       .header Changes saved.
 
-    h2.ui.dividing.header configuration
+    h3.ui.dividing.header configuration
     .ui.fields.three
       .ui.field
         label title
@@ -15,11 +15,11 @@
         .ui.input
           input(name="begTime", placeholder="YYYY-MM-DD HH:mm:ss")
       .ui.field
-        label end with
+        label end at
         .ui.input
           input(name="endTime", placeholder="YYYY-MM-DD HH:mm:ss")
 
-    h2.ui.dividing.header permission
+    h3.ui.dividing.header permission
     .ui.four.fields
       .ui.field
         label owner
@@ -34,7 +34,7 @@
         .ui.input
           input(name="access")
 
-    h2.ui.dividing.header problemset
+    h3.ui.dividing.header problemset
     .ui.field
       .ui.dropdown.icon.selection.fluid.multiple.search
         input(type="hidden", name="probs")
