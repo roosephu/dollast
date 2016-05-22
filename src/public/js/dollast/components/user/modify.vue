@@ -1,6 +1,9 @@
 <template lang="jade">
   .ui.form#form-user
     h2.ui.dividing.header {{user.profile._id}}
+    .ui.success.message
+      .header Changes saved.
+
     .ui.field
       label groups
       .ui.dropdown.icon.selection.search.multiple
@@ -31,7 +34,7 @@
           input(placeholder="new  password", name="newPassword", type="password")
     .four.fields.wide
       .ui.field
-        label confirm old password
+        label confirm new password
         .ui.icon.input.left
           i.icon.lock
           input(placeholder="confirmation", name="confirmPassword", type="password")
@@ -52,10 +55,11 @@ log = debug \dollast:components:user:modify
 
 module.exports =
   data: ->
-    groups: [\group]
-    profile:
-      _id: ""
-      groups: []
+    groups: [\problems, \solutions, \admin, \rounds]
+    user:
+      profile:
+        _id: ""
+        groups: []
 
   route:
     data: co.wrap (to: params: {uid}) ->*
@@ -72,7 +76,7 @@ module.exports =
       $form = $ '#form-user'
       {groups, old-password, new-password, confirm-password, desc} = $form.form 'get values'
       groups = groups.split ','
-      _id = @uid
+      _id = @user.profile._id
 
       if old-password == "" or new-password == ""
         updated = {_id, groups, desc}
@@ -86,24 +90,35 @@ module.exports =
     $form.form do
       on-success: submit
       on: \blur
+      inline: true
       fields:
         old-password:
           identifier: \oldPassword
           optional: true
-          rules: \isPassword
+          rules:
+            * type: \isPassword
+              prompt: "must be password"
+            ...
         new-password:
           identifier: \newPassword
           optional: true
-          rules: \isPassword
+          rules:
+            * type: \isPassword
+              prompt: "must be password"
+            ...
         confirmation:
           identifier: \confirmPassword
           optional: true
-          rules: [\isPassword, "match[newPassword]"]
+          rules:
+            * type: \isPassword
+              prompt: "must be password"
+            * type: "match[newPassword]"
+              prompt: "password must match"
 
   watch:
     'user.profile._id': ->
       $form = $ '#form-user'
       @$next-tick ~>
-        $form.form 'set values', groups: @profile.groups, desc: @profile.desc
+        $form.form 'set values', groups: @user.profile.groups, desc: @user.profile.desc
 
 </script>

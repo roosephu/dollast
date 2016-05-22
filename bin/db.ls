@@ -2,16 +2,16 @@ require! {
   \co
   \debug
   \./config
-  \./models/sol
-  \./models/rnd
-  \./models/prob
-  \./models/user
+  \./models/solutions
+  \./models/rounds
+  \./models/problems
+  \./models/users
   \./models/permit : {can-access}
 }
 
 log = debug \dollast:db
 
-export sol, rnd, prob, user
+export solutions, rounds, problems, users
 
 export bind-ctx = (ctx) ->
   ctx.acquire-privilege = (priv) ->
@@ -23,10 +23,10 @@ export bind-ctx = (ctx) ->
   ctx.ensure-access = co.wrap (model, id, action) ->*
     resource = yield model.find-by-id _id, 'permit' .lean! .exec!
     log "asking for permissions #{resource.permit} in #{ctx.state.user} with action #{action}"
-    if not can-access ctx.state.suer, resource.permit, action
+    if not can-access ctx.state.user, resource.permit, action
       throw new Error "error checking permissions"
 
-  for obj in [sol, rnd, prob, user]
+  for obj in [solutions, rounds, problems, users]
     obj.get-current-user = ~>
       ctx.state.user
     obj.acquire-privilege = ctx.acquire-privilege

@@ -1,5 +1,5 @@
 <template lang="jade">
-  .ui.form.segment#problem-modify
+  .ui.form#problem-modify
     h2.ui.dividing.header {{problem._id}}. {{problem.outlook.title}}
     .ui.error.message
 
@@ -28,15 +28,15 @@
         .ui.input
           input(name="timeLmt", type="number")
       .ui.field
-        label space limit (s)
+        label space limit (MB)
         .ui.input
           input(name="spaceLmt", type="number")
       .ui.field
-        label stack limit (s)
+        label stack limit (MB)
         .ui.input
           input(name="stkLmt", type="number")
       .ui.field
-        label output limit (s)
+        label output limit (MB)
         .ui.input
           input(name="outLmt", type="number")
 
@@ -298,7 +298,8 @@ module.exports =
     submit: co.wrap (e) ->*
       e.prevent-default!
       problem = get-form-values!
-      yield vue.http.post "/problem/#{@pid}", info
+      log {problem}
+      yield vue.http.post "/problem/#{@pid}", problem
 
   render: ->
     problem = @props.problem.to-JS!

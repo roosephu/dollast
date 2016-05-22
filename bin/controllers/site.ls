@@ -1,14 +1,14 @@
 require! {
-  "../db"
-  "../crypt"
-  "debug"
-  "koa-jwt"
-  "prelude-ls": _
-  "../config"
+  \../db
+  \../crypt
+  \debug
+  \koa-jwt
+  \prelude-ls : {lists-to-obj}
+  \../config
   \node-forge
 }
 
-log = debug 'dollast:ctrl:site'
+log = debug \dollast:ctrl:site
 
 export
   theme: ->*
@@ -35,12 +35,12 @@ export
     user = yield db.user.query post.uid, pswd
     if not user
       @body = status:
-        type: "err"
+        type: \err
         msg: "bad user/password combination"
     else
       groups = user.groups
-      groups.push 'login'
-      @state.user.priv = _.lists-to-obj groups, [true for i from 1 to groups.length]
+      groups.push \login
+      @state.user.priv = lists-to-obj groups, [true for i from 1 to groups.length]
 
       client-key = @request.body.client-key
       server-key = config.server-AES-key
@@ -54,12 +54,13 @@ export
         server: server-payload # crypt.AES.enc server-payload, server-key
         client: client-payload # crypt.AES.enc client-payload, client-key
 
-      token = koa-jwt.sign payload, config.jwt-key, expires-in-seconds: 60 * 60 * 24
+      token = koa-jwt.sign payload, config.jwt-key, expires-in: 60 * 60 * 24
 
-      refresh = koa-jwt.sign payload, config.server-AES-key, expires-in-seconds: 60 * 60 * 24 * 30
+      refresh = koa-jwt.sign payload, config.server-AES-key, expires-in: 60 * 60 * 24 * 30
       @body =
         type: "ok"
         payload:
           {token}
+
   logout: ->*
     ...

@@ -1,5 +1,5 @@
 <template lang="jade">
-  .ui.form.segment.relaxed#submit-form
+  .ui.form.segment#submit-form
     h1.ui.header.dividing problem: {{pid}}
     .ui.success.message
       .header Submit successful. Redirect to status in 3 seconds...
@@ -49,31 +49,33 @@ log = debug \dollast:components:solution:submit
 module.exports =
   vuex:
     getters:
-      session: (.session)
+      uid: (.session.uid)
 
   data: ->
-    pid: @$route.params.pid
+    pid: parse-int @$route.params.pid
     languages: [\cpp, \java, \pas]
 
   computed:
     permit: ->
-      owner: @session.uid
+      owner: @uid
       group: \solutions
       access: 8~644
 
   ready: ->
     $ \.dropdown .dropdown!
-    submit = co.wrap (e) ->*
+    submit = co.wrap (e) ~>*
       e.prevent-default!
-      $form = $ \#solution-submit
+      $form = $ \#submit-form
       all-values = $form.form 'get values'
-      permit = all-values{owner, group, acces}
+      permit = all-values{owner, group, access}
+      log {permit}
       permit.access = parse-int permit.access, 8
 
       data = Object.assign do
-        pid: @props.params.pid
-        uid: @props.uid
+        pid: @pid
+        uid: @uid
         all-values{code, lang}
+        permit: permit
       yield vue.http.post \/solution/submit, data
 
     $form = $ '#submit-form'
@@ -93,14 +95,29 @@ module.exports =
             * type: 'empty'
               prompt: 'language cannot be empty'
             ...
-        owner: \isUserId
-        group: \isUserId
-        access: \isAccess
+        owner:
+          identifier: \owner
+          rules:
+            * type: \isUserId
+              prompt: 'wrong user id'
+            ...
+        group:
+          identifier: \group
+          rules:
+            * type: \isUserId
+              prompt: 'wrong group id'
+            ...
+        access:
+          identifier: \access
+          rules:
+            * type: \isAccess
+              prompt: 'wrong access code'
+            ...
       on-success: submit
       inline: true
 
-    # $form.form 'set values', @permit{owner, group}
-    # $form.form 'set values', access: @permit.access.to-string 8
+    $form.form 'set values', @permit{owner, group}
+    $form.form 'set values', access: @permit.access.to-string 8
 
 
 </script>

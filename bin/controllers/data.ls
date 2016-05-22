@@ -1,7 +1,7 @@
 require! {
-  "../db"
-  "../core"
-  "co-busboy"
+  \../db
+  \../core
+  \co-busboy
   \debug
 }
 

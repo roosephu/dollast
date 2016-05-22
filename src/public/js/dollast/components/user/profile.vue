@@ -14,7 +14,6 @@
 
   .ui.segment
     .ui.top.attached.label.large Problems solved
-    p unimplemented
     .ui.relaxed.divided.link.list
       .item(v-for="prob in solveProblems")
         .description

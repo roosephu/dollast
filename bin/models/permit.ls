@@ -22,6 +22,6 @@ export can-access = (user, permit, action) ->
 		| 'r' => 2
 		| 'w' => 1
 		| 'x' => 0
-		| _ => new Error 'invalid action'
+		| _ => throw new Error 'invalid action'
 
 	return (permit.access .>>. offset .&. 1) == 1

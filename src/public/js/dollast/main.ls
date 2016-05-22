@@ -7,10 +7,12 @@ require! {
     \moment
 }
 
-vue.use vuex
-vue.use vue-resource
 vue.config.debug = true
 debug.enable "dollast:*"
+vue.use vuex
+vue.use vue-resource
+
+log = debug \dollast:main
 
 vue.use vue-router
 require! \./router
@@ -26,6 +28,7 @@ extra-rules =
     # log {text}
     moment text, 'YYYY-MM-DD HH:mm:ss' .is-valid!
   is-password: (text) ->
+    log {text}
     4 <= text.length and text.length <= 15
 
   is-user-id: (text) ->

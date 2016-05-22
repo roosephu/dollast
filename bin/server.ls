@@ -24,7 +24,7 @@ require! {
 
 export app = koa!
 
-log = debug 'dollast:server'
+log = debug \dollast:server
 
 # ==== Database ====
 
@@ -116,13 +116,13 @@ app.use (next) ->*
 app.use (next) ->*
   @check = (obj, key, err-msg) ->
     return true
-    if not obj
-      if not @errors
-        @errors = []
-      @errors.push "#{err-msg}"
-      new koa-validate.Validator @, null, null, false, null, false
-    else
-      new koa-validate.Validator @, key, obj[key], obj[key]?, obj
+  #   if not obj
+  #     if not @errors
+  #       @errors = []
+  #     @errors.push "#{err-msg}"
+  #     new koa-validate.Validator @, null, null, false, null, false
+  #   else
+  #     new koa-validate.Validator @, key, obj[key], obj[key]?, obj
   yield next
 
 # ==== JSON and Static Serving ====
@@ -133,9 +133,9 @@ app.use (next) ->*
   @state.user.theme ||= config.default.theme
   @state.user.priv  ||= config.default.priv
   # log @session
-  if @method in ['HEAD', 'GET']
-    for folders in ["public", "theme/#{@state.user.theme}"]
-      if yield koa-send @, @path, index: 'index.html', max-age: 864000000, root: path.resolve folders
+  if @method in [\HEAD, \GET]
+    for folders in [\public, "theme/#{@state.user.theme}"]
+      if yield koa-send @, @path, index: \index.html, max-age: 864000000, root: path.resolve folders
         return
   yield next
 
@@ -158,7 +158,7 @@ app.use (next) ->*
 
 # ========= Router ===============
 
-routers = require './routers'
+routers = require \./routers
 
 app.use routers.router
 

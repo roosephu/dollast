@@ -1,9 +1,14 @@
 <template lang="jade">
-  h3.ui.header author: {{user}}
-  h3.ui.header lang: {{lang}}
-  h3.ui.header problem: {{prob._id}}
+  h1.ui.header.dividing Solution {{$route.params.sid}}
+  .ui.olive.labels
+    .ui.label {{user}}
+      .detail author
+    .ui.label {{lang}}
+      .detail language
+    .ui.label {{prob._id}}
+      .detail problem
 
-  h1.ui.header.dividing code
+  h2.ui.header.dividing code
   pre {{code}}
 
   p(v-if="final.status == 'private'") this code is private

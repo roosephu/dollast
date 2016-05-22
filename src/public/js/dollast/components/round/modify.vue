@@ -1,10 +1,10 @@
 <template lang="jade">
-  .ui.form.segment#form-round
-    h2.ui.dividing.header Round{{rnd._id}}. {{rnd.title}}
+  .ui.form#form-round
+    h2.ui.dividing.header {{formattedTitle}}
     .ui.success.message
       .header Changes saved.
 
-    h3.ui.dividing.header configuration
+    h3.ui.dividing.header Configuration
     .ui.fields.three
       .ui.field
         label title
@@ -19,7 +19,7 @@
         .ui.input
           input(name="endTime", placeholder="YYYY-MM-DD HH:mm:ss")
 
-    h3.ui.dividing.header permission
+    h3.ui.dividing.header Permission
     .ui.four.fields
       .ui.field
         label owner
@@ -34,7 +34,7 @@
         .ui.input
           input(name="access")
 
-    h3.ui.dividing.header problemset
+    h3.ui.dividing.header Problemset
     .ui.field
       .ui.dropdown.icon.selection.fluid.multiple.search
         input(type="hidden", name="probs")
@@ -93,20 +93,29 @@ set-form-values = (round) ->
   probs = map (-> "#{it._id}"), probs
   $form.form 'set values',
     title: title
-    beg-time: moment beg-time .format 'YYYY-MM-DD hh:mm:ss'
-    end-time: moment end-time .format 'YYYY-MM-DD hh:mm:ss'
+    beg-time: if beg-time then moment beg-time .format 'YYYY-MM-DD hh:mm:ss' else void
+    end-time: if end-time then moment end-time .format 'YYYY-MM-DD hh:mm:ss' else void
     probs: probs
   $form.form 'set values', permit
 
 module.exports =
   data: ->
     rnd:
-      _id: -1
+      _id: void
       probs: []
 
   computed:
     dropdown-problems: ->
       {[x._id, formatter.problem x] for x in @rnd.probs}
+    formatted-title: ->
+      if @rnd._id == void
+        "Create new Round"
+      else
+        "Round #{@rnd._id}. #{@rnd.title}"
+
+  vuex:
+    getters:
+      uid: (.session.uid)
 
   ready: ->
     $dropdown = $ '.ui.selection.dropdown'
@@ -174,11 +183,20 @@ module.exports =
             * type: \isAccess
               prompt: 'access code should be /^[0-7]{3}$/'
             ...
+    if @rnd._id == void
+      @rnd.permit =
+        owner: @uid
+        group: \rounds
+        access: 8~644
+      set-form-values @rnd
+      # $form.form 'set values', @rnd.permit
+
 
   route:
     data: co.wrap (to: params: {rid}) ->*
-      {data} = yield vue.http.get "/round/#{rid}"
-      {rnd: data}
+      if rid != void
+        {data} = yield vue.http.get "/round/#{rid}"
+        {rnd: data}
 
   watch:
     'rnd._id': ->

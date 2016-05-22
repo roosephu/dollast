@@ -1,5 +1,5 @@
 require! {
-  "../db"
+  \../db
   \debug
 }
 
@@ -7,9 +7,9 @@ log = debug \dollast:ctrl:sol
 
 export submit = ->*
   @acquire-privilege \login
-  @check-body 'pid' .to-int!
-  @check-body 'lang' .in ['cpp', 'java']
-  @check-body 'code' .len 1, 50000
+  @check-body \pid .is-int! .ge 1
+  @check-body \lang .in [\cpp, \java]
+  @check-body \code .len 1, 50000
   return if @errors
 
   log state: @state.user

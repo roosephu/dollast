@@ -2,21 +2,22 @@ webpackJsonp([0],[
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, vuex, vueRouter, vueResource, debug, moment, router, x$, app, extraRules, key, val;
+	var vue, vuex, vueRouter, vueResource, debug, moment, log, router, x$, app, extraRules, key, val;
 	vue = __webpack_require__(1);
 	vuex = __webpack_require__(3);
 	vueRouter = __webpack_require__(4);
 	vueResource = __webpack_require__(5);
 	debug = __webpack_require__(29);
 	moment = __webpack_require__(32);
-	vue.use(vuex);
-	vue.use(vueResource);
 	vue.config.debug = true;
 	debug.enable("dollast:*");
+	vue.use(vuex);
+	vue.use(vueResource);
+	log = debug('dollast:main');
 	vue.use(vueRouter);
 	router = __webpack_require__(135);
-	x$ = app = __webpack_require__(202);
-	x$.store = __webpack_require__(196);
+	x$ = app = __webpack_require__(208);
+	x$.store = __webpack_require__(199);
 	app = vue.extend(app);
 	extraRules = {
 	  positive: function(text){
@@ -26,6 +27,9 @@ webpackJsonp([0],[
 	    return moment(text, 'YYYY-MM-DD HH:mm:ss').isValid();
 	  },
 	  isPassword: function(text){
+	    log({
+	      text: text
+	    });
 	    return 4 <= text.length && text.length <= 15;
 	  },
 	  isUserId: function(text){
@@ -208,13 +212,13 @@ webpackJsonp([0],[
 	    component: __webpack_require__(140)
 	  },
 	  "/problem/create": {
-	    component: __webpack_require__(150)
-	  },
-	  "/problem/:pid": {
 	    component: __webpack_require__(147)
 	  },
-	  "/problem/:pid/modify": {
+	  "/problem/:pid": {
 	    component: __webpack_require__(150)
+	  },
+	  "/problem/:pid/modify": {
+	    component: __webpack_require__(147)
 	  },
 	  "/problem/:pid/stat": {
 	    component: __webpack_require__(153)
@@ -247,19 +251,19 @@ webpackJsonp([0],[
 	    component: __webpack_require__(190)
 	  },
 	  "/user": {
-	    component: __webpack_require__(199)
-	  },
-	  "/user/login": {
 	    component: __webpack_require__(193)
 	  },
+	  "/user/login": {
+	    component: __webpack_require__(196)
+	  },
 	  "/user/register": {
-	    component: __webpack_require__(273)
+	    component: __webpack_require__(202)
 	  },
 	  "/user/:uid": {
-	    component: __webpack_require__(199)
+	    component: __webpack_require__(193)
 	  },
 	  "/user/:uid/modify": {
-	    component: __webpack_require__(276)
+	    component: __webpack_require__(205)
 	  }
 	});
 	module.exports = router;
@@ -457,83 +461,8 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/problem/show.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(149)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), true)
-	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/show.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 148 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var co, debug, vue, log, this$ = this;
-	co = __webpack_require__(142);
-	debug = __webpack_require__(29);
-	vue = __webpack_require__(1);
-	log = debug('dollast:component:problem:show');
-	module.exports = {
-	  data: function(){
-	    return {
-	      problem: {
-	        config: {},
-	        outlook: {},
-	        permit: {}
-	      }
-	    };
-	  },
-	  route: {
-	    data: co.wrap(function*(arg$){
-	      var pid, data;
-	      pid = arg$.to.params.pid;
-	      data = (yield vue.http.get("/problem/" + pid)).data;
-	      return {
-	        problem: data
-	      };
-	    })
-	  },
-	  watch: {
-	    'problem.outlook.desc': function(){
-	      var this$ = this;
-	      return this.$nextTick(function(){
-	        return MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
-	      });
-	    }
-	  }
-	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/show.vue.map
-
-
-/***/ },
-/* 149 */
-/***/ function(module, exports) {
-
-	module.exports = "<h1 class=\"ui dividing header\">Problem {{problem._id}}. {{problem.outlook.title}}</h1><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui olive labels\"><div class=\"ui label\">{{problem.config.timeLmt}} s<div class=\"detail\">time limit</div></div><div class=\"ui label\">{{problem.config.spaceLmt}} MB<div class=\"detail\">space limit</div></div><div class=\"ui label\">{{problem.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{problem.permit.group}}<div class=\"detail\">group</div></div></div><div class=\"ui segment\"><div class=\"ui top left attached label teal\">description</div><p mathjax=\"mathjax\">{{problem.outlook.desc}}</p></div><div class=\"ui two column grid\"><div class=\"row\"><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">input format</div><p>{{problem.outlook.inFmt}}</p></div></div><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">output format</div><p>{{problem.outlook.outFmt}}</p></div></div></div><div class=\"row\"><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">sample input</div><p>{{problem.outlook.sampleIn}}</p></div></div><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">sample output</div><p>{{problem.outlook.sampleOut}}</p></div></div></div></div></div><div class=\"ui header\"></div><a href=\"#/solution/submit/{{problem._id}}\" class=\"ui icon labeled primary button\"><i class=\"icon rocket\"></i>Submit</a><a href=\"#/problem/{{problem._id}}/modify\" class=\"ui icon labeled orange button\"><i class=\"icon edit\"></i>Modify</a><a href=\"#/problem/{{problem._id}}/stat\" class=\"ui icon labeled purple button\"><i class=\"icon chart bar\"></i>statistics</a>";
-
-/***/ },
-/* 150 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(151)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] src/public/js/dollast/components/problem/modify.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(152)
+	__vue_template__ = __webpack_require__(149)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -552,7 +481,7 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 151 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var debug, co, vue, log, flattenObject, getFormValues, setFormValues, this$ = this;
@@ -795,7 +724,10 @@ webpackJsonp([0],[
 	      var problem;
 	      e.preventDefault();
 	      problem = getFormValues();
-	      return (yield vue.http.post("/problem/" + this.pid, info));
+	      log({
+	        problem: problem
+	      });
+	      return (yield vue.http.post("/problem/" + this.pid, problem));
 	    })
 	  },
 	  render: function(){
@@ -814,10 +746,85 @@ webpackJsonp([0],[
 
 
 /***/ },
+/* 149 */
+/***/ function(module, exports) {
+
+	module.exports = "<div id=\"problem-modify\" class=\"ui form\"><h2 class=\"ui dividing header\">{{problem._id}}. {{problem.outlook.title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (MB)</label><div class=\"ui input\"><input name=\"spaceLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (MB)</label><div class=\"ui input\"><input name=\"stkLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (MB)</label><div class=\"ui input\"><input name=\"outLmt\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"desc\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inFmt\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outFmt\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleIn\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOut\"></textarea></div></div><h3 class=\"ui dividing header\">Dataset Management</h3><div class=\"ui field\"><a :click=\"select\" class=\"ui icon button labeled\"><i class=\"icon file\"></i>select</a><a :click=\"upload\" class=\"ui icon button labeled green\"><i class=\"icon upload\"></i>upload</a><a :click=\"refresh\" class=\"ui icon button labeled teal\"><i class=\"icon refresh\"></i>refresh</a><a :click=\"repair\" class=\"ui icon button labeled teal\"><i class=\"icon retweet\"></i>repair</a></div><div class=\"ui two fields\"><div class=\"ui field four wide\">dropzone</div><div class=\"ui field twelve wide\"><table class=\"ui table segment\"><thead><tr><th>input</th><th>output</th><th>weight</th><th></th></tr></thead><tbody><tr v-for=\"atom in problem.config.dataset\"><td>{{atom.input}}</td><td>{{atom.output}}</td><td>{{atom.weight}}</td><td><a :click=\"remove\" class=\"ui icon labeled button right floated mini\"><i class=\"icon remove\"></i>remove</a></td></tr></tbody></table></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary floated submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary floated\"><i class=\"icon reply\"></i>Back</div></div></div>";
+
+/***/ },
+/* 150 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(151)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] src/public/js/dollast/components/problem/show.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(152)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), true)
+	  if (!hotAPI.compatible) return
+	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/show.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 151 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var co, debug, vue, log, this$ = this;
+	co = __webpack_require__(142);
+	debug = __webpack_require__(29);
+	vue = __webpack_require__(1);
+	log = debug('dollast:component:problem:show');
+	module.exports = {
+	  data: function(){
+	    return {
+	      problem: {
+	        config: {},
+	        outlook: {},
+	        permit: {}
+	      }
+	    };
+	  },
+	  route: {
+	    data: co.wrap(function*(arg$){
+	      var pid, data;
+	      pid = arg$.to.params.pid;
+	      data = (yield vue.http.get("/problem/" + pid)).data;
+	      return {
+	        problem: data
+	      };
+	    })
+	  },
+	  watch: {
+	    'problem.outlook.desc': function(){
+	      var this$ = this;
+	      return this.$nextTick(function(){
+	        return MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
+	      });
+	    }
+	  }
+	};
+	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/show.vue.map
+
+
+/***/ },
 /* 152 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"problem-modify\" class=\"ui form segment\"><h2 class=\"ui dividing header\">{{problem._id}}. {{problem.outlook.title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (s)</label><div class=\"ui input\"><input name=\"spaceLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (s)</label><div class=\"ui input\"><input name=\"stkLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (s)</label><div class=\"ui input\"><input name=\"outLmt\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"desc\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inFmt\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outFmt\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleIn\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOut\"></textarea></div></div><h3 class=\"ui dividing header\">Dataset Management</h3><div class=\"ui field\"><a :click=\"select\" class=\"ui icon button labeled\"><i class=\"icon file\"></i>select</a><a :click=\"upload\" class=\"ui icon button labeled green\"><i class=\"icon upload\"></i>upload</a><a :click=\"refresh\" class=\"ui icon button labeled teal\"><i class=\"icon refresh\"></i>refresh</a><a :click=\"repair\" class=\"ui icon button labeled teal\"><i class=\"icon retweet\"></i>repair</a></div><div class=\"ui two fields\"><div class=\"ui field four wide\">dropzone</div><div class=\"ui field twelve wide\"><table class=\"ui table segment\"><thead><tr><th>input</th><th>output</th><th>weight</th><th></th></tr></thead><tbody><tr v-for=\"atom in problem.config.dataset\"><td>{{atom.input}}</td><td>{{atom.output}}</td><td>{{atom.weight}}</td><td><a :click=\"remove\" class=\"ui icon labeled button right floated mini\"><i class=\"icon remove\"></i>remove</a></td></tr></tbody></table></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary floated submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary floated\"><i class=\"icon reply\"></i>Back</div></div></div>";
+	module.exports = "<h1 class=\"ui dividing header\">Problem {{problem._id}}. {{problem.outlook.title}}</h1><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui olive labels\"><div class=\"ui label\">{{problem.config.timeLmt}} s<div class=\"detail\">time limit</div></div><div class=\"ui label\">{{problem.config.spaceLmt}} MB<div class=\"detail\">space limit</div></div><div class=\"ui label\">{{problem.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{problem.permit.group}}<div class=\"detail\">group</div></div></div><div class=\"ui segment\"><div class=\"ui top left attached label teal\">description</div><p mathjax=\"mathjax\" v-html=\"problem.outlook.desc\"></p></div><div class=\"ui two column grid\"><div class=\"row\"><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">input format</div><p v-html=\"problem.outlook.inFmt\"></p></div></div><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">output format</div><p v-html=\"problem.outlook.outFmt\"></p></div></div></div><div class=\"row\"><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">sample input</div><pre>{{problem.outlook.sampleIn}}</pre></div></div><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">sample output</div><pre>{{problem.outlook.sampleOut}}</pre></div></div></div></div></div><div class=\"ui header\"></div><a href=\"#/solution/submit/{{problem._id}}\" class=\"ui icon labeled primary button\"><i class=\"icon rocket\"></i>submit</a><a href=\"#/problem/{{problem._id}}/modify\" class=\"ui icon labeled button\"><i class=\"icon edit\"></i>modify</a><a href=\"#/problem/{{problem._id}}/stat\" class=\"ui icon labeled button\"><i class=\"icon chart bar\"></i>statistics</a>";
 
 /***/ },
 /* 153 */
@@ -1208,51 +1215,56 @@ webpackJsonp([0],[
 	module.exports = {
 	  vuex: {
 	    getters: {
-	      session: function(it){
-	        return it.session;
+	      uid: function(it){
+	        return it.session.uid;
 	      }
 	    }
 	  },
 	  data: function(){
 	    return {
-	      pid: this.$route.params.pid,
+	      pid: parseInt(this.$route.params.pid),
 	      languages: ['cpp', 'java', 'pas']
 	    };
 	  },
 	  computed: {
 	    permit: function(){
 	      return {
-	        owner: this.session.uid,
+	        owner: this.uid,
 	        group: 'solutions',
 	        access: 420
 	      };
 	    }
 	  },
 	  ready: function(){
-	    var submit, $form;
+	    var submit, $form, ref$, this$ = this;
 	    $('.dropdown').dropdown();
 	    submit = co.wrap(function*(e){
 	      var $form, allValues, permit, data;
 	      e.preventDefault();
-	      $form = $('#solution-submit');
+	      $form = $('#submit-form');
 	      allValues = $form.form('get values');
 	      permit = {
 	        owner: allValues.owner,
 	        group: allValues.group,
-	        acces: allValues.acces
+	        access: allValues.access
 	      };
+	      log({
+	        permit: permit
+	      });
 	      permit.access = parseInt(permit.access, 8);
 	      data = Object.assign({
-	        pid: this.props.params.pid,
-	        uid: this.props.uid
+	        pid: this$.pid,
+	        uid: this$.uid
 	      }, {
 	        code: allValues.code,
 	        lang: allValues.lang
+	      }, {
+	        permit: permit
 	      });
 	      return (yield vue.http.post('/solution/submit', data));
 	    });
 	    $form = $('#submit-form');
-	    return $form.form({
+	    $form.form({
 	      on: 'blur',
 	      fields: {
 	        code: {
@@ -1274,12 +1286,37 @@ webpackJsonp([0],[
 	            prompt: 'language cannot be empty'
 	          }]
 	        },
-	        owner: 'isUserId',
-	        group: 'isUserId',
-	        access: 'isAccess'
+	        owner: {
+	          identifier: 'owner',
+	          rules: [{
+	            type: 'isUserId',
+	            prompt: 'wrong user id'
+	          }]
+	        },
+	        group: {
+	          identifier: 'group',
+	          rules: [{
+	            type: 'isUserId',
+	            prompt: 'wrong group id'
+	          }]
+	        },
+	        access: {
+	          identifier: 'access',
+	          rules: [{
+	            type: 'isAccess',
+	            prompt: 'wrong access code'
+	          }]
+	        }
 	      },
 	      onSuccess: submit,
 	      inline: true
+	    });
+	    $form.form('set values', {
+	      owner: (ref$ = this.permit).owner,
+	      group: ref$.group
+	    });
+	    return $form.form('set values', {
+	      access: this.permit.access.toString(8)
 	    });
 	  }
 	};
@@ -1290,7 +1327,7 @@ webpackJsonp([0],[
 /* 177 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"submit-form\" class=\"ui form segment relaxed\"><h1 class=\"ui header dividing\">problem: {{pid}}</h1><div class=\"ui success message\"><div class=\"header\">Submit successful. Redirect to status in 3 seconds...</div></div><div class=\"ui field\"><label>code</label><textarea name=\"code\"></textarea></div><div class=\"ui two fields\"><div class=\"ui field\"><label>language</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"lang\"/><div class=\"default text\">select your language</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in languages\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><h2 class=\"ui dividing header\">permission</h2><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><a class=\"ui icon labeled button primary floated submit\"><i class=\"icon rocket\"></i>Submit</a></div></div>";
+	module.exports = "<div id=\"submit-form\" class=\"ui form segment\"><h1 class=\"ui header dividing\">problem: {{pid}}</h1><div class=\"ui success message\"><div class=\"header\">Submit successful. Redirect to status in 3 seconds...</div></div><div class=\"ui field\"><label>code</label><textarea name=\"code\"></textarea></div><div class=\"ui two fields\"><div class=\"ui field\"><label>language</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"lang\"/><div class=\"default text\">select your language</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in languages\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><h2 class=\"ui dividing header\">permission</h2><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><a class=\"ui icon labeled button primary floated submit\"><i class=\"icon rocket\"></i>Submit</a></div></div>";
 
 /***/ },
 /* 178 */
@@ -1363,7 +1400,7 @@ webpackJsonp([0],[
 /* 180 */
 /***/ function(module, exports) {
 
-	module.exports = "<h3 class=\"ui header\">author: {{user}}</h3><h3 class=\"ui header\">lang: {{lang}}</h3><h3 class=\"ui header\">problem: {{prob._id}}</h3><h1 class=\"ui header dividing\">code</h1><pre>{{code}}</pre><p v-if=\"final.status == 'private'\">this code is private</p><div v-if=\"final.status == 'CE'\" class=\"ui segment\"><div class=\"ui top attached label\">Error message</div><pre>{{final.message}}</pre></div><div v-if=\"final.status == 'running'\" class=\"ui\">running</div><div v-if=\"final.status == 'finished'\"><div class=\"ui toggle checkbox\"><input type=\"checkbox\"/><label>Current state: {{state}}</label></div><div class=\"ui\"><h1 class=\"ui header dividing\">details</h1><table class=\"ui table segment\"><thead><tr><th>input</th><th>status</th><th>time</th><th>space</th><th>score</th><th>message</th></tr></thead><tbody><tr v-for=\"result in results\" class=\"positive\"><td>{{result.input}}</td><td>{{result.status}}</td><td>{{result.time}}</td><td>{{result.space}}</td><td>{{result.score}}</td><td>{{result.message}}</td></tr></tbody><tfoot><tr><th>final result</th><th>{{final.status}}</th><th>{{final.time}}</th><th>{{final.space}}</th><th>{{final.score}}</th><th>{{final.message}}</th></tr></tfoot></table></div></div>";
+	module.exports = "<h1 class=\"ui header dividing\">Solution {{$route.params.sid}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{user}}<div class=\"detail\">author</div></div><div class=\"ui label\">{{lang}}<div class=\"detail\">language</div></div><div class=\"ui label\">{{prob._id}}<div class=\"detail\">problem</div></div></div><h2 class=\"ui header dividing\">code</h2><pre>{{code}}</pre><p v-if=\"final.status == 'private'\">this code is private</p><div v-if=\"final.status == 'CE'\" class=\"ui segment\"><div class=\"ui top attached label\">Error message</div><pre>{{final.message}}</pre></div><div v-if=\"final.status == 'running'\" class=\"ui\">running</div><div v-if=\"final.status == 'finished'\"><div class=\"ui toggle checkbox\"><input type=\"checkbox\"/><label>Current state: {{state}}</label></div><div class=\"ui\"><h1 class=\"ui header dividing\">details</h1><table class=\"ui table segment\"><thead><tr><th>input</th><th>status</th><th>time</th><th>space</th><th>score</th><th>message</th></tr></thead><tbody><tr v-for=\"result in results\" class=\"positive\"><td>{{result.input}}</td><td>{{result.status}}</td><td>{{result.time}}</td><td>{{result.space}}</td><td>{{result.score}}</td><td>{{result.message}}</td></tr></tbody><tfoot><tr><th>final result</th><th>{{final.status}}</th><th>{{final.time}}</th><th>{{final.space}}</th><th>{{final.score}}</th><th>{{final.message}}</th></tr></tfoot></table></div></div>";
 
 /***/ },
 /* 181 */
@@ -1484,7 +1521,7 @@ webpackJsonp([0],[
 /* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, co, moment, debug, formatter, map, log, getFormValues, setFormValues;
+	var vue, co, moment, debug, formatter, map, log, getFormValues, setFormValues, this$ = this;
 	vue = __webpack_require__(1);
 	co = __webpack_require__(142);
 	moment = __webpack_require__(32);
@@ -1524,8 +1561,8 @@ webpackJsonp([0],[
 	  }, probs);
 	  $form.form('set values', {
 	    title: title,
-	    begTime: moment(begTime).format('YYYY-MM-DD hh:mm:ss'),
-	    endTime: moment(endTime).format('YYYY-MM-DD hh:mm:ss'),
+	    begTime: begTime ? moment(begTime).format('YYYY-MM-DD hh:mm:ss') : void 8,
+	    endTime: endTime ? moment(endTime).format('YYYY-MM-DD hh:mm:ss') : void 8,
 	    probs: probs
 	  });
 	  return $form.form('set values', permit);
@@ -1534,7 +1571,7 @@ webpackJsonp([0],[
 	  data: function(){
 	    return {
 	      rnd: {
-	        _id: -1,
+	        _id: void 8,
 	        probs: []
 	      }
 	    };
@@ -1547,6 +1584,20 @@ webpackJsonp([0],[
 	        resultObj$[x._id] = formatter.problem(x);
 	      }
 	      return resultObj$;
+	    },
+	    formattedTitle: function(){
+	      if (this.rnd._id === void 8) {
+	        return "Create new Round";
+	      } else {
+	        return "Round " + this.rnd._id + ". " + this.rnd.title;
+	      }
+	    }
+	  },
+	  vuex: {
+	    getters: {
+	      uid: function(it){
+	        return it.session.uid;
+	      }
 	    }
 	  },
 	  ready: function(){
@@ -1586,7 +1637,7 @@ webpackJsonp([0],[
 	      return response = (yield vue.http.post("/round/" + this$.rnd._id, data));
 	    });
 	    $form = $('#form-round');
-	    return $form.form({
+	    $form.form({
 	      on: 'blur',
 	      inline: true,
 	      onSuccess: submit,
@@ -1640,15 +1691,25 @@ webpackJsonp([0],[
 	        }
 	      }
 	    });
+	    if (this.rnd._id === void 8) {
+	      this.rnd.permit = {
+	        owner: this.uid,
+	        group: 'rounds',
+	        access: 420
+	      };
+	      return setFormValues(this.rnd);
+	    }
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
 	      var rid, data;
 	      rid = arg$.to.params.rid;
-	      data = (yield vue.http.get("/round/" + rid)).data;
-	      return {
-	        rnd: data
-	      };
+	      if (rid !== void 8) {
+	        data = (yield vue.http.get("/round/" + rid)).data;
+	        return {
+	          rnd: data
+	        };
+	      }
 	    })
 	  },
 	  watch: {
@@ -1668,7 +1729,7 @@ webpackJsonp([0],[
 /* 186 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"form-round\" class=\"ui form segment\"><h2 class=\"ui dividing header\">Round{{rnd._id}}. {{rnd.title}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><h3 class=\"ui dividing header\">configuration</h3><div class=\"ui fields three\"><div class=\"ui field\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field\"><label>start from</label><div class=\"ui input\"><input name=\"begTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div><div class=\"ui field\"><label>end at</label><div class=\"ui input\"><input name=\"endTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div></div><h3 class=\"ui dividing header\">permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><h3 class=\"ui dividing header\">problemset</h3><div class=\"ui field\"><div class=\"ui dropdown icon selection fluid multiple search\"><input type=\"hidden\" name=\"probs\"/><div class=\"default text\">problems</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"(key, value) of dropdownProblems\" data-value=\"{{key}}\" class=\"item\">{{value}}</div></div></div></div><br/><div class=\"ui field\"><a :click=\"delete\" class=\"icon ui labeled button floated red\"><i class=\"icon delete\"></i>delete</a><a class=\"icon ui labeled button floated secondary\"><i class=\"icon cancel\"></i>undo</a><a class=\"icon ui labeled button floated primary submit\"><i class=\"icon save\"></i>save</a></div></div>";
+	module.exports = "<div id=\"form-round\" class=\"ui form\"><h2 class=\"ui dividing header\">{{formattedTitle}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui fields three\"><div class=\"ui field\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field\"><label>start from</label><div class=\"ui input\"><input name=\"begTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div><div class=\"ui field\"><label>end at</label><div class=\"ui input\"><input name=\"endTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><h3 class=\"ui dividing header\">Problemset</h3><div class=\"ui field\"><div class=\"ui dropdown icon selection fluid multiple search\"><input type=\"hidden\" name=\"probs\"/><div class=\"default text\">problems</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"(key, value) of dropdownProblems\" data-value=\"{{key}}\" class=\"item\">{{value}}</div></div></div></div><br/><div class=\"ui field\"><a :click=\"delete\" class=\"icon ui labeled button floated red\"><i class=\"icon delete\"></i>delete</a><a class=\"icon ui labeled button floated secondary\"><i class=\"icon cancel\"></i>undo</a><a class=\"icon ui labeled button floated primary submit\"><i class=\"icon save\"></i>save</a></div></div>";
 
 /***/ },
 /* 187 */
@@ -1844,8 +1905,81 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] src/public/js/dollast/components/user/profile.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(195)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), true)
+	  if (!hotAPI.compatible) return
+	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/profile.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var vue, co, debug, format, log;
+	vue = __webpack_require__(1);
+	co = __webpack_require__(142);
+	debug = __webpack_require__(29);
+	format = __webpack_require__(155);
+	log = debug('dollast:components:user:profile');
+	module.exports = {
+	  data: function(){
+	    return {
+	      uid: this.$route.params.uid,
+	      profile: {},
+	      solvedProblems: [],
+	      ownedProblems: [],
+	      ownedRounds: []
+	    };
+	  },
+	  route: {
+	    data: co.wrap(function*(arg$){
+	      var uid, data;
+	      uid = arg$.to.params.uid;
+	      data = (yield vue.http.get("/user/" + uid)).data;
+	      log({
+	        data: data
+	      });
+	      return data;
+	    })
+	  },
+	  components: {
+	    problem: format.problem,
+	    round: format.round
+	  }
+	};
+	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/profile.vue.map
+
+
+/***/ },
+/* 195 */
+/***/ function(module, exports) {
+
+	module.exports = "<h1 class=\"ui dividing header\">Details of {{uid}}</h1><div class=\"ui segment\"><div class=\"ui top attached label large\">registered since</div><p>unimplemented</p></div><div class=\"ui segment\"><div class=\"ui large top attached label\">description</div><p>{{profile.desc}}</p></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Groups</div><div v-for=\"group in profile.groups\" class=\"ui olive label\">{{group}}</div></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Problems solved</div><div class=\"ui relaxed divided link list\"><div v-for=\"prob in solveProblems\" class=\"item\"><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Problems owned</div><div class=\"ui relaxed divided link list\"><div v-for=\"prob in ownedProblems\" class=\"item\"><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Rounds owned</div><div class=\"ui relaxed divided link list\"><div v-for=\"rnd in ownedRounds\" class=\"item\"><div class=\"ui right floated\">{{rnd.begTime}} {{rnd.endTime}}</div><div class=\"description\"><round :rnd=\"rnd\"></round></div></div></div></div><a href=\"#/user/{{uid}}/modify\" class=\"ui button icon labeled text primary\"><i class=\"icon edit\"></i>modify</a>";
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(197)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] src/public/js/dollast/components/user/login.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(198)
+	__vue_template__ = __webpack_require__(201)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1864,12 +1998,12 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 194 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var debug, login, log;
 	debug = __webpack_require__(29);
-	login = __webpack_require__(195).login;
+	login = __webpack_require__(198).login;
 	log = debug('dollast:component:login');
 	module.exports = {
 	  vuex: {
@@ -1932,12 +2066,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 195 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var vue, store, co, debug, log, login, loadFromToken, logout, out$ = typeof exports != 'undefined' && exports || this;
 	vue = __webpack_require__(1);
-	store = __webpack_require__(196);
+	store = __webpack_require__(199);
 	co = __webpack_require__(142);
 	debug = __webpack_require__(29);
 	log = debug('dollast:actions');
@@ -1965,13 +2099,13 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 196 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var vue, vuex, auth, state, mutations;
 	vue = __webpack_require__(1);
 	vuex = __webpack_require__(3);
-	auth = __webpack_require__(197);
+	auth = __webpack_require__(200);
 	state = {
 	  session: {
 	    guest: true
@@ -2004,7 +2138,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 197 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var debug, pubKey, RSAEntity, log, ref$, out$ = typeof exports != 'undefined' && exports || this;
@@ -2053,83 +2187,10 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 198 */
-/***/ function(module, exports) {
-
-	module.exports = "<div class=\"ui\"><h1 class=\"ui dividing header\">Login</h1><form id=\"login-form\" :class=\"{loading: loading, success: success}\" class=\"ui form segment\"><div class=\"ui error message\"></div><div class=\"ui success message\"><div class=\"header\">Login successfully. Redirect to problem list in 3 seconds.</div></div><div class=\"ui field\"><div class=\"ui icon input left\"><i class=\"icon user\"></i><input name=\"uid\" placeholder=\"user id\"/></div></div><div class=\"ui field\"><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input name=\"pswd\" placeholder=\"password\" type=\"password\"/></div></div><div class=\"ui icon labeled button left primary submit\"><i class=\"icon sign in\"></i>Login</div></form></div>";
-
-/***/ },
-/* 199 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(200)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/user/profile.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(201)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), true)
-	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/profile.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 200 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var vue, co, debug, format, log;
-	vue = __webpack_require__(1);
-	co = __webpack_require__(142);
-	debug = __webpack_require__(29);
-	format = __webpack_require__(155);
-	log = debug('dollast:components:user:profile');
-	module.exports = {
-	  data: function(){
-	    return {
-	      uid: this.$route.params.uid,
-	      profile: {},
-	      solvedProblems: [],
-	      ownedProblems: [],
-	      ownedRounds: []
-	    };
-	  },
-	  route: {
-	    data: co.wrap(function*(arg$){
-	      var uid, data;
-	      uid = arg$.to.params.uid;
-	      data = (yield vue.http.get("/user/" + uid)).data;
-	      log({
-	        data: data
-	      });
-	      return data;
-	    })
-	  },
-	  components: {
-	    problem: format.problem,
-	    round: format.round
-	  }
-	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/profile.vue.map
-
-
-/***/ },
 /* 201 */
 /***/ function(module, exports) {
 
-	module.exports = "<h1 class=\"ui dividing header\">Details of {{uid}}</h1><div class=\"ui segment\"><div class=\"ui top attached label large\">registered since</div><p>unimplemented</p></div><div class=\"ui segment\"><div class=\"ui large top attached label\">description</div><p>{{profile.desc}}</p></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Groups</div><div v-for=\"group in profile.groups\" class=\"ui olive label\">{{group}}</div></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Problems solved</div><p>unimplemented</p><div class=\"ui relaxed divided link list\"><div v-for=\"prob in solveProblems\" class=\"item\"><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Problems owned</div><div class=\"ui relaxed divided link list\"><div v-for=\"prob in ownedProblems\" class=\"item\"><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Rounds owned</div><div class=\"ui relaxed divided link list\"><div v-for=\"rnd in ownedRounds\" class=\"item\"><div class=\"ui right floated\">{{rnd.begTime}} {{rnd.endTime}}</div><div class=\"description\"><round :rnd=\"rnd\"></round></div></div></div></div><a href=\"#/user/{{uid}}/modify\" class=\"ui button icon labeled text primary\"><i class=\"icon edit\"></i>modify</a>";
+	module.exports = "<div class=\"ui\"><h1 class=\"ui dividing header\">Login</h1><form id=\"login-form\" :class=\"{loading: loading, success: success}\" class=\"ui form segment\"><div class=\"ui error message\"></div><div class=\"ui success message\"><div class=\"header\">Login successfully. Redirect to problem list in 3 seconds.</div></div><div class=\"ui field\"><div class=\"ui icon input left\"><i class=\"icon user\"></i><input name=\"uid\" placeholder=\"user id\"/></div></div><div class=\"ui field\"><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input name=\"pswd\" placeholder=\"password\" type=\"password\"/></div></div><div class=\"ui icon labeled button left primary submit\"><i class=\"icon sign in\"></i>Login</div></form></div>";
 
 /***/ },
 /* 202 */
@@ -2140,223 +2201,8 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/app.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(209)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), true)
-	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/app.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 203 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var foot, navbar, vueRouter, vue, loadFromToken;
-	foot = __webpack_require__(204);
-	navbar = __webpack_require__(206);
-	vueRouter = __webpack_require__(4);
-	vue = __webpack_require__(1);
-	loadFromToken = __webpack_require__(195).loadFromToken;
-	module.exports = {
-	  vuex: {
-	    actions: {
-	      loadFromToken: loadFromToken
-	    }
-	  },
-	  components: {
-	    navbar: navbar,
-	    foot: foot
-	  },
-	  ready: function(){
-	    return this.loadFromToken();
-	  }
-	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/app.vue.map
-
-
-/***/ },
-/* 204 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__vue_template__ = __webpack_require__(205)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), true)
-	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/foot.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 205 */
-/***/ function(module, exports) {
-
-	module.exports = "<div class=\"ui divider horizontal\">Yuping Luo @ 2016</div>";
-
-/***/ },
-/* 206 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(207)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/site/navbar.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(208)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), true)
-	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/navbar.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 207 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var debug, logout, log, this$ = this;
-	debug = __webpack_require__(29);
-	logout = __webpack_require__(195).logout;
-	log = debug('dollast:navbar');
-	module.exports = {
-	  vuex: {
-	    getters: {
-	      uid: function(it){
-	        return it.session.uid;
-	      }
-	    },
-	    actions: {
-	      logout: logout
-	    }
-	  },
-	  methods: {
-	    logout: function(){
-	      return this.logout();
-	    }
-	  }
-	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/navbar.vue.map
-
-
-/***/ },
-/* 208 */
-/***/ function(module, exports) {
-
-	module.exports = "<div class=\"row\"><div class=\"ui blue inverted page grid borderless menu\"><div class=\"header item\">dollast</div><a href=\"#/\" class=\"item labeled\"><i class=\"icon home\"></i>Home</a><a href=\"#/problem\" class=\"item labeled\"><i class=\"icon browser\"></i>Problem</a><a href=\"#/solution\" class=\"item labeled\"><i class=\"icon info circle\"></i>Status</a><a href=\"#/round\" class=\"item labeled\"><i class=\"icon users\"></i>Contest</a><div class=\"right menu\"><div class=\"item\"><div class=\"ui input icon inverted small\"><i class=\"icon search link\"></i><input placeholder=\"ID or Search\"/></div></div><a v-if=\"uid != undefined\" href=\"#/user/{{uid}}\" class=\"item labeled\"><i class=\"icon user\"></i>{{uid}}</a><a v-else=\"v-else\" href=\"#/user/login\" class=\"item labeled\"><i class=\"icon sign in\"></i>Sign in</a><a v-if=\"uid != undefined\" @click=\"logout\" class=\"item labeled\"><i class=\"icon sign out\"></i>Logout</a><a v-else=\"v-else\" href=\"#/user/register\" class=\"item labeled\"><i class=\"icon signup\"></i>Register</a></div></div></div>";
-
-/***/ },
-/* 209 */
-/***/ function(module, exports) {
-
-	module.exports = "<div class=\"ui grid\"><navbar></navbar><div class=\"row\"><div class=\"three wide column\"></div><div class=\"ten wide column\"><router-view></router-view></div></div><div class=\"row\"><div class=\"twelve wide column centered\"><foot></foot></div></div></div>";
-
-/***/ },
-/* 210 */,
-/* 211 */,
-/* 212 */,
-/* 213 */,
-/* 214 */,
-/* 215 */,
-/* 216 */,
-/* 217 */,
-/* 218 */,
-/* 219 */,
-/* 220 */,
-/* 221 */,
-/* 222 */,
-/* 223 */,
-/* 224 */,
-/* 225 */,
-/* 226 */,
-/* 227 */,
-/* 228 */,
-/* 229 */,
-/* 230 */,
-/* 231 */,
-/* 232 */,
-/* 233 */,
-/* 234 */,
-/* 235 */,
-/* 236 */,
-/* 237 */,
-/* 238 */,
-/* 239 */,
-/* 240 */,
-/* 241 */,
-/* 242 */,
-/* 243 */,
-/* 244 */,
-/* 245 */,
-/* 246 */,
-/* 247 */,
-/* 248 */,
-/* 249 */,
-/* 250 */,
-/* 251 */,
-/* 252 */,
-/* 253 */,
-/* 254 */,
-/* 255 */,
-/* 256 */,
-/* 257 */,
-/* 258 */,
-/* 259 */,
-/* 260 */,
-/* 261 */,
-/* 262 */,
-/* 263 */,
-/* 264 */,
-/* 265 */,
-/* 266 */,
-/* 267 */,
-/* 268 */,
-/* 269 */,
-/* 270 */,
-/* 271 */,
-/* 272 */,
-/* 273 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(274)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] src/public/js/dollast/components/user/register.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(275)
+	__vue_template__ = __webpack_require__(204)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2375,7 +2221,7 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 274 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var vue, debug, log;
@@ -2431,22 +2277,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 275 */
+/* 204 */
 /***/ function(module, exports) {
 
 	module.exports = "<h1 class=\"ui dividing header\">Register</h1><form id=\"register-form\" class=\"ui form segment\"><div class=\"ui error message\"></div><div class=\"ui success message\"><h2>Register successful. Login please.</h2></div><div class=\"ui field\"><a class=\"input icon left\"><i class=\"icon user\"></i><input placeholder=\"user id\" name=\"uid\"/></a><a class=\"input icon left\"><i class=\"icon lock\"></i><input placeholder=\"password\" name=\"pswd\" type=\"password\"/></a><a class=\"input icon left\"><i class=\"icon mail\"></i><input placeholder=\"abc@xyz\" name=\"email\" type=\"email\"/></a></div><a class=\"icon labeled button left primary submit\"><i class=\"icon sign in\"></i>Register</a></form>";
 
 /***/ },
-/* 276 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(277)
+	__vue_script__ = __webpack_require__(206)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] src/public/js/dollast/components/user/modify.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(278)
+	__vue_template__ = __webpack_require__(207)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2465,7 +2311,7 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 277 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var co, vue, debug, log;
@@ -2476,10 +2322,12 @@ webpackJsonp([0],[
 	module.exports = {
 	  data: function(){
 	    return {
-	      groups: ['group'],
-	      profile: {
-	        _id: "",
-	        groups: []
+	      groups: ['problems', 'solutions', 'admin', 'rounds'],
+	      user: {
+	        profile: {
+	          _id: "",
+	          groups: []
+	        }
 	      }
 	    };
 	  },
@@ -2505,7 +2353,7 @@ webpackJsonp([0],[
 	      $form = $('#form-user');
 	      ref$ = $form.form('get values'), groups = ref$.groups, oldPassword = ref$.oldPassword, newPassword = ref$.newPassword, confirmPassword = ref$.confirmPassword, desc = ref$.desc;
 	      groups = groups.split(',');
-	      _id = this$.uid;
+	      _id = this$.user.profile._id;
 	      if (oldPassword === "" || newPassword === "") {
 	        updated = {
 	          _id: _id,
@@ -2527,21 +2375,36 @@ webpackJsonp([0],[
 	    return $form.form({
 	      onSuccess: submit,
 	      on: 'blur',
+	      inline: true,
 	      fields: {
 	        oldPassword: {
 	          identifier: 'oldPassword',
 	          optional: true,
-	          rules: 'isPassword'
+	          rules: [{
+	            type: 'isPassword',
+	            prompt: "must be password"
+	          }]
 	        },
 	        newPassword: {
 	          identifier: 'newPassword',
 	          optional: true,
-	          rules: 'isPassword'
+	          rules: [{
+	            type: 'isPassword',
+	            prompt: "must be password"
+	          }]
 	        },
 	        confirmation: {
 	          identifier: 'confirmPassword',
 	          optional: true,
-	          rules: ['isPassword', "match[newPassword]"]
+	          rules: [
+	            {
+	              type: 'isPassword',
+	              prompt: "must be password"
+	            }, {
+	              type: "match[newPassword]",
+	              prompt: "password must match"
+	            }
+	          ]
 	        }
 	      }
 	    });
@@ -2552,8 +2415,8 @@ webpackJsonp([0],[
 	      $form = $('#form-user');
 	      return this.$nextTick(function(){
 	        return $form.form('set values', {
-	          groups: this$.profile.groups,
-	          desc: this$.profile.desc
+	          groups: this$.user.profile.groups,
+	          desc: this$.user.profile.desc
 	        });
 	      });
 	    }
@@ -2563,10 +2426,162 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 278 */
+/* 207 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"form-user\" class=\"ui form\"><h2 class=\"ui dividing header\">{{user.profile._id}}</h2><div class=\"ui field\"><label>groups</label><div class=\"ui dropdown icon selection search multiple\"><input type=\"hidden\" name=\"groups\"/><div class=\"default text\">select proper access</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in groups\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui two fields\"><div class=\"ui field\"><label>describe yourself</label><textarea name=\"desc\"></textarea></div></div><h3 class=\"ui dividing header\">Password</h3><div class=\"four fields wide\"><div class=\"ui field\"><label>old password</label><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input placeholder=\"old password\" name=\"oldPassword\" type=\"password\"/></div></div></div><div class=\"four fields wide\"><div class=\"ui field\"><label>new password</label><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input placeholder=\"new  password\" name=\"newPassword\" type=\"password\"/></div></div></div><div class=\"four fields wide\"><div class=\"ui field\"><label>confirm old password</label><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input placeholder=\"confirmation\" name=\"confirmPassword\" type=\"password\"/></div></div></div><a class=\"ui icon labeled button submit primary\"><i class=\"icon save\"></i>submit</a></div>";
+	module.exports = "<div id=\"form-user\" class=\"ui form\"><h2 class=\"ui dividing header\">{{user.profile._id}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><div class=\"ui field\"><label>groups</label><div class=\"ui dropdown icon selection search multiple\"><input type=\"hidden\" name=\"groups\"/><div class=\"default text\">select proper access</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in groups\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui two fields\"><div class=\"ui field\"><label>describe yourself</label><textarea name=\"desc\"></textarea></div></div><h3 class=\"ui dividing header\">Password</h3><div class=\"four fields wide\"><div class=\"ui field\"><label>old password</label><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input placeholder=\"old password\" name=\"oldPassword\" type=\"password\"/></div></div></div><div class=\"four fields wide\"><div class=\"ui field\"><label>new password</label><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input placeholder=\"new  password\" name=\"newPassword\" type=\"password\"/></div></div></div><div class=\"four fields wide\"><div class=\"ui field\"><label>confirm new password</label><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input placeholder=\"confirmation\" name=\"confirmPassword\" type=\"password\"/></div></div></div><a class=\"ui icon labeled button submit primary\"><i class=\"icon save\"></i>submit</a></div>";
+
+/***/ },
+/* 208 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(209)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] src/public/js/dollast/components/app.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(215)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), true)
+	  if (!hotAPI.compatible) return
+	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/app.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var foot, navbar, vueRouter, vue, loadFromToken;
+	foot = __webpack_require__(210);
+	navbar = __webpack_require__(212);
+	vueRouter = __webpack_require__(4);
+	vue = __webpack_require__(1);
+	loadFromToken = __webpack_require__(198).loadFromToken;
+	module.exports = {
+	  vuex: {
+	    actions: {
+	      loadFromToken: loadFromToken
+	    }
+	  },
+	  components: {
+	    navbar: navbar,
+	    foot: foot
+	  },
+	  ready: function(){
+	    return this.loadFromToken();
+	  }
+	};
+	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/app.vue.map
+
+
+/***/ },
+/* 210 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_template__ = __webpack_require__(211)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), true)
+	  if (!hotAPI.compatible) return
+	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/foot.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 211 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"ui divider horizontal\">Yuping Luo @ 2016</div>";
+
+/***/ },
+/* 212 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(213)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] src/public/js/dollast/components/site/navbar.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(214)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), true)
+	  if (!hotAPI.compatible) return
+	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/navbar.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 213 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var debug, logout, log, this$ = this;
+	debug = __webpack_require__(29);
+	logout = __webpack_require__(198).logout;
+	log = debug('dollast:navbar');
+	module.exports = {
+	  vuex: {
+	    getters: {
+	      uid: function(it){
+	        return it.session.uid;
+	      }
+	    },
+	    actions: {
+	      logout: logout
+	    }
+	  },
+	  methods: {
+	    logout: function(){
+	      return this.logout();
+	    }
+	  }
+	};
+	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/navbar.vue.map
+
+
+/***/ },
+/* 214 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"row\"><div class=\"ui blue inverted page grid borderless menu\"><div class=\"header item\">dollast</div><a href=\"#/\" class=\"item labeled\"><i class=\"icon home\"></i>Home</a><a href=\"#/problem\" class=\"item labeled\"><i class=\"icon browser\"></i>Problem</a><a href=\"#/solution\" class=\"item labeled\"><i class=\"icon info circle\"></i>Status</a><a href=\"#/round\" class=\"item labeled\"><i class=\"icon users\"></i>Contest</a><div class=\"right menu\"><div class=\"item\"><div class=\"ui input icon inverted small\"><i class=\"icon search link\"></i><input placeholder=\"ID or Search\"/></div></div><a v-if=\"uid != undefined\" href=\"#/user/{{uid}}\" class=\"item labeled\"><i class=\"icon user\"></i>{{uid}}</a><a v-else=\"v-else\" href=\"#/user/login\" class=\"item labeled\"><i class=\"icon sign in\"></i>Sign in</a><a v-if=\"uid != undefined\" @click=\"logout\" class=\"item labeled\"><i class=\"icon sign out\"></i>Logout</a><a v-else=\"v-else\" href=\"#/user/register\" class=\"item labeled\"><i class=\"icon signup\"></i>Register</a></div></div></div>";
+
+/***/ },
+/* 215 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"ui grid\"><navbar></navbar><div class=\"row\"><div class=\"three wide column\"></div><div class=\"ten wide column\"><router-view></router-view></div></div><div class=\"row\"><div class=\"twelve wide column centered\"><foot></foot></div></div></div>";
 
 /***/ }
 ]);
