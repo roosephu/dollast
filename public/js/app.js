@@ -40,7 +40,7 @@ webpackJsonp([0],[
 	    }
 	  },
 	  isAccess: function(text){
-	    return /^[0-7]{3}$/.test(text);
+	    return /^([r-][w-][x-]){3}$/.test(text);
 	  }
 	};
 	for (key in extraRules) {
@@ -536,7 +536,6 @@ webpackJsonp([0],[
 	  config.spaceLmt = parseFloat(config.spaceLmt);
 	  config.outLmt = parseFloat(config.outLmt);
 	  config.stkLmt = parseFloat(config.stkLmt);
-	  permit.access = parseInt(permit.access, 8);
 	  return {
 	    outlook: outlook,
 	    config: config,
@@ -547,9 +546,6 @@ webpackJsonp([0],[
 	  var problem, $form;
 	  problem = flattenObject(data);
 	  $form = $('#problem-modify');
-	  if (problem.access) {
-	    problem.access = problem.access.toString(8);
-	  }
 	  return $form.form('set values', problem);
 	};
 	module.exports = {
@@ -684,7 +680,7 @@ webpackJsonp([0],[
 	          identifier: 'access',
 	          rules: [{
 	            type: 'isAccess',
-	            prompt: 'access code should be /^[0-7]{3}$/'
+	            prompt: 'access code should be /^([r-][w-][x-]){3}$/'
 	          }]
 	        }
 	      },
@@ -749,7 +745,7 @@ webpackJsonp([0],[
 /* 149 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"problem-modify\" class=\"ui form\"><h2 class=\"ui dividing header\">{{problem._id}}. {{problem.outlook.title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (MB)</label><div class=\"ui input\"><input name=\"spaceLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (MB)</label><div class=\"ui input\"><input name=\"stkLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (MB)</label><div class=\"ui input\"><input name=\"outLmt\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"desc\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inFmt\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outFmt\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleIn\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOut\"></textarea></div></div><h3 class=\"ui dividing header\">Dataset Management</h3><div class=\"ui field\"><a :click=\"select\" class=\"ui icon button labeled\"><i class=\"icon file\"></i>select</a><a :click=\"upload\" class=\"ui icon button labeled green\"><i class=\"icon upload\"></i>upload</a><a :click=\"refresh\" class=\"ui icon button labeled teal\"><i class=\"icon refresh\"></i>refresh</a><a :click=\"repair\" class=\"ui icon button labeled teal\"><i class=\"icon retweet\"></i>repair</a></div><div class=\"ui two fields\"><div class=\"ui field four wide\">dropzone</div><div class=\"ui field twelve wide\"><table class=\"ui table segment\"><thead><tr><th>input</th><th>output</th><th>weight</th><th></th></tr></thead><tbody><tr v-for=\"atom in problem.config.dataset\"><td>{{atom.input}}</td><td>{{atom.output}}</td><td>{{atom.weight}}</td><td><a :click=\"remove\" class=\"ui icon labeled button right floated mini\"><i class=\"icon remove\"></i>remove</a></td></tr></tbody></table></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary floated submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary floated\"><i class=\"icon reply\"></i>Back</div></div></div>";
+	module.exports = "<div id=\"problem-modify\" class=\"ui form\"><h2 class=\"ui dividing header\">{{problem._id}}. {{problem.outlook.title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (MB)</label><div class=\"ui input\"><input name=\"spaceLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (MB)</label><div class=\"ui input\"><input name=\"stkLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (MB)</label><div class=\"ui input\"><input name=\"outLmt\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"desc\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inFmt\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outFmt\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleIn\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOut\"></textarea></div></div><h3 class=\"ui dividing header\">Dataset Management</h3><div class=\"ui field\"><a :click=\"select\" class=\"ui icon button labeled\"><i class=\"icon file\"></i>select</a><a :click=\"upload\" class=\"ui icon button labeled green\"><i class=\"icon upload\"></i>upload</a><a :click=\"refresh\" class=\"ui icon button labeled teal\"><i class=\"icon refresh\"></i>refresh</a><a :click=\"repair\" class=\"ui icon button labeled teal\"><i class=\"icon retweet\"></i>repair</a></div><div class=\"ui two fields\"><div class=\"ui field four wide\">dropzone</div><div class=\"ui field twelve wide\"><table class=\"ui table segment\"><thead><tr><th>input</th><th>output</th><th>weight</th><th></th></tr></thead><tbody><tr v-for=\"atom in problem.config.dataset\"><td>{{atom.input}}</td><td>{{atom.output}}</td><td>{{atom.weight}}</td><td><a :click=\"remove\" class=\"ui icon labeled button right floated mini\"><i class=\"icon remove\"></i>remove</a></td></tr></tbody></table></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field disabled\"><label>owner</label><div class=\"ui input\"><input name=\"owner\" disabled=\"disabled\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary floated submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary floated\"><i class=\"icon reply\"></i>Back</div></div></div>";
 
 /***/ },
 /* 150 */
@@ -1236,7 +1232,7 @@ webpackJsonp([0],[
 	    }
 	  },
 	  ready: function(){
-	    var submit, $form, ref$, this$ = this;
+	    var submit, $form, this$ = this;
 	    $('.dropdown').dropdown();
 	    submit = co.wrap(function*(e){
 	      var $form, allValues, permit, data;
@@ -1253,8 +1249,7 @@ webpackJsonp([0],[
 	      });
 	      permit.access = parseInt(permit.access, 8);
 	      data = Object.assign({
-	        pid: this$.pid,
-	        uid: this$.uid
+	        pid: this$.pid
 	      }, {
 	        code: allValues.code,
 	        lang: allValues.lang
@@ -1311,13 +1306,7 @@ webpackJsonp([0],[
 	      onSuccess: submit,
 	      inline: true
 	    });
-	    $form.form('set values', {
-	      owner: (ref$ = this.permit).owner,
-	      group: ref$.group
-	    });
-	    return $form.form('set values', {
-	      access: this.permit.access.toString(8)
-	    });
+	    return $form.form('set values', this.permit);
 	  }
 	};
 	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/solution/submit.vue.map
@@ -1327,7 +1316,7 @@ webpackJsonp([0],[
 /* 177 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"submit-form\" class=\"ui form segment\"><h1 class=\"ui header dividing\">problem: {{pid}}</h1><div class=\"ui success message\"><div class=\"header\">Submit successful. Redirect to status in 3 seconds...</div></div><div class=\"ui field\"><label>code</label><textarea name=\"code\"></textarea></div><div class=\"ui two fields\"><div class=\"ui field\"><label>language</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"lang\"/><div class=\"default text\">select your language</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in languages\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><h2 class=\"ui dividing header\">permission</h2><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><a class=\"ui icon labeled button primary floated submit\"><i class=\"icon rocket\"></i>Submit</a></div></div>";
+	module.exports = "<div id=\"submit-form\" class=\"ui form segment\"><h1 class=\"ui header dividing\">problem: {{pid}}</h1><div class=\"ui success message\"><div class=\"header\">Submit successful. Redirect to status in 3 seconds...</div></div><div class=\"ui field\"><label>code</label><textarea name=\"code\"></textarea></div><div class=\"ui two fields\"><div class=\"ui field\"><label>language</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"lang\"/><div class=\"default text\">select your language</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in languages\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><h2 class=\"ui dividing header\">permission</h2><div class=\"ui four fields\"><div class=\"ui field disabled\"><label>owner</label><div class=\"ui input\"><input name=\"owner\" disabled=\"disabled\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><a class=\"ui icon labeled button primary floated submit\"><i class=\"icon rocket\"></i>Submit</a></div></div>";
 
 /***/ },
 /* 178 */
@@ -1369,16 +1358,22 @@ webpackJsonp([0],[
 	module.exports = {
 	  data: function(){
 	    return {
-	      final: {},
-	      results: [],
-	      prob: {
-	        _id: 0
+	      sol: {
+	        final: {},
+	        results: [],
+	        prob: {
+	          _id: 0
+	        },
+	        permit: {
+	          owner: "",
+	          group: ""
+	        }
 	      }
 	    };
 	  },
 	  computed: {
 	    pid: function(){
-	      return this.prob._id;
+	      return this.sol.prob._id;
 	    }
 	  },
 	  route: {
@@ -1389,7 +1384,9 @@ webpackJsonp([0],[
 	      log({
 	        data: data
 	      });
-	      return data;
+	      return {
+	        sol: data
+	      };
 	    })
 	  }
 	};
@@ -1400,7 +1397,7 @@ webpackJsonp([0],[
 /* 180 */
 /***/ function(module, exports) {
 
-	module.exports = "<h1 class=\"ui header dividing\">Solution {{$route.params.sid}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{user}}<div class=\"detail\">author</div></div><div class=\"ui label\">{{lang}}<div class=\"detail\">language</div></div><div class=\"ui label\">{{prob._id}}<div class=\"detail\">problem</div></div></div><h2 class=\"ui header dividing\">code</h2><pre>{{code}}</pre><p v-if=\"final.status == 'private'\">this code is private</p><div v-if=\"final.status == 'CE'\" class=\"ui segment\"><div class=\"ui top attached label\">Error message</div><pre>{{final.message}}</pre></div><div v-if=\"final.status == 'running'\" class=\"ui\">running</div><div v-if=\"final.status == 'finished'\"><div class=\"ui toggle checkbox\"><input type=\"checkbox\"/><label>Current state: {{state}}</label></div><div class=\"ui\"><h1 class=\"ui header dividing\">details</h1><table class=\"ui table segment\"><thead><tr><th>input</th><th>status</th><th>time</th><th>space</th><th>score</th><th>message</th></tr></thead><tbody><tr v-for=\"result in results\" class=\"positive\"><td>{{result.input}}</td><td>{{result.status}}</td><td>{{result.time}}</td><td>{{result.space}}</td><td>{{result.score}}</td><td>{{result.message}}</td></tr></tbody><tfoot><tr><th>final result</th><th>{{final.status}}</th><th>{{final.time}}</th><th>{{final.space}}</th><th>{{final.score}}</th><th>{{final.message}}</th></tr></tfoot></table></div></div>";
+	module.exports = "<h1 class=\"ui header dividing\">Solution {{$route.params.sid}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{sol.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{sol.permit.group}}<div class=\"detail\">group</div></div><div class=\"ui label\">{{sol.lang}}<div class=\"detail\">language</div></div><div class=\"ui label\">{{sol.prob._id}}<div class=\"detail\">problem</div></div></div><h2 class=\"ui header dividing\">code</h2><pre>{{code}}</pre><p v-if=\"sol.final.status == 'private'\">this code is private</p><div v-if=\"sol.final.status == 'CE'\" class=\"ui segment\"><div class=\"ui top attached label\">Error message</div><pre>{{sol.final.message}}</pre></div><div v-if=\"sol.final.status == 'running'\" class=\"ui\">running</div><div v-if=\"sol.final.status == 'finished'\"><div class=\"ui toggle checkbox\"><input type=\"checkbox\"/><label>Current state: {{sol.state}}</label></div><div class=\"ui\"><h1 class=\"ui header dividing\">details</h1><table class=\"ui table segment\"><thead><tr><th>input</th><th>status</th><th>time</th><th>space</th><th>score</th><th>message</th></tr></thead><tbody><tr v-for=\"result in sol.results\" class=\"positive\"><td>{{sol.result.input}}</td><td>{{sol.result.status}}</td><td>{{sol.result.time}}</td><td>{{sol.result.space}}</td><td>{{sol.result.score}}</td><td>{{sol.result.message}}</td></tr></tbody><tfoot><tr><th>final result</th><th>{{sol.final.status}}</th><th>{{sol.final.time}}</th><th>{{sol.final.space}}</th><th>{{sol.final.score}}</th><th>{{sol.final.message}}</th></tr></tfoot></table></div></div>";
 
 /***/ },
 /* 181 */
@@ -1538,7 +1535,6 @@ webpackJsonp([0],[
 	    group: values.group,
 	    access: values.access
 	  };
-	  permit.access = parseInt(permit.access, 8);
 	  probs = map(parseInt, values.probs.split(','));
 	  return data = Object.assign({
 	    title: values.title,
@@ -1553,9 +1549,6 @@ webpackJsonp([0],[
 	  var $form, title, begTime, endTime, permit, probs;
 	  $form = $('#form-round');
 	  title = round.title, begTime = round.begTime, endTime = round.endTime, permit = round.permit, probs = round.probs;
-	  if (permit != null && permit.access) {
-	    permit.access = permit.access.toString(8);
-	  }
 	  probs = map(function(it){
 	    return it._id + "";
 	  }, probs);
@@ -1695,7 +1688,7 @@ webpackJsonp([0],[
 	      this.rnd.permit = {
 	        owner: this.uid,
 	        group: 'rounds',
-	        access: 420
+	        access: 'rwxrw-rw-'
 	      };
 	      return setFormValues(this.rnd);
 	    }
@@ -1729,7 +1722,7 @@ webpackJsonp([0],[
 /* 186 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"form-round\" class=\"ui form\"><h2 class=\"ui dividing header\">{{formattedTitle}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui fields three\"><div class=\"ui field\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field\"><label>start from</label><div class=\"ui input\"><input name=\"begTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div><div class=\"ui field\"><label>end at</label><div class=\"ui input\"><input name=\"endTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><h3 class=\"ui dividing header\">Problemset</h3><div class=\"ui field\"><div class=\"ui dropdown icon selection fluid multiple search\"><input type=\"hidden\" name=\"probs\"/><div class=\"default text\">problems</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"(key, value) of dropdownProblems\" data-value=\"{{key}}\" class=\"item\">{{value}}</div></div></div></div><br/><div class=\"ui field\"><a :click=\"delete\" class=\"icon ui labeled button floated red\"><i class=\"icon delete\"></i>delete</a><a class=\"icon ui labeled button floated secondary\"><i class=\"icon cancel\"></i>undo</a><a class=\"icon ui labeled button floated primary submit\"><i class=\"icon save\"></i>save</a></div></div>";
+	module.exports = "<div id=\"form-round\" class=\"ui form\"><h2 class=\"ui dividing header\">{{formattedTitle}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui fields three\"><div class=\"ui field\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field\"><label>start from</label><div class=\"ui input\"><input name=\"begTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div><div class=\"ui field\"><label>end at</label><div class=\"ui input\"><input name=\"endTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field disabled\"><label>owner</label><div class=\"ui input\"><input name=\"owner\" disabled=\"disabled\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><h3 class=\"ui dividing header\">Problemset</h3><div class=\"ui field\"><div class=\"ui dropdown icon selection fluid multiple search\"><input type=\"hidden\" name=\"probs\"/><div class=\"default text\">problems</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"(key, value) of dropdownProblems\" data-value=\"{{key}}\" class=\"item\">{{value}}</div></div></div></div><br/><div class=\"ui field\"><a :click=\"delete\" class=\"icon ui labeled button floated red\"><i class=\"icon delete\"></i>delete</a><a class=\"icon ui labeled button floated secondary\"><i class=\"icon cancel\"></i>undo</a><a class=\"icon ui labeled button floated primary submit\"><i class=\"icon save\"></i>save</a></div></div>";
 
 /***/ },
 /* 187 */
@@ -1780,7 +1773,11 @@ webpackJsonp([0],[
 	        endTime: 0,
 	        _id: 0,
 	        started: false,
-	        probs: []
+	        probs: [],
+	        permit: {
+	          owner: "",
+	          group: ""
+	        }
 	      }
 	    };
 	  },
@@ -1802,7 +1799,7 @@ webpackJsonp([0],[
 /* 189 */
 /***/ function(module, exports) {
 
-	module.exports = "<h1 class=\"ui dividing header\">Round {{rnd._id}}. {{rnd.title}}</h1><p>{{rnd.begTime}} -- {{rnd.endTime}}</p><br/><div v-if=\"rnd.started\"><h2 class=\"ui dividing header\">Problemset</h2><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui relaxed divided link list\"><div v-for=\"prob in rnd.probs\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><br/></div><div v-else=\"v-else\"><p>Sorry, this round has not started.</p></div><a v-if=\"rnd.started\" href=\"#/round/{{rnd._id}}/board\" class=\"ui labeled button purple\"><i class=\"icon trophy\"></i>board</a><a href=\"#/round/{{rnd._id}}/modify\" class=\"ui labeled button orange\"><i class=\"icon edit\"></i>modify</a>";
+	module.exports = "<h1 class=\"ui dividing header\">Round {{rnd._id}}. {{rnd.title}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{rnd.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{rnd.permit.group}}<div class=\"detail\">group</div></div></div><p>{{rnd.begTime}} -- {{rnd.endTime}}</p><br/><div v-if=\"rnd.started\"><h2 class=\"ui dividing header\">Problemset</h2><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui relaxed divided link list\"><div v-for=\"prob in rnd.probs\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><br/></div><div v-else=\"v-else\"><p>Sorry, this round has not started.</p></div><a v-if=\"rnd.started\" href=\"#/round/{{rnd._id}}/board\" class=\"ui labeled button purple\"><i class=\"icon trophy\"></i>board</a><a href=\"#/round/{{rnd._id}}/modify\" class=\"ui labeled button orange\"><i class=\"icon edit\"></i>modify</a>";
 
 /***/ },
 /* 190 */

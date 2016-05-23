@@ -18,10 +18,10 @@
 
     h2.ui.dividing.header permission
     .ui.four.fields
-      .ui.field
+      .ui.field.disabled
         label owner
         .ui.input
-          input(name="owner")
+          input(name="owner", disabled)
       .ui.field
         label group
         .ui.input
@@ -73,7 +73,6 @@ module.exports =
 
       data = Object.assign do
         pid: @pid
-        uid: @uid
         all-values{code, lang}
         permit: permit
       yield vue.http.post \/solution/submit, data
@@ -116,8 +115,7 @@ module.exports =
       on-success: submit
       inline: true
 
-    $form.form 'set values', @permit{owner, group}
-    $form.form 'set values', access: @permit.access.to-string 8
+    $form.form 'set values', @permit
 
 
 </script>

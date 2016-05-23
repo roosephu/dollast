@@ -3,9 +3,9 @@ require! {
 }
 
 export schema =
-	owner: String
+	owner: type: String, ref: \user
 	group: String
-	access: Number
+	access: String
 
 export can-access = (user, permit, action) ->
 	if user == null or permit == null
@@ -24,4 +24,4 @@ export can-access = (user, permit, action) ->
 		| 'x' => 0
 		| _ => throw new Error 'invalid action'
 
-	return (permit.access .>>. offset .&. 1) == 1
+	return permit[pos] != action

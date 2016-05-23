@@ -79,7 +79,7 @@ export stat = (pid, opts = {}) ->*
   # log {@ensure-access, @acquire-privilege}
   @ensure-access model, pid, \r
 
-  query = db.sol.model.aggregate do
+  query = db.solutions.model.aggregate do
     * $match: prob: pid
     * $sort: user: 1, "final.score": -1
     * $project:

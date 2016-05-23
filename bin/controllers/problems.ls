@@ -40,6 +40,7 @@ export save = ->*
   @check-body \/config/stkLmt, true .get! .is-float! .gt 0
   @check-body \/config/outLmt, true .get! .is-float! .gt 0
   @check-body \/config/judger, true .get! .in [\string, \strict, \real, \custom]
+  @check-body \/permit/owner, true .get!
   return if @errors
 
   @body = yield db.problems.modify @params.pid, @request.body

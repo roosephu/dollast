@@ -1,5 +1,12 @@
 <template lang="jade">
   h1.ui.dividing.header Round {{rnd._id}}. {{rnd.title}}
+
+  .ui.olive.labels
+    .ui.label {{rnd.permit.owner}}
+      .detail owner
+    .ui.label {{rnd.permit.group}}
+      .detail group
+
   p {{rnd.begTime}} -- {{rnd.endTime}}
   br
 
@@ -45,6 +52,9 @@ module.exports =
       _id: 0
       started: false
       probs: []
+      permit:
+        owner: ""
+        group: ""
 
   route:
     data: co.wrap (to: params: {rid}) ->*

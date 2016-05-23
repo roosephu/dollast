@@ -39,7 +39,7 @@ extra-rules =
       /^[a-zA-Z0-9._]*$/.test text
 
   is-access: (text) ->
-    /^[0-7]{3}$/.test text
+    /^([r-][w-][x-]){3}$/.test text
 
 for key, val of extra-rules
   # log key

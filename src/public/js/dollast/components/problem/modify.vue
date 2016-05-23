@@ -98,10 +98,10 @@
 
     h3.ui.dividing.header Permission
     .ui.four.fields
-      .ui.field
+      .ui.field.disabled
         label owner
         .ui.input
-          input(name="owner")
+          input(name="owner", disabled)
       .ui.field
         label group
         .ui.input
@@ -152,15 +152,12 @@ get-form-values = ->
   config.space-lmt |>= parse-float
   config.out-lmt   |>= parse-float
   config.stk-lmt   |>= parse-float
-  permit.access      = parse-int permit.access, 8
 
   {outlook, config, permit}
 
 set-form-values = (data) ->
   problem = flatten-object data
   $form = $ '#problem-modify'
-  if problem.access
-    problem.access .= to-string 8
   $form.form 'set values', problem
 
 module.exports =
@@ -272,7 +269,7 @@ module.exports =
           identifier: \access
           rules:
             * type: \isAccess
-              prompt: 'access code should be /^[0-7]{3}$/'
+              prompt: 'access code should be /^([r-][w-][x-]){3}$/'
             ...
       on-success:
         @submit

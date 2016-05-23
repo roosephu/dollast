@@ -21,10 +21,10 @@
 
     h3.ui.dividing.header Permission
     .ui.four.fields
-      .ui.field
+      .ui.field.disabled
         label owner
         .ui.input
-          input(name="owner")
+          input(name="owner", disabled)
       .ui.field
         label group
         .ui.input
@@ -73,7 +73,6 @@ get-form-values = ->
   values = $form.form 'get values'
 
   permit = values{owner, group, access}
-  permit.access = parse-int permit.access, 8
 
   # probs = @props.round.get \probs .to-JS!
   # probs = P.map (._id), probs
@@ -86,8 +85,6 @@ set-form-values = (round) ->
   #log 'new states. setting new values for form...', to-client-fmt problem.to-JS!
   $form = $ '#form-round'
   {title, beg-time, end-time, permit, probs} = round
-  if permit?.access
-    permit.access .= to-string 8
   # probs = map (-> prob-fmt it), probs
   # probs .= join!
   probs = map (-> "#{it._id}"), probs
@@ -187,7 +184,7 @@ module.exports =
       @rnd.permit =
         owner: @uid
         group: \rounds
-        access: 8~644
+        access: \rwxrw-rw-
       set-form-values @rnd
       # $form.form 'set values', @rnd.permit
 

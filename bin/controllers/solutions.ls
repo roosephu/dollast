@@ -14,21 +14,21 @@ export submit = ->*
 
   log state: @state.user
   uid = @state.user.client.uid
-  yield db.sol.submit @request.body, uid
+  yield db.solutions.submit @request.body, uid
   @body = status:
     type: "ok"
     msg: "solution submited successfully"
 
 export list = ->*
-  @body = yield db.sol.list @query
+  @body = yield db.solutions.list @query
 
 export show = ->*
   @acquire-privilege \login
-  @body = yield db.sol.show @params.sid
+  @body = yield db.solutions.show @params.sid
 
 export toggle = ->*
   @acquire-privilege \login
-  @body = yield db.sol.toggle @params.sid
+  @body = yield db.solutions.toggle @params.sid
   @body <<< status:
     type: "ok"
     msg: "solution toggled"

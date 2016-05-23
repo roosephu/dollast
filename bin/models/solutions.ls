@@ -43,14 +43,14 @@ schema = new mongoose.Schema do
 schema.index do
   round: 1
   prob: 1
-  user: 1
+  'permit.user' : 1
   _id: -1
 schema.index do
   prob: 1
-  user: 1
+  'permit.user': 1
   "final.score": -1
 schema.index do
-  user: 1
+  'permit.user': 1
   prob: 1
   round: 1
   "final.score": -1
@@ -68,9 +68,9 @@ export submit = (req, uid) ->*
     code: req.code
     lang: req.lang
     prob: req.pid
-    user: uid
     final:
       status: \running
+    permit: req.permit
 
   prob = yield db.prob.model.find-by-id req.pid, \config .exec!
   if not prob

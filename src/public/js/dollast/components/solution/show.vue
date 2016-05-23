@@ -1,25 +1,27 @@
 <template lang="jade">
   h1.ui.header.dividing Solution {{$route.params.sid}}
   .ui.olive.labels
-    .ui.label {{user}}
-      .detail author
-    .ui.label {{lang}}
+    .ui.label {{sol.permit.owner}}
+      .detail owner
+    .ui.label {{sol.permit.group}}
+      .detail group
+    .ui.label {{sol.lang}}
       .detail language
-    .ui.label {{prob._id}}
+    .ui.label {{sol.prob._id}}
       .detail problem
 
   h2.ui.header.dividing code
   pre {{code}}
 
-  p(v-if="final.status == 'private'") this code is private
-  .ui.segment(v-if="final.status == 'CE'")
+  p(v-if="sol.final.status == 'private'") this code is private
+  .ui.segment(v-if="sol.final.status == 'CE'")
     .ui.top.attached.label Error message
-    pre {{final.message}}
-  .ui(v-if="final.status == 'running'") running
-  div(v-if="final.status == 'finished'")
+    pre {{sol.final.message}}
+  .ui(v-if="sol.final.status == 'running'") running
+  div(v-if="sol.final.status == 'finished'")
     .ui.toggle.checkbox
       input(type="checkbox")
-      label Current state: {{state}}
+      label Current state: {{sol.state}}
     .ui
       h1.ui.header.dividing details
       table.ui.table.segment
@@ -32,21 +34,21 @@
             th score
             th message
         tbody
-          tr.positive(v-for="result in results")
-            td {{result.input}}
-            td {{result.status}}
-            td {{result.time}}
-            td {{result.space}}
-            td {{result.score}}
-            td {{result.message}}
+          tr.positive(v-for="result in sol.results")
+            td {{sol.result.input}}
+            td {{sol.result.status}}
+            td {{sol.result.time}}
+            td {{sol.result.space}}
+            td {{sol.result.score}}
+            td {{sol.result.message}}
         tfoot
           tr
             th final result
-            th {{final.status}}
-            th {{final.time}}
-            th {{final.space}}
-            th {{final.score}}
-            th {{final.message}}
+            th {{sol.final.status}}
+            th {{sol.final.time}}
+            th {{sol.final.space}}
+            th {{sol.final.score}}
+            th {{sol.final.message}}
 </template>
 
 <script lang="vue-livescript">
@@ -60,19 +62,23 @@ log = debug \dollast:component:solution:show
 
 module.exports =
   data: ->
-    final: {}
-    results: []
-    prob:
-      _id: 0
+    sol:
+      final: {}
+      results: []
+      prob:
+        _id: 0
+      permit:
+        owner: ""
+        group: ""
 
   computed:
     pid: ->
-      @prob._id
+      @sol.prob._id
 
   route:
     data: co.wrap (to: params: {sid}) ->*
       {data} = yield vue.http.get "/solution/#{sid}"
       log {data}
-      data
+      {sol: data}
 
 </script>
