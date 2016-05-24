@@ -24,6 +24,7 @@
     "del": "^2.2.0",
     "dropzone": "^4.3.0",
     "extend": "^3.0.0",
+    "fine-uploader": "^5.9.0",
     "highlight.js": "^9.4.0",
     "jade": "^1.11.0",
     "jade-loader": "^0.8.0",

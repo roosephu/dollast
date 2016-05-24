@@ -49,7 +49,6 @@ export show = (pid, opts = {}) ->*
     | "brief"   => "outlook.title config.round"
     | otherwise => ...
   if opts.mode in ["total", "view"]
-    # @acquire-privilege 'prob-all'
     @ensure-access model, pid, \r
 
   prob = yield model .find-by-id pid, fields
@@ -61,7 +60,6 @@ export show = (pid, opts = {}) ->*
   if prob?.config?.round?
     # needn't to check it since the round has settled it up
     # if not that.is-started!
-      # @acquire-privilege 'prob-all'
     prob .= to-object!
     prob.config.round .= _id
   else
@@ -108,7 +106,6 @@ export list = (opts) ->*
     .exec!
 
 export upd-data = (pid) ->*
-  @acquire-privilege 'prob-all'
   prob = yield model.find-by-id pid, 'config.dataset' .exec!
   pairs = yield gen-data-pairs pid
   prob.config.dataset = map (<<< weight: 1), pairs
@@ -117,7 +114,6 @@ export upd-data = (pid) ->*
   return pairs
 
 export list-dataset = (pid) ->*
-  @acquire-privilege 'prob-all'
   prob = yield model.find-by-id pid, "config.dataset" .lean! .exec!
   return prob.config.dataset
 

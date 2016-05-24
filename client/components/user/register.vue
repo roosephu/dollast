@@ -5,35 +5,37 @@
     .ui.success.message
       h2 Register successful. Login please.
     .ui.field
-      a.input.icon.left
+      a.ui.input.icon.left
         i.icon.user
         input(placeholder="user id", name="uid")
-      a.input.icon.left
+    .ui.field
+      a.ui.input.icon.left
         i.icon.lock
         input(placeholder="password", name="pswd", type="password")
-      a.input.icon.left
+    .ui.field
+      a.ui.input.icon.left
         i.icon.mail
         input(placeholder="abc@xyz", name="email", type="email")
-    a.icon.labeled.button.left.primary.submit
+    a.ui.icon.labeled.button.left.primary.submit
       i.icon.sign.in
       | Register
 </template>
 
 <script lang="vue-livescript">
 require! {
-  \vue
   \debug
+  \co
 }
 
 log = debug \dollast:component:login
 
 module.exports =
   ready: ->
-    submit = co.wrap (e) ->*
+    submit = co.wrap (e) ~>*
       e.prevent-default!
       $form = $ '#register-form'
       all-values = $form.form 'get values'
-      yield vue.$http.post \/user/register, all-values
+      yield @$http.post \/user/register, all-values
 
     $ '#register-form' .form do
       on: \blur

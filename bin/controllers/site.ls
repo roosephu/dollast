@@ -32,7 +32,7 @@ export
     pswd = post.pswd
     return if @errors
 
-    user = yield db.user.query post.uid, pswd
+    user = yield db.users.query post.uid, pswd
     if not user
       @body = status:
         type: \err

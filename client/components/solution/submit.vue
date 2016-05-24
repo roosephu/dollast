@@ -18,10 +18,10 @@
 
     h2.ui.dividing.header permission
     .ui.four.fields
-      .ui.field.disabled
+      .ui.field
         label owner
         .ui.input
-          input(name="owner", disabled)
+          input(name="owner")
       .ui.field
         label group
         .ui.input
@@ -39,7 +39,6 @@
 
 <script lang="vue-livescript">
 require! {
-  \vue
   \debug
   \co
 }
@@ -59,7 +58,7 @@ module.exports =
     permit: ->
       owner: @uid
       group: \solutions
-      access: 8~644
+      access: \rwxrw-r--
 
   ready: ->
     $ \.dropdown .dropdown!
@@ -68,14 +67,12 @@ module.exports =
       $form = $ \#submit-form
       all-values = $form.form 'get values'
       permit = all-values{owner, group, access}
-      log {permit}
-      permit.access = parse-int permit.access, 8
 
       data = Object.assign do
         pid: @pid
         all-values{code, lang}
         permit: permit
-      yield vue.http.post \/solution/submit, data
+      yield @$http.post \/solution/submit, data
 
     $form = $ '#submit-form'
     $form.form do

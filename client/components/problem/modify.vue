@@ -1,6 +1,6 @@
 <template lang="jade">
   .ui.form#problem-modify
-    h2.ui.dividing.header {{problem._id}}. {{problem.outlook.title}}
+    h2.ui.dividing.header {{title}}
     .ui.error.message
 
     h3.ui.dividing.header Configuration
@@ -60,13 +60,13 @@
         label sample output
         textarea(name="sampleOut")
 
-
     h3.ui.dividing.header Dataset Management
+    input#upload(type="file", style="display:none", name="upload")
     .ui.field
-      a.ui.icon.button.labeled(:click="select")
+      a.ui.icon.button.labeled(@click="select")
         i.icon.file
         | select
-      a.ui.icon.button.labeled.green(:click="upload")
+      a.ui.icon.button.labeled.green(@click="upload")
         i.icon.upload
         | upload
       a.ui.icon.button.labeled.teal(:click="refresh")
@@ -77,7 +77,8 @@
         | repair
 
     .ui.two.fields
-      .ui.field.four.wide dropzone
+      //- .ui.field.four.wide#dropzone
+        //- .dropzoneText drop files here or click
       .ui.field.twelve.wide
         table.ui.table.segment
           thead
@@ -98,10 +99,10 @@
 
     h3.ui.dividing.header Permission
     .ui.four.fields
-      .ui.field.disabled
+      .ui.field
         label owner
         .ui.input
-          input(name="owner", disabled)
+          input(name="owner")
       .ui.field
         label group
         .ui.input
@@ -138,6 +139,7 @@ flatten-object = (obj) ->
       ret[key] = val
   ret
 
+# remember to ignore files
 get-form-values = ->
   values = $ '.form' .form 'get values'
   outlook = values{title, desc, in-fmt, out-fmt, sample-in, sample-out}
@@ -161,18 +163,36 @@ set-form-values = (data) ->
   $form.form 'set values', problem
 
 module.exports =
+  vuex:
+    getters:
+      uid: (.session.uid)
+
   data: ->
     pid: 0
     files: []
     judgers: [\string, \real, \strict, \custom]
     problem:
+      _id: 0
       outlook:
         title: 'hello world'
       config:
         dataset: []
 
+  computed:
+    title: ->
+      if @problem._id != 0
+        "Problem #{@problem._id}. #{@problem.outlook.title}"
+      else
+        "Create new problem"
+
   ready: ->
     $ \.dropdown .dropdown!
+
+    submit = co.wrap (e) ~>*
+      e.prevent-default!
+      problem = get-form-values!
+      log {problem}
+      yield @$http.post "/problem/#{@pid}", problem
 
     $form = $ '#problem-modify'
     $form.form do
@@ -272,35 +292,33 @@ module.exports =
               prompt: 'access code should be /^([r-][w-][x-]){3}$/'
             ...
       on-success:
-        @submit
+        submit
+    if @pid == 0
+      set-form-values do
+        owner: @uid
+        group: \problems
+        access: \rwxrw-rw-
 
   route:
     data: co.wrap (to: params: {pid}) ~>*
-      {data} = yield vue.http.get "/problem/#{pid}"
-      set-form-values data
-      {pid, problem: data}
+      if pid != void
+        {data} = yield vue.http.get "/problem/#{pid}"
+        set-form-values data
+        {pid, problem: data}
 
   methods:
     repair: co.wrap ->*
-      {data} = yield vue.http.get "/problem/#{@pid}/repair"
+      {data} = yield @$http.get "/problem/#{@pid}/repair"
+
+    select: ->
+      $ '#upload' .click!
 
     upload: co.wrap ->*
-      files = @files
-      if files
-        req = request \post, "/data/#{@pid}/upload"
-        for f in files
-          req.attach f.name, f
-        {data} = yield req.end!
-
-    submit: co.wrap (e) ->*
-      e.prevent-default!
-      problem = get-form-values!
-      log {problem}
-      yield vue.http.post "/problem/#{@pid}", problem
-
-  render: ->
-    problem = @props.problem.to-JS!
-    problem-title = prob-fmt problem
-    title = if @props.params.pid then "Update Problem #{problem-title}" else "Create Problem"
+      files = $ '#upload' .0 .files
+      form-data = new FormData!
+      for file in files
+        form-data.append file.name, file
+      {data} = yield @$http.post "/data/#{@pid}/upload", form-data
+      @problem.config.dataset = data.pairs
 
 </script>

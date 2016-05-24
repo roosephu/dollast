@@ -9,13 +9,13 @@ webpackJsonp([0],[
 	vueResource = __webpack_require__(5);
 	debug = __webpack_require__(29);
 	moment = __webpack_require__(32);
+	vue.use(vuex);
 	vue.config.debug = true;
 	debug.enable("dollast:*");
-	vue.use(vuex);
-	vue.use(vueResource);
 	log = debug('dollast:main');
 	vue.use(vueRouter);
 	router = __webpack_require__(135);
+	vue.use(vueResource);
 	x$ = app = __webpack_require__(208);
 	x$.store = __webpack_require__(199);
 	app = vue.extend(app);
@@ -27,9 +27,6 @@ webpackJsonp([0],[
 	    return moment(text, 'YYYY-MM-DD HH:mm:ss').isValid();
 	  },
 	  isPassword: function(text){
-	    log({
-	      text: text
-	    });
 	    return 4 <= text.length && text.length <= 15;
 	  },
 	  isUserId: function(text){
@@ -57,7 +54,7 @@ webpackJsonp([0],[
 	} else {
 	  log.error('No MathJax found.');
 	}
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/main.ls.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/main.ls.map
 
 
 /***/ },
@@ -267,7 +264,7 @@ webpackJsonp([0],[
 	  }
 	});
 	module.exports = router;
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/router.ls.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/router.ls.map
 
 
 /***/ },
@@ -285,7 +282,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/index.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/site/index.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -314,7 +311,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/about.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/site/about.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -337,7 +334,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/problem/list.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/problem/list.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(146)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -348,7 +345,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/list.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/problem/list.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -396,7 +393,7 @@ webpackJsonp([0],[
 	    return $filter.dropdown('set text', 'all');
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/list.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/problem/list.vue.map
 
 
 /***/ },
@@ -409,7 +406,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/format/problem.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/format/problem.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(145)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -420,7 +417,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/format/problem.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/format/problem.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -437,7 +434,7 @@ webpackJsonp([0],[
 	    prob: Object
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/format/problem.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/format/problem.vue.map
 
 
 /***/ },
@@ -461,7 +458,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/problem/modify.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/problem/modify.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(149)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -472,7 +469,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/modify.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/problem/modify.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -549,12 +546,20 @@ webpackJsonp([0],[
 	  return $form.form('set values', problem);
 	};
 	module.exports = {
+	  vuex: {
+	    getters: {
+	      uid: function(it){
+	        return it.session.uid;
+	      }
+	    }
+	  },
 	  data: function(){
 	    return {
 	      pid: 0,
 	      files: [],
 	      judgers: ['string', 'real', 'strict', 'custom'],
 	      problem: {
+	        _id: 0,
 	        outlook: {
 	          title: 'hello world'
 	        },
@@ -564,11 +569,29 @@ webpackJsonp([0],[
 	      }
 	    };
 	  },
+	  computed: {
+	    title: function(){
+	      if (this.problem._id !== 0) {
+	        return "Problem " + this.problem._id + ". " + this.problem.outlook.title;
+	      } else {
+	        return "Create new problem";
+	      }
+	    }
+	  },
 	  ready: function(){
-	    var $form;
+	    var submit, $form, this$ = this;
 	    $('.dropdown').dropdown();
+	    submit = co.wrap(function*(e){
+	      var problem;
+	      e.preventDefault();
+	      problem = getFormValues();
+	      log({
+	        problem: problem
+	      });
+	      return (yield this$.$http.post("/problem/" + this$.pid, problem));
+	    });
 	    $form = $('#problem-modify');
-	    return $form.form({
+	    $form.form({
 	      on: 'blur',
 	      inline: true,
 	      fields: {
@@ -684,53 +707,49 @@ webpackJsonp([0],[
 	          }]
 	        }
 	      },
-	      onSuccess: this.submit
+	      onSuccess: submit
 	    });
+	    if (this.pid === 0) {
+	      return setFormValues({
+	        owner: this.uid,
+	        group: 'problems',
+	        access: 'rwxrw-rw-'
+	      });
+	    }
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
 	      var pid, data;
 	      pid = arg$.to.params.pid;
-	      data = (yield vue.http.get("/problem/" + pid)).data;
-	      setFormValues(data);
-	      return {
-	        pid: pid,
-	        problem: data
-	      };
+	      if (pid !== void 8) {
+	        data = (yield vue.http.get("/problem/" + pid)).data;
+	        setFormValues(data);
+	        return {
+	          pid: pid,
+	          problem: data
+	        };
+	      }
 	    })
 	  },
 	  methods: {
 	    repair: co.wrap(function*(){
 	      var ref$, data;
-	      return ref$ = (yield vue.http.get("/problem/" + this.pid + "/repair")), data = ref$.data, ref$;
+	      return ref$ = (yield this.$http.get("/problem/" + this.pid + "/repair")), data = ref$.data, ref$;
 	    }),
+	    select: function(){
+	      return $('#upload').click();
+	    },
 	    upload: co.wrap(function*(){
-	      var files, req, i$, len$, f, ref$, data;
-	      files = this.files;
-	      if (files) {
-	        req = request('post', "/data/" + this.pid + "/upload");
-	        for (i$ = 0, len$ = files.length; i$ < len$; ++i$) {
-	          f = files[i$];
-	          req.attach(f.name, f);
-	        }
-	        return ref$ = (yield req.end()), data = ref$.data, ref$;
+	      var files, formData, i$, len$, file, data;
+	      files = $('#upload')[0].files;
+	      formData = new FormData();
+	      for (i$ = 0, len$ = files.length; i$ < len$; ++i$) {
+	        file = files[i$];
+	        formData.append(file.name, file);
 	      }
-	    }),
-	    submit: co.wrap(function*(e){
-	      var problem;
-	      e.preventDefault();
-	      problem = getFormValues();
-	      log({
-	        problem: problem
-	      });
-	      return (yield vue.http.post("/problem/" + this.pid, problem));
+	      data = (yield this.$http.post("/data/" + this.pid + "/upload", formData)).data;
+	      return this.problem.config.dataset = data.pairs;
 	    })
-	  },
-	  render: function(){
-	    var problem, problemTitle, title;
-	    problem = this.props.problem.toJS();
-	    problemTitle = probFmt(problem);
-	    return title = this.props.params.pid ? "Update Problem " + problemTitle : "Create Problem";
 	  }
 	};
 	function import$(obj, src){
@@ -738,14 +757,14 @@ webpackJsonp([0],[
 	  for (var key in src) if (own.call(src, key)) obj[key] = src[key];
 	  return obj;
 	}
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/modify.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/problem/modify.vue.map
 
 
 /***/ },
 /* 149 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"problem-modify\" class=\"ui form\"><h2 class=\"ui dividing header\">{{problem._id}}. {{problem.outlook.title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (MB)</label><div class=\"ui input\"><input name=\"spaceLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (MB)</label><div class=\"ui input\"><input name=\"stkLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (MB)</label><div class=\"ui input\"><input name=\"outLmt\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"desc\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inFmt\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outFmt\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleIn\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOut\"></textarea></div></div><h3 class=\"ui dividing header\">Dataset Management</h3><div class=\"ui field\"><a :click=\"select\" class=\"ui icon button labeled\"><i class=\"icon file\"></i>select</a><a :click=\"upload\" class=\"ui icon button labeled green\"><i class=\"icon upload\"></i>upload</a><a :click=\"refresh\" class=\"ui icon button labeled teal\"><i class=\"icon refresh\"></i>refresh</a><a :click=\"repair\" class=\"ui icon button labeled teal\"><i class=\"icon retweet\"></i>repair</a></div><div class=\"ui two fields\"><div class=\"ui field four wide\">dropzone</div><div class=\"ui field twelve wide\"><table class=\"ui table segment\"><thead><tr><th>input</th><th>output</th><th>weight</th><th></th></tr></thead><tbody><tr v-for=\"atom in problem.config.dataset\"><td>{{atom.input}}</td><td>{{atom.output}}</td><td>{{atom.weight}}</td><td><a :click=\"remove\" class=\"ui icon labeled button right floated mini\"><i class=\"icon remove\"></i>remove</a></td></tr></tbody></table></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field disabled\"><label>owner</label><div class=\"ui input\"><input name=\"owner\" disabled=\"disabled\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary floated submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary floated\"><i class=\"icon reply\"></i>Back</div></div></div>";
+	module.exports = "<div id=\"problem-modify\" class=\"ui form\"><h2 class=\"ui dividing header\">{{title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (MB)</label><div class=\"ui input\"><input name=\"spaceLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (MB)</label><div class=\"ui input\"><input name=\"stkLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (MB)</label><div class=\"ui input\"><input name=\"outLmt\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"desc\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inFmt\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outFmt\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleIn\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOut\"></textarea></div></div><h3 class=\"ui dividing header\">Dataset Management</h3><input id=\"upload\" type=\"file\" style=\"display:none\" name=\"upload\"/><div class=\"ui field\"><a @click=\"select\" class=\"ui icon button labeled\"><i class=\"icon file\"></i>select</a><a @click=\"upload\" class=\"ui icon button labeled green\"><i class=\"icon upload\"></i>upload</a><a :click=\"refresh\" class=\"ui icon button labeled teal\"><i class=\"icon refresh\"></i>refresh</a><a :click=\"repair\" class=\"ui icon button labeled teal\"><i class=\"icon retweet\"></i>repair</a></div><div class=\"ui two fields\"><div class=\"ui field twelve wide\"><table class=\"ui table segment\"><thead><tr><th>input</th><th>output</th><th>weight</th><th></th></tr></thead><tbody><tr v-for=\"atom in problem.config.dataset\"><td>{{atom.input}}</td><td>{{atom.output}}</td><td>{{atom.weight}}</td><td><a :click=\"remove\" class=\"ui icon labeled button right floated mini\"><i class=\"icon remove\"></i>remove</a></td></tr></tbody></table></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary floated submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary floated\"><i class=\"icon reply\"></i>Back</div></div></div>";
 
 /***/ },
 /* 150 */
@@ -756,7 +775,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/problem/show.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/problem/show.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(152)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -767,7 +786,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/show.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/problem/show.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -813,7 +832,7 @@ webpackJsonp([0],[
 	    }
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/show.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/problem/show.vue.map
 
 
 /***/ },
@@ -831,7 +850,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/problem/stat.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/problem/stat.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(171)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -842,7 +861,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/stat.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/problem/stat.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -925,7 +944,7 @@ webpackJsonp([0],[
 	    problem: format.problem
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/problem/stat.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/problem/stat.vue.map
 
 
 /***/ },
@@ -954,7 +973,7 @@ webpackJsonp([0],[
 	    }
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/format/index.ls.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/components/format/index.ls.map
 
 
 /***/ },
@@ -966,7 +985,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/format/code-link.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/format/code-link.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(158)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -977,7 +996,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/format/code-link.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/format/code-link.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -994,7 +1013,7 @@ webpackJsonp([0],[
 	    sid: Number
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/format/code-link.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/format/code-link.vue.map
 
 
 /***/ },
@@ -1012,7 +1031,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/format/round.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/format/round.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(161)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1023,7 +1042,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/format/round.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/format/round.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1040,7 +1059,7 @@ webpackJsonp([0],[
 	    rnd: Object
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/format/round.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/format/round.vue.map
 
 
 /***/ },
@@ -1058,7 +1077,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/format/user.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/format/user.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(164)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1069,7 +1088,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/format/user.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/format/user.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1086,7 +1105,7 @@ webpackJsonp([0],[
 	    uid: String
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/format/user.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/format/user.vue.map
 
 
 /***/ },
@@ -1116,7 +1135,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/solution/list.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/solution/list.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(174)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1127,7 +1146,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/solution/list.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/solution/list.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1162,7 +1181,7 @@ webpackJsonp([0],[
 	  },
 	  components: format
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/solution/list.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/solution/list.vue.map
 
 
 /***/ },
@@ -1180,7 +1199,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/solution/submit.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/solution/submit.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(177)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1191,7 +1210,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/solution/submit.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/solution/submit.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1203,8 +1222,7 @@ webpackJsonp([0],[
 /* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, debug, co, log, this$ = this;
-	vue = __webpack_require__(1);
+	var debug, co, log, this$ = this;
 	debug = __webpack_require__(29);
 	co = __webpack_require__(142);
 	log = debug('dollast:components:solution:submit');
@@ -1227,7 +1245,7 @@ webpackJsonp([0],[
 	      return {
 	        owner: this.uid,
 	        group: 'solutions',
-	        access: 420
+	        access: 'rwxrw-r--'
 	      };
 	    }
 	  },
@@ -1244,10 +1262,6 @@ webpackJsonp([0],[
 	        group: allValues.group,
 	        access: allValues.access
 	      };
-	      log({
-	        permit: permit
-	      });
-	      permit.access = parseInt(permit.access, 8);
 	      data = Object.assign({
 	        pid: this$.pid
 	      }, {
@@ -1256,7 +1270,7 @@ webpackJsonp([0],[
 	      }, {
 	        permit: permit
 	      });
-	      return (yield vue.http.post('/solution/submit', data));
+	      return (yield this$.$http.post('/solution/submit', data));
 	    });
 	    $form = $('#submit-form');
 	    $form.form({
@@ -1309,14 +1323,14 @@ webpackJsonp([0],[
 	    return $form.form('set values', this.permit);
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/solution/submit.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/solution/submit.vue.map
 
 
 /***/ },
 /* 177 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"submit-form\" class=\"ui form segment\"><h1 class=\"ui header dividing\">problem: {{pid}}</h1><div class=\"ui success message\"><div class=\"header\">Submit successful. Redirect to status in 3 seconds...</div></div><div class=\"ui field\"><label>code</label><textarea name=\"code\"></textarea></div><div class=\"ui two fields\"><div class=\"ui field\"><label>language</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"lang\"/><div class=\"default text\">select your language</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in languages\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><h2 class=\"ui dividing header\">permission</h2><div class=\"ui four fields\"><div class=\"ui field disabled\"><label>owner</label><div class=\"ui input\"><input name=\"owner\" disabled=\"disabled\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><a class=\"ui icon labeled button primary floated submit\"><i class=\"icon rocket\"></i>Submit</a></div></div>";
+	module.exports = "<div id=\"submit-form\" class=\"ui form segment\"><h1 class=\"ui header dividing\">problem: {{pid}}</h1><div class=\"ui success message\"><div class=\"header\">Submit successful. Redirect to status in 3 seconds...</div></div><div class=\"ui field\"><label>code</label><textarea name=\"code\"></textarea></div><div class=\"ui two fields\"><div class=\"ui field\"><label>language</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"lang\"/><div class=\"default text\">select your language</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in languages\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><h2 class=\"ui dividing header\">permission</h2><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><a class=\"ui icon labeled button primary floated submit\"><i class=\"icon rocket\"></i>Submit</a></div></div>";
 
 /***/ },
 /* 178 */
@@ -1327,7 +1341,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/solution/show.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/solution/show.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(180)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1338,7 +1352,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/solution/show.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/solution/show.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1390,14 +1404,14 @@ webpackJsonp([0],[
 	    })
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/solution/show.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/solution/show.vue.map
 
 
 /***/ },
 /* 180 */
 /***/ function(module, exports) {
 
-	module.exports = "<h1 class=\"ui header dividing\">Solution {{$route.params.sid}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{sol.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{sol.permit.group}}<div class=\"detail\">group</div></div><div class=\"ui label\">{{sol.lang}}<div class=\"detail\">language</div></div><div class=\"ui label\">{{sol.prob._id}}<div class=\"detail\">problem</div></div></div><h2 class=\"ui header dividing\">code</h2><pre>{{code}}</pre><p v-if=\"sol.final.status == 'private'\">this code is private</p><div v-if=\"sol.final.status == 'CE'\" class=\"ui segment\"><div class=\"ui top attached label\">Error message</div><pre>{{sol.final.message}}</pre></div><div v-if=\"sol.final.status == 'running'\" class=\"ui\">running</div><div v-if=\"sol.final.status == 'finished'\"><div class=\"ui toggle checkbox\"><input type=\"checkbox\"/><label>Current state: {{sol.state}}</label></div><div class=\"ui\"><h1 class=\"ui header dividing\">details</h1><table class=\"ui table segment\"><thead><tr><th>input</th><th>status</th><th>time</th><th>space</th><th>score</th><th>message</th></tr></thead><tbody><tr v-for=\"result in sol.results\" class=\"positive\"><td>{{sol.result.input}}</td><td>{{sol.result.status}}</td><td>{{sol.result.time}}</td><td>{{sol.result.space}}</td><td>{{sol.result.score}}</td><td>{{sol.result.message}}</td></tr></tbody><tfoot><tr><th>final result</th><th>{{sol.final.status}}</th><th>{{sol.final.time}}</th><th>{{sol.final.space}}</th><th>{{sol.final.score}}</th><th>{{sol.final.message}}</th></tr></tfoot></table></div></div>";
+	module.exports = "<h1 class=\"ui header dividing\">Solution {{$route.params.sid}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{sol.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{sol.permit.group}}<div class=\"detail\">group</div></div><div class=\"ui label\">{{sol.lang}}<div class=\"detail\">language</div></div><div class=\"ui label\">{{sol.prob._id}}<div class=\"detail\">problem</div></div></div><h2 class=\"ui header dividing\">code</h2><div class=\"ui segment\"><div class=\"ui top attached label\">code</div><pre>{{sol.code}}</pre></div><p v-if=\"sol.final.status == 'private'\">this code is private</p><div v-if=\"sol.final.status == 'CE'\" class=\"ui segment\"><div class=\"ui top attached label\">Error message</div><pre>{{sol.final.message}}</pre></div><div v-if=\"sol.final.status == 'running'\" class=\"ui\">running</div><div v-if=\"sol.final.status == 'finished'\"><div class=\"ui\"><h1 class=\"ui header dividing\">details</h1><table class=\"ui table segment\"><thead><tr><th>input</th><th>status</th><th>time</th><th>space</th><th>score</th><th>message</th></tr></thead><tbody><tr v-for=\"result in sol.results\" class=\"positive\"><td>{{result.input}}</td><td>{{result.status}}</td><td>{{result.time}}</td><td>{{result.space}}</td><td>{{result.score}}</td><td>{{result.message}}</td></tr></tbody><tfoot><tr><th>final result</th><th>{{sol.final.status}}</th><th>{{sol.final.time}}</th><th>{{sol.final.space}}</th><th>{{sol.final.score}}</th><th>{{sol.final.message}}</th></tr></tfoot></table></div></div>";
 
 /***/ },
 /* 181 */
@@ -1408,7 +1422,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/round/list.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/round/list.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(183)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1419,7 +1433,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/round/list.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/round/list.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1477,7 +1491,7 @@ webpackJsonp([0],[
 	    return $filter.dropdown('set text', 'all');
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/round/list.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/round/list.vue.map
 
 
 /***/ },
@@ -1495,7 +1509,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/round/modify.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/round/modify.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(186)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1506,7 +1520,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/round/modify.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/round/modify.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1715,14 +1729,14 @@ webpackJsonp([0],[
 	    }
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/round/modify.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/round/modify.vue.map
 
 
 /***/ },
 /* 186 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"form-round\" class=\"ui form\"><h2 class=\"ui dividing header\">{{formattedTitle}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui fields three\"><div class=\"ui field\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field\"><label>start from</label><div class=\"ui input\"><input name=\"begTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div><div class=\"ui field\"><label>end at</label><div class=\"ui input\"><input name=\"endTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field disabled\"><label>owner</label><div class=\"ui input\"><input name=\"owner\" disabled=\"disabled\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><h3 class=\"ui dividing header\">Problemset</h3><div class=\"ui field\"><div class=\"ui dropdown icon selection fluid multiple search\"><input type=\"hidden\" name=\"probs\"/><div class=\"default text\">problems</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"(key, value) of dropdownProblems\" data-value=\"{{key}}\" class=\"item\">{{value}}</div></div></div></div><br/><div class=\"ui field\"><a :click=\"delete\" class=\"icon ui labeled button floated red\"><i class=\"icon delete\"></i>delete</a><a class=\"icon ui labeled button floated secondary\"><i class=\"icon cancel\"></i>undo</a><a class=\"icon ui labeled button floated primary submit\"><i class=\"icon save\"></i>save</a></div></div>";
+	module.exports = "<div id=\"form-round\" class=\"ui form\"><h2 class=\"ui dividing header\">{{formattedTitle}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui fields three\"><div class=\"ui field\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field\"><label>start from</label><div class=\"ui input\"><input name=\"begTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div><div class=\"ui field\"><label>end at</label><div class=\"ui input\"><input name=\"endTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><h3 class=\"ui dividing header\">Problemset</h3><div class=\"ui field\"><div class=\"ui dropdown icon selection fluid multiple search\"><input type=\"hidden\" name=\"probs\"/><div class=\"default text\">problems</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"(key, value) of dropdownProblems\" data-value=\"{{key}}\" class=\"item\">{{value}}</div></div></div></div><br/><div class=\"ui field\"><a :click=\"delete\" class=\"icon ui labeled button floated red\"><i class=\"icon delete\"></i>delete</a><a class=\"icon ui labeled button floated secondary\"><i class=\"icon cancel\"></i>undo</a><a class=\"icon ui labeled button floated primary submit\"><i class=\"icon save\"></i>save</a></div></div>";
 
 /***/ },
 /* 187 */
@@ -1733,7 +1747,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/round/show.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/round/show.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(189)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1744,7 +1758,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/round/show.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/round/show.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1792,7 +1806,7 @@ webpackJsonp([0],[
 	    })
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/round/show.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/round/show.vue.map
 
 
 /***/ },
@@ -1810,7 +1824,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/round/board.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/round/board.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(192)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1821,7 +1835,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/round/board.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/round/board.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1884,7 +1898,7 @@ webpackJsonp([0],[
 	    })
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/round/board.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/round/board.vue.map
 
 
 /***/ },
@@ -1902,7 +1916,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/user/profile.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/user/profile.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(195)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1913,7 +1927,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/profile.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/user/profile.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1957,7 +1971,7 @@ webpackJsonp([0],[
 	    round: format.round
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/profile.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/user/profile.vue.map
 
 
 /***/ },
@@ -1975,7 +1989,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/user/login.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/user/login.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(201)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -1986,7 +2000,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/login.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/user/login.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -2059,7 +2073,7 @@ webpackJsonp([0],[
 	    });
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/login.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/user/login.vue.map
 
 
 /***/ },
@@ -2092,7 +2106,7 @@ webpackJsonp([0],[
 	  delete localStorage.token;
 	  return dispatch('logout');
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/actions/index.ls.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/actions/index.ls.map
 
 
 /***/ },
@@ -2131,7 +2145,7 @@ webpackJsonp([0],[
 	  state: state,
 	  mutations: mutations
 	});
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/store/index.ls.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/store/index.ls.map
 
 
 /***/ },
@@ -2180,7 +2194,7 @@ webpackJsonp([0],[
 	    return payload = JSON.parse(forge.util.decode64(jwtStruct[1]));
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/store/auth.ls.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/store/auth.ls.map
 
 
 /***/ },
@@ -2198,7 +2212,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/user/register.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/user/register.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(204)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -2209,7 +2223,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/register.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/user/register.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -2221,19 +2235,19 @@ webpackJsonp([0],[
 /* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, debug, log;
-	vue = __webpack_require__(1);
+	var debug, co, log;
 	debug = __webpack_require__(29);
+	co = __webpack_require__(142);
 	log = debug('dollast:component:login');
 	module.exports = {
 	  ready: function(){
-	    var submit;
+	    var submit, this$ = this;
 	    submit = co.wrap(function*(e){
 	      var $form, allValues;
 	      e.preventDefault();
 	      $form = $('#register-form');
 	      allValues = $form.form('get values');
-	      return (yield vue.$http.post('/user/register', allValues));
+	      return (yield this$.$http.post('/user/register', allValues));
 	    });
 	    return $('#register-form').form({
 	      on: 'blur',
@@ -2270,14 +2284,14 @@ webpackJsonp([0],[
 	    });
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/register.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/user/register.vue.map
 
 
 /***/ },
 /* 204 */
 /***/ function(module, exports) {
 
-	module.exports = "<h1 class=\"ui dividing header\">Register</h1><form id=\"register-form\" class=\"ui form segment\"><div class=\"ui error message\"></div><div class=\"ui success message\"><h2>Register successful. Login please.</h2></div><div class=\"ui field\"><a class=\"input icon left\"><i class=\"icon user\"></i><input placeholder=\"user id\" name=\"uid\"/></a><a class=\"input icon left\"><i class=\"icon lock\"></i><input placeholder=\"password\" name=\"pswd\" type=\"password\"/></a><a class=\"input icon left\"><i class=\"icon mail\"></i><input placeholder=\"abc@xyz\" name=\"email\" type=\"email\"/></a></div><a class=\"icon labeled button left primary submit\"><i class=\"icon sign in\"></i>Register</a></form>";
+	module.exports = "<h1 class=\"ui dividing header\">Register</h1><form id=\"register-form\" class=\"ui form segment\"><div class=\"ui error message\"></div><div class=\"ui success message\"><h2>Register successful. Login please.</h2></div><div class=\"ui field\"><a class=\"ui input icon left\"><i class=\"icon user\"></i><input placeholder=\"user id\" name=\"uid\"/></a></div><div class=\"ui field\"><a class=\"ui input icon left\"><i class=\"icon lock\"></i><input placeholder=\"password\" name=\"pswd\" type=\"password\"/></a></div><div class=\"ui field\"><a class=\"ui input icon left\"><i class=\"icon mail\"></i><input placeholder=\"abc@xyz\" name=\"email\" type=\"email\"/></a></div><a class=\"ui icon labeled button left primary submit\"><i class=\"icon sign in\"></i>Register</a></form>";
 
 /***/ },
 /* 205 */
@@ -2288,7 +2302,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/user/modify.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/user/modify.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(207)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -2299,7 +2313,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/modify.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/user/modify.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -2419,7 +2433,7 @@ webpackJsonp([0],[
 	    }
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/user/modify.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/user/modify.vue.map
 
 
 /***/ },
@@ -2437,7 +2451,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/app.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/app.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(215)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -2448,7 +2462,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/app.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/app.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -2480,7 +2494,7 @@ webpackJsonp([0],[
 	    return this.loadFromToken();
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/app.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/app.vue.map
 
 
 /***/ },
@@ -2498,7 +2512,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/foot.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/site/foot.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -2521,7 +2535,7 @@ webpackJsonp([0],[
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] src/public/js/dollast/components/site/navbar.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/components/site/navbar.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(214)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -2532,7 +2546,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/navbar.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/site/navbar.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -2565,7 +2579,7 @@ webpackJsonp([0],[
 	    }
 	  }
 	};
-	//# sourceMappingURL=/Users/roosephu/Desktop/git/dollast/node_modules/vue-livescript-loader/index.js!/Users/roosephu/Desktop/git/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/Users/roosephu/Desktop/git/dollast/src/public/js/dollast/components/site/navbar.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/site/navbar.vue.map
 
 
 /***/ },

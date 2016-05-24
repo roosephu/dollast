@@ -1,20 +1,19 @@
 require! {
-  'async'
-  'util'
-  'mz/fs'
-  'mz/child_process': child-process
-  'tmp'
-  'bluebird'
-  'co'
-  'debug'
-  'path'
-  'co-limiter'
-  'prelude-ls': _
-  './config'
+  \async
+  \util
+  \mz/fs
+  \mz/child_process : {exec}
+  \tmp
+  \bluebird : {promisify-all}
+  \co
+  \debug
+  \path
+  \co-limiter
+  \prelude-ls : {take, unlines, drop, lines, unwords, zip}
+  \./config
 }
 
-log = debug 'dollast:core'
-asyc = bluebird.promisify-all async
+log = debug \dollast:core
 
 export compile = co.wrap (tmp-dir, lang, code) ->*
   src-path = path.join tmp-dir, "/main#{config.lang-suffix[lang]}"
@@ -24,7 +23,7 @@ export compile = co.wrap (tmp-dir, lang, code) ->*
 
   compile-cmd = config.compile-fmt[lang] src-path, exe-path
   log "compile-cmd #{compile-cmd}"
-  yield child-process.exec compile-cmd
+  yield exec compile-cmd
   return exe-path
 
 flatten-dir = (base-dir) ->*
@@ -45,7 +44,7 @@ export upload = co.wrap (pid, part) ->*
   try
     part.pipe fs.create-write-stream zip-file.name
     data-dir = path.join config.data-dir, "/#pid"
-    [stdout, stderr] = yield child-process.exec "7z e #{zip-file.name} -o#{data-dir} -y"
+    [stdout, stderr] = yield exec "7z e #{zip-file.name} -o#{data-dir} -y"
     #log "output: #{stdout} #{stderr}"
     flatten-dir data-dir # no need to flatten
   catch err
@@ -80,7 +79,7 @@ export gen-data-pairs = co.wrap (pid) ->* # what if no directory
   for inf in files # ensure no directories
     inf-path = path.join data-dir, inf
     if ".in" == path.extname inf
-      ouf = _.take (inf.length - 2), inf
+      ouf = take (inf.length - 2), inf
       ouf = ouf + "out"
       if yield fs.exists path.join data-dir, ouf
         log "find a pair: #{inf} => #{ouf}"
@@ -97,7 +96,7 @@ testlib-exitcodes =
   6: 'unexpected'
 
 drop-first-line = (message) ->
-  _.unlines _.drop 1, _.lines message
+  unlines drop 1, lines message
 
 judge-result = co.wrap (pid, in-file, out-file, ans-file, cfg) ->*
   judger = switch cfg.judger
@@ -107,7 +106,7 @@ judge-result = co.wrap (pid, in-file, out-file, ans-file, cfg) ->*
     | 'custom'  => path.join config.data-dir, "/#pid/", "/judge"
     | otherwise => ...
   try
-    [stdout, stderr] = yield child-process.exec "#{judger} #{in-file} #{out-file} #{ans-file}"
+    [stdout, stderr] = yield exec "#{judger} #{in-file} #{out-file} #{ans-file}"
   catch e
     #log e
     messages = drop-first-line e.message
@@ -117,7 +116,7 @@ judge-result = co.wrap (pid, in-file, out-file, ans-file, cfg) ->*
       message: messages.trim!
   [status, score, ...message] = stderr.trim!.split ' '
   log "judger output: #stdout / #status / #score / #message"
-  message = _.unwords message
+  message = unwords message
   return
     status: status
     score: parse-float score
@@ -133,7 +132,7 @@ run-atom = (pid, lang, exe-path, data, cfg) ->* # TODO if file not exists, throw
   ans = path.join config.data-dir, "/#pid/", data.output
   log "inf #{inf} ans #{ans}"
   exec-cmd = "\"#{config.sandboxer}\" \"#{exe-path}\" #{cfg.time-lmt} #{cfg.space-lmt} #{cfg.stk-lmt} #{cfg.out-lmt} \"#{inf}\" \"#{ouf}\""
-  [proc-out, proc-err] = yield child-process.exec exec-cmd, cwd: path.dirname config.sandboxer
+  [proc-out, proc-err] = yield exec exec-cmd, cwd: path.dirname config.sandboxer
   log {proc-out, proc-err, exec-cmd}
   log "sandboxer result: #proc-err"
   exe-res = JSON.parse proc-err
@@ -151,6 +150,7 @@ calc-prob-score = (results) ->
   ret =
     time : 0
     space: 0
+    score: 0
 
   [sum, ws] = [0, 0]
   for [data, result] in results
@@ -161,8 +161,8 @@ calc-prob-score = (results) ->
       ret.space >?= result.space
     sum += data.weight * result.score
     ws  += data.weight
-  score = if ws then sum / ws else 0
-  return ret <<< score: score
+  ret.score = if ws then sum / ws else 0
+  return ret
 
 export judge = co.wrap (lang, code, prob-config, doc) ->*
   log "Start judging: lang: #{lang}"
@@ -174,6 +174,7 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
   catch err
     message = drop-first-line err.message
     tmp-dir.remove-callback!
+    log err
     log "CE:", message
     doc.final =
       score: 0
@@ -189,7 +190,8 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
 
     log "starting modifying doc"
     doc.results = results
-    doc.final = calc-prob-score _.zip dataset, results
+    doc.final = calc-prob-score zip dataset, results
+    doc.final.status = \finished
     yield doc.save!
   catch err
     log err

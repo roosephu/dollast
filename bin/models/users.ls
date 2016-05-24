@@ -69,9 +69,9 @@ export register = (user) ->*
 
 export profile = (uid) ->*
   profile = yield model.find-by-id uid, '-pswd' .lean! .exec!
-  solved-problems = yield db.sol.get-user-solved-problems uid
-  owned-problems = yield db.prob.get-user-owned-problems uid
-  owned-rounds = yield db.rnd.get-user-owned-rounds uid
+  solved-problems = yield db.solutions.get-user-solved-problems uid
+  owned-problems = yield db.problems.get-user-owned-problems uid
+  owned-rounds = yield db.rounds.get-user-owned-rounds uid
   return {profile, solved-problems, owned-problems, owned-rounds}
 
 export get-privileges = (uid) ->*

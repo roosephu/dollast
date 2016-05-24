@@ -21,10 +21,10 @@
 
     h3.ui.dividing.header Permission
     .ui.four.fields
-      .ui.field.disabled
+      .ui.field
         label owner
         .ui.input
-          input(name="owner", disabled)
+          input(name="owner")
       .ui.field
         label group
         .ui.input

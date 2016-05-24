@@ -11,7 +11,9 @@
       .detail problem
 
   h2.ui.header.dividing code
-  pre {{code}}
+  .ui.segment
+    .ui.top.attached.label code
+    pre {{sol.code}}
 
   p(v-if="sol.final.status == 'private'") this code is private
   .ui.segment(v-if="sol.final.status == 'CE'")
@@ -19,9 +21,6 @@
     pre {{sol.final.message}}
   .ui(v-if="sol.final.status == 'running'") running
   div(v-if="sol.final.status == 'finished'")
-    .ui.toggle.checkbox
-      input(type="checkbox")
-      label Current state: {{sol.state}}
     .ui
       h1.ui.header.dividing details
       table.ui.table.segment
@@ -35,12 +34,12 @@
             th message
         tbody
           tr.positive(v-for="result in sol.results")
-            td {{sol.result.input}}
-            td {{sol.result.status}}
-            td {{sol.result.time}}
-            td {{sol.result.space}}
-            td {{sol.result.score}}
-            td {{sol.result.message}}
+            td {{result.input}}
+            td {{result.status}}
+            td {{result.time}}
+            td {{result.space}}
+            td {{result.score}}
+            td {{result.message}}
         tfoot
           tr
             th final result

@@ -18,7 +18,7 @@ module.exports = config =
   debug: true
   watch: true
   entry:
-    app: \./src/public/js/dollast/main.ls
+    app: \./client/main.ls
     vendors: vendors
   resolve:
     extensions: [\.js, \.vue, \.ls, "", \.coffee]
