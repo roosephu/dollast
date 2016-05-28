@@ -56,15 +56,12 @@ router
   .post   '/user/register',             users.register
   .post   '/user/:uid',                 users.save
   .get    '/user/:uid',                 users.profile
-  # .get    '/user/:uid/privileges',      user.get-privileges
 
   .get    '/round',                     rounds.list
   # .get    '/round/next-count',          rnd.next-count
   .get    '/round/:rid',                rounds.show
   .get    '/round/:rid/board',          rounds.board
   .post   '/round/:rid',                rounds.save
-  .get    '/round/:rid/total',          rounds.total
-  .get    '/round/:rid/publish',        rounds.publish
   .delete '/round/:rid',                rounds.remove
 
   .get    '/problem',                   problems.list
@@ -72,18 +69,16 @@ router
   .get    '/problem/:pid',              problems.show
   .post   '/problem/:pid',              problems.save
   .delete '/problem/:pid',              problems.remove
-  .get    '/problem/:pid/brief',        problems.brief
-  .get    '/problem/:pid/total',        problems.total
-  .get    '/problem/:pid/repair',       problems.repair
   .get    '/problem/:pid/stat',         problems.stat
 
   .get    '/solution',                  solutions.list
   .get    '/solution/:sid',             solutions.show
   .post   '/solution/submit',           solutions.submit
-  .post   '/solution/:sid/toggle',      solutions.toggle
+  # .post   '/solution/:sid/toggle',      solutions.toggle
 
-  .get    '/data/:pid',                 data.show
+  # .get    '/data/:pid',                 data.show
   .post   '/data/:pid/upload',          data.upload
-  .delete '/data/:pid/:file',           data.delete
+  .get    '/data/:pid/repair',          data.repair
+  .delete '/data/:pid/:file',           data.remove
 
 export router = router.middleware!

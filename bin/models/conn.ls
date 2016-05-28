@@ -13,10 +13,9 @@ export conn = mongoose.create-connection 'mongodb://localhost/dollast'
 
 log = debug \dollast:conn
 
-export make-next-count = (model, counter) ->
+export make-next-count = (counter) ->
   counter ||= 1
   ->*
-    log "database counter", counter, typeof counter
-    while yield model.find-by-id counter, \_id .lean! .exec!
+    while 1 == yield @find-by-id counter, \_id .count! .exec!
       counter += 1
     return counter

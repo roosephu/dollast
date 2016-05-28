@@ -1,45 +1,80 @@
 require! {
-  "../db"
+  \../db
   \debug
 }
 
 log = debug \dollast:ctrl:round
 
-export
-  list: ->*
-    @body = yield db.rounds.list!
+export list = ->*
+  @body = yield db.rounds.find null, 'title begTime endTime'
+    .lean!
+    .exec!
 
-  next-count: ->*
-    @acquire-privilege \login
-    @body = _id: yield db.rounds.next-count!
+export show = ->*
+  {rid} = @params
 
-  show: ->*
-    @body = yield db.rounds.show @params.rid, mode: "view"
+  round = yield db.rounds.find-by-id rid, '-__v'
+    .populate 'probs', '_id outlook.title'
+    .lean!
+    .exec!
 
-  save: ->*
-    @acquire-privilege \login
-    # log {body: @request.body}
-    yield db.rounds.modify @params.rid, @request.body
-    @body = status:
-      type: "ok"
-      msg: "round saved"
+  # if opts.mode == "view" and moment!.is-before rnd.beg-time
+  #   rnd.probs = []
+  #   rnd.started = false
+  # else
+  #   rnd.started = true
 
-  total: ->*
-    @acquire-privilege \login
-    @body = yield db.rounds.show @params.rid, mode: "total"
+  @body = round
 
-  remove: ->*
-    @acquire-privilege \login
-    yield db.rounds.delete @params.rid
-    @body = status:
-      type: "ok"
-      msg: "round has been deleted"
+export save = ->*
+  {rid} = @params
+  round = @request.body
 
-  board: ->*
-    rid = @params.rid
-    @body = yield db.rounds.board rid
+  if round._id
+    delete round._id
 
-  publish: ->*
-    @acquire-privilege \login
-    rid = @params.rid
-    @body = yield db.rounds.publish rid
+  if rid == 0
+    rid = yield db.rounds.next-count!
+    round._id = rid
+    log {rid}
+  else
+    existed = yield db.rounds.find-by-id rid, \permit .exec!
+    if not existed
+      @body =
+        status:
+          type: \error
+          message: "cannot find the original round"
+      return
+    existed.permit.check-access @state.user, \w
+
+    # TODO: check permit is not modified here
+    # only owner can transfer owner
+
+  @body = yield db.rounds.update _id: rid, round, upsert: true, overwrite: true .exec!
+
+  @body <<< status:
+    type: "ok"
+    msg: "round saved"
+
+export remove = ->*
+  {rid} = @params
+
+  round = yield db.rounds.find-by-id rid, \permit .exec!
+  round.permit.check-access @state.user, \w
+
+  round.remove!
+
+  @body = status:
+    type: "ok"
+    msg: "round has been deleted"
+
+export board = ->*
+  {rid} = @params
+
+  round = yield db.rounds.find-by-id rid, \permit .exec!
+  if not round
+    throw new Error "no such rounds"
+    return
+  round.permit.check-access @state.user, \r
+
+  @body = yield db.solutions.get-solutions-in-a-round rid

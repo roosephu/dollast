@@ -220,6 +220,9 @@ webpackJsonp([0],[
 	  "/problem/:pid/stat": {
 	    component: __webpack_require__(153)
 	  },
+	  "/problem/:pid/data": {
+	    component: __webpack_require__(216)
+	  },
 	  "/solution": {
 	    component: __webpack_require__(172)
 	  },
@@ -713,7 +716,7 @@ webpackJsonp([0],[
 	      return setFormValues({
 	        owner: this.uid,
 	        group: 'problems',
-	        access: 'rwxrw-rw-'
+	        access: 'rwxrw-r--'
 	      });
 	    }
 	  },
@@ -730,26 +733,6 @@ webpackJsonp([0],[
 	        };
 	      }
 	    })
-	  },
-	  methods: {
-	    repair: co.wrap(function*(){
-	      var ref$, data;
-	      return ref$ = (yield this.$http.get("/problem/" + this.pid + "/repair")), data = ref$.data, ref$;
-	    }),
-	    select: function(){
-	      return $('#upload').click();
-	    },
-	    upload: co.wrap(function*(){
-	      var files, formData, i$, len$, file, data;
-	      files = $('#upload')[0].files;
-	      formData = new FormData();
-	      for (i$ = 0, len$ = files.length; i$ < len$; ++i$) {
-	        file = files[i$];
-	        formData.append(file.name, file);
-	      }
-	      data = (yield this.$http.post("/data/" + this.pid + "/upload", formData)).data;
-	      return this.problem.config.dataset = data.pairs;
-	    })
 	  }
 	};
 	function import$(obj, src){
@@ -764,7 +747,7 @@ webpackJsonp([0],[
 /* 149 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"problem-modify\" class=\"ui form\"><h2 class=\"ui dividing header\">{{title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (MB)</label><div class=\"ui input\"><input name=\"spaceLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (MB)</label><div class=\"ui input\"><input name=\"stkLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (MB)</label><div class=\"ui input\"><input name=\"outLmt\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"desc\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inFmt\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outFmt\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleIn\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOut\"></textarea></div></div><h3 class=\"ui dividing header\">Dataset Management</h3><input id=\"upload\" type=\"file\" style=\"display:none\" name=\"upload\"/><div class=\"ui field\"><a @click=\"select\" class=\"ui icon button labeled\"><i class=\"icon file\"></i>select</a><a @click=\"upload\" class=\"ui icon button labeled green\"><i class=\"icon upload\"></i>upload</a><a :click=\"refresh\" class=\"ui icon button labeled teal\"><i class=\"icon refresh\"></i>refresh</a><a :click=\"repair\" class=\"ui icon button labeled teal\"><i class=\"icon retweet\"></i>repair</a></div><div class=\"ui two fields\"><div class=\"ui field twelve wide\"><table class=\"ui table segment\"><thead><tr><th>input</th><th>output</th><th>weight</th><th></th></tr></thead><tbody><tr v-for=\"atom in problem.config.dataset\"><td>{{atom.input}}</td><td>{{atom.output}}</td><td>{{atom.weight}}</td><td><a :click=\"remove\" class=\"ui icon labeled button right floated mini\"><i class=\"icon remove\"></i>remove</a></td></tr></tbody></table></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary floated submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary floated\"><i class=\"icon reply\"></i>Back</div></div></div>";
+	module.exports = "<div id=\"problem-modify\" class=\"ui form\"><h2 class=\"ui dividing header\">{{title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (MB)</label><div class=\"ui input\"><input name=\"spaceLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (MB)</label><div class=\"ui input\"><input name=\"stkLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (MB)</label><div class=\"ui input\"><input name=\"outLmt\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"desc\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inFmt\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outFmt\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleIn\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOut\"></textarea></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary\"><i class=\"icon reply\"></i>Back</div><a v-if=\"pid != 0\" href=\"#/problem/{{pid}}/data\" class=\"ui icon labeled button secondary\"><i class=\"icon archive\"></i>Dataset Manage</a></div></div>";
 
 /***/ },
 /* 150 */
@@ -1568,8 +1551,8 @@ webpackJsonp([0],[
 	  }, probs);
 	  $form.form('set values', {
 	    title: title,
-	    begTime: begTime ? moment(begTime).format('YYYY-MM-DD hh:mm:ss') : void 8,
-	    endTime: endTime ? moment(endTime).format('YYYY-MM-DD hh:mm:ss') : void 8,
+	    begTime: begTime ? moment(begTime).format('YYYY-MM-DD HH:mm:ss') : void 8,
+	    endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : void 8,
 	    probs: probs
 	  });
 	  return $form.form('set values', permit);
@@ -1577,6 +1560,7 @@ webpackJsonp([0],[
 	module.exports = {
 	  data: function(){
 	    return {
+	      rid: 0,
 	      rnd: {
 	        _id: void 8,
 	        probs: []
@@ -1641,7 +1625,7 @@ webpackJsonp([0],[
 	      var data, response;
 	      e.preventDefault();
 	      data = getFormValues();
-	      return response = (yield vue.http.post("/round/" + this$.rnd._id, data));
+	      return response = (yield vue.http.post("/round/" + this$.rid, data));
 	    });
 	    $form = $('#form-round');
 	    $form.form({
@@ -1702,7 +1686,7 @@ webpackJsonp([0],[
 	      this.rnd.permit = {
 	        owner: this.uid,
 	        group: 'rounds',
-	        access: 'rwxrw-rw-'
+	        access: 'rwxr--r--'
 	      };
 	      return setFormValues(this.rnd);
 	    }
@@ -1714,6 +1698,7 @@ webpackJsonp([0],[
 	      if (rid !== void 8) {
 	        data = (yield vue.http.get("/round/" + rid)).data;
 	        return {
+	          rid: rid,
 	          rnd: data
 	        };
 	      }
@@ -1770,11 +1755,12 @@ webpackJsonp([0],[
 /* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, co, debug, format, log;
+	var vue, co, debug, format, moment, log;
 	vue = __webpack_require__(1);
 	co = __webpack_require__(142);
 	debug = __webpack_require__(29);
 	format = __webpack_require__(155);
+	moment = __webpack_require__(32);
 	log = debug('dollast:component:round:show');
 	module.exports = {
 	  components: {
@@ -1786,7 +1772,6 @@ webpackJsonp([0],[
 	        begTime: 0,
 	        endTime: 0,
 	        _id: 0,
-	        started: false,
 	        probs: [],
 	        permit: {
 	          owner: "",
@@ -1794,6 +1779,11 @@ webpackJsonp([0],[
 	        }
 	      }
 	    };
+	  },
+	  computed: {
+	    started: function(){
+	      return moment().isAfter(this.rnd.begTime);
+	    }
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
@@ -1813,7 +1803,7 @@ webpackJsonp([0],[
 /* 189 */
 /***/ function(module, exports) {
 
-	module.exports = "<h1 class=\"ui dividing header\">Round {{rnd._id}}. {{rnd.title}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{rnd.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{rnd.permit.group}}<div class=\"detail\">group</div></div></div><p>{{rnd.begTime}} -- {{rnd.endTime}}</p><br/><div v-if=\"rnd.started\"><h2 class=\"ui dividing header\">Problemset</h2><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui relaxed divided link list\"><div v-for=\"prob in rnd.probs\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><br/></div><div v-else=\"v-else\"><p>Sorry, this round has not started.</p></div><a v-if=\"rnd.started\" href=\"#/round/{{rnd._id}}/board\" class=\"ui labeled button purple\"><i class=\"icon trophy\"></i>board</a><a href=\"#/round/{{rnd._id}}/modify\" class=\"ui labeled button orange\"><i class=\"icon edit\"></i>modify</a>";
+	module.exports = "<h1 class=\"ui dividing header\">Round {{rnd._id}}. {{rnd.title}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{rnd.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{rnd.permit.group}}<div class=\"detail\">group</div></div></div><p>{{rnd.begTime}} -- {{rnd.endTime}}</p><br/><div v-if=\"started\"><h2 class=\"ui dividing header\">Problemset</h2><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui relaxed divided link list\"><div v-for=\"prob in rnd.probs\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><br/></div><div v-else=\"v-else\"><p>Sorry, this round has not started.</p></div><a v-if=\"started\" href=\"#/round/{{rnd._id}}/board\" class=\"ui labeled button purple\"><i class=\"icon trophy\"></i>board</a><a href=\"#/round/{{rnd._id}}/modify\" class=\"ui labeled button orange\"><i class=\"icon edit\"></i>modify</a>";
 
 /***/ },
 /* 190 */
@@ -2593,6 +2583,97 @@ webpackJsonp([0],[
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"ui grid\"><navbar></navbar><div class=\"row\"><div class=\"three wide column\"></div><div class=\"ten wide column\"><router-view></router-view></div></div><div class=\"row\"><div class=\"twelve wide column centered\"><foot></foot></div></div></div>";
+
+/***/ },
+/* 216 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(217)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] client/components/problem/data.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(218)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), true)
+	  if (!hotAPI.compatible) return
+	  var id = "/home/roosephu/Desktop/dollast/client/components/problem/data.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 217 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var vue, debug, co, log, this$ = this;
+	vue = __webpack_require__(1);
+	debug = __webpack_require__(29);
+	co = __webpack_require__(142);
+	log = debug('dollast:components:problems:data');
+	module.exports = {
+	  data: function(){
+	    return {
+	      problem: {
+	        _id: 0,
+	        outlook: {
+	          title: ""
+	        },
+	        config: {
+	          dataset: []
+	        }
+	      }
+	    };
+	  },
+	  route: {
+	    data: co.wrap(function*(arg$){
+	      var pid, data;
+	      pid = arg$.to.params.pid;
+	      data = (yield vue.http.get("/problem/" + pid)).data;
+	      return {
+	        problem: data
+	      };
+	    })
+	  },
+	  methods: {
+	    repair: co.wrap(function*(){
+	      var ref$, data;
+	      return ref$ = (yield this.$http.get("/problem/" + this.problem._id + "/repair")), data = ref$.data, ref$;
+	    }),
+	    select: function(){
+	      return $('#upload').click();
+	    },
+	    upload: co.wrap(function*(){
+	      var files, formData, i$, len$, file, data;
+	      files = $('#upload')[0].files;
+	      formData = new FormData();
+	      for (i$ = 0, len$ = files.length; i$ < len$; ++i$) {
+	        file = files[i$];
+	        formData.append(file.name, file);
+	      }
+	      data = (yield this.$http.post("/data/" + this.problem._id + "/upload", formData)).data;
+	      return this.problem.config.dataset = data.pairs;
+	    })
+	  }
+	};
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/problem/data.vue.map
+
+
+/***/ },
+/* 218 */
+/***/ function(module, exports) {
+
+	module.exports = "<div id=\"form-data\" class=\"ui form\"><h2 class=\"ui dividing header\">Problem {{problem._id}}. {{problem.outlook.title}}</h2><h3 class=\"ui dividing header\">Dataset Management</h3><input id=\"upload\" type=\"file\" style=\"display:none\" name=\"upload\"/><div class=\"ui field\"><a @click=\"select\" class=\"ui icon button labeled\"><i class=\"icon file\"></i>select</a><a @click=\"upload\" class=\"ui icon button labeled green\"><i class=\"icon upload\"></i>upload</a><a :click=\"refresh\" class=\"ui icon button labeled teal\"><i class=\"icon refresh\"></i>refresh</a><a :click=\"repair\" class=\"ui icon button labeled teal\"><i class=\"icon retweet\"></i>repair</a></div><div class=\"ui two fields\"><div class=\"ui field twelve wide\"><table class=\"ui table segment\"><thead><tr><th>input</th><th>output</th><th>weight</th><th></th></tr></thead><tbody><tr v-for=\"atom in problem.config.dataset\"><td>{{atom.input}}</td><td>{{atom.output}}</td><td>{{atom.weight}}</td><td><a :click=\"remove\" class=\"ui icon labeled button right floated mini\"><i class=\"icon remove\"></i>remove</a></td></tr></tbody></table></div></div></div>";
 
 /***/ }
 ]);

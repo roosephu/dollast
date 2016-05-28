@@ -7,19 +7,15 @@ require! {
   # 'koa-generic-session'
   \koa-conditional-get
   \koa-validate
-  \koa-router
   # 'koa-jade'
   \koa-send
   \koa-etag
   \koa-jwt
-  \util
   \path
-  \fs
   \debug
   \./config
   \./db
   \./crypt
-  \prelude-ls : _
 }
 
 export app = koa!
@@ -59,7 +55,7 @@ app.use koa-bodyparser do
 # ==== Logger ====
 app.use (next) ->*
   try
-    log "#{@req.method} #{@req.url}"
+    # log "#{@req.method} #{@req.ul}"
     yield next
   catch e
     log "catched error:"
@@ -79,7 +75,6 @@ app.use (next) ->*
       error: true
 
 app.use (next) ->*
-  log 'request body', @request.body
   # log "server.user", @state.user
   # log koa-jwt.verify @request.header.authorization.substr(7), config.jwt-key, ignore-expiration: false
 
@@ -88,16 +83,16 @@ app.use (next) ->*
     #@state.user = JSON.parse crypt.AES.dec that, config.server-AES-key
     if @state.user.client
       client-state = JSON.parse that
-      log "client info", client-state
+      # log "client info", client-state
     else
       client-state = {}
     @state.user = JSON.parse @state?.user?.server
     @state.user.client = client-state
-    log 'encrypted data in header.server', @state.user
+    # log 'encrypted data in header.server', @state.user
   else
     @state.user = _id: \__guest__, groups: []
 
-  log 'user state', @state.user
+  # log 'user state', @state.user
 
   #content = @request.body.signed
   #if content
@@ -128,15 +123,19 @@ app.use (next) ->*
 # ==== JSON and Static Serving ====
 
 app.use (next) ->*
-  db.bind-ctx @
   # log 'current user', @state.user, config.default
   @state.user.theme ||= config.default.theme
-  @state.user.priv  ||= config.default.priv
+  @state.user.groups  ||= config.default.groups
   # log @session
   if @method in [\HEAD, \GET]
     for folders in [\public, "theme/#{@state.user.theme}"]
       if yield koa-send @, @path, index: \index.html, max-age: 864000000, root: path.resolve folders
         return
+  yield next
+
+app.use (next) ->*
+  log 'request body', @request.body
+  log "#{@req.method} #{@req.url}"
   yield next
 
 # ==== Jade ====

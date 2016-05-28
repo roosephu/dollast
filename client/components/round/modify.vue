@@ -90,13 +90,14 @@ set-form-values = (round) ->
   probs = map (-> "#{it._id}"), probs
   $form.form 'set values',
     title: title
-    beg-time: if beg-time then moment beg-time .format 'YYYY-MM-DD hh:mm:ss' else void
-    end-time: if end-time then moment end-time .format 'YYYY-MM-DD hh:mm:ss' else void
+    beg-time: if beg-time then moment beg-time .format 'YYYY-MM-DD HH:mm:ss' else void
+    end-time: if end-time then moment end-time .format 'YYYY-MM-DD HH:mm:ss' else void
     probs: probs
   $form.form 'set values', permit
 
 module.exports =
   data: ->
+    rid: 0
     rnd:
       _id: void
       probs: []
@@ -134,7 +135,7 @@ module.exports =
     submit = co.wrap (e) ~>*
       e.prevent-default!
       data = get-form-values!
-      response = yield vue.http.post "/round/#{@rnd._id}", data
+      response = yield vue.http.post "/round/#{@rid}", data
       # log {response}
 
     $form = $ '#form-round'
@@ -184,16 +185,15 @@ module.exports =
       @rnd.permit =
         owner: @uid
         group: \rounds
-        access: \rwxrw-rw-
+        access: \rwxr--r--
       set-form-values @rnd
       # $form.form 'set values', @rnd.permit
-
 
   route:
     data: co.wrap (to: params: {rid}) ->*
       if rid != void
         {data} = yield vue.http.get "/round/#{rid}"
-        {rnd: data}
+        {rid, rnd: data}
 
   watch:
     'rnd._id': ->

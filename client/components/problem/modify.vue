@@ -60,43 +60,6 @@
         label sample output
         textarea(name="sampleOut")
 
-    h3.ui.dividing.header Dataset Management
-    input#upload(type="file", style="display:none", name="upload")
-    .ui.field
-      a.ui.icon.button.labeled(@click="select")
-        i.icon.file
-        | select
-      a.ui.icon.button.labeled.green(@click="upload")
-        i.icon.upload
-        | upload
-      a.ui.icon.button.labeled.teal(:click="refresh")
-        i.icon.refresh
-        | refresh
-      a.ui.icon.button.labeled.teal(:click="repair")
-        i.icon.retweet
-        | repair
-
-    .ui.two.fields
-      //- .ui.field.four.wide#dropzone
-        //- .dropzoneText drop files here or click
-      .ui.field.twelve.wide
-        table.ui.table.segment
-          thead
-            tr
-              th input
-              th output
-              th weight
-              th
-          tbody
-            tr(v-for="atom in problem.config.dataset")
-              td {{atom.input}}
-              td {{atom.output}}
-              td {{atom.weight}}
-              td
-                a.ui.icon.labeled.button.right.floated.mini(:click="remove")
-                  i.icon.remove
-                  | remove
-
     h3.ui.dividing.header Permission
     .ui.four.fields
       .ui.field
@@ -113,12 +76,15 @@
           input(name="access")
 
     .ui.field
-      .ui.icon.labeled.button.primary.floated.submit
+      .ui.icon.labeled.button.primary.submit
         i.icon.save
         | Save
-      .ui.icon.labeled.button.secondary.floated(href="#/problem/{{pid}}")
+      .ui.icon.labeled.button.secondary(href="#/problem/{{pid}}")
         i.icon.reply
         | Back
+      a.ui.icon.labeled.button.secondary(v-if="pid != 0", href="#/problem/{{pid}}/data")
+        i.icon.archive
+        | Dataset Manage
 </template>
 
 <script lang="vue-livescript">
@@ -139,7 +105,6 @@ flatten-object = (obj) ->
       ret[key] = val
   ret
 
-# remember to ignore files
 get-form-values = ->
   values = $ '.form' .form 'get values'
   outlook = values{title, desc, in-fmt, out-fmt, sample-in, sample-out}
@@ -297,7 +262,7 @@ module.exports =
       set-form-values do
         owner: @uid
         group: \problems
-        access: \rwxrw-rw-
+        access: \rwxrw-r--
 
   route:
     data: co.wrap (to: params: {pid}) ~>*
@@ -305,20 +270,4 @@ module.exports =
         {data} = yield vue.http.get "/problem/#{pid}"
         set-form-values data
         {pid, problem: data}
-
-  methods:
-    repair: co.wrap ->*
-      {data} = yield @$http.get "/problem/#{@pid}/repair"
-
-    select: ->
-      $ '#upload' .click!
-
-    upload: co.wrap ->*
-      files = $ '#upload' .0 .files
-      form-data = new FormData!
-      for file in files
-        form-data.append file.name, file
-      {data} = yield @$http.post "/data/#{@pid}/upload", form-data
-      @problem.config.dataset = data.pairs
-
 </script>

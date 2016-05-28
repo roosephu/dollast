@@ -1,19 +1,16 @@
 require! {
-  \mongoose
+  \mongoose : {Schema}
   \debug
   \prelude-ls : {map}
-  \sanitize-html
-  \./conn
-  \./permit : {schema: permit-schema}
   \../core : {gen-data-pairs}
-  \../config : {prob-list-opts}
-  \../db
+  \./conn
+  \./permit
 }
 
-log = debug "dollast:prob"
+log = debug \dollast:prob
 
-schema = new mongoose.Schema do
-  _id: Number
+schema = new Schema do
+  _id: type: Number, required: true
   outlook:
     desc: String
     title: String
@@ -22,7 +19,8 @@ schema = new mongoose.Schema do
     sample-in: String
     sample-out: String
   config:
-    round: type: Number, ref: "round"
+    date: type: Date, default: Date.now
+    round: type: Number, ref: \round
     time-lmt: Number
     space-lmt: Number
     stk-lmt: Number
@@ -35,102 +33,19 @@ schema = new mongoose.Schema do
       weight: Number
     ]
   stat: {}
-  permit: permit-schema
+  permit: permit
 
-export model = conn.conn.model 'problem', schema
-count = 0
+schema.statics.get-user-owned-problems = (uid) ->*
+  return yield model.find 'permit.owner': uid, '_id outlook.title' .exec!
 
-export show = (pid, opts = {}) ->*
-  opts.mode ||= "view"
-  opts.mode = \total
-  fields = switch opts.mode
-    | "view"    => "outlook config.timeLmt config.spaceLmt config.round"
-    | "total"   => undefined
-    | "brief"   => "outlook.title config.round"
-    | otherwise => ...
-  if opts.mode in ["total", "view"]
-    @ensure-access model, pid, \r
-
-  prob = yield model .find-by-id pid, fields
-    .populate "config.round", "begTime"
-    .exec!
-  if not prob
-    throw new Error "no such problem"
-
-  if prob?.config?.round?
-    # needn't to check it since the round has settled it up
-    # if not that.is-started!
-    prob .= to-object!
-    prob.config.round .= _id
-  else
-    prob .= to-object!
-  return prob
-
-export stat = (pid, opts = {}) ->*
-  prob = yield model.find-by-id pid, 'config.round outlook.title'
-    .populate 'config.round', 'published'
-    .lean!
-    .exec!
-  if not prob
-    throw new Error "no such problem"
-
-  # log {@ensure-access, @acquire-privilege}
-  @ensure-access model, pid, \r
-
-  query = db.solutions.model.aggregate do
-    * $match: prob: pid
-    * $sort: user: 1, "final.score": -1
-    * $project:
-        lang: true
-        final: true
-        round: true
-        user: true
-    * $group:
-        _id:
-          user: "$user"
-        doc:
-          $first: "$$CURRENT"
-        submits:
-          $sum: 1
-
-  stat = yield query .exec!
-  delete prob.config
-  return sols: stat, prob: prob
-
-export list = (opts) ->*
-  opts = prob-list-opts with opts
-  return yield model
-    .find null, 'outlook.title' # "config.round": $exists: true,
-    .skip opts.skip
-    .limit opts.limit
-    .exec!
-
-export upd-data = (pid) ->*
-  prob = yield model.find-by-id pid, 'config.dataset' .exec!
-  pairs = yield gen-data-pairs pid
-  prob.config.dataset = map (<<< weight: 1), pairs
-  yield prob.save!
+schema.methods.repair = ->*
+  pairs = yield gen-data-pairs @_id
+  @config.dataset = map (<<< weight: 1), pairs
+  yield @save!
 
   return pairs
 
-export list-dataset = (pid) ->*
-  prob = yield model.find-by-id pid, "config.dataset" .lean! .exec!
-  return prob.config.dataset
+schema.statics.next-count = conn.make-next-count 1
 
-func-next-count = conn.make-next-count model, count
-
-next-count = ->*
-  log "next-count"
-  return yield func-next-count!
-
-export modify = (pid, prob) ->*
-  @ensure-access model, pid, \w
-  if prob._id
-    delete prob._id
-  if pid == 0
-    pid = yield next-count.bind(@)!
-    log {pid}
-  return yield model.update(_id: pid, {$set: prob}, upsert: true, overwrite: true).exec!
-
-export get-user-owned-problems = (uid) ->*
-  return yield model.find 'permit.owner': uid, '_id outlook.title' .exec!
+model = conn.conn.model \problem, schema
+module.exports = model

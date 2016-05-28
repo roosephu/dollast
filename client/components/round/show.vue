@@ -10,7 +10,7 @@
   p {{rnd.begTime}} -- {{rnd.endTime}}
   br
 
-  div(v-if="rnd.started")
+  div(v-if="started")
     h2.ui.dividing.header Problemset
     .ui.segment(:class="{loading: $loadingRouteData}")
       .ui.relaxed.divided.link.list
@@ -23,7 +23,7 @@
   div(v-else)
     p Sorry, this round has not started.
 
-  a.ui.labeled.button.purple(v-if="rnd.started", href="#/round/{{rnd._id}}/board")
+  a.ui.labeled.button.purple(v-if="started", href="#/round/{{rnd._id}}/board")
     i.icon.trophy
     | board
   a.ui.labeled.button.orange(href="#/round/{{rnd._id}}/modify")
@@ -37,6 +37,7 @@ require! {
   \co
   \debug
   \../format
+  \moment
 }
 
 log = debug \dollast:component:round:show
@@ -50,11 +51,14 @@ module.exports =
       beg-time: 0
       end-time: 0
       _id: 0
-      started: false
       probs: []
       permit:
         owner: ""
         group: ""
+
+  computed:
+    started: ->
+      moment!.is-after @rnd.beg-time
 
   route:
     data: co.wrap (to: params: {rid}) ->*

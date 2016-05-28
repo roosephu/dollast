@@ -7,31 +7,57 @@ require! {
 
 log = debug \dollast:ctrl:data
 
-export
-  upload: ->*
-    log \uploading
-    @acquire-privilege \login
-    pid = @params.pid
-    parts = co-busboy @, auto-fields: true
-    while part = yield parts
-      log {part}
-      @body = yield core.upload pid, part
-    pairs = yield db.problems.upd-data pid
-    @body <<< status:
-      type: "ok"
-      msg: "upload successful"
-      data:
-        {pairs}
+export upload = ->*
+  log \uploading
+  {pid} = @params
 
-  delete: ->* # validate
-    @acquire-privilege \login
-    pid = @params.pid
-    yield core.delete-test-data pid, @params.file
-    @body = status:
-      type: "ok"
-      msg: "data has been deleted"
+  problem = yield db.problems.find-by-id pid, \permit .exec!
+  if not problem
+    throw new Error "no such problem"
+  problem.permit.check-access @state.user, \w
 
-  show: ->*
-    @acquire-privilege \login
-    data = yield db.problems.list-dataset @params.pid
-    @body = data
+  parts = co-busboy @, auto-fields: true
+  while part = yield parts
+    log {part}
+    @body = yield core.upload pid, part
+  pairs = yield problem.repair!
+
+  @body <<< status:
+    type: "ok"
+    msg: "upload successful"
+    data:
+      {pairs}
+
+export repair = ->*
+  {pid} = @params
+
+  problem = yield db.problems.find-by-id pid, "config.dataset permit" .exec!
+  if not problem
+    throw new Error 'xxx'
+  problem.check-access @state.user, \w
+  yield problem.repair!
+
+  new-pairs = pairs
+  @body =
+    type: 'server/success'
+    payload: new-pairs
+
+export remove = ->* # validate
+  {pid, file} = @params
+
+  problem = yield db.problems.find-by-id pid, "config.dataset permit" .exec!
+  if not problem
+    throw new Error "xxx"
+  problem.permit.check-access @state.user, \w
+
+  yield core.delete-test-data pid, @params
+  yield problem.repair!
+
+  @body = status:
+    type: "ok"
+    msg: "data has been deleted"
+
+# export show = ->*
+#   @ensure-access db.problems.model, pid, \w
+#   data = yield db.problems.list-dataset @params.pid
+#   @body = data

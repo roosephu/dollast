@@ -12,6 +12,7 @@ router.map do
   "/problem/:pid"                 : component: require(\./components/problem/show)
   "/problem/:pid/modify"          : component: require(\./components/problem/modify)
   "/problem/:pid/stat"            : component: require(\./components/problem/stat)
+  "/problem/:pid/data"            : component: require(\./components/problem/data)
   "/solution"                     : component: require(\./components/solution/list)
   "/solution/submit/:pid"         : component: require(\./components/solution/submit)
   "/solution/user/:uid"           : component: require(\./components/site/index)
