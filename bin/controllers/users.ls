@@ -1,5 +1,5 @@
 require! {
-  \../db
+  \../models
   \../config
   \prelude-ls : {difference}
   \debug
@@ -17,7 +17,7 @@ export save = ->*
 
   {_id, groups} = @request.body
 
-  user = yield db.users.find-by-id _id .exec!
+  user = yield models.users.find-by-id _id .exec!
   if not user
     @body = status:
       type: \error
@@ -40,18 +40,18 @@ export save = ->*
 export register = ->*
   # @check-body '_id' .len 6, 15
   # @check-body 'pswd' .len 8, 15
-  {uid, pswd} = @request.body
+  {uid, password} = @request.body
 
-  if yield db.users.find-by-id uid .count! .exec!
+  if yield models.users.find-by-id uid .count! .exec!
     @body =
       type: \register
       error: true
       payload: "duplicate user id"
 
   else
-    user = new db.users do
+    user = new models.users do
       _id: uid
-      pswd: pswd
+      password: password
       groups: []
       permit:
         owner: uid
@@ -59,7 +59,7 @@ export register = ->*
         access: \rw-rw----
 
     salt = bcrypt.gen-salt-sync bcrypt.bcrypt-cost
-    user.pswd = bcrypt.hash-sync user.pswd, salt
+    user.password = bcrypt.hash-sync password, salt
     yield user.save!
 
     @body =
@@ -69,8 +69,8 @@ export register = ->*
 export profile = ->*
   {uid} = @params
 
-  profile = yield db.users.find-by-id uid, \-pswd .lean! .exec!
-  solved-problems = yield db.solutions.get-user-solved-problems uid
-  owned-problems = yield db.problems.get-user-owned-problems uid
-  owned-rounds = yield db.rounds.get-user-owned-rounds uid
+  profile = yield models.users.find-by-id uid, \-password .lean! .exec!
+  solved-problems = yield models.solutions.get-user-solved-problems uid
+  owned-problems = yield models.problems.get-user-owned-problems uid
+  owned-rounds = yield models.rounds.get-user-owned-rounds uid
   @body = {profile, solved-problems, owned-problems, owned-rounds}

@@ -16,6 +16,6 @@ log = debug \dollast:conn
 export make-next-count = (counter) ->
   counter ||= 1
   ->*
-    while 1 == yield @find-by-id counter, \_id .count! .exec!
+    while 1 == yield @find-by-id "#{counter}", \_id .count! .exec!
       counter += 1
-    return counter
+    return "#{counter}"

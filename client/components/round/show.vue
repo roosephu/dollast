@@ -7,7 +7,7 @@
     .ui.label {{rnd.permit.group}}
       .detail group
 
-  p {{rnd.begTime}} -- {{rnd.endTime}}
+  p {{rnd.beginTime}} -- {{rnd.endTime}}
   br
 
   div(v-if="started")
@@ -51,7 +51,7 @@ module.exports =
       beg-time: 0
       end-time: 0
       _id: 0
-      probs: []
+      problems: []
       permit:
         owner: ""
         group: ""

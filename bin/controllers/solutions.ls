@@ -1,5 +1,5 @@
 require! {
-  \../db
+  \../models
   \debug
   \../core
   \../config
@@ -9,7 +9,7 @@ log = debug \dollast:ctrl:sol
 
 export submit = ->*
   @check-body \pid .is-int! .ge 1
-  @check-body \lang .in [\cpp, \java]
+  @check-body \language .in [\cpp, \java]
   @check-body \code .len 1, 50000
   @check-body \user .empty!
   return if @errors
@@ -17,7 +17,7 @@ export submit = ->*
   req = @request.body
   {pid} = req
 
-  problem = yield db.problems.find-by-id pid, "permit config" .exec!
+  problem = yield models.problems.find-by-id pid, "permit config" .exec!
   if not problem
     throw new Error 'no problem found. '
   problem.permit.check-access @state.user, \x
@@ -25,18 +25,18 @@ export submit = ->*
   uid = @state.user.client.uid
 
   # @ensure-access model, 0, \x # sol = 0 => submision
-  solution = new db.solutions do
-    _id: yield db.solutions.next-count!
+  solution = new models.solutions do
+    _id: yield models.solutions.next-count!
     code: req.code
-    lang: req.lang
-    prob: req.pid
+    language: req.language
+    problem: req.pid
     user: uid
-    final:
+    summary:
       status: \running
     permit: req.permit
 
   yield solution.save!
-  core.judge req.lang, req.code, problem.config, solution
+  core.judge req.language, req.code, problem.config, solution
 
   @body = status:
     type: "ok"
@@ -45,9 +45,9 @@ export submit = ->*
 export list = ->*
   opts = config.sol-list-opts
 
-  query = db.solutions.find {}, '-code -results'
+  query = models.solutions.find {}, '-code -results'
     .populate \prob, 'outlook.title'
-    .populate \round, 'title begTime'
+    .populate \round, 'title beginTime'
     .sort '-_id'
     .skip opts.skip
     .limit opts.limit
@@ -55,7 +55,7 @@ export list = ->*
   if opts.uid
     query .= where \user .equals that
   if opts.pid
-    query .= where \prob .equals that
+    query .= where \problem .equals that
 
   sol-list = yield query.exec!
 
@@ -64,8 +64,8 @@ export list = ->*
 export show = ->*
   {sid} = @params
 
-  solution = yield db.solutions.find-by-id sid
-    .populate 'prob', 'outlook.title'
+  solution = yield models.solutions.find-by-id sid
+    .populate \problem, 'outlook.title'
     .exec!
 
   solution.permit.check-access @state.user, \r

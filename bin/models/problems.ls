@@ -5,26 +5,27 @@ require! {
   \../core : {gen-data-pairs}
   \./conn
   \./permit
+  \../config
 }
 
 log = debug \dollast:prob
 
 schema = new Schema do
-  _id: type: Number, required: true
+  _id: type: String, required: true
   outlook:
-    desc: String
+    description: String
     title: String
-    in-fmt: String
-    out-fmt: String
-    sample-in: String
-    sample-out: String
+    input-format: String
+    output-format: String
+    sample-input: String
+    sample-output: String
   config:
     date: type: Date, default: Date.now
     round: type: Number, ref: \round
-    time-lmt: Number
-    space-lmt: Number
-    stk-lmt: Number
-    out-lmt: Number
+    time-limit: Number
+    space-limit: Number
+    stack-limit: Number
+    output-limit: Number
     regexp: String
     judger: String
     dataset: [
@@ -32,7 +33,7 @@ schema = new Schema do
       output: String
       weight: Number
     ]
-  stat: {}
+  statistics: {}
   permit: permit
 
 schema.statics.get-user-owned-problems = (uid) ->*
@@ -45,7 +46,7 @@ schema.methods.repair = ->*
 
   return pairs
 
-schema.statics.next-count = conn.make-next-count 1
+schema.statics.next-count = conn.make-next-count config.starting-ids.problems
 
 model = conn.conn.model \problem, schema
 module.exports = model

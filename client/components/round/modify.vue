@@ -13,7 +13,7 @@
       .ui.field
         label start from
         .ui.input
-          input(name="begTime", placeholder="YYYY-MM-DD HH:mm:ss")
+          input(name="beginTime", placeholder="YYYY-MM-DD HH:mm:ss")
       .ui.field
         label end at
         .ui.input
@@ -37,7 +37,7 @@
     h3.ui.dividing.header Problemset
     .ui.field
       .ui.dropdown.icon.selection.fluid.multiple.search
-        input(type="hidden", name="probs")
+        input(type="hidden", name="problems")
         .default.text problems
         i.dropdown.icon
         .menu
@@ -78,7 +78,7 @@ get-form-values = ->
   # probs = P.map (._id), probs
   probs = map parse-int, values.probs.split ','
 
-  data = Object.assign values{title, beg-time, end-time},
+  data = Object.assign values{title, begin-time, end-time},
     {probs, permit}
 
 set-form-values = (round) ->
@@ -90,9 +90,9 @@ set-form-values = (round) ->
   probs = map (-> "#{it._id}"), probs
   $form.form 'set values',
     title: title
-    beg-time: if beg-time then moment beg-time .format 'YYYY-MM-DD HH:mm:ss' else void
+    begin-time: if begin-time then moment begin-time .format 'YYYY-MM-DD HH:mm:ss' else void
     end-time: if end-time then moment end-time .format 'YYYY-MM-DD HH:mm:ss' else void
-    probs: probs
+    probs: problems
   $form.form 'set values', permit
 
 module.exports =
@@ -100,11 +100,11 @@ module.exports =
     rid: 0
     rnd:
       _id: void
-      probs: []
+      problems: []
 
   computed:
     dropdown-problems: ->
-      {[x._id, formatter.problem x] for x in @rnd.probs}
+      {[x._id, formatter.problem x] for x in @rnd.problems}
     formatted-title: ->
       if @rnd._id == void
         "Create new Round"
@@ -152,7 +152,7 @@ module.exports =
             * type: 'maxLength[63]'
               prompt: 'title has maximum length of 63'
         beg-time:
-          identifier: \begTime
+          identifier: \beginTime
           rules:
             * type: \isTime
               prompt: 'start time should be valid'

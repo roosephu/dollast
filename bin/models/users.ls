@@ -10,14 +10,14 @@ log = debug \dollast:models:user
 
 schema = new Schema do
   _id: type: String, required: true, trim: true
-  pswd: String
-  desc: String
+  password: String
+  description: String
   date: type: Date, default: Date.now
   groups: [String]
   permit: permit
 
 schema.methods.check-password = (candidate) ->
-  bcrypt.compare-sync candidate, @pswd
+  bcrypt.compare-sync candidate, @password
 
 # TODO CSRF
 model = conn.conn.model \user, schema

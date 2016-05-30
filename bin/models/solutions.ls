@@ -4,6 +4,7 @@ require! {
   \moment
   \./conn : {make-next-count, conn}
   \./permit
+  \../config
 }
 
 atom-result-schema = new Schema do
@@ -18,14 +19,14 @@ atom-result-schema = new Schema do
   weight: Number
 
 schema = new Schema do
-  _id: Number
+  _id: String
   date: type: Date, default: Date.now
   code: String
-  lang: String
-  prob: type: Number, ref: \problem
+  language: String
+  problem: type: Number, ref: \problem
   user: type: String, ref: \user
   round: type: Number, ref: \round
-  final:
+  summary:
     time: Number
     space: Number
     message: String
@@ -40,42 +41,42 @@ schema = new Schema do
 # schema.plugin mongoose-auto-increment.plugin, model: \solution
 schema.index do
   round: 1
-  prob: 1
+  problem: 1
   user : 1
   _id: -1
 schema.index do
-  prob: 1
+  problem: 1
   user: 1
-  "final.score": -1
+  "summary.score": -1
 schema.index do
   user: 1
-  prob: 1
+  problem: 1
   round: 1
-  "final.score": -1
+  "summary.score": -1
 
 log = debug \dollast:sol
 
-schema.statics.next-count = make-next-count 1
+schema.statics.next-count = make-next-count config.starting-ids.solutions
 
 schema.statics.get-user-solved-problems = (uid) ->*
   # log {uid, model.aggregate}
   query = model.aggregate do
-    * $match: user: uid, 'final.score': 1
-    * $sort: prob: 1
+    * $match: user: uid, 'summary.score': 1
+    * $sort: problem: 1
     * $group:
-        _id: \$prob
+        _id: \$problem
   return yield query.exec!
 
 schema.statics.get-solutions-in-a-round = (rid) ->*
   query = model.aggregate do
     * $match: round: rid
-    * $sort: prob: 1, user: 1, _id: -1
+    * $sort: problem: 1, user: 1, _id: -1
     * $group:
         _id:
-          prob: \$prob
+          problem: \$problem
           user: \$user
         score:
-          $first: '$final.score'
+          $first: '$summary.score'
         sid:
           $first: \$_id
   return yield query.exec!

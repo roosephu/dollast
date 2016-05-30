@@ -1,5 +1,5 @@
 require! {
-  \../db
+  \../models
   \debug
   \../config : {prob-list-opts}
   \sanitize-html
@@ -9,18 +9,18 @@ log = debug \dollast:ctrls:prob
 
 export list = ->*
   opts = prob-list-opts
-  @body = yield db.problems
+  @body = yield models.problems
     .find null, \outlook.title # "config.round": $exists: true,
     .skip opts.skip
     .limit opts.limit
     .exec!
-  log "prob-list #{@body}"
+  # log "prob-list #{@body}"
 
 export show = ->*
   log "finding problem"
   {pid} = @params
 
-  problem = yield db.problems.find-by-id pid
+  problem = yield models.problems.find-by-id pid
     # .populate "config.round", "begTime"
     .exec!
   if not problem
@@ -42,10 +42,10 @@ export save = ->*
   #@check req.outlook, 'outFmt' .not-empty!
   #@check req.outlook, 'sampleIn' .not-empty!
   #@check req.outlook, 'sampleOut' .not-empty!
-  @check-body \/config/timeLmt, true .get! .is-float! .gt 0
-  @check-body \/config/spaceLmt, true .get! .is-float! .gt 0
-  @check-body \/config/stkLmt, true .get! .is-float! .gt 0
-  @check-body \/config/outLmt, true .get! .is-float! .gt 0
+  @check-body \/config/timeLimit, true .get! .is-float! .gt 0
+  @check-body \/config/spaceLimit, true .get! .is-float! .gt 0
+  @check-body \/config/stackLimit, true .get! .is-float! .gt 0
+  @check-body \/config/outputLimit, true .get! .is-float! .gt 0
   @check-body \/config/judger, true .get! .in [\string, \strict, \real, \custom]
   @check-body \/permit/owner, true .get!
   return if @errors
@@ -54,13 +54,13 @@ export save = ->*
 
   if problem._id
     delete problem._id
-  if pid == 0
-    pid = yield db.problems.next-count!
+  if pid == void
+    pid = yield models.problems.next-count!
     log "saving new problem using id #{pid}"
 
     # TODO: check whether user can create a problem here
   else
-    existed = yield db.problems.find-by-id pid, \permit .exec!
+    existed = yield models.problems.find-by-id pid, \permit .exec!
     if not existed
       @body =
         status:
@@ -72,7 +72,7 @@ export save = ->*
     # TODO: check permit is not modified here
     # only owner can transfer owner
 
-  @body = yield db.problems.update _id: pid, problem, upsert: true, overwrite: true .exec!
+  @body = yield models.problems.update _id: pid, problem, upsert: true, overwrite: true .exec!
 
   @body <<< status:
     type: "ok"
@@ -85,18 +85,18 @@ export remove = ->*
 export stat = ->*
   {pid} = @params
 
-  problem = yield db.problems.find-by-id pid, 'config.round outlook.title permit'
+  problem = yield models.problems.find-by-id pid, 'config.round outlook.title permit'
     .exec!
   if not problem
     throw new Error "no such problem"
   problem.check-access @state.user, \r
 
-  query = db.solutions.aggregate do
-    * $match: prob: pid
+  query = models.solutions.aggregate do
+    * $match: problem: pid
     * $sort: user: 1, "final.score": -1
     * $project:
-        lang: true
-        final: true
+        language: true
+        summary: true
         round: true
         user: true
     * $group:

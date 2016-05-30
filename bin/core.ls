@@ -98,7 +98,7 @@ testlib-exitcodes =
 drop-first-line = (message) ->
   unlines drop 1, lines message
 
-judge-result = co.wrap (pid, in-file, out-file, ans-file, cfg) ->*
+judge-result = co.wrap (pid, input-file, output-file, answer-file, cfg) ->*
   judger = switch cfg.judger
     | 'string'  => path.join config.judger-dir, "/string"
     | 'real'    => path.join config.judger-dir, "/real"
@@ -106,7 +106,7 @@ judge-result = co.wrap (pid, in-file, out-file, ans-file, cfg) ->*
     | 'custom'  => path.join config.data-dir, "/#pid/", "/judge"
     | otherwise => ...
   try
-    [stdout, stderr] = yield exec "#{judger} #{in-file} #{out-file} #{ans-file}"
+    [stdout, stderr] = yield exec "#{judger} #{input-file} #{output-file} #{answer-file}"
   catch e
     #log e
     messages = drop-first-line e.message
@@ -124,14 +124,14 @@ judge-result = co.wrap (pid, in-file, out-file, ans-file, cfg) ->*
 
 limit = co-limiter config.concurrency
 
-run-atom = (pid, lang, exe-path, data, cfg) ->* # TODO if file not exists, throw an error
+run-atom = (pid, language, exe-path, data, cfg) ->* # TODO if file not exists, throw an error
   log "running atom..."
   tmp-file = tmp.file-sync!
   ouf = tmp-file.name
   inf = path.join config.data-dir, "/#pid/", data.input
   ans = path.join config.data-dir, "/#pid/", data.output
   log "inf #{inf} ans #{ans}"
-  exec-cmd = "\"#{config.sandboxer}\" \"#{exe-path}\" #{cfg.time-lmt} #{cfg.space-lmt} #{cfg.stk-lmt} #{cfg.out-lmt} \"#{inf}\" \"#{ouf}\""
+  exec-cmd = "\"#{config.sandboxer}\" \"#{exe-path}\" #{cfg.time-limit} #{cfg.space-limit} #{cfg.stack-limit} #{cfg.output-limit} \"#{inf}\" \"#{ouf}\""
   [proc-out, proc-err] = yield exec exec-cmd, cwd: path.dirname config.sandboxer
   log {proc-out, proc-err, exec-cmd}
   log "sandboxer result: #proc-err"
@@ -146,7 +146,7 @@ run-atom = (pid, lang, exe-path, data, cfg) ->* # TODO if file not exists, throw
 
   return (exe-res <<< judge-res) <<< data
 
-calc-prob-score = (results) ->
+calc-problem-score = (results) ->
   ret =
     time : 0
     space: 0
@@ -164,19 +164,19 @@ calc-prob-score = (results) ->
   ret.score = if ws then sum / ws else 0
   return ret
 
-export judge = co.wrap (lang, code, prob-config, doc) ->*
-  log "Start judging: lang: #{lang}"
+export judge = co.wrap (language, code, problem-config, doc) ->*
+  log "Start judging: language: #{language}"
   tmp-dir = tmp.dir-sync unsafe-cleanup: true
-  config = prob-config.to-object!
-  pid = doc.prob
+  config = problem-config.to-object!
+  pid = doc.problem
   try
-    exe-path = yield compile tmp-dir.name, lang, code
+    exe-path = yield compile tmp-dir.name, language, code
   catch err
     message = drop-first-line err.message
     tmp-dir.remove-callback!
     log err
     log "CE:", message
-    doc.final =
+    doc.summary =
       score: 0
       status: "CE"
       message: message
@@ -186,12 +186,12 @@ export judge = co.wrap (lang, code, prob-config, doc) ->*
   try
     dataset = delete config.dataset
 
-    results = yield [limit run-atom pid, lang, exe-path, data.to-object!, config for data in dataset]
+    results = yield [limit run-atom pid, language, exe-path, data.to-object!, config for data in dataset]
 
     log "starting modifying doc"
     doc.results = results
-    doc.final = calc-prob-score zip dataset, results
-    doc.final.status = \finished
+    doc.summary = calc-problem-score zip dataset, results
+    doc.summary.status = \finished
     yield doc.save!
   catch err
     log err

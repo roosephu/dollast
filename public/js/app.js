@@ -450,7 +450,7 @@ webpackJsonp([0],[
 /* 146 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"ui\"><h1 class=\"ui dividing header\">Problem List</h1><div class=\"ui dropdown floated pointing button labeled icon\"><input type=\"hidden\" name=\"filter\"/><div class=\"default text\">please select filter</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in options\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div><a href=\"#/problem/create\" class=\"ui icon labeled button right floated primary\"><i class=\"icon plus\"></i>create</a><div class=\"ui segment\"><div class=\"ui very relaxed divided link list\"><div v-for=\"prob in problems\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"ui description\"><problem :prob=\"prob\"></problem></div></div></div></div></div>";
+	module.exports = "<div class=\"ui\"><h1 class=\"ui dividing header\">Problem List</h1><div class=\"ui dropdown floated pointing button labeled icon\"><input type=\"hidden\" name=\"filter\"/><div class=\"default text\">please select filter</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in options\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div><a href=\"#/problem/create\" class=\"ui icon labeled button right floated primary\"><i class=\"icon plus\"></i>create</a><div class=\"ui segment\"><div class=\"ui very relaxed divided link list\"><div v-for=\"problem in problems\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"ui description\"><problem :prob=\"problem\"></problem></div></div></div></div></div>";
 
 /***/ },
 /* 147 */
@@ -507,20 +507,20 @@ webpackJsonp([0],[
 	  values = $('.form').form('get values');
 	  outlook = {
 	    title: values.title,
-	    desc: values.desc,
-	    inFmt: values.inFmt,
-	    outFmt: values.outFmt,
-	    sampleIn: values.sampleIn,
-	    sampleOut: values.sampleOut
+	    description: values.description,
+	    inputFormat: values.inputFormat,
+	    outputFormat: values.outputFormat,
+	    sampleInput: values.sampleInput,
+	    sampleOutput: values.sampleOutput
 	  };
 	  config = {
 	    rid: values.rid,
 	    pid: values.pid,
 	    judger: values.judger,
-	    timeLmt: values.timeLmt,
-	    spaceLmt: values.spaceLmt,
-	    outLmt: values.outLmt,
-	    stkLmt: values.stkLmt
+	    timeLimit: values.timeLimit,
+	    spaceLimit: values.spaceLimit,
+	    outLimit: values.outLimit,
+	    stkLimit: values.stkLimit
 	  };
 	  permit = {
 	    owner: values.owner,
@@ -532,10 +532,10 @@ webpackJsonp([0],[
 	  } else {
 	    config.rid = parseInt(config.rid);
 	  }
-	  config.timeLmt = parseFloat(config.timeLmt);
-	  config.spaceLmt = parseFloat(config.spaceLmt);
-	  config.outLmt = parseFloat(config.outLmt);
-	  config.stkLmt = parseFloat(config.stkLmt);
+	  config.timeLimit = parseFloat(config.timeLimit);
+	  config.spaceLimit = parseFloat(config.spaceLimit);
+	  config.outLimit = parseFloat(config.outLimit);
+	  config.stkLimit = parseFloat(config.stkLimit);
 	  return {
 	    outlook: outlook,
 	    config: config,
@@ -558,11 +558,11 @@ webpackJsonp([0],[
 	  },
 	  data: function(){
 	    return {
-	      pid: 0,
+	      pid: "",
 	      files: [],
 	      judgers: ['string', 'real', 'strict', 'custom'],
 	      problem: {
-	        _id: 0,
+	        _id: "",
 	        outlook: {
 	          title: 'hello world'
 	        },
@@ -574,7 +574,7 @@ webpackJsonp([0],[
 	  },
 	  computed: {
 	    title: function(){
-	      if (this.problem._id !== 0) {
+	      if (this.problem._id !== "") {
 	        return "Problem " + this.problem._id + ". " + this.problem.outlook.title;
 	      } else {
 	        return "Create new problem";
@@ -591,7 +591,11 @@ webpackJsonp([0],[
 	      log({
 	        problem: problem
 	      });
-	      return (yield this$.$http.post("/problem/" + this$.pid, problem));
+	      if (this$.pid === "") {
+	        return (yield this$.$http.post("/problem", problem));
+	      } else {
+	        return (yield this$.$http.put("/problem/" + this$.pid, problem));
+	      }
 	    });
 	    $form = $('#problem-modify');
 	    $form.form({
@@ -626,63 +630,63 @@ webpackJsonp([0],[
 	          }]
 	        },
 	        timeLmt: {
-	          identifier: 'timeLmt',
+	          identifier: 'timeLimit',
 	          rules: [{
 	            type: 'positive',
 	            prompt: 'time limit must be positive'
 	          }]
 	        },
 	        spaceLmt: {
-	          identifier: 'spaceLmt',
+	          identifier: 'spaceLimit',
 	          rules: [{
 	            type: 'positive',
 	            prompt: 'space limit must be positive'
 	          }]
 	        },
 	        stkLmt: {
-	          identifier: 'stkLmt',
+	          identifier: 'stkLimit',
 	          rules: [{
 	            type: 'positive',
 	            prompt: "stack limit must be positive"
 	          }]
 	        },
 	        outLmt: {
-	          identifier: 'outLmt',
+	          identifier: 'outLimit',
 	          rules: [{
 	            type: 'positive',
 	            prompt: "output limit must be positive"
 	          }]
 	        },
 	        desc: {
-	          identifier: 'desc',
+	          identifier: 'description',
 	          rules: [{
 	            type: "maxLength[65535]",
 	            prompt: "description cannot be longer than 65535"
 	          }]
 	        },
 	        inFmt: {
-	          identifier: 'inFmt',
+	          identifier: 'inputFormat',
 	          rules: [{
 	            type: "maxLength[65535]",
 	            prompt: "input format cannot be longer than 65535"
 	          }]
 	        },
 	        outFmt: {
-	          identifier: 'outFmt',
+	          identifier: 'outputFormat',
 	          rules: [{
 	            type: "maxLength[65535]",
 	            prmopt: "output format cannot be longer than 65535"
 	          }]
 	        },
 	        sampleIn: {
-	          identifier: 'sampleIn',
+	          identifier: 'sampleInput',
 	          rules: [{
 	            type: "maxLength[65535]",
 	            prompt: "sample input cannot be longer than 65535"
 	          }]
 	        },
 	        sampleOut: {
-	          identifier: 'sampleOut',
+	          identifier: 'sampleOutput',
 	          rules: [{
 	            type: "maxLength[65535]",
 	            prompt: "sample output cannot be longer than 65535"
@@ -712,7 +716,7 @@ webpackJsonp([0],[
 	      },
 	      onSuccess: submit
 	    });
-	    if (this.pid === 0) {
+	    if (this.pid === "") {
 	      return setFormValues({
 	        owner: this.uid,
 	        group: 'problems',
@@ -747,7 +751,7 @@ webpackJsonp([0],[
 /* 149 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"problem-modify\" class=\"ui form\"><h2 class=\"ui dividing header\">{{title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (MB)</label><div class=\"ui input\"><input name=\"spaceLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (MB)</label><div class=\"ui input\"><input name=\"stkLmt\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (MB)</label><div class=\"ui input\"><input name=\"outLmt\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"desc\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inFmt\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outFmt\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleIn\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOut\"></textarea></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary\"><i class=\"icon reply\"></i>Back</div><a v-if=\"pid != 0\" href=\"#/problem/{{pid}}/data\" class=\"ui icon labeled button secondary\"><i class=\"icon archive\"></i>Dataset Manage</a></div></div>";
+	module.exports = "<div id=\"problem-modify\" class=\"ui form\"><h2 class=\"ui dividing header\">{{title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLimit\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (MB)</label><div class=\"ui input\"><input name=\"spaceLimit\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (MB)</label><div class=\"ui input\"><input name=\"stkLimit\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (MB)</label><div class=\"ui input\"><input name=\"outLimit\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"description\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inputFormat\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outputFormat\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleInput\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOutput\"></textarea></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary\"><i class=\"icon reply\"></i>Back</div><a v-if=\"pid != 0\" href=\"#/problem/{{pid}}/data\" class=\"ui icon labeled button secondary\"><i class=\"icon archive\"></i>Dataset Manage</a></div></div>";
 
 /***/ },
 /* 150 */
@@ -822,7 +826,7 @@ webpackJsonp([0],[
 /* 152 */
 /***/ function(module, exports) {
 
-	module.exports = "<h1 class=\"ui dividing header\">Problem {{problem._id}}. {{problem.outlook.title}}</h1><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui olive labels\"><div class=\"ui label\">{{problem.config.timeLmt}} s<div class=\"detail\">time limit</div></div><div class=\"ui label\">{{problem.config.spaceLmt}} MB<div class=\"detail\">space limit</div></div><div class=\"ui label\">{{problem.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{problem.permit.group}}<div class=\"detail\">group</div></div></div><div class=\"ui segment\"><div class=\"ui top left attached label teal\">description</div><p mathjax=\"mathjax\" v-html=\"problem.outlook.desc\"></p></div><div class=\"ui two column grid\"><div class=\"row\"><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">input format</div><p v-html=\"problem.outlook.inFmt\"></p></div></div><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">output format</div><p v-html=\"problem.outlook.outFmt\"></p></div></div></div><div class=\"row\"><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">sample input</div><pre>{{problem.outlook.sampleIn}}</pre></div></div><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">sample output</div><pre>{{problem.outlook.sampleOut}}</pre></div></div></div></div></div><div class=\"ui header\"></div><a href=\"#/solution/submit/{{problem._id}}\" class=\"ui icon labeled primary button\"><i class=\"icon rocket\"></i>submit</a><a href=\"#/problem/{{problem._id}}/modify\" class=\"ui icon labeled button\"><i class=\"icon edit\"></i>modify</a><a href=\"#/problem/{{problem._id}}/stat\" class=\"ui icon labeled button\"><i class=\"icon chart bar\"></i>statistics</a>";
+	module.exports = "<h1 class=\"ui dividing header\">Problem {{problem._id}}. {{problem.outlook.title}}</h1><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui olive labels\"><div class=\"ui label\">{{problem.config.timeLimit}} s<div class=\"detail\">time limit</div></div><div class=\"ui label\">{{problem.config.spaceLimit}} MB<div class=\"detail\">space limit</div></div><div class=\"ui label\">{{problem.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{problem.permit.group}}<div class=\"detail\">group</div></div></div><div class=\"ui segment\"><div class=\"ui top left attached label teal\">description</div><p mathjax=\"mathjax\" v-html=\"problem.outlook.description\"></p></div><div class=\"ui two column grid\"><div class=\"row\"><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">input format</div><p v-html=\"problem.outlook.inputFormat\"></p></div></div><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">output format</div><p v-html=\"problem.outlook.outputFormat\"></p></div></div></div><div class=\"row\"><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">sample input</div><pre>{{problem.outlook.sampleInput}}</pre></div></div><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">sample output</div><pre>{{problem.outlook.sampleOutput}}</pre></div></div></div></div></div><div class=\"ui header\"></div><a href=\"#/solution/submit/{{problem._id}}\" class=\"ui icon labeled primary button\"><i class=\"icon rocket\"></i>submit</a><a href=\"#/problem/{{problem._id}}/modify\" class=\"ui icon labeled button\"><i class=\"icon edit\"></i>modify</a><a href=\"#/problem/{{problem._id}}/stat\" class=\"ui icon labeled button\"><i class=\"icon chart bar\"></i>statistics</a>";
 
 /***/ },
 /* 153 */
@@ -1481,7 +1485,7 @@ webpackJsonp([0],[
 /* 183 */
 /***/ function(module, exports) {
 
-	module.exports = "<h1 class=\"ui header dividing\">Rounds</h1><div class=\"ui dropdown floated pointing button labeled icon\"><input type=\"hidden\" name=\"filter\"/><div class=\"default text\">please select filter</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in options\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div><a href=\"#/round/create\" class=\"ui icon labeled button launch primary right floated\"><i class=\"icon plus\"></i>create</a><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui very relxed divided link list\"><div v-for=\"round in rounds\" class=\"item\"><div class=\"ui right floated\">{{round.begTime, round.endTime}}</div><div class=\"description\"><round :rnd=\"round\"></round></div></div></div></div>";
+	module.exports = "<h1 class=\"ui header dividing\">Rounds</h1><div class=\"ui dropdown floated pointing button labeled icon\"><input type=\"hidden\" name=\"filter\"/><div class=\"default text\">please select filter</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in options\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div><a href=\"#/round/create\" class=\"ui icon labeled button launch primary right floated\"><i class=\"icon plus\"></i>create</a><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui very relxed divided link list\"><div v-for=\"round in rounds\" class=\"item\"><div class=\"ui right floated\">{{round.beginTime, round.endTime}}</div><div class=\"description\"><round :rnd=\"round\"></round></div></div></div></div>";
 
 /***/ },
 /* 184 */
@@ -1535,7 +1539,7 @@ webpackJsonp([0],[
 	  probs = map(parseInt, values.probs.split(','));
 	  return data = Object.assign({
 	    title: values.title,
-	    begTime: values.begTime,
+	    beginTime: values.beginTime,
 	    endTime: values.endTime
 	  }, {
 	    probs: probs,
@@ -1551,9 +1555,9 @@ webpackJsonp([0],[
 	  }, probs);
 	  $form.form('set values', {
 	    title: title,
-	    begTime: begTime ? moment(begTime).format('YYYY-MM-DD HH:mm:ss') : void 8,
+	    beginTime: beginTime ? moment(beginTime).format('YYYY-MM-DD HH:mm:ss') : void 8,
 	    endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : void 8,
-	    probs: probs
+	    probs: problems
 	  });
 	  return $form.form('set values', permit);
 	};
@@ -1563,14 +1567,14 @@ webpackJsonp([0],[
 	      rid: 0,
 	      rnd: {
 	        _id: void 8,
-	        probs: []
+	        problems: []
 	      }
 	    };
 	  },
 	  computed: {
 	    dropdownProblems: function(){
 	      var i$, ref$, len$, x, resultObj$ = {};
-	      for (i$ = 0, len$ = (ref$ = this.rnd.probs).length; i$ < len$; ++i$) {
+	      for (i$ = 0, len$ = (ref$ = this.rnd.problems).length; i$ < len$; ++i$) {
 	        x = ref$[i$];
 	        resultObj$[x._id] = formatter.problem(x);
 	      }
@@ -1646,7 +1650,7 @@ webpackJsonp([0],[
 	          ]
 	        },
 	        begTime: {
-	          identifier: 'begTime',
+	          identifier: 'beginTime',
 	          rules: [{
 	            type: 'isTime',
 	            prompt: 'start time should be valid'
@@ -1721,7 +1725,7 @@ webpackJsonp([0],[
 /* 186 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"form-round\" class=\"ui form\"><h2 class=\"ui dividing header\">{{formattedTitle}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui fields three\"><div class=\"ui field\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field\"><label>start from</label><div class=\"ui input\"><input name=\"begTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div><div class=\"ui field\"><label>end at</label><div class=\"ui input\"><input name=\"endTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><h3 class=\"ui dividing header\">Problemset</h3><div class=\"ui field\"><div class=\"ui dropdown icon selection fluid multiple search\"><input type=\"hidden\" name=\"probs\"/><div class=\"default text\">problems</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"(key, value) of dropdownProblems\" data-value=\"{{key}}\" class=\"item\">{{value}}</div></div></div></div><br/><div class=\"ui field\"><a :click=\"delete\" class=\"icon ui labeled button floated red\"><i class=\"icon delete\"></i>delete</a><a class=\"icon ui labeled button floated secondary\"><i class=\"icon cancel\"></i>undo</a><a class=\"icon ui labeled button floated primary submit\"><i class=\"icon save\"></i>save</a></div></div>";
+	module.exports = "<div id=\"form-round\" class=\"ui form\"><h2 class=\"ui dividing header\">{{formattedTitle}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui fields three\"><div class=\"ui field\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field\"><label>start from</label><div class=\"ui input\"><input name=\"beginTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div><div class=\"ui field\"><label>end at</label><div class=\"ui input\"><input name=\"endTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><h3 class=\"ui dividing header\">Problemset</h3><div class=\"ui field\"><div class=\"ui dropdown icon selection fluid multiple search\"><input type=\"hidden\" name=\"problems\"/><div class=\"default text\">problems</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"(key, value) of dropdownProblems\" data-value=\"{{key}}\" class=\"item\">{{value}}</div></div></div></div><br/><div class=\"ui field\"><a :click=\"delete\" class=\"icon ui labeled button floated red\"><i class=\"icon delete\"></i>delete</a><a class=\"icon ui labeled button floated secondary\"><i class=\"icon cancel\"></i>undo</a><a class=\"icon ui labeled button floated primary submit\"><i class=\"icon save\"></i>save</a></div></div>";
 
 /***/ },
 /* 187 */
@@ -1772,7 +1776,7 @@ webpackJsonp([0],[
 	        begTime: 0,
 	        endTime: 0,
 	        _id: 0,
-	        probs: [],
+	        problems: [],
 	        permit: {
 	          owner: "",
 	          group: ""
@@ -1803,7 +1807,7 @@ webpackJsonp([0],[
 /* 189 */
 /***/ function(module, exports) {
 
-	module.exports = "<h1 class=\"ui dividing header\">Round {{rnd._id}}. {{rnd.title}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{rnd.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{rnd.permit.group}}<div class=\"detail\">group</div></div></div><p>{{rnd.begTime}} -- {{rnd.endTime}}</p><br/><div v-if=\"started\"><h2 class=\"ui dividing header\">Problemset</h2><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui relaxed divided link list\"><div v-for=\"prob in rnd.probs\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><br/></div><div v-else=\"v-else\"><p>Sorry, this round has not started.</p></div><a v-if=\"started\" href=\"#/round/{{rnd._id}}/board\" class=\"ui labeled button purple\"><i class=\"icon trophy\"></i>board</a><a href=\"#/round/{{rnd._id}}/modify\" class=\"ui labeled button orange\"><i class=\"icon edit\"></i>modify</a>";
+	module.exports = "<h1 class=\"ui dividing header\">Round {{rnd._id}}. {{rnd.title}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{rnd.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{rnd.permit.group}}<div class=\"detail\">group</div></div></div><p>{{rnd.beginTime}} -- {{rnd.endTime}}</p><br/><div v-if=\"started\"><h2 class=\"ui dividing header\">Problemset</h2><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui relaxed divided link list\"><div v-for=\"prob in rnd.probs\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><br/></div><div v-else=\"v-else\"><p>Sorry, this round has not started.</p></div><a v-if=\"started\" href=\"#/round/{{rnd._id}}/board\" class=\"ui labeled button purple\"><i class=\"icon trophy\"></i>board</a><a href=\"#/round/{{rnd._id}}/modify\" class=\"ui labeled button orange\"><i class=\"icon edit\"></i>modify</a>";
 
 /***/ },
 /* 190 */
@@ -1895,7 +1899,7 @@ webpackJsonp([0],[
 /* 192 */
 /***/ function(module, exports) {
 
-	module.exports = "<table class=\"ui table segment large green selectable\"><thead><tr><th>user</th><th>total</th><th v-for=\"prob in probs\"><problem :prob=\"prob\"></problem></th></tr></thead><tbody><tr v-for=\"[user, score] in board\"><td><user :uid=\"user\"></user></td><td>{{score.total}}</td><td v-for=\"prob in probs\"><code-link :sid=\"score[pid].sid\"></code-link></td></tr></tbody></table>";
+	module.exports = "<table class=\"ui table segment large green selectable\"><thead><tr><th>user</th><th>total</th><th v-for=\"problem in problems\"><problem :prob=\"problem\"></problem></th></tr></thead><tbody><tr v-for=\"[user, score] in board\"><td><user :uid=\"user\"></user></td><td>{{score.total}}</td><td v-for=\"problem in problems\"><code-link :sid=\"score[pid].sid\"></code-link></td></tr></tbody></table>";
 
 /***/ },
 /* 193 */

@@ -1,5 +1,5 @@
 require! {
-  \../db
+  \../models
   \../crypt
   \debug
   \koa-jwt
@@ -27,11 +27,11 @@ export token = ->*
 export login = ->*
   # @check-body '_id' .len 6, 15
   # @check-body 'pswd' .non-empty!
-  {uid, pswd} = @request.body
+  {uid, password} = @request.body
   return if @errors
 
-  user = yield db.users.find-by-id uid .exec!
-  if not user.check-password pswd
+  user = yield models.users.find-by-id uid .exec!
+  if not user.check-password password
     @body = status:
       type: \err
       msg: "bad user/password combination"

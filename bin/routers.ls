@@ -4,7 +4,6 @@ require! {
   \co-busboy
   \./config
   \./core
-  \./db
   \./controllers : {data, problems, solutions, rounds, site, users}
 }
 
@@ -42,10 +41,10 @@ params-validator =
 
 router = new koa-router!
 router
-  .param \pid, params-validator.pid
-  .param \sid, params-validator.sid
-  .param \rid, params-validator.rid
-  .param \uid, params-validator.uid
+  # .param \pid, params-validator.pid
+  # .param \sid, params-validator.sid
+  # .param \rid, params-validator.rid
+  # .param \uid, params-validator.uid
 
   .get    '/site/theme/:theme',         site.theme
   # .get    '/site/session',              site.session
@@ -67,7 +66,8 @@ router
   .get    '/problem',                   problems.list
   # .get    '/problem/next-count',        prob.next-count
   .get    '/problem/:pid',              problems.show
-  .post   '/problem/:pid',              problems.save
+  .post   '/problem',                   problems.save
+  .put    '/problem/:pid',              problems.save
   .delete '/problem/:pid',              problems.remove
   .get    '/problem/:pid/stat',         problems.stat
 

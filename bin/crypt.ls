@@ -1,8 +1,7 @@
 require! {
-  "node-forge"
-  "debug"
+  \node-forge
+  \debug
   \koa-jwt
-  "prelude-ls": _
   \./config
 }
 

@@ -1,5 +1,5 @@
 require! {
-  \../db
+  \../models
   \../core
   \co-busboy
   \debug
@@ -11,7 +11,7 @@ export upload = ->*
   log \uploading
   {pid} = @params
 
-  problem = yield db.problems.find-by-id pid, \permit .exec!
+  problem = yield models.problems.find-by-id pid, \permit .exec!
   if not problem
     throw new Error "no such problem"
   problem.permit.check-access @state.user, \w
@@ -31,7 +31,7 @@ export upload = ->*
 export repair = ->*
   {pid} = @params
 
-  problem = yield db.problems.find-by-id pid, "config.dataset permit" .exec!
+  problem = yield models.problems.find-by-id pid, "config.dataset permit" .exec!
   if not problem
     throw new Error 'xxx'
   problem.check-access @state.user, \w
@@ -39,13 +39,13 @@ export repair = ->*
 
   new-pairs = pairs
   @body =
-    type: 'server/success'
+    type: 'ok'
     payload: new-pairs
 
 export remove = ->* # validate
   {pid, file} = @params
 
-  problem = yield db.problems.find-by-id pid, "config.dataset permit" .exec!
+  problem = yield models.problems.find-by-id pid, "config.dataset permit" .exec!
   if not problem
     throw new Error "xxx"
   problem.permit.check-access @state.user, \w
@@ -58,6 +58,6 @@ export remove = ->* # validate
     msg: "data has been deleted"
 
 # export show = ->*
-#   @ensure-access db.problems.model, pid, \w
-#   data = yield db.problems.list-dataset @params.pid
+#   @ensure-access models.problems.model, pid, \w
+#   data = yield models.problems.list-dataset @params.pid
 #   @body = data

@@ -4,14 +4,14 @@
       tr
         th user
         th total
-        th(v-for="prob in probs")
-          problem(:prob="prob")
+        th(v-for="problem in problems")
+          problem(:prob="problem")
     tbody
       tr(v-for="[user, score] in board")
         td
           user(:uid="user")
         td {{score.total}}
-        td(v-for="prob in probs")
+        td(v-for="problem in problems")
           code-link(:sid="score[pid].sid")
 </template>
 

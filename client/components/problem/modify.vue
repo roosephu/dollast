@@ -26,39 +26,39 @@
       .ui.field
         label time limit (s)
         .ui.input
-          input(name="timeLmt", type="number")
+          input(name="timeLimit", type="number")
       .ui.field
         label space limit (MB)
         .ui.input
-          input(name="spaceLmt", type="number")
+          input(name="spaceLimit", type="number")
       .ui.field
         label stack limit (MB)
         .ui.input
-          input(name="stkLmt", type="number")
+          input(name="stkLimit", type="number")
       .ui.field
         label output limit (MB)
         .ui.input
-          input(name="outLmt", type="number")
+          input(name="outLimit", type="number")
 
     h3.ui.dividing.header Description
     .ui.field
       .ui.field
         label description
-        textarea(name="desc")
+        textarea(name="description")
     .ui.two.fields
       .ui.field
         label input format
-        textarea(name="inFmt")
+        textarea(name="inputFormat")
       .ui.field
         label output format
-        textarea(name="outFmt")
+        textarea(name="outputFormat")
     .ui.two.fields
       .ui.field
         label sample input
-        textarea(name="sampleIn")
+        textarea(name="sampleInput")
       .ui.field
         label sample output
-        textarea(name="sampleOut")
+        textarea(name="sampleOutput")
 
     h3.ui.dividing.header Permission
     .ui.four.fields
@@ -107,18 +107,18 @@ flatten-object = (obj) ->
 
 get-form-values = ->
   values = $ '.form' .form 'get values'
-  outlook = values{title, desc, in-fmt, out-fmt, sample-in, sample-out}
-  config  = values{rid, pid, judger, time-lmt, space-lmt, out-lmt, stk-lmt}
+  outlook = values{title, description, input-format, output-format, sample-input, sample-output}
+  config  = values{rid, pid, judger, time-limit, space-limit, out-limit, stk-limit}
   permit  = values{owner, group, access}
   if config.rid == ""
     delete config.rid
   else
     config.rid |>= parse-int
 
-  config.time-lmt  |>= parse-float
-  config.space-lmt |>= parse-float
-  config.out-lmt   |>= parse-float
-  config.stk-lmt   |>= parse-float
+  config.time-limit  |>= parse-float
+  config.space-limit |>= parse-float
+  config.out-limit   |>= parse-float
+  config.stk-limit   |>= parse-float
 
   {outlook, config, permit}
 
@@ -133,11 +133,11 @@ module.exports =
       uid: (.session.uid)
 
   data: ->
-    pid: 0
+    pid: ""
     files: []
     judgers: [\string, \real, \strict, \custom]
     problem:
-      _id: 0
+      _id: ""
       outlook:
         title: 'hello world'
       config:
@@ -145,7 +145,7 @@ module.exports =
 
   computed:
     title: ->
-      if @problem._id != 0
+      if @problem._id != ""
         "Problem #{@problem._id}. #{@problem.outlook.title}"
       else
         "Create new problem"
@@ -157,7 +157,10 @@ module.exports =
       e.prevent-default!
       problem = get-form-values!
       log {problem}
-      yield @$http.post "/problem/#{@pid}", problem
+      if @pid == ""
+        yield @$http.post "/problem", problem
+      else
+        yield @$http.put "/problem/#{@pid}", problem
 
     $form = $ '#problem-modify'
     $form.form do
@@ -185,55 +188,55 @@ module.exports =
               prompt: 'please choose your judger'
             ...
         time-lmt:
-          identifier: \timeLmt
+          identifier: \timeLimit
           rules:
             * type: 'positive'
               prompt: 'time limit must be positive'
             ...
         space-lmt:
-          identifier: \spaceLmt
+          identifier: \spaceLimit
           rules:
             * type: \positive
               prompt: 'space limit must be positive'
             ...
         stk-lmt:
-          identifier: \stkLmt
+          identifier: \stkLimit
           rules:
             * type: \positive
               prompt: "stack limit must be positive"
             ...
         out-lmt:
-          identifier: \outLmt
+          identifier: \outLimit
           rules:
             * type: \positive
               prompt: "output limit must be positive"
             ...
         desc:
-          identifier: \desc
+          identifier: \description
           rules:
             * type: "maxLength[65535]"
               prompt: "description cannot be longer than 65535"
             ...
         in-fmt:
-          identifier: \inFmt
+          identifier: \inputFormat
           rules:
             * type: "maxLength[65535]"
               prompt: "input format cannot be longer than 65535"
             ...
         out-fmt:
-          identifier: \outFmt
+          identifier: \outputFormat
           rules:
             * type: "maxLength[65535]"
               prmopt: "output format cannot be longer than 65535"
             ...
         sample-in:
-          identifier: \sampleIn
+          identifier: \sampleInput
           rules:
             * type: "maxLength[65535]"
               prompt: "sample input cannot be longer than 65535"
             ...
         sample-out:
-          identifier: \sampleOut
+          identifier: \sampleOutput
           rules:
             * type: "maxLength[65535]"
               prompt: "sample output cannot be longer than 65535"
@@ -258,7 +261,7 @@ module.exports =
             ...
       on-success:
         submit
-    if @pid == 0
+    if @pid == ""
       set-form-values do
         owner: @uid
         group: \problems

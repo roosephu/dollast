@@ -12,10 +12,10 @@
       | create
     .ui.segment
       .ui.very.relaxed.divided.link.list
-        .item(v-for="prob in problems")
+        .item(v-for="problem in problems")
           .ui.right.floated ??
           .ui.description
-            problem(:prob="prob")
+            problem(:prob="problem")
 </template>
 
 <script lang="vue-livescript">

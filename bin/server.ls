@@ -14,7 +14,7 @@ require! {
   \path
   \debug
   \./config
-  \./db
+  \./models
   \./crypt
 }
 
@@ -24,7 +24,7 @@ log = debug \dollast:server
 
 # ==== Database ====
 
-log "No Database found" if !db
+log "No Database found" if !models
 
 app.use koa-compress!
 app.use koa-conditional-get!

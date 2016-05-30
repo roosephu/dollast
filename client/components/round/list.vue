@@ -12,7 +12,7 @@
   .ui.segment(:class="{loading: $loadingRouteData}")
     .ui.very.relxed.divided.link.list
       .item(v-for="round in rounds")
-        .ui.right.floated {{round.begTime, round.endTime}}
+        .ui.right.floated {{round.beginTime, round.endTime}}
         .description
           round(:rnd="round")
 </template>

@@ -2,9 +2,9 @@
   h1.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
   .ui.segment(:class="{loading: $loadingRouteData}")
     .ui.olive.labels
-      .ui.label {{problem.config.timeLmt}} s
+      .ui.label {{problem.config.timeLimit}} s
         .detail time limit
-      .ui.label {{problem.config.spaceLmt}} MB
+      .ui.label {{problem.config.spaceLimit}} MB
         .detail space limit
       .ui.label {{problem.permit.owner}}
         .detail owner
@@ -13,26 +13,26 @@
 
     .ui.segment
       .ui.top.left.attached.label.teal description
-      p(mathjax, v-html="problem.outlook.desc")
+      p(mathjax, v-html="problem.outlook.description")
     .ui.two.column.grid
       .row
         .column
           .ui.segment
             .ui.top.left.attached.label.teal input format
-            p(v-html="problem.outlook.inFmt")
+            p(v-html="problem.outlook.inputFormat")
         .column
           .ui.segment
             .ui.top.left.attached.label.teal output format
-            p(v-html="problem.outlook.outFmt")
+            p(v-html="problem.outlook.outputFormat")
       .row
         .column
           .ui.segment
             .ui.top.left.attached.label.teal sample input
-            pre {{problem.outlook.sampleIn}}
+            pre {{problem.outlook.sampleInput}}
         .column
           .ui.segment
             .ui.top.left.attached.label.teal sample output
-            pre {{problem.outlook.sampleOut}}
+            pre {{problem.outlook.sampleOutput}}
 
   .ui.header
 

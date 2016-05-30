@@ -1,20 +1,20 @@
 require! {
-  \../db
+  \../models
   \debug
 }
 
 log = debug \dollast:ctrl:round
 
 export list = ->*
-  @body = yield db.rounds.find null, 'title begTime endTime'
+  @body = yield models.rounds.find null, 'title beginTime endTime'
     .lean!
     .exec!
 
 export show = ->*
   {rid} = @params
 
-  round = yield db.rounds.find-by-id rid, '-__v'
-    .populate 'probs', '_id outlook.title'
+  round = yield models.rounds.find-by-id rid, '-__v'
+    .populate 'problems', '_id outlook.title'
     .lean!
     .exec!
 
@@ -34,11 +34,11 @@ export save = ->*
     delete round._id
 
   if rid == 0
-    rid = yield db.rounds.next-count!
+    rid = yield models.rounds.next-count!
     round._id = rid
     log {rid}
   else
-    existed = yield db.rounds.find-by-id rid, \permit .exec!
+    existed = yield models.rounds.find-by-id rid, \permit .exec!
     if not existed
       @body =
         status:
@@ -50,7 +50,7 @@ export save = ->*
     # TODO: check permit is not modified here
     # only owner can transfer owner
 
-  @body = yield db.rounds.update _id: rid, round, upsert: true, overwrite: true .exec!
+  @body = yield models.rounds.update _id: rid, round, upsert: true, overwrite: true .exec!
 
   @body <<< status:
     type: "ok"
@@ -59,7 +59,7 @@ export save = ->*
 export remove = ->*
   {rid} = @params
 
-  round = yield db.rounds.find-by-id rid, \permit .exec!
+  round = yield models.rounds.find-by-id rid, \permit .exec!
   round.permit.check-access @state.user, \w
 
   round.remove!
@@ -71,10 +71,10 @@ export remove = ->*
 export board = ->*
   {rid} = @params
 
-  round = yield db.rounds.find-by-id rid, \permit .exec!
+  round = yield models.rounds.find-by-id rid, \permit .exec!
   if not round
     throw new Error "no such rounds"
     return
   round.permit.check-access @state.user, \r
 
-  @body = yield db.solutions.get-solutions-in-a-round rid
+  @body = yield models.solutions.get-solutions-in-a-round rid
