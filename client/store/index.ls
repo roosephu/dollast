@@ -7,6 +7,7 @@ require! {
 state =
   session:
     guest: true
+  error: void
 
 mutations =
   load-from-token: (state, token) ->
@@ -21,6 +22,12 @@ mutations =
 
   logout: (state) ->
     state.session = guest: true
+
+  raise-error: (state, error) ->
+    state.error = error
+
+  resolve-error: ->
+    state.error = void
 
 module.exports = new vuex.Store do
   {state, mutations}

@@ -62,8 +62,9 @@ require! {
   \co
   \moment
   \debug
+  \prelude-ls : {map, pairs-to-obj, obj-to-pairs, flatten}
   \../format : {formatter}
-  \prelude-ls : {map}
+  \../../actions : {raise-error}
 }
 
 log = debug \dollast:component:round:modify
@@ -114,6 +115,8 @@ module.exports =
   vuex:
     getters:
       uid: (.session.uid)
+    actions:
+      {raise-error}
 
   ready: ->
     $dropdown = $ '.ui.selection.dropdown'
@@ -135,8 +138,9 @@ module.exports =
     submit = co.wrap (e) ~>*
       e.prevent-default!
       data = get-form-values!
-      response = yield vue.http.post "/round/#{@rid}", data
-      # log {response}
+      {data: response} = yield vue.http.post "/round/#{@rid}", data
+      if response.errors
+        log {response.errors}
 
     $form = $ '#form-round'
     $form.form do
@@ -192,8 +196,13 @@ module.exports =
   route:
     data: co.wrap (to: params: {rid}) ->*
       if rid != void
-        {data} = yield vue.http.get "/round/#{rid}"
-        {rid, rnd: data}
+        {data: response} = yield vue.http.get "/round/#{rid}"
+        if response.errors
+          @raise-error response
+          return null
+        round = response.data
+
+        {rid, rnd: round}
 
   watch:
     'rnd._id': ->

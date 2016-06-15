@@ -16,8 +16,8 @@ webpackJsonp([0],[
 	vue.use(vueRouter);
 	router = __webpack_require__(135);
 	vue.use(vueResource);
-	x$ = app = __webpack_require__(208);
-	x$.store = __webpack_require__(199);
+	x$ = app = __webpack_require__(211);
+	x$.store = __webpack_require__(147);
 	app = vue.extend(app);
 	extraRules = {
 	  positive: function(text){
@@ -209,61 +209,61 @@ webpackJsonp([0],[
 	    component: __webpack_require__(140)
 	  },
 	  "/problem/create": {
-	    component: __webpack_require__(147)
-	  },
-	  "/problem/:pid": {
 	    component: __webpack_require__(150)
 	  },
-	  "/problem/:pid/modify": {
-	    component: __webpack_require__(147)
-	  },
-	  "/problem/:pid/stat": {
+	  "/problem/:pid": {
 	    component: __webpack_require__(153)
 	  },
+	  "/problem/:pid/modify": {
+	    component: __webpack_require__(150)
+	  },
+	  "/problem/:pid/stat": {
+	    component: __webpack_require__(156)
+	  },
 	  "/problem/:pid/data": {
-	    component: __webpack_require__(216)
+	    component: __webpack_require__(175)
 	  },
 	  "/solution": {
-	    component: __webpack_require__(172)
+	    component: __webpack_require__(178)
 	  },
 	  "/solution/submit/:pid": {
-	    component: __webpack_require__(175)
+	    component: __webpack_require__(181)
 	  },
 	  "/solution/user/:uid": {
 	    component: __webpack_require__(136)
 	  },
 	  "/solution/:sid": {
-	    component: __webpack_require__(178)
+	    component: __webpack_require__(184)
 	  },
 	  "/round": {
-	    component: __webpack_require__(181)
-	  },
-	  "/round/create": {
-	    component: __webpack_require__(184)
-	  },
-	  "/round/:rid": {
 	    component: __webpack_require__(187)
 	  },
-	  "/round/:rid/modify": {
-	    component: __webpack_require__(184)
-	  },
-	  "/round/:rid/board": {
+	  "/round/create": {
 	    component: __webpack_require__(190)
 	  },
-	  "/user": {
+	  "/round/:rid": {
 	    component: __webpack_require__(193)
 	  },
-	  "/user/login": {
+	  "/round/:rid/modify": {
+	    component: __webpack_require__(190)
+	  },
+	  "/round/:rid/board": {
 	    component: __webpack_require__(196)
 	  },
-	  "/user/register": {
+	  "/user": {
+	    component: __webpack_require__(199)
+	  },
+	  "/user/login": {
 	    component: __webpack_require__(202)
 	  },
+	  "/user/register": {
+	    component: __webpack_require__(205)
+	  },
 	  "/user/:uid": {
-	    component: __webpack_require__(193)
+	    component: __webpack_require__(199)
 	  },
 	  "/user/:uid/modify": {
-	    component: __webpack_require__(205)
+	    component: __webpack_require__(208)
 	  }
 	});
 	module.exports = router;
@@ -338,7 +338,7 @@ webpackJsonp([0],[
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/problem/list.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(146)
+	__vue_template__ = __webpack_require__(149)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -360,13 +360,19 @@ webpackJsonp([0],[
 /* 141 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, co, debug, problem, log;
+	var vue, co, debug, problem, raiseError, log;
 	vue = __webpack_require__(1);
 	co = __webpack_require__(142);
 	debug = __webpack_require__(29);
 	problem = __webpack_require__(143);
+	raiseError = __webpack_require__(146).raiseError;
 	log = debug('dollast:component:problem:list');
 	module.exports = {
+	  vuex: {
+	    actions: {
+	      raiseError: raiseError
+	    }
+	  },
 	  data: function(){
 	    return {
 	      filter: 'all',
@@ -377,12 +383,19 @@ webpackJsonp([0],[
 	  components: {
 	    problem: problem
 	  },
-	  created: function(){
-	    var this$ = this;
-	    return co(function*(){
-	      var ref$;
-	      return ref$ = (yield vue.http.get('/problem')), this$.problems = ref$.data, ref$;
-	    });
+	  route: {
+	    data: co.wrap(function*(){
+	      var response, problems;
+	      response = (yield vue.http.get('/problem')).data;
+	      if (response.errors) {
+	        this.raiseError(response);
+	        return null;
+	      }
+	      problems = response.data;
+	      return {
+	        problems: problems
+	      };
+	    })
 	  },
 	  ready: function(){
 	    var $filter, this$ = this;
@@ -448,21 +461,162 @@ webpackJsonp([0],[
 
 /***/ },
 /* 146 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div class=\"ui\"><h1 class=\"ui dividing header\">Problem List</h1><div class=\"ui dropdown floated pointing button labeled icon\"><input type=\"hidden\" name=\"filter\"/><div class=\"default text\">please select filter</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in options\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div><a href=\"#/problem/create\" class=\"ui icon labeled button right floated primary\"><i class=\"icon plus\"></i>create</a><div class=\"ui segment\"><div class=\"ui very relaxed divided link list\"><div v-for=\"problem in problems\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"ui description\"><problem :prob=\"problem\"></problem></div></div></div></div></div>";
+	var vue, co, debug, store, log, login, loadFromToken, logout, raiseError, resolveError, out$ = typeof exports != 'undefined' && exports || this;
+	vue = __webpack_require__(1);
+	co = __webpack_require__(142);
+	debug = __webpack_require__(29);
+	store = __webpack_require__(147);
+	log = debug('dollast:actions');
+	out$.login = login = co.wrap(function*(arg$, info){
+	  var dispatch, data;
+	  dispatch = arg$.dispatch;
+	  data = (yield vue.http.post('/site/login', info)).data;
+	  localStorage.token = data.payload.token;
+	  return dispatch('loadFromToken', data.payload.token);
+	});
+	out$.loadFromToken = loadFromToken = function(arg$){
+	  var dispatch;
+	  dispatch = arg$.dispatch;
+	  if (localStorage.token) {
+	    return dispatch('loadFromToken', localStorage.token);
+	  }
+	};
+	out$.logout = logout = function(arg$){
+	  var dispatch;
+	  dispatch = arg$.dispatch;
+	  delete localStorage.token;
+	  return dispatch('logout');
+	};
+	out$.raiseError = raiseError = function(arg$, response){
+	  var dispatch;
+	  dispatch = arg$.dispatch;
+	  log('raise', {
+	    response: response
+	  });
+	  return dispatch('raiseError', response.errors[0]);
+	};
+	out$.resolveError = resolveError = function(arg$){
+	  var dispatch;
+	  dispatch = arg$.dispatch;
+	  return dispatch('resolveError');
+	};
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/actions/index.ls.map
+
 
 /***/ },
 /* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var vue, vuex, auth, state, mutations;
+	vue = __webpack_require__(1);
+	vuex = __webpack_require__(3);
+	auth = __webpack_require__(148);
+	state = {
+	  session: {
+	    guest: true
+	  },
+	  error: void 8
+	};
+	mutations = {
+	  loadFromToken: function(state, token){
+	    var payload, clientInfo;
+	    payload = auth.jwt.dec(token);
+	    clientInfo = JSON.parse(payload.client);
+	    localStorage.token = token;
+	    vue.http.headers.common.Authorization = "Bearer " + token;
+	    return state.session = {
+	      guest: false,
+	      uid: clientInfo.uid,
+	      token: token
+	    };
+	  },
+	  logout: function(state){
+	    return state.session = {
+	      guest: true
+	    };
+	  },
+	  raiseError: function(state, error){
+	    return state.error = error;
+	  },
+	  resolveError: function(){
+	    return state.error = void 8;
+	  }
+	};
+	module.exports = new vuex.Store({
+	  state: state,
+	  mutations: mutations
+	});
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/store/index.ls.map
+
+
+/***/ },
+/* 148 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var debug, pubKey, RSAEntity, log, ref$, out$ = typeof exports != 'undefined' && exports || this;
+	debug = __webpack_require__(29);
+	pubKey = '-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCV8qwyGUz1mKUNyMUXIb5THUYJ\n9Xf9WgL/GC5UeVon7JKtzeWXRSCmzxlO5XD4GD8zcJ728kNfABdizPQ1HG4MFfRc\ns5vPQDiIR23dafkGODmE039aKRiTc+xxrLgx3huasFan+2yG/tiFQbXEFfAmLaal\n6FuOukBTwitq0XBdiQIDAQAB\n-----END PUBLIC KEY-----';
+	RSAEntity = forge.pki.publicKeyFromPem(pubKey);
+	log = debug('dollast:auth');
+	ref$ = out$;
+	ref$.RSA = {
+	  enc: function(txt){
+	    return txt;
+	  },
+	  dec: function(cipher, key){
+	    return cipher;
+	  }
+	};
+	ref$.jwt = {
+	  enc: function(header, payload, key){
+	    var header64, payload64, unsignedToken, h, signature64, ret;
+	    if ('string' !== typeof header) {
+	      header = JSON.stringify(header);
+	    }
+	    if ('string' !== typeof payload) {
+	      payload = JSON.stringify(payload);
+	    }
+	    header64 = forge.util.encode64(header);
+	    payload64 = forge.util.encode64(payload);
+	    unsignedToken = header64 + "." + payload64;
+	    h = forge.hmac.create();
+	    h.start('sha256', key);
+	    h.update(unsignedToken);
+	    signature64 = forge.util.encode64(forge.util.hexToBytes(h.digest().toHex()));
+	    ret = (unsignedToken + "." + signature64).replace(/\#g, '_' .replace /['+/g'], '-').replace(/\=/g, '');
+	    return ret;
+	  },
+	  dec: function(token){
+	    var jwtStruct, payload;
+	    jwtStruct = token.split('.');
+	    while (jwtStruct[1].length % 4 !== 0) {
+	      jwtStruct[1] += "=";
+	    }
+	    return payload = JSON.parse(forge.util.decode64(jwtStruct[1]));
+	  }
+	};
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/store/auth.ls.map
+
+
+/***/ },
+/* 149 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"ui\"><h1 class=\"ui dividing header\">Problem List</h1><div class=\"ui dropdown floated pointing button labeled icon\"><input type=\"hidden\" name=\"filter\"/><div class=\"default text\">please select filter</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in options\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div><a href=\"#/problem/create\" class=\"ui icon labeled button right floated primary\"><i class=\"icon plus\"></i>create</a><div class=\"ui segment\"><div class=\"ui very relaxed divided link list\"><div v-for=\"problem in problems\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"ui description\"><problem :prob=\"problem\"></problem></div></div></div></div></div>";
+
+/***/ },
+/* 150 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(148)
+	__vue_script__ = __webpack_require__(151)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/problem/modify.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(149)
+	__vue_template__ = __webpack_require__(152)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -481,13 +635,14 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 148 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var debug, co, vue, log, flattenObject, getFormValues, setFormValues, this$ = this;
+	var debug, co, vue, raiseError, log, flattenObject, getFormValues, setFormValues, this$ = this;
 	debug = __webpack_require__(29);
 	co = __webpack_require__(142);
 	vue = __webpack_require__(1);
+	raiseError = __webpack_require__(146).raiseError;
 	log = debug('dollast:component:problem:modify');
 	flattenObject = function(obj){
 	  var ret, key, val;
@@ -554,6 +709,9 @@ webpackJsonp([0],[
 	      uid: function(it){
 	        return it.session.uid;
 	      }
+	    },
+	    actions: {
+	      raiseError: raiseError
 	    }
 	  },
 	  data: function(){
@@ -585,16 +743,19 @@ webpackJsonp([0],[
 	    var submit, $form, this$ = this;
 	    $('.dropdown').dropdown();
 	    submit = co.wrap(function*(e){
-	      var problem;
+	      var problem, data;
 	      e.preventDefault();
 	      problem = getFormValues();
 	      log({
 	        problem: problem
 	      });
 	      if (this$.pid === "") {
-	        return (yield this$.$http.post("/problem", problem));
+	        data = (yield this$.$http.post("/problem", problem)).data;
 	      } else {
-	        return (yield this$.$http.put("/problem/" + this$.pid, problem));
+	        data = (yield this$.$http.put("/problem/" + this$.pid, problem)).data;
+	      }
+	      if (data.errors !== void 8) {
+	        return log(data.errors);
 	      }
 	    });
 	    $form = $('#problem-modify');
@@ -726,14 +887,19 @@ webpackJsonp([0],[
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
-	      var pid, data;
+	      var pid, response, problem;
 	      pid = arg$.to.params.pid;
 	      if (pid !== void 8) {
-	        data = (yield vue.http.get("/problem/" + pid)).data;
-	        setFormValues(data);
+	        response = (yield vue.http.get("/problem/" + pid)).data;
+	        if (response.errors) {
+	          this$.raiseError(response);
+	          return null;
+	        }
+	        problem = response.data;
+	        setFormValues(problem);
 	        return {
 	          pid: pid,
-	          problem: data
+	          problem: problem
 	        };
 	      }
 	    })
@@ -748,22 +914,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 149 */
+/* 152 */
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"problem-modify\" class=\"ui form\"><h2 class=\"ui dividing header\">{{title}}</h2><div class=\"ui error message\"></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui three fields\"><div class=\"ui field eight wide\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field four wide\"><label>round</label><div class=\"ui input\"><input name=\"rid\" type=\"number\" placeholder=\"optional\"/></div></div><div class=\"ui field four wide\"><label>judger</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"judger\"/><div class=\"default text\">choose a judger</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in judgers\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><div class=\"ui four fields\"><div class=\"ui field\"><label>time limit (s)</label><div class=\"ui input\"><input name=\"timeLimit\" type=\"number\"/></div></div><div class=\"ui field\"><label>space limit (MB)</label><div class=\"ui input\"><input name=\"spaceLimit\" type=\"number\"/></div></div><div class=\"ui field\"><label>stack limit (MB)</label><div class=\"ui input\"><input name=\"stkLimit\" type=\"number\"/></div></div><div class=\"ui field\"><label>output limit (MB)</label><div class=\"ui input\"><input name=\"outLimit\" type=\"number\"/></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui field\"><div class=\"ui field\"><label>description</label><textarea name=\"description\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>input format</label><textarea name=\"inputFormat\"></textarea></div><div class=\"ui field\"><label>output format</label><textarea name=\"outputFormat\"></textarea></div></div><div class=\"ui two fields\"><div class=\"ui field\"><label>sample input</label><textarea name=\"sampleInput\"></textarea></div><div class=\"ui field\"><label>sample output</label><textarea name=\"sampleOutput\"></textarea></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><div class=\"ui icon labeled button primary submit\"><i class=\"icon save\"></i>Save</div><div href=\"#/problem/{{pid}}\" class=\"ui icon labeled button secondary\"><i class=\"icon reply\"></i>Back</div><a v-if=\"pid != 0\" href=\"#/problem/{{pid}}/data\" class=\"ui icon labeled button secondary\"><i class=\"icon archive\"></i>Dataset Manage</a></div></div>";
 
 /***/ },
-/* 150 */
+/* 153 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(151)
+	__vue_script__ = __webpack_require__(154)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/problem/show.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(152)
+	__vue_template__ = __webpack_require__(155)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -782,15 +948,21 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 151 */
+/* 154 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var co, debug, vue, log, this$ = this;
+	var co, debug, vue, raiseError, log;
 	co = __webpack_require__(142);
 	debug = __webpack_require__(29);
 	vue = __webpack_require__(1);
+	raiseError = __webpack_require__(146).raiseError;
 	log = debug('dollast:component:problem:show');
 	module.exports = {
+	  vuex: {
+	    actions: {
+	      raiseError: raiseError
+	    }
+	  },
 	  data: function(){
 	    return {
 	      problem: {
@@ -802,11 +974,16 @@ webpackJsonp([0],[
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
-	      var pid, data;
+	      var pid, response, problem;
 	      pid = arg$.to.params.pid;
-	      data = (yield vue.http.get("/problem/" + pid)).data;
+	      response = (yield vue.http.get("/problem/" + pid)).data;
+	      if (response.errors) {
+	        this.raiseError(response);
+	        return null;
+	      }
+	      problem = response.data;
 	      return {
-	        problem: data
+	        problem: problem
 	      };
 	    })
 	  },
@@ -823,22 +1000,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 152 */
+/* 155 */
 /***/ function(module, exports) {
 
 	module.exports = "<h1 class=\"ui dividing header\">Problem {{problem._id}}. {{problem.outlook.title}}</h1><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui olive labels\"><div class=\"ui label\">{{problem.config.timeLimit}} s<div class=\"detail\">time limit</div></div><div class=\"ui label\">{{problem.config.spaceLimit}} MB<div class=\"detail\">space limit</div></div><div class=\"ui label\">{{problem.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{problem.permit.group}}<div class=\"detail\">group</div></div></div><div class=\"ui segment\"><div class=\"ui top left attached label teal\">description</div><p mathjax=\"mathjax\" v-html=\"problem.outlook.description\"></p></div><div class=\"ui two column grid\"><div class=\"row\"><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">input format</div><p v-html=\"problem.outlook.inputFormat\"></p></div></div><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">output format</div><p v-html=\"problem.outlook.outputFormat\"></p></div></div></div><div class=\"row\"><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">sample input</div><pre>{{problem.outlook.sampleInput}}</pre></div></div><div class=\"column\"><div class=\"ui segment\"><div class=\"ui top left attached label teal\">sample output</div><pre>{{problem.outlook.sampleOutput}}</pre></div></div></div></div></div><div class=\"ui header\"></div><a href=\"#/solution/submit/{{problem._id}}\" class=\"ui icon labeled primary button\"><i class=\"icon rocket\"></i>submit</a><a href=\"#/problem/{{problem._id}}/modify\" class=\"ui icon labeled button\"><i class=\"icon edit\"></i>modify</a><a href=\"#/problem/{{problem._id}}/stat\" class=\"ui icon labeled button\"><i class=\"icon chart bar\"></i>statistics</a>";
 
 /***/ },
-/* 153 */
+/* 156 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(154)
+	__vue_script__ = __webpack_require__(157)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/problem/stat.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(171)
+	__vue_template__ = __webpack_require__(174)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -857,15 +1034,16 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 154 */
+/* 157 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, debug, co, format, ref$, average, map, filter, log, generateStat;
+	var vue, debug, co, ref$, average, map, filter, format, raiseError, log, generateStat;
 	vue = __webpack_require__(1);
 	debug = __webpack_require__(29);
 	co = __webpack_require__(142);
-	format = __webpack_require__(155);
-	ref$ = __webpack_require__(165), average = ref$.average, map = ref$.map, filter = ref$.filter;
+	ref$ = __webpack_require__(158), average = ref$.average, map = ref$.map, filter = ref$.filter;
+	format = __webpack_require__(164);
+	raiseError = __webpack_require__(146).raiseError;
 	log = debug('dollast:component:problem:stat');
 	generateStat = function(sols){
 	  var scores, res$, i$, len$, sol, mean, median, variance, stddev, solved, this$ = this;
@@ -904,6 +1082,11 @@ webpackJsonp([0],[
 	  };
 	};
 	module.exports = {
+	  vuex: {
+	    actions: {
+	      raiseError: raiseError
+	    }
+	  },
 	  data: function(){
 	    return {
 	      stat: [],
@@ -912,9 +1095,14 @@ webpackJsonp([0],[
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
-	      var pid, ref$, sols, prob, stat;
+	      var pid, response, ref$, sols, prob, stat;
 	      pid = arg$.to.params.pid;
-	      ref$ = (yield vue.http.get("/problem/" + pid + "/stat")).data, sols = ref$.sols, prob = ref$.prob;
+	      response = (yield vue.http.get("/problem/" + pid + "/stat")).data;
+	      if (response.errors) {
+	        this.raiseError(response);
+	        return null;
+	      }
+	      ref$ = response.data, sols = ref$.sols, prob = ref$.prob;
 	      stat = generateStat(sols);
 	      return {
 	        stat: {
@@ -935,14 +1123,20 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 155 */
+/* 158 */,
+/* 159 */,
+/* 160 */,
+/* 161 */,
+/* 162 */,
+/* 163 */,
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var codeLink, problem, round, user;
-	codeLink = __webpack_require__(156);
+	codeLink = __webpack_require__(165);
 	problem = __webpack_require__(143);
-	round = __webpack_require__(159);
-	user = __webpack_require__(162);
+	round = __webpack_require__(168);
+	user = __webpack_require__(171);
 	module.exports = {
 	  codeLink: codeLink,
 	  problem: problem,
@@ -964,16 +1158,16 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 156 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(157)
+	__vue_script__ = __webpack_require__(166)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/format/code-link.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(158)
+	__vue_template__ = __webpack_require__(167)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -992,7 +1186,7 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 157 */
+/* 166 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -1004,22 +1198,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 158 */
+/* 167 */
 /***/ function(module, exports) {
 
 	module.exports = "<a href=\"#/solution/{{sid}}\" class=\"ui label grey\">{{sid}}</a>";
 
 /***/ },
-/* 159 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(160)
+	__vue_script__ = __webpack_require__(169)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/format/round.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(161)
+	__vue_template__ = __webpack_require__(170)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1038,7 +1232,7 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 160 */
+/* 169 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -1050,22 +1244,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 161 */
+/* 170 */
 /***/ function(module, exports) {
 
 	module.exports = "<a v-if=\"rnd &amp;&amp; rnd._id &gt; 0\" href=\"#/round/{{rnd._id}}\" class=\"ui label light teal\">{{rnd._id}}. {{rnd.title}}</a><a v-else=\"v-else\" class=\"ui label light teal\">hidden</a>";
 
 /***/ },
-/* 162 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(163)
+	__vue_script__ = __webpack_require__(172)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/format/user.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(164)
+	__vue_template__ = __webpack_require__(173)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1084,7 +1278,7 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 163 */
+/* 172 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -1096,34 +1290,130 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 164 */
+/* 173 */
 /***/ function(module, exports) {
 
 	module.exports = "<a href=\"#/user/{{uid}}\" class=\"ui label\">{{uid}}</a>";
 
 /***/ },
-/* 165 */,
-/* 166 */,
-/* 167 */,
-/* 168 */,
-/* 169 */,
-/* 170 */,
-/* 171 */
+/* 174 */
 /***/ function(module, exports) {
 
 	module.exports = "<h1 class=\"ui header dividing\">Statistics for Problem {{problem._id}}</h1><problem :prob=\"problem\"></problem><h3 class=\"ui header dividing\">numbers</h3><div class=\"ui statistics\"><div v-for=\"(key, val) in stat\" class=\"statistic\"><div class=\"value\">{{val}}</div><div class=\"label\">{{key}}</div></div></div>";
 
 /***/ },
-/* 172 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(173)
+	__vue_script__ = __webpack_require__(176)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] client/components/problem/data.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(177)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), true)
+	  if (!hotAPI.compatible) return
+	  var id = "/home/roosephu/Desktop/dollast/client/components/problem/data.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var vue, debug, co, raiseError, log, this$ = this;
+	vue = __webpack_require__(1);
+	debug = __webpack_require__(29);
+	co = __webpack_require__(142);
+	raiseError = __webpack_require__(146).raiseError;
+	log = debug('dollast:components:problems:data');
+	module.exports = {
+	  vuex: {
+	    actions: {
+	      raiseError: raiseError
+	    }
+	  },
+	  data: function(){
+	    return {
+	      problem: {
+	        _id: 0,
+	        outlook: {
+	          title: ""
+	        },
+	        config: {
+	          dataset: []
+	        }
+	      }
+	    };
+	  },
+	  route: {
+	    data: co.wrap(function*(arg$){
+	      var pid, response, problem;
+	      pid = arg$.to.params.pid;
+	      response = (yield vue.http.get("/problem/" + pid)).data;
+	      if (response.errors) {
+	        this$.raiseError(response);
+	        return null;
+	      }
+	      problem = response.data;
+	      return {
+	        problem: problem
+	      };
+	    })
+	  },
+	  methods: {
+	    repair: co.wrap(function*(){
+	      var ref$, data;
+	      return ref$ = (yield this.$http.get("/problem/" + this.problem._id + "/repair")), data = ref$.data, ref$;
+	    }),
+	    select: function(){
+	      return $('#upload').click();
+	    },
+	    upload: co.wrap(function*(){
+	      var files, formData, i$, len$, file, data;
+	      files = $('#upload')[0].files;
+	      formData = new FormData();
+	      for (i$ = 0, len$ = files.length; i$ < len$; ++i$) {
+	        file = files[i$];
+	        formData.append(file.name, file);
+	      }
+	      data = (yield this.$http.post("/data/" + this.problem._id + "/upload", formData)).data;
+	      return this.problem.config.dataset = data.pairs;
+	    })
+	  }
+	};
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/problem/data.vue.map
+
+
+/***/ },
+/* 177 */
+/***/ function(module, exports) {
+
+	module.exports = "<div id=\"form-data\" class=\"ui form\"><h2 class=\"ui dividing header\">Problem {{problem._id}}. {{problem.outlook.title}}</h2><h3 class=\"ui dividing header\">Dataset Management</h3><input id=\"upload\" type=\"file\" style=\"display:none\" name=\"upload\"/><div class=\"ui field\"><a @click=\"select\" class=\"ui icon button labeled\"><i class=\"icon file\"></i>select</a><a @click=\"upload\" class=\"ui icon button labeled green\"><i class=\"icon upload\"></i>upload</a><a :click=\"refresh\" class=\"ui icon button labeled teal\"><i class=\"icon refresh\"></i>refresh</a><a :click=\"repair\" class=\"ui icon button labeled teal\"><i class=\"icon retweet\"></i>repair</a></div><div class=\"ui two fields\"><div class=\"ui field twelve wide\"><table class=\"ui table segment\"><thead><tr><th>input</th><th>output</th><th>weight</th><th></th></tr></thead><tbody><tr v-for=\"atom in problem.config.dataset\"><td>{{atom.input}}</td><td>{{atom.output}}</td><td>{{atom.weight}}</td><td><a :click=\"remove\" class=\"ui icon labeled button right floated mini\"><i class=\"icon remove\"></i>remove</a></td></tr></tbody></table></div></div></div>";
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(179)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/solution/list.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(174)
+	__vue_template__ = __webpack_require__(180)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1142,16 +1432,22 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 173 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var debug, co, vue, format, log, this$ = this;
+	var debug, co, vue, format, raiseError, log, this$ = this;
 	debug = __webpack_require__(29);
 	co = __webpack_require__(142);
 	vue = __webpack_require__(1);
-	format = __webpack_require__(155);
+	format = __webpack_require__(164);
+	raiseError = __webpack_require__(146).raiseError;
 	log = debug('dollast:component:solution:list');
 	module.exports = {
+	  vuex: {
+	    actions: {
+	      raiseError: raiseError
+	    }
+	  },
 	  data: function(){
 	    return {
 	      solutions: []
@@ -1159,10 +1455,15 @@ webpackJsonp([0],[
 	  },
 	  route: {
 	    data: co.wrap(function*(){
-	      var data;
-	      data = (yield vue.http.get('/solution')).data;
+	      var response, solutions;
+	      response = (yield vue.http.get('/solution')).data;
+	      if (response.errors) {
+	        this$.raiseError(response);
+	        return null;
+	      }
+	      solutions = response.data;
 	      return {
-	        solutions: data
+	        solutions: solutions
 	      };
 	    })
 	  },
@@ -1172,22 +1473,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 174 */
+/* 180 */
 /***/ function(module, exports) {
 
 	module.exports = "<h1 class=\"ui dividing header\">Status</h1><div :class=\"{loading: false}\" class=\"ui segment\"><table class=\"ui table large green selectable very basic\"><thead><tr><th class=\"collapsing right\">sol id</th><th>problem</th><th>user</th><th>status</th><th>score</th><th>time(s)</th><th>space(MB)</th><th class=\"collapsing\">lang</th><th class=\"collapsing\">round</th></tr></thead><tbody><tr v-for=\"sol in solutions\" class=\"red\"><td><code-link :sid=\"sol._id\"></code-link></td><td><problem :prob=\"sol.prob\"></problem></td><td><user :uid=\"sol.user\"></user></td><td>{{sol.final.status}}</td><td>{{sol.final.score}}</td><td>{{sol.final.time}}</td><td>{{sol.final.space}}</td><td>{{sol.lang}}</td><td v-if=\"sol.round\"><round :rnd=\"sol.round\"></round></td><td v-else=\"v-else\"></td></tr></tbody></table></div><div class=\"ui icon labeled button floated right primary\"><i class=\"icon refresh\"></i>refresh</div>";
 
 /***/ },
-/* 175 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(176)
+	__vue_script__ = __webpack_require__(182)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/solution/submit.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(177)
+	__vue_template__ = __webpack_require__(183)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1206,12 +1507,13 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 176 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var debug, co, log, this$ = this;
+	var debug, co, ref$, pairsToObj, objToPairs, flatten, log, this$ = this;
 	debug = __webpack_require__(29);
 	co = __webpack_require__(142);
+	ref$ = __webpack_require__(158), pairsToObj = ref$.pairsToObj, objToPairs = ref$.objToPairs, flatten = ref$.flatten;
 	log = debug('dollast:components:solution:submit');
 	module.exports = {
 	  vuex: {
@@ -1239,9 +1541,8 @@ webpackJsonp([0],[
 	  ready: function(){
 	    var submit, $form, this$ = this;
 	    $('.dropdown').dropdown();
-	    submit = co.wrap(function*(e){
-	      var $form, allValues, permit, data;
-	      e.preventDefault();
+	    submit = co.wrap(function*(){
+	      var $form, allValues, permit, data, response, errors, i$, ref$, len$, error;
 	      $form = $('#submit-form');
 	      allValues = $form.form('get values');
 	      permit = {
@@ -1250,18 +1551,26 @@ webpackJsonp([0],[
 	        access: allValues.access
 	      };
 	      data = Object.assign({
-	        pid: this$.pid
-	      }, {
 	        code: allValues.code,
 	        lang: allValues.lang
 	      }, {
+	        pid: this$.pid,
 	        permit: permit
 	      });
-	      return (yield this$.$http.post('/solution/submit', data));
+	      response = (yield this$.$http.post('/solution/submit', data)).data;
+	      if (response.errors) {
+	        errors = {};
+	        for (i$ = 0, len$ = (ref$ = response.errors).length; i$ < len$; ++i$) {
+	          error = ref$[i$];
+	          Object.assign(errors, error);
+	        }
+	        return $form.form('add errors', errors);
+	      }
 	    });
 	    $form = $('#submit-form');
 	    $form.form({
 	      on: 'blur',
+	      debug: true,
 	      fields: {
 	        code: {
 	          identifier: 'code',
@@ -1276,7 +1585,7 @@ webpackJsonp([0],[
 	          ]
 	        },
 	        lang: {
-	          identifier: 'lang',
+	          identifier: 'language',
 	          rules: [{
 	            type: 'empty',
 	            prompt: 'language cannot be empty'
@@ -1314,22 +1623,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 177 */
+/* 183 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"submit-form\" class=\"ui form segment\"><h1 class=\"ui header dividing\">problem: {{pid}}</h1><div class=\"ui success message\"><div class=\"header\">Submit successful. Redirect to status in 3 seconds...</div></div><div class=\"ui field\"><label>code</label><textarea name=\"code\"></textarea></div><div class=\"ui two fields\"><div class=\"ui field\"><label>language</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"lang\"/><div class=\"default text\">select your language</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in languages\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><h2 class=\"ui dividing header\">permission</h2><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><a class=\"ui icon labeled button primary floated submit\"><i class=\"icon rocket\"></i>Submit</a></div></div>";
+	module.exports = "<div id=\"submit-form\" class=\"ui form segment\"><h1 class=\"ui header dividing\">problem: {{pid}}</h1><div class=\"ui success message\"><div class=\"header\">Submit successful. Redirect to status in 3 seconds...</div></div><div class=\"ui field\"><label>code</label><textarea name=\"code\"></textarea></div><div class=\"ui two fields\"><div class=\"ui field\"><label>language</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"language\"/><div class=\"default text\">select your language</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in languages\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><h2 class=\"ui dividing header\">permission</h2><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><a class=\"ui icon labeled button primary floated submit\"><i class=\"icon rocket\"></i>Submit</a></div></div>";
 
 /***/ },
-/* 178 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(179)
+	__vue_script__ = __webpack_require__(185)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/solution/show.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(180)
+	__vue_template__ = __webpack_require__(186)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1348,15 +1657,21 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 179 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var debug, co, vue, log;
+	var debug, co, vue, raiseError, log;
 	debug = __webpack_require__(29);
 	co = __webpack_require__(142);
 	vue = __webpack_require__(1);
+	raiseError = __webpack_require__(146).raiseError;
 	log = debug('dollast:component:solution:show');
 	module.exports = {
+	  vuex: {
+	    actions: {
+	      raiseError: raiseError
+	    }
+	  },
 	  data: function(){
 	    return {
 	      sol: {
@@ -1379,14 +1694,16 @@ webpackJsonp([0],[
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
-	      var sid, data;
+	      var sid, response, solution;
 	      sid = arg$.to.params.sid;
-	      data = (yield vue.http.get("/solution/" + sid)).data;
-	      log({
-	        data: data
-	      });
+	      response = (yield vue.http.get("/solution/" + sid)).data;
+	      if (response.errors) {
+	        this.raiseError(response);
+	        return null;
+	      }
+	      solution = response.data;
 	      return {
-	        sol: data
+	        sol: solution
 	      };
 	    })
 	  }
@@ -1395,22 +1712,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 180 */
+/* 186 */
 /***/ function(module, exports) {
 
 	module.exports = "<h1 class=\"ui header dividing\">Solution {{$route.params.sid}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{sol.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{sol.permit.group}}<div class=\"detail\">group</div></div><div class=\"ui label\">{{sol.lang}}<div class=\"detail\">language</div></div><div class=\"ui label\">{{sol.prob._id}}<div class=\"detail\">problem</div></div></div><h2 class=\"ui header dividing\">code</h2><div class=\"ui segment\"><div class=\"ui top attached label\">code</div><pre>{{sol.code}}</pre></div><p v-if=\"sol.final.status == 'private'\">this code is private</p><div v-if=\"sol.final.status == 'CE'\" class=\"ui segment\"><div class=\"ui top attached label\">Error message</div><pre>{{sol.final.message}}</pre></div><div v-if=\"sol.final.status == 'running'\" class=\"ui\">running</div><div v-if=\"sol.final.status == 'finished'\"><div class=\"ui\"><h1 class=\"ui header dividing\">details</h1><table class=\"ui table segment\"><thead><tr><th>input</th><th>status</th><th>time</th><th>space</th><th>score</th><th>message</th></tr></thead><tbody><tr v-for=\"result in sol.results\" class=\"positive\"><td>{{result.input}}</td><td>{{result.status}}</td><td>{{result.time}}</td><td>{{result.space}}</td><td>{{result.score}}</td><td>{{result.message}}</td></tr></tbody><tfoot><tr><th>final result</th><th>{{sol.final.status}}</th><th>{{sol.final.time}}</th><th>{{sol.final.space}}</th><th>{{sol.final.score}}</th><th>{{sol.final.message}}</th></tr></tfoot></table></div></div>";
 
 /***/ },
-/* 181 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(182)
+	__vue_script__ = __webpack_require__(188)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/round/list.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(183)
+	__vue_template__ = __webpack_require__(189)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1429,14 +1746,15 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 182 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, debug, co, format, log;
+	var vue, debug, co, format, raiseError, log;
 	vue = __webpack_require__(1);
 	debug = __webpack_require__(29);
 	co = __webpack_require__(142);
-	format = __webpack_require__(155);
+	format = __webpack_require__(164);
+	raiseError = __webpack_require__(146).raiseError;
 	log = debug('dollast:component:round:list');
 	module.exports = {
 	  components: {
@@ -1455,10 +1773,15 @@ webpackJsonp([0],[
 	  },
 	  route: {
 	    data: co.wrap(function*(){
-	      var data;
-	      data = (yield vue.http.get("/round")).data;
+	      var response, rounds;
+	      response = (yield vue.http.get("/round")).data;
+	      if (response.errors) {
+	        this.raiseError(response);
+	        return null;
+	      }
+	      rounds = response.data;
 	      return {
-	        rounds: data
+	        rounds: rounds
 	      };
 	    })
 	  },
@@ -1482,22 +1805,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 183 */
+/* 189 */
 /***/ function(module, exports) {
 
 	module.exports = "<h1 class=\"ui header dividing\">Rounds</h1><div class=\"ui dropdown floated pointing button labeled icon\"><input type=\"hidden\" name=\"filter\"/><div class=\"default text\">please select filter</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in options\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div><a href=\"#/round/create\" class=\"ui icon labeled button launch primary right floated\"><i class=\"icon plus\"></i>create</a><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui very relxed divided link list\"><div v-for=\"round in rounds\" class=\"item\"><div class=\"ui right floated\">{{round.beginTime, round.endTime}}</div><div class=\"description\"><round :rnd=\"round\"></round></div></div></div></div>";
 
 /***/ },
-/* 184 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(185)
+	__vue_script__ = __webpack_require__(191)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/round/modify.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(186)
+	__vue_template__ = __webpack_require__(192)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1516,16 +1839,17 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 185 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, co, moment, debug, formatter, map, log, getFormValues, setFormValues, this$ = this;
+	var vue, co, moment, debug, ref$, map, pairsToObj, objToPairs, flatten, formatter, raiseError, log, getFormValues, setFormValues, this$ = this;
 	vue = __webpack_require__(1);
 	co = __webpack_require__(142);
 	moment = __webpack_require__(32);
 	debug = __webpack_require__(29);
-	formatter = __webpack_require__(155).formatter;
-	map = __webpack_require__(165).map;
+	ref$ = __webpack_require__(158), map = ref$.map, pairsToObj = ref$.pairsToObj, objToPairs = ref$.objToPairs, flatten = ref$.flatten;
+	formatter = __webpack_require__(164).formatter;
+	raiseError = __webpack_require__(146).raiseError;
 	log = debug('dollast:component:round:modify');
 	getFormValues = function(){
 	  var $form, values, permit, probs, data;
@@ -1593,6 +1917,9 @@ webpackJsonp([0],[
 	      uid: function(it){
 	        return it.session.uid;
 	      }
+	    },
+	    actions: {
+	      raiseError: raiseError
 	    }
 	  },
 	  ready: function(){
@@ -1629,7 +1956,12 @@ webpackJsonp([0],[
 	      var data, response;
 	      e.preventDefault();
 	      data = getFormValues();
-	      return response = (yield vue.http.post("/round/" + this$.rid, data));
+	      response = (yield vue.http.post("/round/" + this$.rid, data)).data;
+	      if (response.errors) {
+	        return log({
+	          errors: response.errors
+	        });
+	      }
 	    });
 	    $form = $('#form-round');
 	    $form.form({
@@ -1697,13 +2029,18 @@ webpackJsonp([0],[
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
-	      var rid, data;
+	      var rid, response, round;
 	      rid = arg$.to.params.rid;
 	      if (rid !== void 8) {
-	        data = (yield vue.http.get("/round/" + rid)).data;
+	        response = (yield vue.http.get("/round/" + rid)).data;
+	        if (response.errors) {
+	          this.raiseError(response);
+	          return null;
+	        }
+	        round = response.data;
 	        return {
 	          rid: rid,
-	          rnd: data
+	          rnd: round
 	        };
 	      }
 	    })
@@ -1722,22 +2059,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 186 */
+/* 192 */
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"form-round\" class=\"ui form\"><h2 class=\"ui dividing header\">{{formattedTitle}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><h3 class=\"ui dividing header\">Configuration</h3><div class=\"ui fields three\"><div class=\"ui field\"><label>title</label><div class=\"ui input\"><input name=\"title\"/></div></div><div class=\"ui field\"><label>start from</label><div class=\"ui input\"><input name=\"beginTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div><div class=\"ui field\"><label>end at</label><div class=\"ui input\"><input name=\"endTime\" placeholder=\"YYYY-MM-DD HH:mm:ss\"/></div></div></div><h3 class=\"ui dividing header\">Permission</h3><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><h3 class=\"ui dividing header\">Problemset</h3><div class=\"ui field\"><div class=\"ui dropdown icon selection fluid multiple search\"><input type=\"hidden\" name=\"problems\"/><div class=\"default text\">problems</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"(key, value) of dropdownProblems\" data-value=\"{{key}}\" class=\"item\">{{value}}</div></div></div></div><br/><div class=\"ui field\"><a :click=\"delete\" class=\"icon ui labeled button floated red\"><i class=\"icon delete\"></i>delete</a><a class=\"icon ui labeled button floated secondary\"><i class=\"icon cancel\"></i>undo</a><a class=\"icon ui labeled button floated primary submit\"><i class=\"icon save\"></i>save</a></div></div>";
 
 /***/ },
-/* 187 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(188)
+	__vue_script__ = __webpack_require__(194)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/round/show.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(189)
+	__vue_template__ = __webpack_require__(195)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1756,17 +2093,23 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 188 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, co, debug, format, moment, log;
+	var vue, co, debug, moment, format, raiseError, log;
 	vue = __webpack_require__(1);
 	co = __webpack_require__(142);
 	debug = __webpack_require__(29);
-	format = __webpack_require__(155);
 	moment = __webpack_require__(32);
+	format = __webpack_require__(164);
+	raiseError = __webpack_require__(146).raiseError;
 	log = debug('dollast:component:round:show');
 	module.exports = {
+	  vuex: {
+	    actions: {
+	      raiseError: raiseError
+	    }
+	  },
 	  components: {
 	    problem: format.problem
 	  },
@@ -1791,11 +2134,16 @@ webpackJsonp([0],[
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
-	      var rid, data;
+	      var rid, response, round;
 	      rid = arg$.to.params.rid;
-	      data = (yield vue.http.get("/round/" + rid)).data;
+	      response = (yield vue.http.get("/round/" + rid)).data;
+	      if (response.errors) {
+	        this.raiseError(response);
+	        return null;
+	      }
+	      round = response.data;
 	      return {
-	        rnd: data
+	        rnd: round
 	      };
 	    })
 	  }
@@ -1804,22 +2152,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 189 */
+/* 195 */
 /***/ function(module, exports) {
 
 	module.exports = "<h1 class=\"ui dividing header\">Round {{rnd._id}}. {{rnd.title}}</h1><div class=\"ui olive labels\"><div class=\"ui label\">{{rnd.permit.owner}}<div class=\"detail\">owner</div></div><div class=\"ui label\">{{rnd.permit.group}}<div class=\"detail\">group</div></div></div><p>{{rnd.beginTime}} -- {{rnd.endTime}}</p><br/><div v-if=\"started\"><h2 class=\"ui dividing header\">Problemset</h2><div :class=\"{loading: $loadingRouteData}\" class=\"ui segment\"><div class=\"ui relaxed divided link list\"><div v-for=\"prob in rnd.probs\" class=\"item\"><div class=\"ui right floated\">??</div><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><br/></div><div v-else=\"v-else\"><p>Sorry, this round has not started.</p></div><a v-if=\"started\" href=\"#/round/{{rnd._id}}/board\" class=\"ui labeled button purple\"><i class=\"icon trophy\"></i>board</a><a href=\"#/round/{{rnd._id}}/modify\" class=\"ui labeled button orange\"><i class=\"icon edit\"></i>modify</a>";
 
 /***/ },
-/* 190 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(191)
+	__vue_script__ = __webpack_require__(197)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/round/board.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(192)
+	__vue_template__ = __webpack_require__(198)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1838,21 +2186,21 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 191 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var debug, vue, co, format, ref$, objToPairs, sort, reverse, log, generateBoard;
 	debug = __webpack_require__(29);
 	vue = __webpack_require__(1);
 	co = __webpack_require__(142);
-	format = __webpack_require__(155);
-	ref$ = __webpack_require__(165), objToPairs = ref$.objToPairs, sort = ref$.sort, reverse = ref$.reverse;
+	format = __webpack_require__(164);
+	ref$ = __webpack_require__(158), objToPairs = ref$.objToPairs, sort = ref$.sort, reverse = ref$.reverse;
 	log = debug('dollast:component:round:board');
-	generateBoard = function(sols){
+	generateBoard = function(solutions){
 	  var board, i$, len$, sol, ref$, user, prob;
 	  board = {};
-	  for (i$ = 0, len$ = sols.length; i$ < len$; ++i$) {
-	    sol = sols[i$];
+	  for (i$ = 0, len$ = solutions.length; i$ < len$; ++i$) {
+	    sol = solutions[i$];
 	    ref$ = sol._id, user = ref$.user, prob = ref$.prob;
 	    board[user] || (board[user] = {
 	      total: 0
@@ -1878,14 +2226,24 @@ webpackJsonp([0],[
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
-	      var rid, sols, round, board;
+	      var rid, response, round, solutions, board;
 	      rid = arg$.to.params.rid;
-	      sols = (yield vue.http.get("/round/" + rid + "/board")).data;
-	      round = (yield vue.http.get("/round/" + rid)).data;
+	      response = (yield vue.http.get("/round/" + rid)).data;
+	      if (reseponse.errors) {
+	        this.raiseError(reseponse);
+	        return null;
+	      }
+	      round = reseponse.data;
+	      response = (yield vue.http.get("/round/" + rid + "/board")).data;
+	      if (response.errors) {
+	        this.raiseError(response);
+	        return null;
+	      }
+	      solutions = response.data;
 	      board = reverse(
 	      sort(
 	      objToPairs(
-	      generateBoard(sols))));
+	      generateBoard(solutions))));
 	      return {
 	        board: board
 	      };
@@ -1896,22 +2254,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 192 */
+/* 198 */
 /***/ function(module, exports) {
 
 	module.exports = "<table class=\"ui table segment large green selectable\"><thead><tr><th>user</th><th>total</th><th v-for=\"problem in problems\"><problem :prob=\"problem\"></problem></th></tr></thead><tbody><tr v-for=\"[user, score] in board\"><td><user :uid=\"user\"></user></td><td>{{score.total}}</td><td v-for=\"problem in problems\"><code-link :sid=\"score[pid].sid\"></code-link></td></tr></tbody></table>";
 
 /***/ },
-/* 193 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(194)
+	__vue_script__ = __webpack_require__(200)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/user/profile.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(195)
+	__vue_template__ = __webpack_require__(201)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1930,16 +2288,22 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 194 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, co, debug, format, log;
+	var vue, co, debug, format, raiseError, log;
 	vue = __webpack_require__(1);
 	co = __webpack_require__(142);
 	debug = __webpack_require__(29);
-	format = __webpack_require__(155);
+	format = __webpack_require__(164);
+	raiseError = __webpack_require__(146).raiseError;
 	log = debug('dollast:components:user:profile');
 	module.exports = {
+	  vuex: {
+	    actions: {
+	      raiseError: raiseError
+	    }
+	  },
 	  data: function(){
 	    return {
 	      uid: this.$route.params.uid,
@@ -1951,13 +2315,15 @@ webpackJsonp([0],[
 	  },
 	  route: {
 	    data: co.wrap(function*(arg$){
-	      var uid, data;
+	      var uid, response, profile;
 	      uid = arg$.to.params.uid;
-	      data = (yield vue.http.get("/user/" + uid)).data;
-	      log({
-	        data: data
-	      });
-	      return data;
+	      response = (yield vue.http.get("/user/" + uid)).data;
+	      if (response.errors) {
+	        this.raiseError(response);
+	        return null;
+	      }
+	      profile = data.data;
+	      return profile;
 	    })
 	  },
 	  components: {
@@ -1969,22 +2335,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 195 */
+/* 201 */
 /***/ function(module, exports) {
 
 	module.exports = "<h1 class=\"ui dividing header\">Details of {{uid}}</h1><div class=\"ui segment\"><div class=\"ui top attached label large\">registered since</div><p>unimplemented</p></div><div class=\"ui segment\"><div class=\"ui large top attached label\">description</div><p>{{profile.desc}}</p></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Groups</div><div v-for=\"group in profile.groups\" class=\"ui olive label\">{{group}}</div></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Problems solved</div><div class=\"ui relaxed divided link list\"><div v-for=\"prob in solveProblems\" class=\"item\"><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Problems owned</div><div class=\"ui relaxed divided link list\"><div v-for=\"prob in ownedProblems\" class=\"item\"><div class=\"description\"><problem :prob=\"prob\"></problem></div></div></div></div><div class=\"ui segment\"><div class=\"ui top attached label large\">Rounds owned</div><div class=\"ui relaxed divided link list\"><div v-for=\"rnd in ownedRounds\" class=\"item\"><div class=\"ui right floated\">{{rnd.begTime}} {{rnd.endTime}}</div><div class=\"description\"><round :rnd=\"rnd\"></round></div></div></div></div><a href=\"#/user/{{uid}}/modify\" class=\"ui button icon labeled text primary\"><i class=\"icon edit\"></i>modify</a>";
 
 /***/ },
-/* 196 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(197)
+	__vue_script__ = __webpack_require__(203)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/user/login.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(201)
+	__vue_template__ = __webpack_require__(204)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2003,12 +2369,12 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 197 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var debug, login, log;
 	debug = __webpack_require__(29);
-	login = __webpack_require__(198).login;
+	login = __webpack_require__(146).login;
 	log = debug('dollast:component:login');
 	module.exports = {
 	  vuex: {
@@ -2071,143 +2437,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 198 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var vue, store, co, debug, log, login, loadFromToken, logout, out$ = typeof exports != 'undefined' && exports || this;
-	vue = __webpack_require__(1);
-	store = __webpack_require__(199);
-	co = __webpack_require__(142);
-	debug = __webpack_require__(29);
-	log = debug('dollast:actions');
-	out$.login = login = co.wrap(function*(arg$, info){
-	  var dispatch, data;
-	  dispatch = arg$.dispatch;
-	  data = (yield vue.http.post('/site/login', info)).data;
-	  localStorage.token = data.payload.token;
-	  return dispatch('loadFromToken', data.payload.token);
-	});
-	out$.loadFromToken = loadFromToken = function(arg$){
-	  var dispatch;
-	  dispatch = arg$.dispatch;
-	  if (localStorage.token) {
-	    return dispatch('loadFromToken', localStorage.token);
-	  }
-	};
-	out$.logout = logout = function(arg$){
-	  var dispatch;
-	  dispatch = arg$.dispatch;
-	  delete localStorage.token;
-	  return dispatch('logout');
-	};
-	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/actions/index.ls.map
-
-
-/***/ },
-/* 199 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var vue, vuex, auth, state, mutations;
-	vue = __webpack_require__(1);
-	vuex = __webpack_require__(3);
-	auth = __webpack_require__(200);
-	state = {
-	  session: {
-	    guest: true
-	  }
-	};
-	mutations = {
-	  loadFromToken: function(state, token){
-	    var payload, clientInfo;
-	    payload = auth.jwt.dec(token);
-	    clientInfo = JSON.parse(payload.client);
-	    localStorage.token = token;
-	    vue.http.headers.common.Authorization = "Bearer " + token;
-	    return state.session = {
-	      guest: false,
-	      uid: clientInfo.uid,
-	      token: token
-	    };
-	  },
-	  logout: function(state){
-	    return state.session = {
-	      guest: true
-	    };
-	  }
-	};
-	module.exports = new vuex.Store({
-	  state: state,
-	  mutations: mutations
-	});
-	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/store/index.ls.map
-
-
-/***/ },
-/* 200 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var debug, pubKey, RSAEntity, log, ref$, out$ = typeof exports != 'undefined' && exports || this;
-	debug = __webpack_require__(29);
-	pubKey = '-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCV8qwyGUz1mKUNyMUXIb5THUYJ\n9Xf9WgL/GC5UeVon7JKtzeWXRSCmzxlO5XD4GD8zcJ728kNfABdizPQ1HG4MFfRc\ns5vPQDiIR23dafkGODmE039aKRiTc+xxrLgx3huasFan+2yG/tiFQbXEFfAmLaal\n6FuOukBTwitq0XBdiQIDAQAB\n-----END PUBLIC KEY-----';
-	RSAEntity = forge.pki.publicKeyFromPem(pubKey);
-	log = debug('dollast:auth');
-	ref$ = out$;
-	ref$.RSA = {
-	  enc: function(txt){
-	    return txt;
-	  },
-	  dec: function(cipher, key){
-	    return cipher;
-	  }
-	};
-	ref$.jwt = {
-	  enc: function(header, payload, key){
-	    var header64, payload64, unsignedToken, h, signature64, ret;
-	    if ('string' !== typeof header) {
-	      header = JSON.stringify(header);
-	    }
-	    if ('string' !== typeof payload) {
-	      payload = JSON.stringify(payload);
-	    }
-	    header64 = forge.util.encode64(header);
-	    payload64 = forge.util.encode64(payload);
-	    unsignedToken = header64 + "." + payload64;
-	    h = forge.hmac.create();
-	    h.start('sha256', key);
-	    h.update(unsignedToken);
-	    signature64 = forge.util.encode64(forge.util.hexToBytes(h.digest().toHex()));
-	    ret = (unsignedToken + "." + signature64).replace(/\#g, '_' .replace /['+/g'], '-').replace(/\=/g, '');
-	    return ret;
-	  },
-	  dec: function(token){
-	    var jwtStruct, payload;
-	    jwtStruct = token.split('.');
-	    while (jwtStruct[1].length % 4 !== 0) {
-	      jwtStruct[1] += "=";
-	    }
-	    return payload = JSON.parse(forge.util.decode64(jwtStruct[1]));
-	  }
-	};
-	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/client/store/auth.ls.map
-
-
-/***/ },
-/* 201 */
+/* 204 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"ui\"><h1 class=\"ui dividing header\">Login</h1><form id=\"login-form\" :class=\"{loading: loading, success: success}\" class=\"ui form segment\"><div class=\"ui error message\"></div><div class=\"ui success message\"><div class=\"header\">Login successfully. Redirect to problem list in 3 seconds.</div></div><div class=\"ui field\"><div class=\"ui icon input left\"><i class=\"icon user\"></i><input name=\"uid\" placeholder=\"user id\"/></div></div><div class=\"ui field\"><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input name=\"pswd\" placeholder=\"password\" type=\"password\"/></div></div><div class=\"ui icon labeled button left primary submit\"><i class=\"icon sign in\"></i>Login</div></form></div>";
 
 /***/ },
-/* 202 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(203)
+	__vue_script__ = __webpack_require__(206)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/user/register.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(204)
+	__vue_template__ = __webpack_require__(207)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2226,7 +2471,7 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 203 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var debug, co, log;
@@ -2282,22 +2527,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 204 */
+/* 207 */
 /***/ function(module, exports) {
 
 	module.exports = "<h1 class=\"ui dividing header\">Register</h1><form id=\"register-form\" class=\"ui form segment\"><div class=\"ui error message\"></div><div class=\"ui success message\"><h2>Register successful. Login please.</h2></div><div class=\"ui field\"><a class=\"ui input icon left\"><i class=\"icon user\"></i><input placeholder=\"user id\" name=\"uid\"/></a></div><div class=\"ui field\"><a class=\"ui input icon left\"><i class=\"icon lock\"></i><input placeholder=\"password\" name=\"pswd\" type=\"password\"/></a></div><div class=\"ui field\"><a class=\"ui input icon left\"><i class=\"icon mail\"></i><input placeholder=\"abc@xyz\" name=\"email\" type=\"email\"/></a></div><a class=\"ui icon labeled button left primary submit\"><i class=\"icon sign in\"></i>Register</a></form>";
 
 /***/ },
-/* 205 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(206)
+	__vue_script__ = __webpack_require__(209)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/user/modify.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(207)
+	__vue_template__ = __webpack_require__(210)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2316,7 +2561,7 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 206 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var co, vue, debug, log;
@@ -2431,22 +2676,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 207 */
+/* 210 */
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"form-user\" class=\"ui form\"><h2 class=\"ui dividing header\">{{user.profile._id}}</h2><div class=\"ui success message\"><div class=\"header\">Changes saved.</div></div><div class=\"ui field\"><label>groups</label><div class=\"ui dropdown icon selection search multiple\"><input type=\"hidden\" name=\"groups\"/><div class=\"default text\">select proper access</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in groups\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div><h3 class=\"ui dividing header\">Description</h3><div class=\"ui two fields\"><div class=\"ui field\"><label>describe yourself</label><textarea name=\"desc\"></textarea></div></div><h3 class=\"ui dividing header\">Password</h3><div class=\"four fields wide\"><div class=\"ui field\"><label>old password</label><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input placeholder=\"old password\" name=\"oldPassword\" type=\"password\"/></div></div></div><div class=\"four fields wide\"><div class=\"ui field\"><label>new password</label><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input placeholder=\"new  password\" name=\"newPassword\" type=\"password\"/></div></div></div><div class=\"four fields wide\"><div class=\"ui field\"><label>confirm new password</label><div class=\"ui icon input left\"><i class=\"icon lock\"></i><input placeholder=\"confirmation\" name=\"confirmPassword\" type=\"password\"/></div></div></div><a class=\"ui icon labeled button submit primary\"><i class=\"icon save\"></i>submit</a></div>";
 
 /***/ },
-/* 208 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(209)
+	__vue_script__ = __webpack_require__(212)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/app.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(215)
+	__vue_template__ = __webpack_require__(221)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2465,15 +2710,16 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 209 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var foot, navbar, vueRouter, vue, loadFromToken;
-	foot = __webpack_require__(210);
-	navbar = __webpack_require__(212);
-	vueRouter = __webpack_require__(4);
+	var vue, vueRouter, foot, navbar, error, loadFromToken;
 	vue = __webpack_require__(1);
-	loadFromToken = __webpack_require__(198).loadFromToken;
+	vueRouter = __webpack_require__(4);
+	foot = __webpack_require__(213);
+	navbar = __webpack_require__(215);
+	error = __webpack_require__(218);
+	loadFromToken = __webpack_require__(146).loadFromToken;
 	module.exports = {
 	  vuex: {
 	    actions: {
@@ -2482,7 +2728,8 @@ webpackJsonp([0],[
 	  },
 	  components: {
 	    navbar: navbar,
-	    foot: foot
+	    foot: foot,
+	    error: error
 	  },
 	  ready: function(){
 	    return this.loadFromToken();
@@ -2492,11 +2739,11 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 210 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_template__ = __webpack_require__(211)
+	__vue_template__ = __webpack_require__(214)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2515,22 +2762,22 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 211 */
+/* 214 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"ui divider horizontal\">Yuping Luo @ 2016</div>";
 
 /***/ },
-/* 212 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(213)
+	__vue_script__ = __webpack_require__(216)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/components/site/navbar.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(214)
+	__vue_template__ = __webpack_require__(217)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2549,12 +2796,12 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 213 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var debug, logout, log, this$ = this;
 	debug = __webpack_require__(29);
-	logout = __webpack_require__(198).logout;
+	logout = __webpack_require__(146).logout;
 	log = debug('dollast:navbar');
 	module.exports = {
 	  vuex: {
@@ -2577,28 +2824,22 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 214 */
+/* 217 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"row\"><div class=\"ui blue inverted page grid borderless menu\"><div class=\"header item\">dollast</div><a href=\"#/\" class=\"item labeled\"><i class=\"icon home\"></i>Home</a><a href=\"#/problem\" class=\"item labeled\"><i class=\"icon browser\"></i>Problem</a><a href=\"#/solution\" class=\"item labeled\"><i class=\"icon info circle\"></i>Status</a><a href=\"#/round\" class=\"item labeled\"><i class=\"icon users\"></i>Contest</a><div class=\"right menu\"><div class=\"item\"><div class=\"ui input icon inverted small\"><i class=\"icon search link\"></i><input placeholder=\"ID or Search\"/></div></div><a v-if=\"uid != undefined\" href=\"#/user/{{uid}}\" class=\"item labeled\"><i class=\"icon user\"></i>{{uid}}</a><a v-else=\"v-else\" href=\"#/user/login\" class=\"item labeled\"><i class=\"icon sign in\"></i>Sign in</a><a v-if=\"uid != undefined\" @click=\"logout\" class=\"item labeled\"><i class=\"icon sign out\"></i>Logout</a><a v-else=\"v-else\" href=\"#/user/register\" class=\"item labeled\"><i class=\"icon signup\"></i>Register</a></div></div></div>";
 
 /***/ },
-/* 215 */
-/***/ function(module, exports) {
-
-	module.exports = "<div class=\"ui grid\"><navbar></navbar><div class=\"row\"><div class=\"three wide column\"></div><div class=\"ten wide column\"><router-view></router-view></div></div><div class=\"row\"><div class=\"twelve wide column centered\"><foot></foot></div></div></div>";
-
-/***/ },
-/* 216 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(217)
+	__vue_script__ = __webpack_require__(219)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client/components/problem/data.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(218)
+	  console.warn("[vue-loader] client/components/site/error.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(220)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2608,7 +2849,7 @@ webpackJsonp([0],[
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), true)
 	  if (!hotAPI.compatible) return
-	  var id = "/home/roosephu/Desktop/dollast/client/components/problem/data.vue"
+	  var id = "/home/roosephu/Desktop/dollast/client/components/site/error.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -2617,67 +2858,84 @@ webpackJsonp([0],[
 	})()}
 
 /***/ },
-/* 217 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, debug, co, log, this$ = this;
+	var vue, debug, co, resolveError, log, this$ = this;
 	vue = __webpack_require__(1);
 	debug = __webpack_require__(29);
 	co = __webpack_require__(142);
-	log = debug('dollast:components:problems:data');
+	resolveError = __webpack_require__(146).resolveError;
+	log = debug('dollast:error');
 	module.exports = {
-	  data: function(){
-	    return {
-	      problem: {
-	        _id: 0,
-	        outlook: {
-	          title: ""
-	        },
-	        config: {
-	          dataset: []
-	        }
+	  vuex: {
+	    getters: {
+	      error: function(it){
+	        return it.error;
 	      }
-	    };
+	    },
+	    actions: {
+	      resolveError: resolveError
+	    }
 	  },
-	  route: {
-	    data: co.wrap(function*(arg$){
-	      var pid, data;
-	      pid = arg$.to.params.pid;
-	      data = (yield vue.http.get("/problem/" + pid)).data;
-	      return {
-	        problem: data
-	      };
-	    })
+	  computed: {
+	    message: function(){
+	      if (this.error === void 8) {
+	        return "";
+	      } else {
+	        return this.error.detail + "";
+	      }
+	    },
+	    object: function(){
+	      if (this.error === void 8) {
+	        return "";
+	      } else {
+	        return this.error.type + " " + this.error.id;
+	      }
+	    }
+	  },
+	  ready: function(){
+	    var $modal;
+	    $modal = $('.modal');
+	    return $modal.modal('setting', 'closable', false);
 	  },
 	  methods: {
-	    repair: co.wrap(function*(){
-	      var ref$, data;
-	      return ref$ = (yield this.$http.get("/problem/" + this.problem._id + "/repair")), data = ref$.data, ref$;
-	    }),
-	    select: function(){
-	      return $('#upload').click();
+	    back: function(){
+	      this.resolveError();
+	      return this.$route.router.go(window.history.back());
 	    },
-	    upload: co.wrap(function*(){
-	      var files, formData, i$, len$, file, data;
-	      files = $('#upload')[0].files;
-	      formData = new FormData();
-	      for (i$ = 0, len$ = files.length; i$ < len$; ++i$) {
-	        file = files[i$];
-	        formData.append(file.name, file);
+	    home: function(){
+	      this.resolveError();
+	      return this.$route.router.go('/');
+	    }
+	  },
+	  watch: {
+	    error: function(val){
+	      log({
+	        val: val
+	      });
+	      if (val !== void 8) {
+	        return $('.modal').modal('show');
+	      } else {
+	        return $('.modal').modal('hide');
 	      }
-	      data = (yield this.$http.post("/data/" + this.problem._id + "/upload", formData)).data;
-	      return this.problem.config.dataset = data.pairs;
-	    })
+	    }
 	  }
 	};
-	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/problem/data.vue.map
+	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/site/error.vue.map
 
 
 /***/ },
-/* 218 */
+/* 220 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"form-data\" class=\"ui form\"><h2 class=\"ui dividing header\">Problem {{problem._id}}. {{problem.outlook.title}}</h2><h3 class=\"ui dividing header\">Dataset Management</h3><input id=\"upload\" type=\"file\" style=\"display:none\" name=\"upload\"/><div class=\"ui field\"><a @click=\"select\" class=\"ui icon button labeled\"><i class=\"icon file\"></i>select</a><a @click=\"upload\" class=\"ui icon button labeled green\"><i class=\"icon upload\"></i>upload</a><a :click=\"refresh\" class=\"ui icon button labeled teal\"><i class=\"icon refresh\"></i>refresh</a><a :click=\"repair\" class=\"ui icon button labeled teal\"><i class=\"icon retweet\"></i>repair</a></div><div class=\"ui two fields\"><div class=\"ui field twelve wide\"><table class=\"ui table segment\"><thead><tr><th>input</th><th>output</th><th>weight</th><th></th></tr></thead><tbody><tr v-for=\"atom in problem.config.dataset\"><td>{{atom.input}}</td><td>{{atom.output}}</td><td>{{atom.weight}}</td><td><a :click=\"remove\" class=\"ui icon labeled button right floated mini\"><i class=\"icon remove\"></i>remove</a></td></tr></tbody></table></div></div></div>";
+	module.exports = "<div class=\"ui basic modal small\"><div class=\"ui icon header\"><i class=\"icon announcement\"></i>Error on {{ object }}</div><div class=\"content\"><h4>{{ message }}</h4></div><div class=\"actions\"><div @click=\"home\" class=\"ui red basic inverted button\"><i class=\"icon home\"></i>Home</div><div @click=\"back\" class=\"ui green basic inverted button\"><i class=\"icon arrow left\"></i>Back</div></div></div>";
+
+/***/ },
+/* 221 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"ui grid\"><error></error><navbar></navbar><div class=\"row\"><div class=\"three wide column\"></div><div class=\"ten wide column\"><router-view></router-view></div></div><div class=\"row\"><div class=\"twelve wide column centered\"><foot></foot></div></div></div>";
 
 /***/ }
 ]);

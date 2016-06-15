@@ -24,7 +24,10 @@ export show = ->*
     # .populate "config.round", "begTime"
     .exec!
   if not problem
-    throw new Error "no such problem"
+    @throw do
+      _id: pid
+      type: \problem
+      detail: "non-existing problem"
   problem.permit.check-access @state.user, \r
 
   # TODO check whether the corresponding round has started
@@ -48,7 +51,8 @@ export save = ->*
   @check-body \/config/outputLimit, true .get! .is-float! .gt 0
   @check-body \/config/judger, true .get! .in [\string, \strict, \real, \custom]
   @check-body \/permit/owner, true .get!
-  return if @errors
+  # return if @errors.length > 0
+  @check-errors!
 
   problem = @request.body
 
@@ -61,22 +65,15 @@ export save = ->*
     # TODO: check whether user can create a problem here
   else
     existed = yield models.problems.find-by-id pid, \permit .exec!
-    if not existed
-      @body =
-        status:
-          type: \error
-          message: "cannot find the original problem"
-      return
+    @assert existed, id: pid, type: \problem, detail: "cannot find the original problem"
+
     existed.permit.check-access @state.user, \w
 
     # TODO: check permit is not modified here
     # only owner can transfer owner
 
-  @body = yield models.problems.update _id: pid, problem, upsert: true, overwrite: true .exec!
-
-  @body <<< status:
-    type: "ok"
-    msg: "problem has been saved"
+  yield models.problems.update _id: pid, problem, upsert: true, overwrite: true .exec!
+  @body = problem with _id: pid
 
 export remove = ->*
   # TODO: implement removing a problem
@@ -89,7 +86,7 @@ export stat = ->*
     .exec!
   if not problem
     throw new Error "no such problem"
-  problem.check-access @state.user, \r
+  problem.permit.check-access @state.user, \r
 
   query = models.solutions.aggregate do
     * $match: problem: pid

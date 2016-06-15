@@ -46,11 +46,16 @@ require! {
   \vue
   \debug
   \co
+  \../../actions : {raise-error}
 }
 
 log = debug \dollast:components:problems:data
 
 module.exports =
+  vuex:
+    actions:
+      {raise-error}
+
   data: ->
     problem:
       _id: 0
@@ -61,8 +66,13 @@ module.exports =
 
   route:
     data: co.wrap (to: params: {pid}) ~>*
-      {data} = yield vue.http.get "/problem/#{pid}"
-      {problem: data}
+      {data: response} = yield vue.http.get "/problem/#{pid}"
+      if response.errors
+        @raise-error response
+        return null
+      problem = response.data
+
+      {problem}
 
   methods:
     repair: co.wrap ->*

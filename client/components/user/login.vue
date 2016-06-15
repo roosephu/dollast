@@ -28,7 +28,8 @@ log = debug 'dollast:component:login'
 
 module.exports =
   vuex:
-    actions: {login}
+    actions:
+      {login}
 
   data: ->
     success: false

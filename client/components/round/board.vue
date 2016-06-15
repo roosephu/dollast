@@ -26,9 +26,9 @@ require! {
 
 log = debug \dollast:component:round:board
 
-generate-board = (sols) ->
+generate-board = (solutions) ->
   board = {}
-  for sol in sols
+  for sol in solutions
     {user, prob} = sol._id
     board[user] ||= total: 0
     board[user][prob] = sol{score, sid}
@@ -44,9 +44,19 @@ module.exports =
 
   route:
     data: co.wrap (to: params: {rid}) ->*
-      {data: sols} = yield vue.http.get "/round/#{rid}/board"
-      {data: round} = yield vue.http.get "/round/#{rid}"
-      board = generate-board sols |> obj-to-pairs |> sort |> reverse
+      {data: response} = yield vue.http.get "/round/#{rid}"
+      if reseponse.errors
+        @raise-error reseponse
+        return null
+      round = reseponse.data
+
+      {data: response} = yield vue.http.get "/round/#{rid}/board"
+      if response.errors
+        @raise-error response
+        return null
+      solutions = response.data
+
+      board = generate-board solutions |> obj-to-pairs |> sort |> reverse
       {board}
 
 </script>

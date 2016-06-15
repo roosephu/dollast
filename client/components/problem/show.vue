@@ -52,20 +52,32 @@ require! {
   \co
   \debug
   \vue
+  \../../actions : {raise-error}
 }
 
 log = debug \dollast:component:problem:show
 
 module.exports =
+  vuex:
+    actions:
+      {raise-error}
+
   data: ->
     problem:
       config: {}
       outlook: {}
       permit: {}
+
   route:
-    data: co.wrap (to: params: {pid}) ~>*
-      {data} = yield vue.http.get "/problem/#{pid}"
-      problem: data
+    data: co.wrap (to: params: {pid}) ->*
+      {data: response} = yield vue.http.get "/problem/#{pid}"
+      if response.errors
+        @raise-error response
+        return null
+      problem = response.data
+
+      {problem}
+
   watch:
     'problem.outlook.desc': ->
       @$next-tick ~>

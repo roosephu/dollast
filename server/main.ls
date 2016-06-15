@@ -16,6 +16,7 @@ require! {
   \./config
   \./models
   \./crypt
+  \./Exception
 }
 
 export app = koa!
@@ -51,28 +52,6 @@ app.use koa-bodyparser do
   extend-types:
     json: ['application/x-javascript']
     multipart: ['multipart/form-data']
-
-# ==== Logger ====
-app.use (next) ->*
-  try
-    # log "#{@req.method} #{@req.ul}"
-    yield next
-  catch e
-    log "catched error:"
-    log e
-    @status = e.status || 200
-    #@body = [error: e.message]
-    @body =
-      type: 'internal error'
-      payload:
-        message: e.message
-      error: true
-  if @errors
-    @status = 200
-    @body =
-      type: 'invalid request'
-      payload: @errors
-      error: true
 
 app.use (next) ->*
   # log "server.user", @state.user
@@ -133,10 +112,34 @@ app.use (next) ->*
         return
   yield next
 
+# ==== Logger ====
 app.use (next) ->*
-  log 'request body', @request.body
-  log "#{@req.method} #{@req.url}"
-  yield next
+  @errors = []
+  @throw = (err) ->
+    throw new Exception err
+  @check-errors = ->
+    if @errors.length > 0
+      throw new Exception
+  @assert = (expression, e) ->
+    if !expression
+      throw new Exception e
+
+  try
+    log 'request body', @request.body
+    log "#{@req.method} #{@req.url}"
+    yield next
+  catch e
+    if e instanceof Exception
+      if e.error
+        @errors.push e.error
+    else
+      @app.emit \error, e, @
+
+  @status = 200
+  if @errors.length > 0
+    @body = errors: @errors
+  else
+    @body = data: @body
 
 # ==== Jade ====
 #

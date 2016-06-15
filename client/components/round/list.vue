@@ -23,6 +23,7 @@ require! {
   \debug
   \co
   \../format
+  \../../actions : {raise-error}
 }
 
 log = debug \dollast:component:round:list
@@ -37,8 +38,13 @@ module.exports =
 
   route:
     data: co.wrap ->*
-      {data} = yield vue.http.get "/round"
-      rounds: data
+      {data: response} = yield vue.http.get "/round"
+      if response.errors
+        @raise-error response
+        return null
+      rounds = response.data
+
+      {rounds}
 
   ready: ->
     $filter = $ '.dropdown'

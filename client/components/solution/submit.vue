@@ -10,7 +10,7 @@
       .ui.field
         label language
         .ui.dropdown.icon.selection
-          input(type="hidden", name="lang")
+          input(type="hidden", name="language")
           .default.text select your language
           i.dropdown.icon
           .menu
@@ -41,6 +41,7 @@
 require! {
   \debug
   \co
+  \prelude-ls : {pairs-to-obj, obj-to-pairs, flatten}
 }
 
 log = debug \dollast:components:solution:submit
@@ -62,21 +63,25 @@ module.exports =
 
   ready: ->
     $ \.dropdown .dropdown!
-    submit = co.wrap (e) ~>*
-      e.prevent-default!
-      $form = $ \#submit-form
+    submit = co.wrap ~>*
+      $form = $ '#submit-form'
       all-values = $form.form 'get values'
       permit = all-values{owner, group, access}
 
       data = Object.assign do
-        pid: @pid
         all-values{code, lang}
-        permit: permit
-      yield @$http.post \/solution/submit, data
+        {@pid, permit}
+      {data: response} = yield @$http.post \/solution/submit, data
+      if response.errors
+        errors = {}
+        for error in response.errors
+          Object.assign errors, error
+        $form.form 'add errors', errors
 
     $form = $ '#submit-form'
     $form.form do
       on: \blur
+      debug: true
       fields:
         code:
           identifier: \code
@@ -86,7 +91,7 @@ module.exports =
             * type: 'maxLength[65535]'
               prompt: 'code length cannot exceed 65535'
         lang:
-          identifier: \lang
+          identifier: \language
           rules:
             * type: 'empty'
               prompt: 'language cannot be empty'

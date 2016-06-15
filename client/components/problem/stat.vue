@@ -14,8 +14,9 @@ require! {
   \vue
   \debug
   \co
-  \../format
   \prelude-ls : {average, map, filter}
+  \../format
+  \../../actions : {raise-error}
 }
 
 log = debug \dollast:component:problem:stat
@@ -39,12 +40,22 @@ generate-stat = (sols) ->
   return {solved, mean, median, stddev}
 
 module.exports =
+  vuex:
+    actions:
+      {raise-error}
+
   data: ->
     stat: []
     problem: {}
+
   route:
     data: co.wrap (to: params: {pid}) ->*
-      {data: {sols, prob}} = yield vue.http.get "/problem/#{pid}/stat"
+      {data: response} = yield vue.http.get "/problem/#{pid}/stat"
+      if response.errors
+        @raise-error response
+        return null
+      {sols, prob} = response.data
+
       stat = generate-stat sols
       stat:
         "accepted users": stat.solved
@@ -53,6 +64,7 @@ module.exports =
         median: stat.median
         "standard deviation": stat.stddev
       problem: prob
+
   components:
     format{problem}
 

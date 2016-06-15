@@ -1,8 +1,8 @@
 require! {
   \vue
-  \../store
   \co
   \debug
+  \../store
 }
 
 log = debug \dollast:actions
@@ -19,3 +19,10 @@ export load-from-token = ({dispatch}) ->
 export logout = ({dispatch}) ->
   delete local-storage.token
   dispatch \logout
+
+export raise-error = ({dispatch}, response) ->
+  log \raise, {response}
+  dispatch \raiseError, response.errors[0]
+
+export resolve-error = ({dispatch}) ->
+  dispatch \resolveError

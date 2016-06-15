@@ -24,11 +24,16 @@ require! {
   \co
   \debug
   \../format/problem
+  \../../actions : {raise-error}
 }
 
-log = debug 'dollast:component:problem:list'
+log = debug \dollast:component:problem:list
 
 module.exports =
+  vuex:
+    actions:
+      {raise-error}
+
   data: ->
     filter: \all
     options: [\all, \solved, \unsolved]
@@ -37,9 +42,15 @@ module.exports =
   components:
     {problem}
 
-  created: ->
-    co ~>*
-      {data: @problems} = yield vue.http.get \/problem
+  route:
+    data: co.wrap ->*
+      {data: response} = yield vue.http.get \/problem
+      if response.errors
+        @raise-error response
+        return null
+      problems = response.data
+
+      {problems}
 
   ready: ->
     $filter = $ '.dropdown'

@@ -18,8 +18,7 @@ export submit = ->*
   {pid} = req
 
   problem = yield models.problems.find-by-id pid, "permit config" .exec!
-  if not problem
-    throw new Error 'no problem found. '
+  @assert problem, id: pid, type: \problem, detail: 'no problem found. '
   problem.permit.check-access @state.user, \x
 
   uid = @state.user.client.uid
@@ -38,9 +37,7 @@ export submit = ->*
   yield solution.save!
   core.judge req.language, req.code, problem.config, solution
 
-  @body = status:
-    type: "ok"
-    msg: "solution submited successfully"
+  @body = msg: "solution submited successfully"
 
 export list = ->*
   opts = config.sol-list-opts
@@ -67,6 +64,7 @@ export show = ->*
   solution = yield models.solutions.find-by-id sid
     .populate \problem, 'outlook.title'
     .exec!
+  @assert solution, id: sid, type: \solution, detail: 'no solution found. '
 
   solution.permit.check-access @state.user, \r
 

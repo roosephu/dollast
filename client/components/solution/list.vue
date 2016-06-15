@@ -40,17 +40,29 @@ require! {
   \co
   \vue
   \../format
+  \../../actions : {raise-error}
 }
 
 log = debug \dollast:component:solution:list
 
 module.exports =
+  vuex:
+    actions:
+      {raise-error}
+
   data: ->
     solutions: []
+
   route:
     data: co.wrap ~>*
-      {data} = yield vue.http.get \/solution
-      solutions: data
+      {data: response} = yield vue.http.get \/solution
+      if response.errors
+        @raise-error response
+        return null
+      solutions = response.data
+
+      {solutions}
+
   components:
     format
 

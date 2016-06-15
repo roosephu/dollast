@@ -36,13 +36,18 @@ require! {
   \vue
   \co
   \debug
-  \../format
   \moment
+  \../format
+  \../../actions : {raise-error}
 }
 
 log = debug \dollast:component:round:show
 
 module.exports =
+  vuex:
+    actions:
+      {raise-error}
+
   components:
     format{problem}
 
@@ -62,7 +67,12 @@ module.exports =
 
   route:
     data: co.wrap (to: params: {rid}) ->*
-      {data} = yield vue.http.get "/round/#{rid}"
-      {rnd: data}
+      {data: response} = yield vue.http.get "/round/#{rid}"
+      if response.errors
+        @raise-error response
+        return null
+      round = response.data
+
+      {rnd: round}
 
 </script>

@@ -9,8 +9,7 @@
     "url": "https://github.com/roosephu/dollast.git"
   },
   "scripts": {
-    "server": "DEBUG=dollast:* nodemon -w bin -x lsc bin/server.ls",
-    "compile": "lsc -o bin -w -c src/bin"
+    "server": "DEBUG=dollast:* nodemon -w server -x lsc server/main.ls"
   },
   "dependencies": {
     "async": "^2.0.0-rc.5",

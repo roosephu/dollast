@@ -92,6 +92,7 @@ require! {
   \debug
   \co
   \vue
+  \../../actions : {raise-error}
 }
 
 log = debug 'dollast:component:problem:modify'
@@ -131,6 +132,8 @@ module.exports =
   vuex:
     getters:
       uid: (.session.uid)
+    actions:
+      {raise-error}
 
   data: ->
     pid: ""
@@ -158,9 +161,11 @@ module.exports =
       problem = get-form-values!
       log {problem}
       if @pid == ""
-        yield @$http.post "/problem", problem
+        {data} = yield @$http.post "/problem", problem
       else
-        yield @$http.put "/problem/#{@pid}", problem
+        {data} = yield @$http.put "/problem/#{@pid}", problem
+      if data.errors != void
+        log data.errors
 
     $form = $ '#problem-modify'
     $form.form do
@@ -270,7 +275,12 @@ module.exports =
   route:
     data: co.wrap (to: params: {pid}) ~>*
       if pid != void
-        {data} = yield vue.http.get "/problem/#{pid}"
-        set-form-values data
-        {pid, problem: data}
+        {data: response} = yield vue.http.get "/problem/#{pid}"
+        if response.errors
+          @raise-error response
+          return null
+        problem = response.data
+
+        set-form-values problem
+        {pid, problem}
 </script>
