@@ -1,7 +1,9 @@
 require! {
   \koa
+  \koa-convert
   \koa-router
   \debug
+  \co
   \co-busboy
   \./config
   \./core
@@ -11,65 +13,57 @@ require! {
 
 log = debug \dollast:router
 
-image = # deprecated
-  upload: ->*
-    parts = co-busboy @, auto-fields: true
-    while part = yield parts
-      @body = link: yield core.upload-image part
-    log @body
-
 params-validator =
-  pid: (pid, next) ->*
-    @params.pid = pid
-    # log {pid}, @req
-    @check-params \pid .to-int! .ge 0
-    return if @errors
-    yield next
-  sid: (sid, next) ->*
-    @params.sid = sid
-    @check-params \sid .to-int! .ge 0
-    return if @errors
-    yield next
-  rid: (rid, next) ->*
-    @params.rid = rid
-    @check-params \rid .to-int! .ge 0
-    return if @errors
-    yield next
-  uid: (uid, next) ->*
-    @params.uid = uid
-    @check-params \uid .len config.uid-min-len, config.uid-max-len
-    return if @errors
-    yield next
+  pid: (pid, ctx, next) ->
+    ctx.params.pid = pid
+    # log {pid}, ctx.req
+    ctx.check-params \pid .to-int! .ge 0
+    return if ctx.errors
+    next!
+  sid: (sid, ctx, next) ->
+    ctx.params.sid = sid
+    ctx.check-params \sid .to-int! .ge 0
+    return if ctx.errors
+    next!
+  rid: (rid, ctx, next) ->
+    ctx.params.rid = rid
+    ctx.check-params \rid .to-int! .ge 0
+    return if ctx.errors
+    next!
+  uid: (uid, ctx, next) ->
+    ctx.params.uid = uid
+    ctx.check-params \uid .len config.uid-min-len, config.uid-max-len
+    return if ctx.errors
+    next!
 
 app = new koa!
 
-app.use (next) ->*
-  @errors = []
-  @throw = (err) ->
+app.use co.wrap (ctx, next) ->*
+  ctx.errors = []
+  ctx.throw = (err) ->
     throw new Exception err
-  @check-errors = ->
-    if @errors.length > 0
+  ctx.check-errors = ->
+    if ctx.errors.length > 0
       throw new Exception
-  @assert = (expression, e) ->
+  ctx.assert = (expression, e) ->
     if !expression
       throw new Exception e
 
   try
-    log 'request body', @request.body
-    log "#{@req.method} #{@req.url}"
-    yield next
+    log "#{ctx.req.method} #{ctx.req.url}: #{ctx.request.body}"
+    yield next!
   catch e
     if e instanceof Exception
       if e.error
-        @errors.push e.error
+        ctx.errors.push e.error
     else
-      @app.emit \error, e, @
+      ctx.app.emit \error, e, ctx
 
-  @status = 200
-  if @errors.length > 0
-    @body = errors: @errors
+  ctx.status = 200
+  if ctx.errors.length > 0
+    ctx.body = errors: ctx.errors
   else
-    @body = data: @body
+    ctx.body = data: ctx.body
 
 router = new koa-router!
 router

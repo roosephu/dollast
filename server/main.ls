@@ -1,4 +1,5 @@
 require! {
+  \co
   \koa
   \koa-compress
   \koa-json
@@ -7,11 +8,16 @@ require! {
   \koa-conditional-get
   \koa-validate
   \koa-mount
+  \koa-convert
   \koa-send
   \koa-etag
   \koa-jwt
+  \koa-webpack-middleware : {dev-middleware, hot-middleware}
+  \webpack
   \path
   \debug
+  \babel-polyfill
+  \../webpack.config : webpack-config
   \./config
   \./models
   \./crypt
@@ -19,7 +25,13 @@ require! {
   \./router
 }
 
-export app = koa!
+export app = new koa!
+
+compile = webpack webpack-config
+
+_use = app.use
+app.use = (x) ->
+  _use.call app, koa-convert x
 
 log = debug \dollast:server
 
@@ -33,6 +45,23 @@ app.use koa-etag!
 app.use koa-json!
 koa-validate app
 
+app.use dev-middleware compile,
+  quiet: true
+  lazy: false
+  public-path: webpack-config.output.public-path
+  stats:
+    colors: true
+
+# we shouldn't compress webpack hot module replacement information
+app.use (next) ->*
+  log @request.method, @request.url
+  if @request.url == "/__webpack_hmr"
+    @compress = false
+  yield next
+
+app.use hot-middleware compile,
+  log: debug \dollast:webpack
+
 # ==== Session ====
 
 app.use koa-jwt do
@@ -44,100 +73,43 @@ app.keys = config.keys
 #   cookie:
 #     max-age: 1000 * 60 * 5
 
-app.use (next) ->*
-  # log @request
-  yield next
-
 app.use koa-bodyparser do
   extend-types:
     json: ['application/x-javascript']
     multipart: ['multipart/form-data']
 
-app.use (next) ->*
-  # log "server.user", @state.user
-  # log koa-jwt.verify @request.header.authorization.substr(7), config.jwt-key, ignore-expiration: false
+app.use co.wrap (ctx, next) ->*
+  # log "server.user", ctx.state.user
+  # log koa-jwt.verify ctx.request.header.authorization.substr(7), config.jwt-key, ignore-expiration: false
 
   # decode header
-  if @state?.user?.server
-    #@state.user = JSON.parse crypt.AES.dec that, config.server-AES-key
-    if @state.user.client
+  if ctx.state?.user?.server
+    #ctx.state.user = JSON.parse crypt.AES.dec that, config.server-AES-key
+    if ctx.state.user.client
       client-state = JSON.parse that
       # log "client info", client-state
     else
       client-state = {}
-    @state.user = JSON.parse @state?.user?.server
-    @state.user.client = client-state
-    # log 'encrypted data in header.server', @state.user
+    ctx.state.user = JSON.parse ctx.state?.user?.server
+    ctx.state.user.client = client-state
+    # log 'encrypted data in header.server', ctx.state.user
   else
-    @state.user = _id: \__guest__, groups: []
+    ctx.state.user = _id: \__guest__, groups: []
 
-  # log 'user state', @state.user
-
-  #content = @request.body.signed
-  #if content
-    #content = koa-jwt.decode content
-    #data = crypt.RSA.dec content.content
-    #if @state.user.user and @state.user.client-key != data.client-key
-      #throw new Error 'wrong client-key'
-#
-    #@request.body = data
-    #log 'verified encrypted data found in body.', @request.body
-  yield next
-
-  # if @state.user.server
-    # @body = encrypted: crypt.AES.enc JSON.stringf
-
-app.use (next) ->*
-  @check = (obj, key, err-msg) ->
-    return true
-  #   if not obj
-  #     if not @errors
-  #       @errors = []
-  #     @errors.push "#{err-msg}"
-  #     new koa-validate.Validator @, null, null, false, null, false
-  #   else
-  #     new koa-validate.Validator @, key, obj[key], obj[key]?, obj
-  yield next
+  ctx.state.user.theme ||= config.default.theme
+  ctx.state.user.groups  ||= config.default.groups
+  yield next!
 
 # ==== JSON and Static Serving ====
 
-app.use (next) ->*
-  # log 'current user', @state.user, config.default
-  @state.user.theme ||= config.default.theme
-  @state.user.groups  ||= config.default.groups
-  # log @session
-  if @method in [\HEAD, \GET]
-    for folders in [\public, "theme/#{@state.user.theme}"]
-      if yield koa-send @, @path, index: \index.html, max-age: 864000000, root: path.resolve folders
+app.use co.wrap (ctx, next) ->*
+  if ctx.method in [\HEAD, \GET]
+    for folder in [\public, "theme/#{ctx.state.user.theme}"]
+      if yield koa-send ctx, ctx.path, index: \index.html, max-age: 864000000, root: path.resolve folder
         return
-  yield next
-
-# ==== Jade ====
-#
-# app.use koa-jade.middleware do
-#   view-path: "theme/dollast"
-#   pretty: true
-#   compile-debug: false
-#
-# app.use (next) ->*
-#   log "hello world"
-#   extname = path.extname @req.url
-#   if @req.url == "/"
-#     yield @render "index.html", {}, true
-#   else if extname == ".html"
-#     yield @render @req.url, {}, true
-#   else
-#     yield next
-
-# ========= Router ===============
+  yield next!
 
 app.use koa-mount \/api, router
-
-# app.use (next) ->*
-#   # log "request", @request.body, "jwt", @user, "query", @query
-#   if not @user and config.mode != "debug"
-#     throw new Error "login to explore more fields"
-#   yield next
 
 # ====================================
 

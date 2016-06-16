@@ -1,4 +1,5 @@
 require! {
+  \co
   \../models
   \../config
   \prelude-ls : {difference}
@@ -8,42 +9,42 @@ require! {
 
 log = debug \dollast:ctrl:user
 
-export save = ->*
-  # @acquire-privilege \login
-  @check-body '_id' .len config.uid-min-len, config.uid-max-len
+export save = co.wrap (ctx) ->*
+  # ctx.acquire-privilege \login
+  ctx.check-body '_id' .len config.uid-min-len, config.uid-max-len
 
-  delete @request.body.pswd # should check once here
-  return if @errors
+  delete ctx.request.body.pswd # should check once here
+  return if ctx.errors
 
-  {_id, groups} = @request.body
+  {_id, groups} = ctx.request.body
 
   user = yield models.users.find-by-id _id .exec!
   if not user
-    @body = status:
+    ctx.body = status:
       type: \error
       message: "no such user"
 
-  user.permit.check-access @state.user, \w
+  user.permit.check-access ctx.state.user, \w
 
   priv-diff = difference user.groups, groups
   if priv-diff? and priv-diff.length > 0
-    user.permit.check-admin @state.user
-  delete @request.body.permit
+    user.permit.check-admin ctx.state.user
+  delete ctx.request.body.permit
 
-  user <<< @request.body
+  user <<< ctx.request.body
   yield user.save!
 
-  @body = status:
+  ctx.body = status:
     type: "ok"
     msg: "user profile saved"
 
-export register = ->*
-  # @check-body '_id' .len 6, 15
-  # @check-body 'pswd' .len 8, 15
-  {uid, password} = @request.body
+export register = co.wrap (ctx) ->*
+  # ctx.check-body '_id' .len 6, 15
+  # ctx.check-body 'pswd' .len 8, 15
+  {uid, password} = ctx.request.body
 
   if yield models.users.find-by-id uid .count! .exec!
-    @body =
+    ctx.body =
       type: \register
       error: true
       payload: "duplicate user id"
@@ -62,15 +63,15 @@ export register = ->*
     user.password = bcrypt.hash-sync password, salt
     yield user.save!
 
-    @body =
+    ctx.body =
       type: \register
       payload: "register successful"
 
-export profile = ->*
-  {uid} = @params
+export profile = co.wrap (ctx) ->*
+  {uid} = ctx.params
 
   profile = yield models.users.find-by-id uid, \-password .lean! .exec!
   solved-problems = yield models.solutions.get-user-solved-problems uid
   owned-problems = yield models.problems.get-user-owned-problems uid
   owned-rounds = yield models.rounds.get-user-owned-rounds uid
-  @body = {profile, solved-problems, owned-problems, owned-rounds}
+  ctx.body = {profile, solved-problems, owned-problems, owned-rounds}

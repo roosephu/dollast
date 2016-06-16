@@ -1,4 +1,5 @@
 require! {
+  \co
   \../models
   \debug
   \../core
@@ -7,23 +8,23 @@ require! {
 
 log = debug \dollast:ctrl:sol
 
-export submit = ->*
-  @check-body \pid .is-int! .ge 1
-  @check-body \language .in [\cpp, \java]
-  @check-body \code .len 1, 50000
-  @check-body \user .empty!
-  return if @errors
+export submit = co.wrap (ctx) ->*
+  ctx.check-body \pid .is-int! .ge 1
+  ctx.check-body \language .in [\cpp, \java]
+  ctx.check-body \code .len 1, 50000
+  ctx.check-body \user .empty!
+  return if ctx.errors
 
-  req = @request.body
+  req = ctx.request.body
   {pid} = req
 
   problem = yield models.problems.find-by-id pid, "permit config" .exec!
-  @assert problem, id: pid, type: \problem, detail: 'no problem found. '
-  problem.permit.check-access @state.user, \x
+  ctx.assert problem, id: pid, type: \problem, detail: 'no problem found. '
+  problem.permit.check-access ctx.state.user, \x
 
-  uid = @state.user.client.uid
+  uid = ctx.state.user.client.uid
 
-  # @ensure-access model, 0, \x # sol = 0 => submision
+  # ctx.ensure-access model, 0, \x # sol = 0 => submision
   solution = new models.solutions do
     _id: yield models.solutions.next-count!
     code: req.code
@@ -37,9 +38,9 @@ export submit = ->*
   yield solution.save!
   core.judge req.language, req.code, problem.config, solution
 
-  @body = msg: "solution submited successfully"
+  ctx.body = msg: "solution submited successfully"
 
-export list = ->*
+export list = co.wrap (ctx) ->*
   opts = config.sol-list-opts
 
   query = models.solutions.find {}, '-code -results'
@@ -56,16 +57,16 @@ export list = ->*
 
   sol-list = yield query.exec!
 
-  @body = sol-list
+  ctx.body = sol-list
 
-export show = ->*
-  {sid} = @params
+export show = co.wrap (ctx) ->*
+  {sid} = ctx.params
 
   solution = yield models.solutions.find-by-id sid
     .populate \problem, 'outlook.title'
     .exec!
-  @assert solution, id: sid, type: \solution, detail: 'no solution found. '
+  ctx.assert solution, id: sid, type: \solution, detail: 'no solution found. '
 
-  solution.permit.check-access @state.user, \r
+  solution.permit.check-access ctx.state.user, \r
 
-  @body = solution
+  ctx.body = solution

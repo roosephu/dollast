@@ -1,4 +1,5 @@
 require! {
+  \co
   \../models
   \../crypt
   \debug
@@ -10,41 +11,41 @@ require! {
 
 log = debug \dollast:ctrl:site
 
-export theme = ->*
-  @state.user.theme = @params.theme
-  @body = status: true
+export theme = co.wrap (ctx) ->*
+  ctx.state.user.theme = ctx.params.theme
+  ctx.body = status: true
 
-export token = ->*
-  token = @crypt.gen-salt!
+export token = co.wrap (ctx) ->*
+  token = ctx.crypt.gen-salt!
   log {token}
-  # @state.user.token = str
-  @body = {token}
+  # ctx.state.user.token = str
+  ctx.body = {token}
 #
 # session: ->*
-#   log @session
-#   @body = uid: if @session.passport?.user?._id? then that else void
+#   log ctx.session
+#   ctx.body = uid: if ctx.session.passport?.user?._id? then that else void
 
-export login = ->*
-  # @check-body '_id' .len 6, 15
-  # @check-body 'pswd' .non-empty!
-  {uid, password} = @request.body
-  return if @errors
+export login = co.wrap (ctx) ->*
+  # ctx.check-body '_id' .len 6, 15
+  # ctx.check-body 'pswd' .non-empty!
+  {uid, password} = ctx.request.body
+  return if ctx.errors
 
   user = yield models.users.find-by-id uid .exec!
   if not user.check-password password
-    @body = status:
+    ctx.body = status:
       type: \err
       msg: "bad user/password combination"
   else
     groups = user.groups
     groups.push \users
-    @state.user.groups = lists-to-obj groups, [true for i from 1 to groups.length]
+    ctx.state.user.groups = lists-to-obj groups, [true for i from 1 to groups.length]
 
-    client-key = @request.body.client-key
+    client-key = ctx.request.body.client-key
     server-key = config.server-AES-key
     server-payload = JSON.stringify do
       _id: user._id
-      groups: @state.user.groups
+      groups: ctx.state.user.groups
       client-key: client-key
     client-payload = JSON.stringify do
       uid: user._id
@@ -57,10 +58,10 @@ export login = ->*
     token = koa-jwt.sign payload, config.jwt-key, expires-in: 60 * 60 * 24
 
     refresh = koa-jwt.sign payload, config.server-AES-key, expires-in: 60 * 60 * 24 * 30
-    @body =
+    ctx.body =
       type: "ok"
       payload:
         {token}
 
-export logout = ->*
+export logout = co.wrap (ctx) ->*
   ...

@@ -1,4 +1,5 @@
 require! {
+  \co
   \../models
   \debug
   \../config : {prob-list-opts}
@@ -7,54 +8,54 @@ require! {
 
 log = debug \dollast:ctrls:prob
 
-export list = ->*
+export list = co.wrap (ctx) ->*
   opts = prob-list-opts
-  @body = yield models.problems
+  ctx.body = yield models.problems
     .find null, \outlook.title # "config.round": $exists: true,
     .skip opts.skip
     .limit opts.limit
     .exec!
-  # log "prob-list #{@body}"
+  # log \problem-list, ctx.body
 
-export show = ->*
+export show = co.wrap (ctx) ->*
   log "finding problem"
-  {pid} = @params
+  {pid} = ctx.params
 
   problem = yield models.problems.find-by-id pid
     # .populate "config.round", "begTime"
     .exec!
   if not problem
-    @throw do
+    ctx.throw do
       _id: pid
       type: \problem
       detail: "non-existing problem"
-  problem.permit.check-access @state.user, \r
+  problem.permit.check-access ctx.state.user, \r
 
   # TODO check whether the corresponding round has started
   problem .= to-object!
-  @body = problem
+  ctx.body = problem
 
-export save = ->*
-  {pid} = @params
+export save = co.wrap (ctx) ->*
+  {pid} = ctx.params
 
-  #@check-body 'method' .in ['modify', 'create'], 'wrong method'
+  #ctx.check-body 'method' .in ['modify', 'create'], 'wrong method'
   # log req.outlook.title
-  @check-body \/outlook/title, true .get! .len 1, 63
-  # @check req.outlook, 'title' .len 1, 63
-  #@check req.outlook, 'inFmt' .not-empty!
-  #@check req.outlook, 'outFmt' .not-empty!
-  #@check req.outlook, 'sampleIn' .not-empty!
-  #@check req.outlook, 'sampleOut' .not-empty!
-  @check-body \/config/timeLimit, true .get! .is-float! .gt 0
-  @check-body \/config/spaceLimit, true .get! .is-float! .gt 0
-  @check-body \/config/stackLimit, true .get! .is-float! .gt 0
-  @check-body \/config/outputLimit, true .get! .is-float! .gt 0
-  @check-body \/config/judger, true .get! .in [\string, \strict, \real, \custom]
-  @check-body \/permit/owner, true .get!
-  # return if @errors.length > 0
-  @check-errors!
+  ctx.check-body \/outlook/title, true .get! .len 1, 63
+  # ctx.check req.outlook, 'title' .len 1, 63
+  #ctx.check req.outlook, 'inFmt' .not-empty!
+  #ctx.check req.outlook, 'outFmt' .not-empty!
+  #ctx.check req.outlook, 'sampleIn' .not-empty!
+  #ctx.check req.outlook, 'sampleOut' .not-empty!
+  ctx.check-body \/config/timeLimit, true .get! .is-float! .gt 0
+  ctx.check-body \/config/spaceLimit, true .get! .is-float! .gt 0
+  ctx.check-body \/config/stackLimit, true .get! .is-float! .gt 0
+  ctx.check-body \/config/outputLimit, true .get! .is-float! .gt 0
+  ctx.check-body \/config/judger, true .get! .in [\string, \strict, \real, \custom]
+  ctx.check-body \/permit/owner, true .get!
+  # return if ctx.errors.length > 0
+  ctx.check-errors!
 
-  problem = @request.body
+  problem = ctx.request.body
 
   if problem._id
     delete problem._id
@@ -65,28 +66,28 @@ export save = ->*
     # TODO: check whether user can create a problem here
   else
     existed = yield models.problems.find-by-id pid, \permit .exec!
-    @assert existed, id: pid, type: \problem, detail: "cannot find the original problem"
+    ctx.assert existed, id: pid, type: \problem, detail: "cannot find the original problem"
 
-    existed.permit.check-access @state.user, \w
+    existed.permit.check-access ctx.state.user, \w
 
     # TODO: check permit is not modified here
     # only owner can transfer owner
 
   yield models.problems.update _id: pid, problem, upsert: true, overwrite: true .exec!
-  @body = problem with _id: pid
+  ctx.body = problem with _id: pid
 
-export remove = ->*
+export remove = co.wrap (ctx) ->*
   # TODO: implement removing a problem
   ...
 
-export stat = ->*
-  {pid} = @params
+export stat = co.wrap (ctx) ->*
+  {pid} = ctx.params
 
   problem = yield models.problems.find-by-id pid, 'config.round outlook.title permit'
     .exec!
   if not problem
     throw new Error "no such problem"
-  problem.permit.check-access @state.user, \r
+  problem.permit.check-access ctx.state.user, \r
 
   query = models.solutions.aggregate do
     * $match: problem: pid
@@ -108,4 +109,4 @@ export stat = ->*
   delete problem.config
   delete problem.permit
 
-  @body = sols: solutions, prob: problem
+  ctx.body = sols: solutions, prob: problem

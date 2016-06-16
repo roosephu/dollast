@@ -1,17 +1,18 @@
 require! {
+  \co
   \../models
   \debug
 }
 
 log = debug \dollast:ctrl:round
 
-export list = ->*
-  @body = yield models.rounds.find null, 'title beginTime endTime'
+export list = co.wrap (ctx) ->*
+  ctx.body = yield models.rounds.find null, 'title beginTime endTime'
     .lean!
     .exec!
 
-export show = ->*
-  {rid} = @params
+export show = co.wrap (ctx) ->*
+  {rid} = ctx.params
 
   round = yield models.rounds.find-by-id rid, '-__v'
     .populate 'problems', '_id outlook.title'
@@ -24,11 +25,11 @@ export show = ->*
   # else
   #   rnd.started = true
 
-  @body = round
+  ctx.body = round
 
-export save = ->*
-  {rid} = @params
-  round = @request.body
+export save = co.wrap (ctx) ->*
+  {rid} = ctx.params
+  round = ctx.request.body
 
   if round._id
     delete round._id
@@ -40,41 +41,41 @@ export save = ->*
   else
     existed = yield models.rounds.find-by-id rid, \permit .exec!
     if not existed
-      @body =
+      ctx.body =
         status:
           type: \error
           message: "cannot find the original round"
       return
-    existed.permit.check-access @state.user, \w
+    existed.permit.check-access ctx.state.user, \w
 
     # TODO: check permit is not modified here
     # only owner can transfer owner
 
-  @body = yield models.rounds.update _id: rid, round, upsert: true, overwrite: true .exec!
+  ctx.body = yield models.rounds.update _id: rid, round, upsert: true, overwrite: true .exec!
 
-  @body <<< status:
+  ctx.body <<< status:
     type: "ok"
     msg: "round saved"
 
-export remove = ->*
-  {rid} = @params
+export remove = co.wrap (ctx) ->*
+  {rid} = ctx.params
 
   round = yield models.rounds.find-by-id rid, \permit .exec!
-  round.permit.check-access @state.user, \w
+  round.permit.check-access ctx.state.user, \w
 
   round.remove!
 
-  @body = status:
+  ctx.body = status:
     type: "ok"
     msg: "round has been deleted"
 
-export board = ->*
-  {rid} = @params
+export board = co.wrap (ctx) ->*
+  {rid} = ctx.params
 
   round = yield models.rounds.find-by-id rid, \permit .exec!
   if not round
     throw new Error "no such rounds"
     return
-  round.permit.check-access @state.user, \r
+  round.permit.check-access ctx.state.user, \r
 
-  @body = yield models.solutions.get-solutions-in-a-round rid
+  ctx.body = yield models.solutions.get-solutions-in-a-round rid
