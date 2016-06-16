@@ -38,11 +38,14 @@ module.exports =
   ready: ->
     $form = $ '#login-form'
 
-    submit = (e) ~>
+    submit = co.wrap (e) ~>*
       e.prevent-default!
       $form = $ '#login-form'
       values = $form.form 'get values'
-      @login values
+      {data} = yield vue.http.post \/site/login, values
+      local-storage.token = data.payload.token
+      @login data.payload.token
+
       @success = true
 
     $form.form do

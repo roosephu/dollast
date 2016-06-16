@@ -10,7 +10,7 @@ state =
   error: void
 
 mutations =
-  load-from-token: (state, token) ->
+  login: (state, token) ->
     payload = auth.jwt.dec token
     client-info = JSON.parse payload.client
     local-storage.token = token

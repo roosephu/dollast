@@ -4,10 +4,9 @@ require! {
   \koa-json
   \koa-static
   \koa-bodyparser
-  # 'koa-generic-session'
   \koa-conditional-get
   \koa-validate
-  # 'koa-jade'
+  \koa-mount
   \koa-send
   \koa-etag
   \koa-jwt
@@ -17,6 +16,7 @@ require! {
   \./models
   \./crypt
   \./Exception
+  \./router
 }
 
 export app = koa!
@@ -112,35 +112,6 @@ app.use (next) ->*
         return
   yield next
 
-# ==== Logger ====
-app.use (next) ->*
-  @errors = []
-  @throw = (err) ->
-    throw new Exception err
-  @check-errors = ->
-    if @errors.length > 0
-      throw new Exception
-  @assert = (expression, e) ->
-    if !expression
-      throw new Exception e
-
-  try
-    log 'request body', @request.body
-    log "#{@req.method} #{@req.url}"
-    yield next
-  catch e
-    if e instanceof Exception
-      if e.error
-        @errors.push e.error
-    else
-      @app.emit \error, e, @
-
-  @status = 200
-  if @errors.length > 0
-    @body = errors: @errors
-  else
-    @body = data: @body
-
 # ==== Jade ====
 #
 # app.use koa-jade.middleware do
@@ -160,9 +131,7 @@ app.use (next) ->*
 
 # ========= Router ===============
 
-routers = require \./routers
-
-app.use routers.router
+app.use koa-mount \/api, router
 
 # app.use (next) ->*
 #   # log "request", @request.body, "jwt", @user, "query", @query

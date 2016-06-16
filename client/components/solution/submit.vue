@@ -32,8 +32,8 @@
           input(name="access")
 
     .ui.field
-      a.ui.icon.labeled.button.primary.floated.submit
-        i.icon.rocket
+      a.ui.button.primary.floated.submit
+        //- i.icon.rocket
         | Submit
 </template>
 
@@ -63,19 +63,22 @@ module.exports =
 
   ready: ->
     $ \.dropdown .dropdown!
-    submit = co.wrap ~>*
+    submit = co.wrap (e) ~>*
       $form = $ '#submit-form'
       all-values = $form.form 'get values'
       permit = all-values{owner, group, access}
 
       data = Object.assign do
-        all-values{code, lang}
+        all-values{code, language}
         {@pid, permit}
-      {data: response} = yield @$http.post \/solution/submit, data
+      {data: response} = yield @$http.post \solution/submit, data
       if response.errors
         errors = {}
         for error in response.errors
           Object.assign errors, error
+
+        # TODO not working yet: https://github.com/Semantic-Org/Semantic-UI/issues/959
+        # need to set the form to invalid state
         $form.form 'add errors', errors
 
     $form = $ '#submit-form'

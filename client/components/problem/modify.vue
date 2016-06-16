@@ -161,9 +161,9 @@ module.exports =
       problem = get-form-values!
       log {problem}
       if @pid == ""
-        {data} = yield @$http.post "/problem", problem
+        {data} = yield @$http.post "problem", problem
       else
-        {data} = yield @$http.put "/problem/#{@pid}", problem
+        {data} = yield @$http.put "problem/#{@pid}", problem
       if data.errors != void
         log data.errors
 
@@ -275,7 +275,7 @@ module.exports =
   route:
     data: co.wrap (to: params: {pid}) ~>*
       if pid != void
-        {data: response} = yield vue.http.get "/problem/#{pid}"
+        {data: response} = yield vue.http.get "problem/#{pid}"
         if response.errors
           @raise-error response
           return null

@@ -1,10 +1,12 @@
 require! {
+  \koa
   \koa-router
   \debug
   \co-busboy
   \./config
   \./core
   \./controllers : {data, problems, solutions, rounds, site, users}
+  \./Exception
 }
 
 log = debug \dollast:router
@@ -38,6 +40,36 @@ params-validator =
     @check-params \uid .len config.uid-min-len, config.uid-max-len
     return if @errors
     yield next
+
+app = new koa!
+
+app.use (next) ->*
+  @errors = []
+  @throw = (err) ->
+    throw new Exception err
+  @check-errors = ->
+    if @errors.length > 0
+      throw new Exception
+  @assert = (expression, e) ->
+    if !expression
+      throw new Exception e
+
+  try
+    log 'request body', @request.body
+    log "#{@req.method} #{@req.url}"
+    yield next
+  catch e
+    if e instanceof Exception
+      if e.error
+        @errors.push e.error
+    else
+      @app.emit \error, e, @
+
+  @status = 200
+  if @errors.length > 0
+    @body = errors: @errors
+  else
+    @body = data: @body
 
 router = new koa-router!
 router
@@ -81,4 +113,6 @@ router
   .get    '/data/:pid/repair',          data.repair
   .delete '/data/:pid/:file',           data.remove
 
-export router = router.middleware!
+app.use router.middleware!
+
+module.exports = app

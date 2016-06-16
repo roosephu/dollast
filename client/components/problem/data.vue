@@ -66,7 +66,7 @@ module.exports =
 
   route:
     data: co.wrap (to: params: {pid}) ~>*
-      {data: response} = yield vue.http.get "/problem/#{pid}"
+      {data: response} = yield vue.http.get "problem/#{pid}"
       if response.errors
         @raise-error response
         return null
@@ -76,7 +76,7 @@ module.exports =
 
   methods:
     repair: co.wrap ->*
-      {data} = yield @$http.get "/problem/#{@problem._id}/repair"
+      {data} = yield @$http.get "problem/#{@problem._id}/repair"
 
     select: ->
       $ '#upload' .click!
@@ -86,7 +86,7 @@ module.exports =
       form-data = new FormData!
       for file in files
         form-data.append file.name, file
-      {data} = yield @$http.post "/data/#{@problem._id}/upload", form-data
+      {data} = yield @$http.post "data/#{@problem._id}/upload", form-data
       @problem.config.dataset = data.pairs
 
 </script>

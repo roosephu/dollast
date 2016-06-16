@@ -131,14 +131,14 @@ module.exports =
           title = response.outlook.title
           id = response._id
           return results: [value: id, name: formatter.problem response]
-        url: "/problem/{query}"
+        url: "/api/problem/{query}"
         on-change: (value) ~>
           log {value}
 
     submit = co.wrap (e) ~>*
       e.prevent-default!
       data = get-form-values!
-      {data: response} = yield vue.http.post "/round/#{@rid}", data
+      {data: response} = yield vue.http.post "round/#{@rid}", data
       if response.errors
         log {response.errors}
 
@@ -196,7 +196,7 @@ module.exports =
   route:
     data: co.wrap (to: params: {rid}) ->*
       if rid != void
-        {data: response} = yield vue.http.get "/round/#{rid}"
+        {data: response} = yield vue.http.get "round/#{rid}"
         if response.errors
           @raise-error response
           return null

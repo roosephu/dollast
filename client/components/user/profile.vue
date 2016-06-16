@@ -64,7 +64,7 @@ module.exports =
 
   route:
     data: co.wrap (to: params: {uid}) ->*
-      {data: response} = yield vue.http.get "/user/#{uid}"
+      {data: response} = yield vue.http.get "user/#{uid}"
       if response.errors
         @raise-error response
         return null

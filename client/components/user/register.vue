@@ -35,7 +35,7 @@ module.exports =
       e.prevent-default!
       $form = $ '#register-form'
       all-values = $form.form 'get values'
-      yield @$http.post \/user/register, all-values
+      yield @$http.post \user/register, all-values
 
     $ '#register-form' .form do
       on: \blur

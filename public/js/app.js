@@ -16,6 +16,7 @@ webpackJsonp([0],[
 	vue.use(vueRouter);
 	router = __webpack_require__(135);
 	vue.use(vueResource);
+	vue.http.options.root = '/api';
 	x$ = app = __webpack_require__(211);
 	x$.store = __webpack_require__(147);
 	app = vue.extend(app);
@@ -386,7 +387,7 @@ webpackJsonp([0],[
 	  route: {
 	    data: co.wrap(function*(){
 	      var response, problems;
-	      response = (yield vue.http.get('/problem')).data;
+	      response = (yield vue.http.get('problem')).data;
 	      if (response.errors) {
 	        this.raiseError(response);
 	        return null;
@@ -463,24 +464,17 @@ webpackJsonp([0],[
 /* 146 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, co, debug, store, log, login, loadFromToken, logout, raiseError, resolveError, out$ = typeof exports != 'undefined' && exports || this;
+	var vue, co, debug, store, log, login, logout, raiseError, resolveError, out$ = typeof exports != 'undefined' && exports || this;
 	vue = __webpack_require__(1);
 	co = __webpack_require__(142);
 	debug = __webpack_require__(29);
 	store = __webpack_require__(147);
 	log = debug('dollast:actions');
-	out$.login = login = co.wrap(function*(arg$, info){
-	  var dispatch, data;
-	  dispatch = arg$.dispatch;
-	  data = (yield vue.http.post('/site/login', info)).data;
-	  localStorage.token = data.payload.token;
-	  return dispatch('loadFromToken', data.payload.token);
-	});
-	out$.loadFromToken = loadFromToken = function(arg$){
+	out$.login = login = function(arg$){
 	  var dispatch;
 	  dispatch = arg$.dispatch;
 	  if (localStorage.token) {
-	    return dispatch('loadFromToken', localStorage.token);
+	    return dispatch('login', localStorage.token);
 	  }
 	};
 	out$.logout = logout = function(arg$){
@@ -520,7 +514,7 @@ webpackJsonp([0],[
 	  error: void 8
 	};
 	mutations = {
-	  loadFromToken: function(state, token){
+	  login: function(state, token){
 	    var payload, clientInfo;
 	    payload = auth.jwt.dec(token);
 	    clientInfo = JSON.parse(payload.client);
@@ -750,9 +744,9 @@ webpackJsonp([0],[
 	        problem: problem
 	      });
 	      if (this$.pid === "") {
-	        data = (yield this$.$http.post("/problem", problem)).data;
+	        data = (yield this$.$http.post("problem", problem)).data;
 	      } else {
-	        data = (yield this$.$http.put("/problem/" + this$.pid, problem)).data;
+	        data = (yield this$.$http.put("problem/" + this$.pid, problem)).data;
 	      }
 	      if (data.errors !== void 8) {
 	        return log(data.errors);
@@ -890,7 +884,7 @@ webpackJsonp([0],[
 	      var pid, response, problem;
 	      pid = arg$.to.params.pid;
 	      if (pid !== void 8) {
-	        response = (yield vue.http.get("/problem/" + pid)).data;
+	        response = (yield vue.http.get("problem/" + pid)).data;
 	        if (response.errors) {
 	          this$.raiseError(response);
 	          return null;
@@ -976,7 +970,7 @@ webpackJsonp([0],[
 	    data: co.wrap(function*(arg$){
 	      var pid, response, problem;
 	      pid = arg$.to.params.pid;
-	      response = (yield vue.http.get("/problem/" + pid)).data;
+	      response = (yield vue.http.get("problem/" + pid)).data;
 	      if (response.errors) {
 	        this.raiseError(response);
 	        return null;
@@ -1097,7 +1091,7 @@ webpackJsonp([0],[
 	    data: co.wrap(function*(arg$){
 	      var pid, response, ref$, sols, prob, stat;
 	      pid = arg$.to.params.pid;
-	      response = (yield vue.http.get("/problem/" + pid + "/stat")).data;
+	      response = (yield vue.http.get("problem/" + pid + "/stat")).data;
 	      if (response.errors) {
 	        this.raiseError(response);
 	        return null;
@@ -1362,7 +1356,7 @@ webpackJsonp([0],[
 	    data: co.wrap(function*(arg$){
 	      var pid, response, problem;
 	      pid = arg$.to.params.pid;
-	      response = (yield vue.http.get("/problem/" + pid)).data;
+	      response = (yield vue.http.get("problem/" + pid)).data;
 	      if (response.errors) {
 	        this$.raiseError(response);
 	        return null;
@@ -1376,7 +1370,7 @@ webpackJsonp([0],[
 	  methods: {
 	    repair: co.wrap(function*(){
 	      var ref$, data;
-	      return ref$ = (yield this.$http.get("/problem/" + this.problem._id + "/repair")), data = ref$.data, ref$;
+	      return ref$ = (yield this.$http.get("problem/" + this.problem._id + "/repair")), data = ref$.data, ref$;
 	    }),
 	    select: function(){
 	      return $('#upload').click();
@@ -1389,7 +1383,7 @@ webpackJsonp([0],[
 	        file = files[i$];
 	        formData.append(file.name, file);
 	      }
-	      data = (yield this.$http.post("/data/" + this.problem._id + "/upload", formData)).data;
+	      data = (yield this.$http.post("data/" + this.problem._id + "/upload", formData)).data;
 	      return this.problem.config.dataset = data.pairs;
 	    })
 	  }
@@ -1456,7 +1450,7 @@ webpackJsonp([0],[
 	  route: {
 	    data: co.wrap(function*(){
 	      var response, solutions;
-	      response = (yield vue.http.get('/solution')).data;
+	      response = (yield vue.http.get('solution')).data;
 	      if (response.errors) {
 	        this$.raiseError(response);
 	        return null;
@@ -1541,7 +1535,7 @@ webpackJsonp([0],[
 	  ready: function(){
 	    var submit, $form, this$ = this;
 	    $('.dropdown').dropdown();
-	    submit = co.wrap(function*(){
+	    submit = co.wrap(function*(e){
 	      var $form, allValues, permit, data, response, errors, i$, ref$, len$, error;
 	      $form = $('#submit-form');
 	      allValues = $form.form('get values');
@@ -1552,12 +1546,12 @@ webpackJsonp([0],[
 	      };
 	      data = Object.assign({
 	        code: allValues.code,
-	        lang: allValues.lang
+	        language: allValues.language
 	      }, {
 	        pid: this$.pid,
 	        permit: permit
 	      });
-	      response = (yield this$.$http.post('/solution/submit', data)).data;
+	      response = (yield this$.$http.post('solution/submit', data)).data;
 	      if (response.errors) {
 	        errors = {};
 	        for (i$ = 0, len$ = (ref$ = response.errors).length; i$ < len$; ++i$) {
@@ -1626,7 +1620,7 @@ webpackJsonp([0],[
 /* 183 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"submit-form\" class=\"ui form segment\"><h1 class=\"ui header dividing\">problem: {{pid}}</h1><div class=\"ui success message\"><div class=\"header\">Submit successful. Redirect to status in 3 seconds...</div></div><div class=\"ui field\"><label>code</label><textarea name=\"code\"></textarea></div><div class=\"ui two fields\"><div class=\"ui field\"><label>language</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"language\"/><div class=\"default text\">select your language</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in languages\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><h2 class=\"ui dividing header\">permission</h2><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><a class=\"ui icon labeled button primary floated submit\"><i class=\"icon rocket\"></i>Submit</a></div></div>";
+	module.exports = "<div id=\"submit-form\" class=\"ui form segment\"><h1 class=\"ui header dividing\">problem: {{pid}}</h1><div class=\"ui success message\"><div class=\"header\">Submit successful. Redirect to status in 3 seconds...</div></div><div class=\"ui field\"><label>code</label><textarea name=\"code\"></textarea></div><div class=\"ui two fields\"><div class=\"ui field\"><label>language</label><div class=\"ui dropdown icon selection\"><input type=\"hidden\" name=\"language\"/><div class=\"default text\">select your language</div><i class=\"dropdown icon\"></i><div class=\"menu\"><div v-for=\"item in languages\" data-value=\"{{item}}\" class=\"item\">{{item}}</div></div></div></div></div><h2 class=\"ui dividing header\">permission</h2><div class=\"ui four fields\"><div class=\"ui field\"><label>owner</label><div class=\"ui input\"><input name=\"owner\"/></div></div><div class=\"ui field\"><label>group</label><div class=\"ui input\"><input name=\"group\"/></div></div><div class=\"ui field\"><label>access</label><div class=\"ui input\"><input name=\"access\"/></div></div></div><div class=\"ui field\"><a class=\"ui button primary floated submit\">Submit</a></div></div>";
 
 /***/ },
 /* 184 */
@@ -1696,7 +1690,7 @@ webpackJsonp([0],[
 	    data: co.wrap(function*(arg$){
 	      var sid, response, solution;
 	      sid = arg$.to.params.sid;
-	      response = (yield vue.http.get("/solution/" + sid)).data;
+	      response = (yield vue.http.get("solution/" + sid)).data;
 	      if (response.errors) {
 	        this.raiseError(response);
 	        return null;
@@ -1774,7 +1768,7 @@ webpackJsonp([0],[
 	  route: {
 	    data: co.wrap(function*(){
 	      var response, rounds;
-	      response = (yield vue.http.get("/round")).data;
+	      response = (yield vue.http.get("round")).data;
 	      if (response.errors) {
 	        this.raiseError(response);
 	        return null;
@@ -1944,7 +1938,7 @@ webpackJsonp([0],[
 	            }]
 	          };
 	        },
-	        url: "/problem/{query}",
+	        url: "/api/problem/{query}",
 	        onChange: function(value){
 	          return log({
 	            value: value
@@ -1956,7 +1950,7 @@ webpackJsonp([0],[
 	      var data, response;
 	      e.preventDefault();
 	      data = getFormValues();
-	      response = (yield vue.http.post("/round/" + this$.rid, data)).data;
+	      response = (yield vue.http.post("round/" + this$.rid, data)).data;
 	      if (response.errors) {
 	        return log({
 	          errors: response.errors
@@ -2032,7 +2026,7 @@ webpackJsonp([0],[
 	      var rid, response, round;
 	      rid = arg$.to.params.rid;
 	      if (rid !== void 8) {
-	        response = (yield vue.http.get("/round/" + rid)).data;
+	        response = (yield vue.http.get("round/" + rid)).data;
 	        if (response.errors) {
 	          this.raiseError(response);
 	          return null;
@@ -2136,7 +2130,7 @@ webpackJsonp([0],[
 	    data: co.wrap(function*(arg$){
 	      var rid, response, round;
 	      rid = arg$.to.params.rid;
-	      response = (yield vue.http.get("/round/" + rid)).data;
+	      response = (yield vue.http.get("round/" + rid)).data;
 	      if (response.errors) {
 	        this.raiseError(response);
 	        return null;
@@ -2228,13 +2222,13 @@ webpackJsonp([0],[
 	    data: co.wrap(function*(arg$){
 	      var rid, response, round, solutions, board;
 	      rid = arg$.to.params.rid;
-	      response = (yield vue.http.get("/round/" + rid)).data;
+	      response = (yield vue.http.get("round/" + rid)).data;
 	      if (reseponse.errors) {
 	        this.raiseError(reseponse);
 	        return null;
 	      }
 	      round = reseponse.data;
-	      response = (yield vue.http.get("/round/" + rid + "/board")).data;
+	      response = (yield vue.http.get("round/" + rid + "/board")).data;
 	      if (response.errors) {
 	        this.raiseError(response);
 	        return null;
@@ -2317,7 +2311,7 @@ webpackJsonp([0],[
 	    data: co.wrap(function*(arg$){
 	      var uid, response, profile;
 	      uid = arg$.to.params.uid;
-	      response = (yield vue.http.get("/user/" + uid)).data;
+	      response = (yield vue.http.get("user/" + uid)).data;
 	      if (response.errors) {
 	        this.raiseError(response);
 	        return null;
@@ -2391,14 +2385,16 @@ webpackJsonp([0],[
 	  ready: function(){
 	    var $form, submit, this$ = this;
 	    $form = $('#login-form');
-	    submit = function(e){
-	      var $form, values;
+	    submit = co.wrap(function*(e){
+	      var $form, values, data;
 	      e.preventDefault();
 	      $form = $('#login-form');
 	      values = $form.form('get values');
-	      this$.login(values);
+	      data = (yield vue.http.post('/site/login', values)).data;
+	      localStorage.token = data.payload.token;
+	      this$.login(data.payload.token);
 	      return this$.success = true;
-	    };
+	    });
 	    return $form.form({
 	      on: 'blur',
 	      inline: true,
@@ -2486,7 +2482,7 @@ webpackJsonp([0],[
 	      e.preventDefault();
 	      $form = $('#register-form');
 	      allValues = $form.form('get values');
-	      return (yield this$.$http.post('/user/register', allValues));
+	      return (yield this$.$http.post('user/register', allValues));
 	    });
 	    return $('#register-form').form({
 	      on: 'blur',
@@ -2585,7 +2581,7 @@ webpackJsonp([0],[
 	    data: co.wrap(function*(arg$){
 	      var uid, user;
 	      uid = arg$.to.params.uid;
-	      user = (yield vue.http.get("/user/" + uid)).data;
+	      user = (yield vue.http.get("user/" + uid)).data;
 	      return {
 	        user: user
 	      };
@@ -2619,7 +2615,7 @@ webpackJsonp([0],[
 	          newPassword: newPassword
 	        };
 	      }
-	      return response = (yield vue.http.post("/user/" + _id, updated));
+	      return response = (yield vue.http.post("user/" + _id, updated));
 	    });
 	    $form = $('#form-user');
 	    return $form.form({
@@ -2713,17 +2709,17 @@ webpackJsonp([0],[
 /* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var vue, vueRouter, foot, navbar, error, loadFromToken;
+	var vue, vueRouter, foot, navbar, error, login;
 	vue = __webpack_require__(1);
 	vueRouter = __webpack_require__(4);
 	foot = __webpack_require__(213);
 	navbar = __webpack_require__(215);
 	error = __webpack_require__(218);
-	loadFromToken = __webpack_require__(146).loadFromToken;
+	login = __webpack_require__(146).login;
 	module.exports = {
 	  vuex: {
 	    actions: {
-	      loadFromToken: loadFromToken
+	      login: login
 	    }
 	  },
 	  components: {
@@ -2732,7 +2728,7 @@ webpackJsonp([0],[
 	    error: error
 	  },
 	  ready: function(){
-	    return this.loadFromToken();
+	    return this.login();
 	  }
 	};
 	//# sourceMappingURL=/home/roosephu/Desktop/dollast/node_modules/vue-livescript-loader/index.js!/home/roosephu/Desktop/dollast/node_modules/vue-loader/lib/selector.js?type=script&index=0!/home/roosephu/Desktop/dollast/client/components/app.vue.map

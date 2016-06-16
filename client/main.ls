@@ -16,6 +16,7 @@ log = debug \dollast:main
 vue.use vue-router
 require! \./router
 vue.use vue-resource
+vue.http.options.root = \/api
 
 app = require \./components/app.vue
   ..store = require \./store

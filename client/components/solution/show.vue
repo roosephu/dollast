@@ -81,7 +81,7 @@ module.exports =
 
   route:
     data: co.wrap (to: params: {sid}) ->*
-      {data: response} = yield vue.http.get "/solution/#{sid}"
+      {data: response} = yield vue.http.get "solution/#{sid}"
       if response.errors
         @raise-error response
         return null

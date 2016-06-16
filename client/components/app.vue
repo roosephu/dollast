@@ -18,15 +18,17 @@ require! {
   \./site/foot
   \./site/navbar
   \./site/error
-  \../actions : {load-from-token}
+  \../actions : {login}
 }
 
 module.exports =
   vuex:
-    actions: {load-from-token}
+    actions: {login}
+
   components:
     {navbar, foot, error}
+
   ready: ->
-    @load-from-token!
+    @login!
 
 </script>

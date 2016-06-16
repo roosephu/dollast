@@ -55,7 +55,7 @@ module.exports =
 
   route:
     data: co.wrap ~>*
-      {data: response} = yield vue.http.get \/solution
+      {data: response} = yield vue.http.get \solution
       if response.errors
         @raise-error response
         return null

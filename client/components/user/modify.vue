@@ -63,7 +63,7 @@ module.exports =
 
   route:
     data: co.wrap (to: params: {uid}) ->*
-      {data: user} = yield vue.http.get "/user/#{uid}"
+      {data: user} = yield vue.http.get "user/#{uid}"
       {user}
 
   ready: ->
@@ -83,7 +83,7 @@ module.exports =
       else
         updated = {_id, groups, desc, old-password, new-password}
 
-      response = yield vue.http.post "/user/#{_id}", updated
+      response = yield vue.http.post "user/#{_id}", updated
       # @props.dispatch on-update-user @props.params.uid, updated
 
     $form = $ '#form-user'
