@@ -12,7 +12,7 @@
       .ui.field
         .ui.icon.input.left
           i.icon.lock
-          input(name="pswd", placeholder="password", type="password")
+          input(name="password", placeholder="password", type="password")
       .ui.icon.labeled.button.left.primary.submit
         i.icon.sign.in
         | Login
@@ -21,7 +21,9 @@
 <script lang="vue-livescript">
 require! {
   \debug
-  \../../actions : {login}
+  \co
+  \vue
+  \../../actions
 }
 
 log = debug 'dollast:component:login'
@@ -29,7 +31,7 @@ log = debug 'dollast:component:login'
 module.exports =
   vuex:
     actions:
-      {login}
+      actions{login, raise-error}
 
   data: ->
     success: false
@@ -42,9 +44,13 @@ module.exports =
       e.prevent-default!
       $form = $ '#login-form'
       values = $form.form 'get values'
-      {data} = yield vue.http.post \/site/login, values
-      local-storage.token = data.payload.token
-      @login data.payload.token
+      {data} = yield vue.http.post \site/login, values
+      if data.errors
+        @raise-error data, true
+      else
+        {data: {token}} = data
+        local-storage.token = token
+        @login token
 
       @success = true
 
@@ -59,8 +65,8 @@ module.exports =
               prompt: "User name must be longer than 5"
             * type: 'maxLength[16]'
               prompt: "User name must be shorter than 15"
-        pswd:
-          identifier: \pswd
+        password:
+          identifier: \password
           rules:
             * type: 'minLength[6]'
               prompt: 'password length must be longer than 5'

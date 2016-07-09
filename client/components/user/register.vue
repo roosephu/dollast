@@ -11,7 +11,7 @@
     .ui.field
       a.ui.input.icon.left
         i.icon.lock
-        input(placeholder="password", name="pswd", type="password")
+        input(placeholder="password", name="password", type="password")
     .ui.field
       a.ui.input.icon.left
         i.icon.mail
@@ -48,7 +48,7 @@ module.exports =
             * type: 'maxLength[16]'
               prompt: "User name must be shorter than 15"
         pswd:
-          identifier: \pswd
+          identifier: \password
           rules:
             * type: 'isPassword'
               prompt: 'password length must be longer than 5'

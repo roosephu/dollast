@@ -14,7 +14,7 @@ export save = co.wrap (ctx) ->*
   ctx.check-body '_id' .len config.uid-min-len, config.uid-max-len
 
   delete ctx.request.body.pswd # should check once here
-  return if ctx.errors
+  return if ctx.errors?.length > 0
 
   {_id, groups} = ctx.request.body
 

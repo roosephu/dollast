@@ -6,15 +6,16 @@ require! {
   \../config
 }
 
-log = debug \dollast:ctrl:sol
+log = debug \dollast:ctrl:solution
 
 export submit = co.wrap (ctx) ->*
   ctx.check-body \pid .is-int! .ge 1
   ctx.check-body \language .in [\cpp, \java]
   ctx.check-body \code .len 1, 50000
   ctx.check-body \user .empty!
-  return if ctx.errors
+  return if ctx.errors?.length > 0
 
+  log "solution valid"
   req = ctx.request.body
   {pid} = req
 
@@ -22,7 +23,7 @@ export submit = co.wrap (ctx) ->*
   ctx.assert problem, id: pid, type: \problem, detail: 'no problem found. '
   problem.permit.check-access ctx.state.user, \x
 
-  uid = ctx.state.user.client.uid
+  {uid} = ctx.state.user.client
 
   # ctx.ensure-access model, 0, \x # sol = 0 => submision
   solution = new models.solutions do
@@ -44,7 +45,7 @@ export list = co.wrap (ctx) ->*
   opts = config.sol-list-opts
 
   query = models.solutions.find {}, '-code -results'
-    .populate \prob, 'outlook.title'
+    .populate \problem, 'outlook.title'
     .populate \round, 'title beginTime'
     .sort '-_id'
     .skip opts.skip

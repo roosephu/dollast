@@ -49,8 +49,10 @@ app.use co.wrap (ctx, next) ->*
     if !expression
       throw new Exception e
 
+  # log "response:", ctx.body, ctx.errors
+  log "#{ctx.req.method} #{ctx.req.url}:", ctx.request.body
+  ctx.body = void
   try
-    log "#{ctx.req.method} #{ctx.req.url}: #{ctx.request.body}"
     yield next!
   catch e
     if e instanceof Exception
@@ -64,6 +66,7 @@ app.use co.wrap (ctx, next) ->*
     ctx.body = errors: ctx.errors
   else
     ctx.body = data: ctx.body
+  log ctx.body
 
 router = new koa-router!
 router

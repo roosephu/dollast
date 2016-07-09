@@ -5,5 +5,5 @@
 <script lang="vue-livescript">
 module.exports =
   props:
-    sid: Number
+    sid: String
 </script>

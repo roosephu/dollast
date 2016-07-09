@@ -54,11 +54,12 @@ app.use dev-middleware compile,
 
 # we shouldn't compress webpack hot module replacement information
 app.use (next) ->*
-  log @request.method, @request.url
+  # log @request.method, @request.url
   if @request.url == "/__webpack_hmr"
     @compress = false
   yield next
 
+# I don't know why, but ctx.body gets modified after this middleware
 app.use hot-middleware compile,
   log: debug \dollast:webpack
 

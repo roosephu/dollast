@@ -2,6 +2,7 @@ require! {
   \co
   \../models
   \../core
+  \../Exception
   \co-busboy
   \debug
 }
@@ -14,13 +15,13 @@ export upload = co.wrap (ctx) ->*
 
   problem = yield models.problems.find-by-id pid, \permit .exec!
   if not problem
-    throw new Error "no such problem"
+    throw new Exception "no such problem"
   problem.permit.check-access ctx.state.user, \w
 
   parts = co-busboy ctx, auto-fields: true
   while part = yield parts
     log {part}
-    ctx.body = yield core.upload pid, part
+    ctx.body = yield core.upload pid, part # TODO
   pairs = yield problem.repair!
 
   ctx.body <<< status:
@@ -34,7 +35,7 @@ export repair = co.wrap (ctx) ->*
 
   problem = yield models.problems.find-by-id pid, "config.dataset permit" .exec!
   if not problem
-    throw new Error 'xxx'
+    throw new Exception 'xxx'
   problem.check-access ctx.state.user, \w
   yield problem.repair!
 
@@ -48,7 +49,7 @@ export remove = co.wrap (ctx) ->* # validate
 
   problem = yield models.problems.find-by-id pid, "config.dataset permit" .exec!
   if not problem
-    throw new Error "xxx"
+    throw new Exception "xxx"
   problem.permit.check-access ctx.state.user, \w
 
   yield core.delete-test-data pid, ctx.params

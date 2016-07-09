@@ -21,7 +21,7 @@ require! {
   \vue
   \debug
   \co
-  \../../actions : {resolve-error}
+  \../../actions
 }
 
 log = debug \dollast:error
@@ -31,7 +31,7 @@ module.exports =
     getters:
       error: (.error)
     actions:
-      {resolve-error}
+      actions{resolve-error}
 
   computed:
     message: ->
@@ -48,7 +48,8 @@ module.exports =
 
   ready: ->
     $modal = $ \.modal
-    $modal.modal \setting, \closable, false
+    # if !@error.closable
+    #   $modal.modal \setting, \closable, false
 
   methods:
     back: ->
@@ -62,10 +63,11 @@ module.exports =
   watch:
     error: (val) ->
       log {val}
+      $modal = $ \.modal
       if val != void
-        $ \.modal .modal \show
+        $modal.modal \setting, \closable, @error?.closable || false
+        $modal.modal \show
       else
-        $ \.modal .modal \hide
-
+        $modal.modal \hide
 
 </script>

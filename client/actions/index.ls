@@ -15,9 +15,12 @@ export logout = ({dispatch}) ->
   delete local-storage.token
   dispatch \logout
 
-export raise-error = ({dispatch}, response) ->
+export raise-error = ({dispatch}, response, closable) ->
   log \raise, {response}
-  dispatch \raiseError, response.errors[0]
+  error = response.errors[0]
+  if closable
+    error.closable = true
+  dispatch \raiseError, error
 
 export resolve-error = ({dispatch}) ->
   dispatch \resolveError

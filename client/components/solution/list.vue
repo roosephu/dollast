@@ -18,14 +18,14 @@
           td
             code-link(:sid="sol._id")
           td
-            problem(:prob="sol.prob")
+            problem(:prob="sol.problem")
           td
             user(:uid="sol.user")
-          td {{sol.final.status}}
-          td {{sol.final.score}}
-          td {{sol.final.time}}
-          td {{sol.final.space}}
-          td {{sol.lang}}
+          td {{sol.summary.status}}
+          td {{sol.summary.score}}
+          td {{sol.summary.time}}
+          td {{sol.summary.space}}
+          td {{sol.language}}
           td(v-if="sol.round")
             round(:rnd="sol.round")
           td(v-else)

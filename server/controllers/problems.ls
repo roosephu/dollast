@@ -52,8 +52,7 @@ export save = co.wrap (ctx) ->*
   ctx.check-body \/config/outputLimit, true .get! .is-float! .gt 0
   ctx.check-body \/config/judger, true .get! .in [\string, \strict, \real, \custom]
   ctx.check-body \/permit/owner, true .get!
-  # return if ctx.errors.length > 0
-  ctx.check-errors!
+  return if ctx.errors?.length > 0
 
   problem = ctx.request.body
 
