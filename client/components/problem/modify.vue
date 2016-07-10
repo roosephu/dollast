@@ -15,7 +15,7 @@
           input(name="rid", type="number", placeholder="optional")
       .ui.field.four.wide
         label judger
-        .ui.dropdown.icon.selection
+        .ui.dropdown.icon.selection#judger
           input(type="hidden", name="judger")
           .default.text choose a judger
           i.dropdown.icon
@@ -34,11 +34,11 @@
       .ui.field
         label stack limit (MB)
         .ui.input
-          input(name="stkLimit", type="number")
+          input(name="stackLimit", type="number")
       .ui.field
         label output limit (MB)
         .ui.input
-          input(name="outLimit", type="number")
+          input(name="outputLimit", type="number")
 
     h3.ui.dividing.header Description
     .ui.field
@@ -109,17 +109,17 @@ flatten-object = (obj) ->
 get-form-values = ->
   values = $ '.form' .form 'get values'
   outlook = values{title, description, input-format, output-format, sample-input, sample-output}
-  config  = values{rid, pid, judger, time-limit, space-limit, out-limit, stk-limit}
+  config  = values{rid, pid, judger, time-limit, space-limit, output-limit, stack-limit}
   permit  = values{owner, group, access}
   if config.rid == ""
     delete config.rid
   else
     config.rid |>= parse-int
 
-  config.time-limit  |>= parse-float
-  config.space-limit |>= parse-float
-  config.out-limit   |>= parse-float
-  config.stk-limit   |>= parse-float
+  config.time-limit   |>= parse-float
+  config.space-limit  |>= parse-float
+  config.output-limit |>= parse-float
+  config.stack-limit  |>= parse-float
 
   {outlook, config, permit}
 
@@ -204,14 +204,14 @@ module.exports =
             * type: \positive
               prompt: 'space limit must be positive'
             ...
-        stk-lmt:
-          identifier: \stkLimit
+        stack-limit:
+          identifier: \stackLimit
           rules:
             * type: \positive
               prompt: "stack limit must be positive"
             ...
-        out-lmt:
-          identifier: \outLimit
+        output-lmt:
+          identifier: \outputLimit
           rules:
             * type: \positive
               prompt: "output limit must be positive"

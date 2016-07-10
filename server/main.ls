@@ -19,10 +19,8 @@ require! {
   \babel-polyfill
   \../webpack.config : webpack-config
   \./config
-  \./models
   \./crypt
   \./Exception
-  \./router
 }
 
 export app = new koa!
@@ -36,8 +34,6 @@ app.use = (x) ->
 log = debug \dollast:server
 
 # ==== Database ====
-
-log "No Database found" if !models
 
 app.use koa-compress!
 app.use koa-conditional-get!
@@ -110,7 +106,10 @@ app.use co.wrap (ctx, next) ->*
         return
   yield next!
 
-app.use koa-mount \/api, router
+if process.env.NODE_ENV == \development
+  app.use koa-mount \/monk, require \./monk
+
+app.use koa-mount \/api, require \./router
 
 # ====================================
 

@@ -11,7 +11,7 @@
       i.icon.plus
       | create
     .ui.segment
-      .ui.very.relaxed.divided.link.list
+      .ui.very.relaxed.divided.link.list#problems
         .item(v-for="problem in problems")
           .ui.right.floated ??
           .ui.description

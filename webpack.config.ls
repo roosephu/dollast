@@ -44,6 +44,8 @@ module.exports = config =
     new webpack.optimize.OccurenceOrderPlugin!
     new webpack.HotModuleReplacementPlugin!
     new webpack.NoErrorsPlugin!
+    new webpack.DefinePlugin do
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || '"development"')
     # new webpack.optimize.UglifyJsPlugin do
       # compress:
         # warnings: false

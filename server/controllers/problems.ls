@@ -1,9 +1,9 @@
 require! {
   \co
-  \../models
   \debug
-  \../config : {prob-list-opts}
   \sanitize-html
+  \../models
+  \../config : {prob-list-opts}
 }
 
 log = debug \dollast:ctrls:prob

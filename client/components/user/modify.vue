@@ -76,7 +76,7 @@ module.exports =
       $form = $ '#form-user'
       {groups, old-password, new-password, confirm-password, desc} = $form.form 'get values'
       groups = groups.split ','
-      _id = @user.profile._id
+      {_id} = @user.profile
 
       if old-password == "" or new-password == ""
         updated = {_id, groups, desc}
