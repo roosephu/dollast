@@ -1,6 +1,7 @@
 <template lang="jade">
   h1.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
-  .ui.segment(:class="{loading: $loadingRouteData}")
+  // .ui.segment(:class="{loading: $loadingRouteData}")
+  div
     .ui.olive.labels
       .ui.label {{problem.config.timeLimit}} s
         .detail time limit

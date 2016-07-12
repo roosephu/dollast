@@ -1,15 +1,16 @@
 <template lang="jade">
-  navbar
-  .ui.grid
-    error
-    .row
-    .row
-      .three.wide.column
-      .ten.wide.column
-        router-view
-    .row
-      .twelve.wide.column.centered
-        foot
+  div
+    navbar
+    .ui.grid
+      error
+      .row
+      .row
+        .three.wide.column
+        .ten.wide.column
+          router-view
+      .row
+        .twelve.wide.column.centered
+          foot
 </template>
 
 <script lang="vue-livescript">

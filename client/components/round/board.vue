@@ -45,10 +45,10 @@ module.exports =
   route:
     data: co.wrap (to: params: {rid}) ->*
       {data: response} = yield vue.http.get "round/#{rid}"
-      if reseponse.errors
-        @raise-error reseponse
+      if response.errors
+        @raise-error response
         return null
-      round = reseponse.data
+      round = response.data
 
       {data: response} = yield vue.http.get "round/#{rid}/board"
       if response.errors

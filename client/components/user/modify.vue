@@ -49,11 +49,16 @@ require! {
   \co
   \vue
   \debug
+  \../../actions : {raise-error}
 }
 
 log = debug \dollast:components:user:modify
 
 module.exports =
+  vuex:
+    actions:
+      {raise-error}
+
   data: ->
     groups: [\problems, \solutions, \admin, \rounds]
     user:
@@ -63,7 +68,11 @@ module.exports =
 
   route:
     data: co.wrap (to: params: {uid}) ->*
-      {data: user} = yield vue.http.get "user/#{uid}"
+      {data: response} = yield vue.http.get "user/#{uid}"
+      if response.errors
+        @raise-error response
+        return null
+      {data: user} = response 
       {user}
 
   ready: ->

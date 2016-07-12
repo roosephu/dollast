@@ -22,9 +22,9 @@
           td
             user(:uid="sol.user")
           td {{sol.summary.status}}
-          td {{sol.summary.score}}
-          td {{sol.summary.time}}
-          td {{sol.summary.space}}
+          td {{sol.summary.score | decimal 3}}
+          td {{sol.summary.time | decimal 3}}
+          td {{sol.summary.space | decimal 3}}
           td {{sol.language}}
           td(v-if="sol.round")
             round(:rnd="sol.round")

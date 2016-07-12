@@ -34,7 +34,7 @@ export save = co.wrap (ctx) ->*
   if round._id
     delete round._id
 
-  if rid == 0
+  if rid == "0"
     rid = yield models.rounds.next-count!
     round._id = rid
     log {rid}
@@ -53,9 +53,9 @@ export save = co.wrap (ctx) ->*
 
   ctx.body = yield models.rounds.update _id: rid, round, upsert: true, overwrite: true .exec!
 
-  ctx.body <<< status:
-    type: "ok"
-    msg: "round saved"
+  ctx.body =
+    _id: rid
+    detail: "round saved"
 
 export remove = co.wrap (ctx) ->*
   {rid} = ctx.params

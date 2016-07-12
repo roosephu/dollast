@@ -7,26 +7,29 @@
     .ui.label {{rnd.permit.group}}
       .detail group
 
-  p {{rnd.beginTime}} -- {{rnd.endTime}}
+  div from 
+    .ui.label {{rnd.beginTime | time}} 
+    | to 
+    .ui.label {{rnd.endTime | time}}
   br
 
   div(v-if="started")
     h2.ui.dividing.header Problemset
     .ui.segment(:class="{loading: $loadingRouteData}")
       .ui.relaxed.divided.link.list
-        .item(v-for="prob in rnd.probs")
+        .item(v-for="prob in rnd.problems")
           .ui.right.floated ??
           .description
             problem(:prob="prob")
     br
 
   div(v-else)
-    p Sorry, this round has not started.
+    h3.header Sorry, this round has not started.
 
-  a.ui.labeled.button.purple(v-if="started", href="#/round/{{rnd._id}}/board")
+  a.ui.icon.labeled.button(v-if="started", href="#/round/{{rnd._id}}/board")
     i.icon.trophy
     | board
-  a.ui.labeled.button.orange(href="#/round/{{rnd._id}}/modify")
+  a.ui.icon.labeled.button(href="#/round/{{rnd._id}}/modify")
     i.icon.edit
     | modify
 </template>
@@ -37,7 +40,7 @@ require! {
   \co
   \debug
   \moment
-  \../format
+  \../format : {problem, formatter}
   \../../actions : {raise-error}
 }
 
@@ -49,11 +52,11 @@ module.exports =
       {raise-error}
 
   components:
-    format{problem}
+    {problem}
 
   data: ->
     rnd:
-      beg-time: 0
+      begin-time: 0
       end-time: 0
       _id: 0
       problems: []
@@ -63,7 +66,7 @@ module.exports =
 
   computed:
     started: ->
-      moment!.is-after @rnd.beg-time
+      moment!.is-after @rnd.begin-time
 
   route:
     data: co.wrap (to: params: {rid}) ->*

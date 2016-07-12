@@ -45,10 +45,10 @@
     br
 
     .ui.field
-      a.icon.ui.labeled.button.floated.red(:click="delete")
+      a.icon.ui.labeled.button.floated(:click="delete")
         i.icon.delete
         | delete
-      a.icon.ui.labeled.button.floated.secondary
+      a.icon.ui.labeled.button.floated
         i.icon.cancel
         | undo
       a.icon.ui.labeled.button.floated.primary.submit
@@ -63,7 +63,6 @@ require! {
   \moment
   \debug
   \prelude-ls : {map, pairs-to-obj, obj-to-pairs, flatten}
-  \../format : {formatter}
   \../../actions : {raise-error}
 }
 
@@ -75,25 +74,23 @@ get-form-values = ->
 
   permit = values{owner, group, access}
 
-  # probs = @props.round.get \probs .to-JS!
-  # probs = P.map (._id), probs
-  probs = map parse-int, values.probs.split ','
+  problems = if values.problems != "" then map parse-int, values.problems.split ',' else []
 
   data = Object.assign values{title, begin-time, end-time},
-    {probs, permit}
+    {problems, permit}
 
 set-form-values = (round) ->
   #log 'new states. setting new values for form...', to-client-fmt problem.to-JS!
   $form = $ '#form-round'
-  {title, beg-time, end-time, permit, probs} = round
+  {title, begin-time, end-time, permit, problems} = round
   # probs = map (-> prob-fmt it), probs
   # probs .= join!
-  probs = map (-> "#{it._id}"), probs
+  problems = map ((problem) -> "#{problem._id}"), problems
   $form.form 'set values',
     title: title
     begin-time: if begin-time then moment begin-time .format 'YYYY-MM-DD HH:mm:ss' else void
     end-time: if end-time then moment end-time .format 'YYYY-MM-DD HH:mm:ss' else void
-    probs: problems
+    problems: problems
   $form.form 'set values', permit
 
 module.exports =
@@ -105,7 +102,7 @@ module.exports =
 
   computed:
     dropdown-problems: ->
-      {[x._id, formatter.problem x] for x in @rnd.problems}
+      {[x._id, vue.filter(\problem) x] for x in @rnd.problems}
     formatted-title: ->
       if @rnd._id == void
         "Create new Round"
@@ -124,13 +121,14 @@ module.exports =
     $dropdown.dropdown do
       data-type: \jsonp
       api-settings:
+        save-remove-data: false
         on-response: (response) ->
-          if !response.outlook
-            return results: []
+          if !response.data?._id
+            return success: false, results: []
           # log {response}
-          title = response.outlook.title
-          id = response._id
-          return results: [value: id, name: formatter.problem response]
+          problem = response.data
+          {_id, outlook: {title}} = problem
+          return results: [value: _id, name: vue.filter(\problem) problem]
         url: "/api/problem/{query}"
         on-change: (value) ~>
           log {value}
