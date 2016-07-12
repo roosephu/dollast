@@ -107,7 +107,7 @@ router
 
   # .get    '/data/:pid',                 data.show
   .post   '/data/:pid/upload',          data.upload
-  .get    '/data/:pid/repair',          data.repair
+  .get    '/data/:pid/rebuild',         data.rebuild
   .delete '/data/:pid/:file',           data.remove
 
 app.use router.middleware!

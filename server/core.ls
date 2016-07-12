@@ -115,7 +115,7 @@ judge-result = co.wrap (pid, input-file, output-file, answer-file, cfg) ->*
       score: 0
       message: messages.trim!
   [status, score, ...message] = stderr.trim!.split ' '
-  log "judger output: #stdout / #status / #score / #message"
+  # log "judger output: #stdout / #status / #score / #message"
   message = unwords message
   return
     status: status
@@ -125,7 +125,7 @@ judge-result = co.wrap (pid, input-file, output-file, answer-file, cfg) ->*
 limit = co-limiter config.concurrency
 
 run-atom = (pid, language, exe-path, data, cfg) ->* # TODO if file not exists, throw an error
-  log "running atom..."
+  # log "running atom..."
   tmp-file = tmp.file-sync!
   ouf = tmp-file.name
   inf = path.join config.data-dir, "/#pid/", data.input
@@ -133,7 +133,7 @@ run-atom = (pid, language, exe-path, data, cfg) ->* # TODO if file not exists, t
   log "inf #{inf} ans #{ans}"
   exec-cmd = "\"#{config.sandboxer}\" \"#{exe-path}\" #{cfg.time-limit} #{cfg.space-limit} #{cfg.stack-limit} #{cfg.output-limit} \"#{inf}\" \"#{ouf}\""
   [proc-out, proc-err] = yield exec exec-cmd, cwd: path.dirname config.sandboxer
-  log {proc-out, proc-err, exec-cmd}
+  # log {proc-out, proc-err, exec-cmd}
   log "sandboxer result: #proc-err"
   exe-res = JSON.parse proc-err
 
@@ -154,7 +154,7 @@ calc-problem-score = (results) ->
 
   [sum, ws] = [0, 0]
   for [data, result] in results
-    log {data, result}
+    # log {data, result}
     if result.time
       ret.time  >?= result.time
     if result.space
@@ -188,7 +188,7 @@ export judge = co.wrap (language, code, problem-config, doc) ->*
 
     results = yield [limit run-atom pid, language, exe-path, data.to-object!, config for data in dataset]
 
-    log "starting modifying doc"
+    log "writing back"
     doc.results = results
     doc.summary = calc-problem-score zip dataset, results
     doc.summary.status = \finished

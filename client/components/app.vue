@@ -1,7 +1,8 @@
 <template lang="jade">
+  navbar
   .ui.grid
     error
-    navbar
+    .row
     .row
       .three.wide.column
       .ten.wide.column

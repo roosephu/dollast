@@ -52,7 +52,7 @@ module.exports =
       uid: (.session.uid)
 
   data: ->
-    pid: parse-int @$route.params.pid
+    pid: @$route.params.pid
     languages: [\cpp, \java, \pas]
 
   computed:

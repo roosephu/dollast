@@ -64,6 +64,7 @@ module.exports =
 
   data: ->
     problem:
+      _id: 0
       config: {}
       outlook: {}
       permit: {}
@@ -79,7 +80,7 @@ module.exports =
       {problem}
 
   watch:
-    'problem.outlook.desc': ->
+    'problem._id': ->
       @$next-tick ~>
         MathJax.Hub.Queue [\Typeset, MathJax.Hub]
 

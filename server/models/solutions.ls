@@ -23,7 +23,7 @@ schema = new Schema do
   date: type: Date, default: Date.now
   code: String
   language: String
-  problem: type: Number, ref: \problem
+  problem: type: String, ref: \problem
   user: type: String, ref: \user
   round: type: Number, ref: \round
   summary:

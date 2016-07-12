@@ -30,19 +30,16 @@ export upload = co.wrap (ctx) ->*
     data:
       {pairs}
 
-export repair = co.wrap (ctx) ->*
+export rebuild = co.wrap (ctx) ->*
   {pid} = ctx.params
 
   problem = yield models.problems.find-by-id pid, "config.dataset permit" .exec!
   if not problem
     throw new Exception 'xxx'
-  problem.check-access ctx.state.user, \w
-  yield problem.repair!
-
-  new-pairs = pairs
-  ctx.body =
-    type: 'ok'
-    payload: new-pairs
+  problem.permit.check-access ctx.state.user, \w
+  
+  new-pairs = yield problem.rebuild!
+  ctx.body = new-pairs
 
 export remove = co.wrap (ctx) ->* # validate
   {pid, file} = ctx.params

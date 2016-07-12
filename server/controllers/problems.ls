@@ -108,4 +108,4 @@ export stat = co.wrap (ctx) ->*
   delete problem.config
   delete problem.permit
 
-  ctx.body = sols: solutions, prob: problem
+  ctx.body = {solutions, problem}

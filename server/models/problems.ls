@@ -39,7 +39,7 @@ schema = new Schema do
 schema.statics.get-user-owned-problems = (uid) ->*
   return yield model.find 'permit.owner': uid, '_id outlook.title' .exec!
 
-schema.methods.repair = ->*
+schema.methods.rebuild = ->*
   pairs = yield gen-data-pairs @_id
   @config.dataset = map (<<< weight: 1), pairs
   yield @save!

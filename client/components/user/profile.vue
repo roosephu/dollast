@@ -2,7 +2,7 @@
   h1.ui.dividing.header Details of {{uid}}
   .ui.segment
     .ui.top.attached.label.large registered since
-    p unimplemented
+    p {{registerDate}}
 
   .ui.segment
     .ui.large.top.attached.label description
@@ -43,6 +43,7 @@
 require! {
   \vue
   \co
+  \moment
   \debug
   \../format
   \../../actions : {raise-error}
@@ -61,6 +62,13 @@ module.exports =
     solved-problems: []
     owned-problems: []
     owned-rounds: []
+  
+  computed:
+    register-date: ->
+      if @profile.date
+        moment @profile.date .format 'MMMM Do YYYY'
+      else
+        ""
 
   route:
     data: co.wrap (to: params: {uid}) ->*
@@ -68,7 +76,7 @@ module.exports =
       if response.errors
         @raise-error response
         return null
-      profile = data.data
+      profile = response.data
 
       profile
 

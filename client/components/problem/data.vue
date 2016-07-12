@@ -11,12 +11,9 @@
       a.ui.icon.button.labeled.green(@click="upload")
         i.icon.upload
         | upload
-      a.ui.icon.button.labeled.teal(:click="refresh")
-        i.icon.refresh
-        | refresh
-      a.ui.icon.button.labeled.teal(:click="repair")
+      a.ui.icon.button.labeled.teal(@click="rebuild")
         i.icon.retweet
-        | repair
+        | rebuild
 
     .ui.two.fields
       //- .ui.field.four.wide#dropzone
@@ -75,8 +72,12 @@ module.exports =
       {problem}
 
   methods:
-    repair: co.wrap ->*
-      {data} = yield @$http.get "problem/#{@problem._id}/repair"
+    rebuild: co.wrap ->*
+      {data: response} = yield @$http.get "data/#{@problem._id}/rebuild"
+      if response.errors
+        @raise-error response
+      else
+        @problem.config.dataset = response.data
 
     select: ->
       $ '#upload' .click!

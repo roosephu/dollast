@@ -29,7 +29,7 @@ generate-stat = (sols) ->
       median: 0
       stddev: 0
   scores = for sol in sols
-    sol.doc.final.score || 0
+    sol.doc.summary.score || 0
 
   mean = average scores
   median = scores[Math.floor scores.length / 2]
@@ -54,16 +54,16 @@ module.exports =
       if response.errors
         @raise-error response
         return null
-      {sols, prob} = response.data
+      {solutions, problem} = response.data
 
-      stat = generate-stat sols
+      stat = generate-stat solutions
       stat:
         "accepted users": stat.solved
         # "accepted programs": "???"
         mean: stat.mean
         median: stat.median
         "standard deviation": stat.stddev
-      problem: prob
+      problem: problem
 
   components:
     format{problem}

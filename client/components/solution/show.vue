@@ -5,9 +5,9 @@
       .detail owner
     .ui.label {{sol.permit.group}}
       .detail group
-    .ui.label {{sol.lang}}
+    .ui.label {{sol.language}}
       .detail language
-    .ui.label {{sol.prob._id}}
+    .ui.label {{sol.problem._id}}
       .detail problem
 
   h2.ui.header.dividing code
@@ -15,12 +15,12 @@
     .ui.top.attached.label code
     pre {{sol.code}}
 
-  p(v-if="sol.final.status == 'private'") this code is private
-  .ui.segment(v-if="sol.final.status == 'CE'")
+  p(v-if="sol.summary.status == 'private'") this code is private
+  .ui.segment(v-if="sol.summary.status == 'CE'")
     .ui.top.attached.label Error message
-    pre {{sol.final.message}}
-  .ui(v-if="sol.final.status == 'running'") running
-  div(v-if="sol.final.status == 'finished'")
+    pre {{sol.summary.message}}
+  .ui(v-if="sol.summary.status == 'running'") running
+  div(v-if="sol.summary.status == 'finished'")
     .ui
       h1.ui.header.dividing details
       table.ui.table.segment
@@ -43,11 +43,11 @@
         tfoot
           tr
             th final result
-            th {{sol.final.status}}
-            th {{sol.final.time}}
-            th {{sol.final.space}}
-            th {{sol.final.score}}
-            th {{sol.final.message}}
+            th {{sol.summary.status}}
+            th {{sol.summary.time}}
+            th {{sol.summary.space}}
+            th {{sol.summary.score}}
+            th {{sol.summary.message}}
 </template>
 
 <script lang="vue-livescript">
@@ -67,9 +67,9 @@ module.exports =
 
   data: ->
     sol:
-      final: {}
+      summary: {}
       results: []
-      prob:
+      problem:
         _id: 0
       permit:
         owner: ""

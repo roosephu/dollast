@@ -9,15 +9,15 @@ require! {
 log = debug \dollast:ctrl:solution
 
 export submit = co.wrap (ctx) ->*
+  log {pid: ctx.request.body.pid}
   ctx.check-body \pid .is-int! .ge 1
   ctx.check-body \language .in [\cpp, \java]
   ctx.check-body \code .len 1, 50000
   ctx.check-body \user .empty!
   return if ctx.errors?.length > 0
 
-  log "solution valid"
-  req = ctx.request.body
-  {pid} = req
+  {pid, code, language, permit} = ctx.request.body
+  log {pid}
 
   problem = yield models.problems.find-by-id pid, "permit config" .exec!
   ctx.assert problem, id: pid, type: \problem, detail: 'no problem found. '
@@ -28,16 +28,16 @@ export submit = co.wrap (ctx) ->*
   # ctx.ensure-access model, 0, \x # sol = 0 => submision
   solution = new models.solutions do
     _id: yield models.solutions.next-count!
-    code: req.code
-    language: req.language
-    problem: req.pid
+    code: code
+    language: language
+    problem: pid
     user: uid
     summary:
       status: \running
-    permit: req.permit
+    permit: permit
 
   yield solution.save!
-  core.judge req.language, req.code, problem.config, solution
+  core.judge language, code, problem.config, solution
 
   ctx.body = msg: "solution submited successfully"
 

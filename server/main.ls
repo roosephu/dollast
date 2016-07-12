@@ -111,6 +111,9 @@ if process.env.NODE_ENV == \development
 
 app.use koa-mount \/api, require \./router
 
+app.use co.wrap (ctx, next) ->*
+  ctx.body = "404!"
+
 # ====================================
 
 port = process.env.PORT || 3000
