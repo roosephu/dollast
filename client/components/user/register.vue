@@ -1,6 +1,6 @@
 <template lang="jade">
-  h1.ui.dividing.header Register
-  form.ui.form.segment#register-form
+  form.ui.form.basic.segment#register-form
+    h1.ui.dividing.header Register
     .ui.error.message
     .ui.success.message
       h2 Register successful. Login please.

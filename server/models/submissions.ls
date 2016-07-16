@@ -38,7 +38,7 @@ schema = new Schema do
   results: [atom-result-schema]
   permit: permit
 
-# schema.plugin mongoose-auto-increment.plugin, model: \solution
+# schema.plugin mongoose-auto-increment.plugin, model: \submission
 schema.index do
   round: 1
   problem: 1
@@ -53,21 +53,24 @@ schema.index do
   problem: 1
   round: 1
   "summary.score": -1
+schema.index do
+  date: -1
 
 log = debug \dollast:sol
 
-schema.statics.next-count = make-next-count config.starting-ids.solutions
+schema.statics.next-count = make-next-count config.starting-ids.submissions
 
-schema.statics.get-user-solved-problems = (uid) ->*
+schema.statics.get-user-solved-problem-ids = (uid) ->*
   # log {uid, model.aggregate}
   query = model.aggregate do
     * $match: user: uid, 'summary.score': 1
     * $sort: problem: 1
     * $group:
         _id: \$problem
+    
   return yield query.exec!
 
-schema.statics.get-solutions-in-a-round = (rid) ->*
+schema.statics.get-submissions-in-a-round = (rid) ->*
   query = model.aggregate do
     * $match: round: rid
     * $sort: problem: 1, user: 1, _id: -1
@@ -81,5 +84,5 @@ schema.statics.get-solutions-in-a-round = (rid) ->*
           $first: \$_id
   return yield query.exec!
 
-model = conn.model \solution, schema
+model = conn.model \submission, schema
 module.exports = model

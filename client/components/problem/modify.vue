@@ -1,5 +1,5 @@
 <template lang="jade">
-  .ui.form#problem-modify
+  .ui.form.basic.segment#problem-modify
     h2.ui.dividing.header {{title}}
     .ui.error.message
 

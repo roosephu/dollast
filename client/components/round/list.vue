@@ -1,20 +1,24 @@
 <template lang="jade">
-  h1.ui.header.dividing Rounds
-  .ui.dropdown.floated.pointing.button.labeled.icon
-    input(type="hidden", name="filter")
-    .default.text please select filter
-    i.dropdown.icon
-    .menu
-      .item(v-for="item in options", data-value="{{item}}") {{item}}
-  a.ui.icon.labeled.button.launch.primary.right.floated(href="#/round/create")
-    i.icon.plus
-    | create
-  .ui.segment(:class="{loading: $loadingRouteData}")
-    .ui.very.relxed.divided.link.list
-      .item(v-for="round in rounds")
-        .ui.right.floated {{round.beginTime, round.endTime}}
-        .description
-          round(:rnd="round")
+  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+    h1.ui.header.dividing Rounds
+    .ui.dropdown.floated.pointing.button.labeled.icon
+      input(type="hidden", name="filter")
+      .default.text please select filter
+      i.dropdown.icon
+      .menu
+        .item(v-for="item in options", data-value="{{item}}") {{item}}
+    a.ui.icon.labeled.button.launch.primary.right.floated(href="#/round/create")
+      i.icon.plus
+      | create
+    .ui.segment(:class="{loading: $loadingRouteData}")
+      .ui.very.relxed.divided.link.list
+        .item(v-for="round in rounds")
+          .ui.right.floated 
+            .ui.label {{round.beginTime | time}} 
+            | to 
+            .ui.label {{round.endTime | time}}
+          .description
+            round(:rnd="round")
 </template>
 
 <script lang="vue-livescript">

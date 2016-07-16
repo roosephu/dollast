@@ -19,6 +19,10 @@ schema = new Schema do
 schema.methods.check-password = (candidate) ->
   bcrypt.compare-sync candidate, @password
 
+schema.methods.set-password = (password) ->
+  salt = bcrypt.gen-salt-sync bcrypt.bcrypt-cost
+  @password = bcrypt.hash-sync password, salt
+
 # TODO CSRF
 model = conn.conn.model \user, schema
 module.exports = model

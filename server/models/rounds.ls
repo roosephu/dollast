@@ -19,6 +19,9 @@ schema = new Schema do
   problems: [type: Number, ref: \problem]
   permit: permit
 
+schema.index do
+  begin-time: 1
+
 schema.statics.next-count = conn.make-next-count config.starting-ids.problems
 
 schema.methods.is-started = ->

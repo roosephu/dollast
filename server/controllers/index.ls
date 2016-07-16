@@ -1,10 +1,10 @@
 require! {
   \./problems
   \./rounds
-  \./solutions
+  \./submissions
   \./users
   \./data
   \./site
 }
 
-export problems, rounds, solutions, users, data, site
+export problems, rounds, submissions, users, data, site

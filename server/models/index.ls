@@ -1,6 +1,6 @@
 require! {
   \debug
-  \./solutions
+  \./submissions
   \./rounds
   \./problems
   \./users
@@ -8,4 +8,4 @@ require! {
 
 log = debug \dollast:db
 
-export solutions, rounds, problems, users
+export submissions, rounds, problems, users

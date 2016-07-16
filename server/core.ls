@@ -132,6 +132,7 @@ run-atom = (pid, language, exe-path, data, cfg) ->* # TODO if file not exists, t
   ans = path.join config.data-dir, "/#pid/", data.output
   log "inf #{inf} ans #{ans}"
   exec-cmd = "\"#{config.sandboxer}\" \"#{exe-path}\" #{cfg.time-limit} #{cfg.space-limit} #{cfg.stack-limit} #{cfg.output-limit} \"#{inf}\" \"#{ouf}\""
+  # log {exec-cmd}
   [proc-out, proc-err] = yield exec exec-cmd, cwd: path.dirname config.sandboxer
   # log {proc-out, proc-err, exec-cmd}
   log "sandboxer result: #proc-err"

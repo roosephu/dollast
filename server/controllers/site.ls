@@ -34,7 +34,7 @@ export login = co.wrap (ctx) ->*
 
   user = yield models.users.find-by-id uid .exec!
   # log password, user.password
-  if not user.check-password password
+  if not user or not user.check-password password
     throw new Exception id: uid, type: \user, detail: "bad user/password combination"
 
   groups = user.groups

@@ -1,5 +1,5 @@
 <template lang="jade">
-  .ui.form#form-user
+  .ui.basic.segment.form#form-user
     h2.ui.dividing.header {{user.profile._id}}
     .ui.success.message
       .header Changes saved.
@@ -17,7 +17,7 @@
     .ui.two.fields
       .ui.field
         label describe yourself
-        textarea(name="desc")
+        textarea(name="description")
 
     h3.ui.dividing.header Password
     .four.fields.wide
@@ -60,7 +60,7 @@ module.exports =
       {raise-error}
 
   data: ->
-    groups: [\problems, \solutions, \admin, \rounds]
+    groups: [\problems, \submissions, \admin, \rounds]
     user:
       profile:
         _id: ""
@@ -83,14 +83,14 @@ module.exports =
     submit = co.wrap (e) ~>*
       e.prevent-default!
       $form = $ '#form-user'
-      {groups, old-password, new-password, confirm-password, desc} = $form.form 'get values'
+      {groups, old-password, new-password, confirm-password, description} = $form.form 'get values'
       groups = groups.split ','
       {_id} = @user.profile
 
       if old-password == "" or new-password == ""
-        updated = {_id, groups, desc}
+        updated = {_id, groups, description}
       else
-        updated = {_id, groups, desc, old-password, new-password}
+        updated = {_id, groups, description, old-password, new-password}
 
       response = yield vue.http.post "user/#{_id}", updated
       # @props.dispatch on-update-user @props.params.uid, updated
@@ -128,6 +128,6 @@ module.exports =
     'user.profile._id': ->
       $form = $ '#form-user'
       @$next-tick ~>
-        $form.form 'set values', groups: @user.profile.groups, desc: @user.profile.desc
+        $form.form 'set values', @user.profile{groups, description}
 
 </script>

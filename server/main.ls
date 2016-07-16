@@ -42,7 +42,7 @@ app.use koa-json!
 koa-validate app
 
 app.use dev-middleware compile,
-  quiet: true
+  no-info: true
   lazy: false
   public-path: webpack-config.output.public-path
   stats:

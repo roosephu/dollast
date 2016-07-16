@@ -14,7 +14,7 @@ schema = new Schema do
 	access: String
 
 schema.methods.check-access = (user, action) ->
-	log "checking permit:", user, {@owner, @group, @access}
+	log "checking permit:", user, action, {@owner, @group, @access}
 	if user.groups.admin != void
 		return true
 

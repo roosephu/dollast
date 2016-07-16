@@ -14,6 +14,9 @@
       .ui.green.basic.inverted.button(@click="back")
         i.icon.arrow.left
         | Back
+      .ui.green.basic.inverted.button(@click="ignore")
+        i.icon.configure
+        | Ignore
 </template>
 
 <script lang="vue-livescript">
@@ -59,6 +62,9 @@ module.exports =
     home: ->
       @resolve-error!
       @$route.router.go '/'
+    
+    ignore: ->
+      @resolve-error!
 
   watch:
     error: (val) ->

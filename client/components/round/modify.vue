@@ -1,5 +1,5 @@
 <template lang="jade">
-  .ui.form#form-round
+  .ui.form.segment.basic#form-round
     h2.ui.dividing.header {{formattedTitle}}
     .ui.success.message
       .header Changes saved.

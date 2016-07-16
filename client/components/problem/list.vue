@@ -1,5 +1,5 @@
 <template lang="jade">
-  .ui
+  .ui.basic.segment(:class="{loading: $loadingRouteData}")
     h1.ui.dividing.header Problem List
     .ui.dropdown.floated.pointing.button.labeled.icon
       input(type="hidden", name="filter")

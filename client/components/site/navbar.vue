@@ -9,7 +9,7 @@
       a.item.labeled(href="#/problem")
         i.icon.browser
         | Problem
-      a.item.labeled(href="#/solution")
+      a.item.labeled(href="#/submission")
         i.icon.info.circle
         | Status
       a.item.labeled(href="#/round")
@@ -32,7 +32,7 @@
         a.item.labeled(v-else, href="#/user/register")
           i.icon.signup
           | Register
-  .ui.sidebar.vertical.menu.inverted.visible.icon.labeled.borderless.blue
+  .ui.left.sidebar.vertical.menu.inverted.visible.icon.labeled.borderless.blue
     // .header.item dollast
     a.item.labeled.header(href="#/")
       // i.icon.home
@@ -41,9 +41,9 @@
     a.item.labeled(href="#/problem")
       i.icon.browser
       | Problem
-    a.item.labeled(href="#/solution")
+    a.item.labeled(href="#/submission")
       i.icon.info.circle
-      | Status
+      | Submissions
     a.item.labeled(href="#/round")
       i.icon.users
       | Contest
@@ -75,6 +75,7 @@ module.exports =
       uid: (.session.uid)
     actions:
       {logout}
+
   methods:
     logout: ->
       @logout!

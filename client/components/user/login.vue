@@ -1,5 +1,5 @@
 <template lang="jade">
-  .ui
+  .ui.basic.segment
     h1.ui.dividing.header Login
     form.ui.form.segment#login-form(:class="{loading: loading, success: success}")
       .ui.error.message

@@ -1,10 +1,9 @@
 require! {
   \co
+  \prelude-ls : {difference, map}
+  \debug
   \../models
   \../config
-  \prelude-ls : {difference}
-  \debug
-  \bcrypt
 }
 
 log = debug \dollast:ctrl:user
@@ -52,15 +51,13 @@ export register = co.wrap (ctx) ->*
   else
     user = new models.users do
       _id: uid
-      password: password
       groups: []
       permit:
         owner: uid
         group: \admin
         access: \rw-rw----
 
-    salt = bcrypt.gen-salt-sync bcrypt.bcrypt-cost
-    user.password = bcrypt.hash-sync password, salt
+    user.set-password password
     yield user.save!
 
     ctx.body =
@@ -71,7 +68,10 @@ export profile = co.wrap (ctx) ->*
   {uid} = ctx.params
 
   profile = yield models.users.find-by-id uid, \-password .lean! .exec!
-  solved-problems = yield models.solutions.get-user-solved-problems uid
+  solved-problem-ids = yield models.submissions.get-user-solved-problem-ids uid
+  solved-problems = yield models.problems.populate solved-problem-ids, path: '_id', select: '_id outlook.title'
+  solved-problems = map (._id), solved-problems 
+
   owned-problems = yield models.problems.get-user-owned-problems uid
   owned-rounds = yield models.rounds.get-user-owned-rounds uid
   ctx.body = {profile, solved-problems, owned-problems, owned-rounds}

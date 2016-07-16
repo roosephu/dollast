@@ -1,7 +1,6 @@
 <template lang="jade">
-  h1.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
-  // .ui.segment(:class="{loading: $loadingRouteData}")
-  div
+  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+    h1.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
     .ui.olive.labels
       .ui.label {{problem.config.timeLimit}} s
         .detail time limit
@@ -37,7 +36,7 @@
 
   .ui.header
 
-  a.ui.icon.labeled.primary.button(href="#/solution/submit/{{problem._id}}")
+  a.ui.icon.labeled.primary.button(href="#/submission/submit/{{problem._id}}")
     i.icon.rocket
     | submit
   a.ui.icon.labeled.button(href="#/problem/{{problem._id}}/modify")

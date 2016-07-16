@@ -7,7 +7,7 @@ require! {
   \co-busboy
   \./config
   \./core
-  \./controllers : {data, problems, solutions, rounds, site, users}
+  \./controllers : {data, problems, submissions, rounds, site, users}
   \./Exception
 }
 
@@ -100,10 +100,10 @@ router
   .delete '/problem/:pid',              problems.remove
   .get    '/problem/:pid/stat',         problems.stat
 
-  .get    '/solution',                  solutions.list
-  .get    '/solution/:sid',             solutions.show
-  .post   '/solution/submit',           solutions.submit
-  # .post   '/solution/:sid/toggle',      solutions.toggle
+  .get    '/submission',                submissions.list
+  .get    '/submission/:sid',           submissions.show
+  .post   '/submission/submit',         submissions.submit
+  # .post   '/submission/:sid/toggle',    submissions.toggle
 
   # .get    '/data/:pid',                 data.show
   .post   '/data/:pid/upload',          data.upload

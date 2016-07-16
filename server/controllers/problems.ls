@@ -88,7 +88,7 @@ export stat = co.wrap (ctx) ->*
     throw new Error "no such problem"
   problem.permit.check-access ctx.state.user, \r
 
-  query = models.solutions.aggregate do
+  query = models.submissions.aggregate do
     * $match: problem: pid
     * $sort: user: 1, "final.score": -1
     * $project:
@@ -104,8 +104,8 @@ export stat = co.wrap (ctx) ->*
         submits:
           $sum: 1
 
-  solutions = yield query.exec!
+  submissions = yield query.exec!
   delete problem.config
   delete problem.permit
 
-  ctx.body = {solutions, problem}
+  ctx.body = {submissions, problem}

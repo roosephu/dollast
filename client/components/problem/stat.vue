@@ -1,12 +1,15 @@
 <template lang="jade">
-  h1.ui.header.dividing Statistics for Problem {{problem._id}}
-  problem(:prob="problem")
+  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+    h1.ui.header.dividing Statistics for Problem {{problem._id}}
+    // problem(:prob="problem")
+    a.ui.button(href="#!/problem/{{problem._id}}") Back to problem
+    a.ui.button(v-link="{name: 'submissions', query: {problem: problem._id}}") All submissions
 
-  h3.ui.header.dividing numbers
-  .ui.statistics
-    .statistic(v-for="(key, val) in stat")
-      .value {{val}}
-      .label {{key}}
+    h3.ui.header.dividing numbers
+    .ui.statistics
+      .statistic(v-for="(key, val) in stat")
+        .value {{val}}
+        .label {{key}}
 </template>
 
 <script lang="vue-livescript">
@@ -54,9 +57,9 @@ module.exports =
       if response.errors
         @raise-error response
         return null
-      {solutions, problem} = response.data
+      {submissions, problem} = response.data
 
-      stat = generate-stat solutions
+      stat = generate-stat submissions
       stat:
         "accepted users": stat.solved
         # "accepted programs": "???"

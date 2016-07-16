@@ -78,4 +78,4 @@ export board = co.wrap (ctx) ->*
     return
   round.permit.check-access ctx.state.user, \r
 
-  ctx.body = yield models.solutions.get-solutions-in-a-round rid
+  ctx.body = yield models.submissions.get-submissions-in-a-round rid

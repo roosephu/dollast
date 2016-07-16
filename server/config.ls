@@ -24,14 +24,14 @@ export
   jwt-key: \drdrdrd
   server-AES-key: \da63af5c90e00d60aa3ddd0793a6e3ca6a8284b0fa8884bba72602ec3719c661 # len = 64 bytes
   sol-list-opts:
-    skip: 0
-    limit: 10
+    page: 1
+    limit: 50
   prob-list-opts:
-    skip: 0
+    page: 1
     limit: 2
   uid-min-len: 3
   uid-max-len: 15
   starting-ids:
-    solutions: 1
+    submissions: 1
     problems: 1
     rounds: 1

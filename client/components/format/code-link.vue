@@ -1,5 +1,5 @@
 <template lang="jade">
-  a.ui.label.grey(href="#/solution/{{sid}}") {{sid}}
+  a.ui.label.grey(href="#/submission/{{sid}}") {{sid}}
 </template>
 
 <script lang="vue-livescript">

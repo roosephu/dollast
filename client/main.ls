@@ -56,5 +56,5 @@ if MathJax
 else
   log.error 'No MathJax found.'
 
-if module.hot
-  module.hot.accept!
+# if module.hot
+#   module.hot.accept!

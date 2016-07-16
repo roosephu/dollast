@@ -1,5 +1,5 @@
 <template lang="jade">
-  .ui.form#form-data
+  .ui.form.basic.segment#form-data
     h2.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
 
     h3.ui.dividing.header Dataset Management

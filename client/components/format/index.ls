@@ -22,6 +22,9 @@ vue.filter \time, (time) ->
 vue.filter \decimal, (value, fixed) ->
   Number value .to-fixed fixed
 
+vue.filter \concise-time, (time) ->
+  moment time .format "YYYY-MM-DD HH:mm:ss"
+
 module.exports = {
   code-link
   problem

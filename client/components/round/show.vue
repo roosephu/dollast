@@ -1,37 +1,41 @@
 <template lang="jade">
-  h1.ui.dividing.header Round {{rnd._id}}. {{rnd.title}}
+  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+    h1.ui.dividing.header Round {{rnd._id}}. {{rnd.title}}
 
-  .ui.olive.labels
-    .ui.label {{rnd.permit.owner}}
-      .detail owner
-    .ui.label {{rnd.permit.group}}
-      .detail group
+    .ui.olive.labels
+      .ui.label {{rnd.permit.owner}}
+        .detail owner
+      .ui.label {{rnd.permit.group}}
+        .detail group
 
-  div from 
-    .ui.label {{rnd.beginTime | time}} 
-    | to 
-    .ui.label {{rnd.endTime | time}}
-  br
-
-  div(v-if="started")
-    h2.ui.dividing.header Problemset
-    .ui.segment(:class="{loading: $loadingRouteData}")
-      .ui.relaxed.divided.link.list
-        .item(v-for="prob in rnd.problems")
-          .ui.right.floated ??
-          .description
-            problem(:prob="prob")
+    div from 
+      .ui.label {{rnd.beginTime | time}} 
+      | to 
+      .ui.label {{rnd.endTime | time}}
     br
 
-  div(v-else)
-    h3.header Sorry, this round has not started.
+    div(v-if="started")
+      h2.ui.dividing.header Problemset
+      .ui.segment(:class="{loading: $loadingRouteData}")
+        .ui.relaxed.divided.link.list
+          .item(v-for="prob in rnd.problems")
+            .ui.right.floated ??
+            .description
+              problem(:prob="prob")
+      br
 
-  a.ui.icon.labeled.button(v-if="started", href="#/round/{{rnd._id}}/board")
-    i.icon.trophy
-    | board
-  a.ui.icon.labeled.button(href="#/round/{{rnd._id}}/modify")
-    i.icon.edit
-    | modify
+    div(v-else)
+      h3.header Sorry, this round has not started.
+
+    a.ui.icon.labeled.button(v-if="started", href="#/round/{{rnd._id}}/board")
+      i.icon.trophy
+      | board
+    a.ui.icon.labeled.button(href="#/round/{{rnd._id}}/modify")
+      i.icon.edit
+      | modify
+    a.ui.icon.labeled.button(v-link="{name: 'submissions', query: {round: rnd._id}}")
+      i.icon.info
+      | submissions
 </template>
 
 <script lang="vue-livescript">

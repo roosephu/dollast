@@ -1,18 +1,19 @@
 <template lang="jade">
-  table.ui.table.segment.large.green.selectable
-    thead
-      tr
-        th user
-        th total
-        th(v-for="problem in problems")
-          problem(:prob="problem")
-    tbody
-      tr(v-for="[user, score] in board")
-        td
-          user(:uid="user")
-        td {{score.total}}
-        td(v-for="problem in problems")
-          code-link(:sid="score[pid].sid")
+  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+    table.ui.table.segment.large.green.selectable
+      thead
+        tr
+          th user
+          th total
+          th(v-for="problem in problems")
+            problem(:prob="problem")
+      tbody
+        tr(v-for="[user, score] in board")
+          td
+            user(:uid="user")
+          td {{score.total}}
+          td(v-for="problem in problems")
+            code-link(:sid="score[pid].sid")
 </template>
 
 <script lang="vue-livescript">
@@ -26,9 +27,9 @@ require! {
 
 log = debug \dollast:component:round:board
 
-generate-board = (solutions) ->
+generate-board = (submissions) ->
   board = {}
-  for sol in solutions
+  for sol in submissions
     {user, prob} = sol._id
     board[user] ||= total: 0
     board[user][prob] = sol{score, sid}
@@ -54,9 +55,9 @@ module.exports =
       if response.errors
         @raise-error response
         return null
-      solutions = response.data
+      submissions = response.data
 
-      board = generate-board solutions |> obj-to-pairs |> sort |> reverse
+      board = generate-board submissions |> obj-to-pairs |> sort |> reverse
       {board}
 
 </script>
