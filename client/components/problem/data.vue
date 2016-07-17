@@ -1,19 +1,25 @@
 <template lang="jade">
-  .ui.form.basic.segment#form-data
+  .ui.form.basic.segment#form-data(:class="{loading: $loadingRouteData}")
     h2.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
 
     h3.ui.dividing.header Dataset Management
-    input#upload(type="file", style="display:none", name="upload")
     .ui.field
-      a.ui.icon.button.labeled(@click="select")
-        i.icon.file
-        | select
-      a.ui.icon.button.labeled.green(@click="upload")
+      .ui.fluid.action.input
+        input#filename(type='text', readonly)
+        input#upload(type='file', hidden, name="upload")
+        .ui.button#select
+          | select
+    .ui.field
+      a.ui.icon.button.labeled.submit
         i.icon.upload
         | upload
-      a.ui.icon.button.labeled.teal(@click="rebuild")
+      a.ui.icon.button.labeled(@click="rebuild")
         i.icon.retweet
         | rebuild
+
+    .ui.progress.indicating
+      .bar
+        .progress
 
     .ui.two.fields
       //- .ui.field.four.wide#dropzone
@@ -35,7 +41,6 @@
                 a.ui.icon.labeled.button.right.floated.mini(:click="remove")
                   i.icon.remove
                   | remove
-
 </template>
 
 <script lang="vue-livescript">
@@ -79,15 +84,49 @@ module.exports =
       else
         @problem.config.dataset = response.data
 
-    select: ->
-      $ '#upload' .click!
-
     upload: co.wrap ->*
+
+  ready: ->
+    $ 'input:text, #select' .on \click, (e) ->
+      $ '#upload', $(e.target).parents! .click!
+    
+    $ 'input:file' .on \change, (e) ->
+      if e.target?.files?.0?.name
+        name = e.target.files[0].name 
+        $ '#filename', $(e.target).parents! .val name
+
+    submit = co.wrap (e) ~>*
       files = $ '#upload' .0 .files
+
       form-data = new FormData!
       for file in files
         form-data.append file.name, file
-      {data} = yield @$http.post "data/#{@problem._id}/upload", form-data
-      @problem.config.dataset = data.pairs
+      
+      $progress = $ \.ui.progress
+      $progress.progress do
+        text:
+          ratio: '{value} of {total}'
+          success: 'uploaded!'
+      {data: response} = yield @$http.post "data/#{@problem._id}/upload", form-data, progress: (e) ->
+        if e.length-computable
+          $progress.progress value: e.loaded, total: e.total
+      
+      if response.errors
+        @raise-error response
+      
+      @problem.config.dataset = response.data.dataset
+
+    $ '.form' .form do
+      inline: true
+      on: \blur
+      fields:
+        upload:
+          identifier: \upload
+          rules:
+            * type: 'empty'
+              prompt: 'please select file first'
+            ...
+      on-success:
+        submit
 
 </script>

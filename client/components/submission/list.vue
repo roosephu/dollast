@@ -43,9 +43,9 @@
           .ui.button.primary.submit submit
           .ui.button(@click="clear") clear
 
-      a.item(v-bind:class="{'disabled': query.page == 1}", @click="go(1)")
+      a.item(:class="{'disabled': query.page == 1}", @click="go(1)")
         i.icon.angle.double.left
-      a.item(v-bind:class="{'disabled': query.page == 1}", @click="go(query.page - 1)")
+      a.item(:class="{'disabled': query.page == 1}", @click="go(query.page - 1)")
         i.icon.angle.left
       a.active.item {{query.page}}
       a.item(@click="go(query.page + 1)") 
@@ -64,7 +64,7 @@
           th.collapsing lang
           th.collapsing round
       tbody
-        tr(v-for="sol in submissions", v-bind:class="{'positive': sol.summary.score > 0.999, 'negative': sol.summary.score < 0.001}")
+        tr(v-for="sol in submissions", :class="{'positive': sol.summary.score > 0.999, 'negative': sol.summary.score < 0.001}")
           td
             code-link(:sid="sol._id")
           td
@@ -136,7 +136,7 @@ module.exports =
       @$next-tick ->
         set-form-values query
 
-      {data: response} = yield vue.http.get \submission, query
+      {data: response} = yield vue.http.get \submission, params: query
       if response.errors
         @raise-error response
         return null

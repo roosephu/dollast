@@ -16,7 +16,7 @@
 
     div(v-if="started")
       h2.ui.dividing.header Problemset
-      .ui.segment(:class="{loading: $loadingRouteData}")
+      .ui.segment
         .ui.relaxed.divided.link.list
           .item(v-for="prob in rnd.problems")
             .ui.right.floated ??

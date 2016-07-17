@@ -23,6 +23,10 @@ require! {
   \./Exception
 }
 
+# can be used to implement a logging module
+# debug.log = ->
+#   console.log ...
+
 export app = new koa!
 
 compile = webpack webpack-config

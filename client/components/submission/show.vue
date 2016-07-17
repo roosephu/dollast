@@ -18,7 +18,7 @@
     h2.ui.header.dividing code
     .ui.segment
       .ui.top.attached.label code
-      pre(v-bind:class="[sol.langauge]")#code {{sol.code}}
+      pre(:class="[sol.langauge]")#code {{sol.code}}
 
     p(v-if="sol.summary.status == 'private'") this code is private
     .ui.segment(v-if="sol.summary.status == 'CE'")

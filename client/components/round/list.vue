@@ -10,7 +10,7 @@
     a.ui.icon.labeled.button.launch.primary.right.floated(href="#/round/create")
       i.icon.plus
       | create
-    .ui.segment(:class="{loading: $loadingRouteData}")
+    .ui.segment
       .ui.very.relxed.divided.link.list
         .item(v-for="round in rounds")
           .ui.right.floated 

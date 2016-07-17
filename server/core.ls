@@ -5,6 +5,7 @@ require! {
   \mz/child_process : {exec}
   \tmp
   \bluebird : {promisify-all}
+  \stream-to-promise
   \co
   \debug
   \path
@@ -42,7 +43,7 @@ export upload = co.wrap (pid, part) ->*
   zip-file = tmp.file-sync postfix: ext-name
   log "upload #{part.filename} -> #{zip-file.name}"
   try
-    part.pipe fs.create-write-stream zip-file.name
+    yield stream-to-promise part.pipe fs.create-write-stream zip-file.name
     data-dir = path.join config.data-dir, "/#pid"
     [stdout, stderr] = yield exec "7z e #{zip-file.name} -o#{data-dir} -y"
     #log "output: #{stdout} #{stderr}"

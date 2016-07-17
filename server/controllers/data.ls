@@ -22,13 +22,11 @@ export upload = co.wrap (ctx) ->*
   while part = yield parts
     log {part}
     ctx.body = yield core.upload pid, part # TODO
-  pairs = yield problem.repair!
+  pairs = yield problem.rebuild!
 
-  ctx.body <<< status:
-    type: "ok"
-    msg: "upload successful"
-    data:
-      {pairs}
+  ctx.body = 
+    dataset: 
+      pairs
 
 export rebuild = co.wrap (ctx) ->*
   {pid} = ctx.params
@@ -50,7 +48,7 @@ export remove = co.wrap (ctx) ->* # validate
   problem.permit.check-access ctx.state.user, \w
 
   yield core.delete-test-data pid, ctx.params
-  yield problem.repair!
+  yield problem.rebuild!
 
   ctx.body = status:
     type: "ok"
