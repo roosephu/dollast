@@ -5,7 +5,7 @@
 
     h3.ui.dividing.header Configuration
     .ui.three.fields
-      .ui.field.eight.wide
+      .ui.field.twelve.wide
         label title
         .ui.input
           input(name="title")
@@ -13,14 +13,14 @@
         label round
         .ui.input
           input(name="rid", type="number", placeholder="optional")
-      .ui.field.four.wide
-        label judger
-        .ui.dropdown.icon.selection#judger
-          input(type="hidden", name="judger")
-          .default.text choose a judger
-          i.dropdown.icon
-          .menu
-            .item(v-for="item in judgers", data-value="{{item}}") {{item}}
+    .ui.field
+      label judger
+      .ui.dropdown.icon.fluid.selection#judger
+        input(type="hidden", name="judger")
+        .default.text choose a judger
+        i.dropdown.icon
+        .menu
+          .item(v-for="(key, value) of judgers", data-value="{{key}}") ({{key}}) {{value}}
 
     .ui.four.fields
       .ui.field
@@ -92,6 +92,7 @@ require! {
   \debug
   \co
   \vue
+  \../../../common/judgers
   \../../actions : {raise-error}
 }
 
@@ -138,7 +139,7 @@ module.exports =
   data: ->
     pid: ""
     files: []
-    judgers: [\string, \real, \strict, \custom]
+    judgers: judgers
     problem:
       _id: ""
       outlook:

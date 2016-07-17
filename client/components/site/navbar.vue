@@ -47,6 +47,9 @@
     a.item.labeled(href="#/round")
       i.icon.users
       | Contest
+    a.item.labeled(href="#/about")
+      i.icon.help.circle
+      | About
     // .right.menu
     a.item.labeled(v-if="uid != undefined", href="#/user/{{uid}}")
       i.icon.user

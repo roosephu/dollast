@@ -100,22 +100,20 @@ drop-first-line = (message) ->
 
 judge-result = co.wrap (pid, input-file, output-file, answer-file, cfg) ->*
   judger = switch cfg.judger
-    | 'string'  => path.join config.judger-dir, "/string"
-    | 'real'    => path.join config.judger-dir, "/real"
-    | 'strict'  => path.join config.judger-dir, "/strict"
     | 'custom'  => path.join config.data-dir, "/#pid/", "/judge"
-    | otherwise => ...
+    | otherwise => path.join config.judger-dir, "/#{cfg.judger}"
   try
     [stdout, stderr] = yield exec "#{judger} #{input-file} #{output-file} #{answer-file}"
   catch e
-    #log e
+    # log e
     messages = drop-first-line e.message
     return
       status: testlib-exitcodes[e.code]
       score: 0
       message: messages.trim!
   [status, score, ...message] = stderr.trim!.split ' '
-  # log "judger output: #stdout / #status / #score / #message"
+
+  log {stderr, stdout, status, score, message}
   message = unwords message
   return
     status: status

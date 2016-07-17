@@ -41,6 +41,8 @@
     a.ui.button.icon.labeled.text.primary(href="#/user/{{uid}}/modify")
       i.icon.edit
       | modify
+    a.ui.button(v-link="{name: 'submissions', query: {user: uid}}")
+      | All submissions
 </template>
 
 <script lang="vue-livescript">

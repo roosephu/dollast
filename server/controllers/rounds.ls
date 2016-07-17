@@ -1,7 +1,8 @@
 require! {
   \co
-  \../models
+  \flat
   \debug
+  \../models
 }
 
 log = debug \dollast:ctrl:round
@@ -51,7 +52,10 @@ export save = co.wrap (ctx) ->*
     # TODO: check permit is not modified here
     # only owner can transfer owner
 
-  ctx.body = yield models.rounds.update _id: rid, round, upsert: true, overwrite: true .exec!
+    # flat it!
+    round |>= flat
+
+  ctx.body = yield models.rounds.update _id: rid, round, upsert: true .exec!
 
   ctx.body =
     _id: rid

@@ -20,7 +20,10 @@ vue.filter \time, (time) ->
   moment time .format "MMMM Do YYYY HH:mm:ss"
 
 vue.filter \decimal, (value, fixed) ->
-  Number value .to-fixed fixed
+  if \number != typeof value
+    ''
+  else
+    Number value .to-fixed fixed
 
 vue.filter \concise-time, (time) ->
   moment time .format "YYYY-MM-DD HH:mm:ss"

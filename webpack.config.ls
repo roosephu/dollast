@@ -31,7 +31,7 @@ module.exports = config =
       * test: /\.vue$/
         loader: \vue
       * test: /\.ls$/
-        loader: \vue-livescript-loader
+        loader: \vue-livescript
   output:
     path: path.join __dirname, \public/js
     filename: \app.js
@@ -47,8 +47,8 @@ module.exports = config =
     new webpack.DefinePlugin do
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || '"development"')
     # new webpack.optimize.UglifyJsPlugin do
-      # compress:
-        # warnings: false
+    #   compress:
+    #     warnings: false
   ]
 #
 #webpack config, (err, res) ->

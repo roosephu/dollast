@@ -161,7 +161,7 @@ module.exports =
       @$route.router.go name: \submissions, query: values
 
     $ \#submission .form do
-      inline: false
+      inline: true
       on: \blur
       on-success: submit
       fields:

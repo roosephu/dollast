@@ -52,7 +52,7 @@ export list = co.wrap (ctx) ->*
   query = models.submissions.find basic-filters, '-code -results'
     .populate \problem, 'outlook.title'
     .populate \round, 'title beginTime'
-    .sort '-_id'
+    .sort '-date'
     .lean!
   if opts.page
     query .= skip (opts.page - 1) * opts.limit

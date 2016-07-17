@@ -33,9 +33,8 @@
     a.ui.icon.labeled.button(href="#/round/{{rnd._id}}/modify")
       i.icon.edit
       | modify
-    a.ui.icon.labeled.button(v-link="{name: 'submissions', query: {round: rnd._id}}")
-      i.icon.info
-      | submissions
+    a.ui.button(v-link="{name: 'submissions', query: {round: rnd._id}}")
+      | All submissions
 </template>
 
 <script lang="vue-livescript">

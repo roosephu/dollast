@@ -11,10 +11,14 @@
       .ui.label {{sol.problem._id}}
         .detail problem
 
+    .ui.dividing.header
+    a.ui.button(href="#!/problem/{{sol.problem._id}}")
+      | Back to problem
+
     h2.ui.header.dividing code
     .ui.segment
       .ui.top.attached.label code
-      pre {{sol.code}}
+      pre(v-bind:class="[sol.langauge]")#code {{sol.code}}
 
     p(v-if="sol.summary.status == 'private'") this code is private
     .ui.segment(v-if="sol.summary.status == 'CE'")
@@ -37,17 +41,17 @@
             tr.positive(v-for="result in sol.results")
               td {{result.input}}
               td {{result.status}}
-              td {{result.time}}
-              td {{result.space}}
-              td {{result.score}}
+              td {{result.time | decimal 3}}
+              td {{result.space | decimal 3}}
+              td {{result.score | decimal 3}}
               td {{result.message}}
           tfoot
             tr
               th final result
               th {{sol.summary.status}}
-              th {{sol.summary.time}}
-              th {{sol.summary.space}}
-              th {{sol.summary.score}}
+              th {{sol.summary.time | decimal 3}}
+              th {{sol.summary.space | decimal 3}}
+              th {{sol.summary.score | decimal 3}}
               th {{sol.summary.message}}
 </template>
 
@@ -68,6 +72,7 @@ module.exports =
 
   data: ->
     sol:
+      code: ""
       summary: {}
       results: []
       problem:
@@ -78,7 +83,7 @@ module.exports =
 
   computed:
     pid: ->
-      @sol.prob._id
+      @sol.problem._id
 
   route:
     data: co.wrap (to: params: {sid}) ->*
@@ -89,5 +94,12 @@ module.exports =
       submission = response.data
 
       {sol: submission}
+  
+  watch:
+    'sol.code': ->
+      @$next-tick ->
+        block = $ '#code' .0
+        hljs.highlight-block block
+
 
 </script>

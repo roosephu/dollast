@@ -51,7 +51,7 @@ app.use dev-middleware compile,
 # we shouldn't compress webpack hot module replacement information
 app.use (next) ->*
   # log @request.method, @request.url
-  if @request.url == "/__webpack_hmr"
+  if @request.url == "/__webpack_hmr" or '/api' == @request.url.substr 0, 4
     @compress = false
   yield next
 

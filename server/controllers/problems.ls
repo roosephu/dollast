@@ -2,6 +2,8 @@ require! {
   \co
   \debug
   \sanitize-html
+  \flat
+  \../../common/judgers
   \../models
   \../config : {prob-list-opts}
 }
@@ -50,7 +52,7 @@ export save = co.wrap (ctx) ->*
   ctx.check-body \/config/spaceLimit, true .get! .is-float! .gt 0
   ctx.check-body \/config/stackLimit, true .get! .is-float! .gt 0
   ctx.check-body \/config/outputLimit, true .get! .is-float! .gt 0
-  ctx.check-body \/config/judger, true .get! .in [\string, \strict, \real, \custom]
+  ctx.check-body \/config/judger, true .get! .in Object.keys judgers
   ctx.check-body \/permit/owner, true .get!
   return if ctx.errors?.length > 0
 
@@ -64,6 +66,7 @@ export save = co.wrap (ctx) ->*
 
     # TODO: check whether user can create a problem here
   else
+
     existed = yield models.problems.find-by-id pid, \permit .exec!
     ctx.assert existed, id: pid, type: \problem, detail: "cannot find the original problem"
 
@@ -72,7 +75,11 @@ export save = co.wrap (ctx) ->*
     # TODO: check permit is not modified here
     # only owner can transfer owner
 
-  yield models.problems.update _id: pid, problem, upsert: true, overwrite: true .exec!
+    # we are updating!
+    problem |>= flat
+    log {problem}
+
+  yield models.problems.update _id: pid, problem, upsert: true .exec!
   ctx.body = problem with _id: pid
 
 export remove = co.wrap (ctx) ->*

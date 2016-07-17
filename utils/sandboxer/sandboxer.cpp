@@ -139,7 +139,7 @@ void run_parent(pid_t pid) {
 			case SIGXFSZ: msg = "XFSZ"; break; // file-size-limit-exceeded
 			default     : msg = "UNKW"; break; // unknown-signal
 			}
-			cerr("[runner]%s\n", msg);
+			// cerr("[runner]%s\n", msg);
 			if (sig == SIGXCPU)
 				cerr("{\"score\": 0, \"status\": \"%s\", \"time\": %.6f}\n", msg, utm_lmt);
 			else
