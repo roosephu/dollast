@@ -29,13 +29,13 @@ export token = co.wrap (ctx) ->*
 export login = co.wrap (ctx) ->*
   # ctx.check-body '_id' .len 6, 15
   # ctx.check-body 'pswd' .non-empty!
-  {uid, password} = ctx.request.body
+  {user, password} = ctx.request.body
   return if ctx.errors?.length > 0
 
-  user = yield models.users.find-by-id uid .exec!
+  user = yield models.users.find-by-id user .exec!
   # log password, user.password
   if not user or not user.check-password password
-    throw new Exception id: uid, type: \user, detail: "bad user/password combination"
+    throw new Exception id: user._id, type: \user, detail: "bad user/password combination"
 
   groups = user.groups
   groups.push \users
@@ -48,7 +48,7 @@ export login = co.wrap (ctx) ->*
     groups: ctx.state.user.groups
     client-key: client-key
   client-payload = JSON.stringify do
-    uid: user._id
+    user: user._id
   payload =
     server: server-payload # crypt.AES.enc server-payload, server-key
     client: client-payload # crypt.AES.enc client-payload, client-key

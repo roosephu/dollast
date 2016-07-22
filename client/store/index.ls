@@ -17,7 +17,7 @@ mutations =
     vue.http.headers.common.Authorization = "Bearer #{token}"
     state.session =
       guest: false
-      uid: client-info.uid
+      user: client-info.user
       token: token
 
   logout: (state) ->

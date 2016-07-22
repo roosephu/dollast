@@ -10,10 +10,10 @@
       tbody
         tr(v-for="[user, score] in board")
           td
-            user(:uid="user")
+            user(:user="user")
           td {{score.total}}
           td(v-for="problem in problems")
-            code-link(:sid="score[pid].sid")
+            code-link(:sid="score[problem].sid")
 </template>
 
 <script lang="vue-livescript">
@@ -25,7 +25,7 @@ require! {
   \prelude-ls : {obj-to-pairs, sort, reverse}
 }
 
-log = debug \dollast:component:round:board
+log = debug \dollast:component:pack:board
 
 generate-board = (submissions) ->
   board = {}
@@ -44,14 +44,14 @@ module.exports =
     board: []
 
   route:
-    data: co.wrap (to: params: {rid}) ->*
-      {data: response} = yield vue.http.get "round/#{rid}"
+    data: co.wrap (to: params: {pack}) ->*
+      {data: response} = yield vue.http.get "pack/#{pack}"
       if response.errors
         @raise-error response
         return null
-      round = response.data
+      pack = response.data
 
-      {data: response} = yield vue.http.get "round/#{rid}/board"
+      {data: response} = yield vue.http.get "pack/#{pack}/board"
       if response.errors
         @raise-error response
         return null

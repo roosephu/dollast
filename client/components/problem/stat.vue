@@ -52,8 +52,8 @@ module.exports =
     problem: {}
 
   route:
-    data: co.wrap (to: params: {pid}) ->*
-      {data: response} = yield vue.http.get "problem/#{pid}/stat"
+    data: co.wrap (to: params: {problem}) ->*
+      {data: response} = yield vue.http.get "problem/#{problem}/stat"
       if response.errors
         @raise-error response
         return null

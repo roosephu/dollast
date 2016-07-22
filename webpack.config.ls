@@ -12,6 +12,7 @@ vendors =
     \vue-resource
     \prelude-ls
     \moment
+    \flat
 
 module.exports = config =
   debug: true

@@ -36,4 +36,4 @@ export
   starting-ids:
     submissions: 1
     problems: 1
-    rounds: 1
+    packs: 1

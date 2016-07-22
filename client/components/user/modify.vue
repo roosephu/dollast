@@ -60,15 +60,15 @@ module.exports =
       {raise-error}
 
   data: ->
-    groups: [\problems, \submissions, \admin, \rounds]
+    groups: [\problems, \submissions, \admin, \packs]
     user:
       profile:
         _id: ""
         groups: []
 
   route:
-    data: co.wrap (to: params: {uid}) ->*
-      {data: response} = yield vue.http.get "user/#{uid}"
+    data: co.wrap (to: params: {user}) ->*
+      {data: response} = yield vue.http.get "user/#{user}"
       if response.errors
         @raise-error response
         return null
@@ -93,7 +93,7 @@ module.exports =
         updated = {_id, groups, description, old-password, new-password}
 
       response = yield vue.http.post "user/#{_id}", updated
-      # @props.dispatch on-update-user @props.params.uid, updated
+      # @props.dispatch on-update-user @props.params.user, updated
 
     $form = $ '#form-user'
     $form.form do

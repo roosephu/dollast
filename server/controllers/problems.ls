@@ -13,7 +13,7 @@ log = debug \dollast:ctrls:prob
 export list = co.wrap (ctx) ->*
   opts = prob-list-opts
   ctx.body = yield models.problems
-    .find null, \outlook.title # "config.round": $exists: true,
+    .find null, \outlook.title # "config.pack": $exists: true,
     .skip opts.skip
     .limit opts.limit
     .exec!
@@ -21,24 +21,23 @@ export list = co.wrap (ctx) ->*
 
 export show = co.wrap (ctx) ->*
   log "finding problem"
-  {pid} = ctx.params
+  {problem} = ctx.params
 
-  problem = yield models.problems.find-by-id pid
-    # .populate "config.round", "begTime"
+  problem = yield models.problems.find-by-id problem
+    .populate 'config.pack', \title
     .exec!
   if not problem
     ctx.throw do
-      _id: pid
+      _id: problem._id
       type: \problem
       detail: "non-existing problem"
   problem.permit.check-access ctx.state.user, \r
 
-  # TODO check whether the corresponding round has started
+  # TODO check whether the corresponding pack has started
   problem .= to-object!
   ctx.body = problem
 
 export save = co.wrap (ctx) ->*
-  {pid} = ctx.params
 
   #ctx.check-body 'method' .in ['modify', 'create'], 'wrong method'
   # log req.outlook.title
@@ -58,17 +57,15 @@ export save = co.wrap (ctx) ->*
 
   problem = ctx.request.body
 
-  if problem._id
-    delete problem._id
-  if pid == void
-    pid = yield models.problems.next-count!
-    log "saving new problem using id #{pid}"
+  if problem._id == void
+    problem._id = yield models.problems.next-count!
+    log "saving new problem using id #{problem._id}"
 
     # TODO: check whether user can create a problem here
   else
 
-    existed = yield models.problems.find-by-id pid, \permit .exec!
-    ctx.assert existed, id: pid, type: \problem, detail: "cannot find the original problem"
+    existed = yield models.problems.find-by-id problem._id, \permit .exec!
+    ctx.assert existed, id: problem._id, type: \problem, detail: "cannot find the original problem"
 
     existed.permit.check-access ctx.state.user, \w
 
@@ -79,29 +76,29 @@ export save = co.wrap (ctx) ->*
     problem |>= flat
     log {problem}
 
-  yield models.problems.update _id: pid, problem, upsert: true .exec!
-  ctx.body = problem with _id: pid
+  yield models.problems.update _id: problem._id, problem, upsert: true .exec!
+  ctx.body = problem
 
 export remove = co.wrap (ctx) ->*
   # TODO: implement removing a problem
   ...
 
 export stat = co.wrap (ctx) ->*
-  {pid} = ctx.params
+  {problem} = ctx.params
 
-  problem = yield models.problems.find-by-id pid, 'config.round outlook.title permit'
+  problem = yield models.problems.find-by-id problem, 'config.pack outlook.title permit'
     .exec!
   if not problem
     throw new Error "no such problem"
   problem.permit.check-access ctx.state.user, \r
 
   query = models.submissions.aggregate do
-    * $match: problem: pid
+    * $match: problem: problem._id
     * $sort: user: 1, "final.score": -1
     * $project:
         language: true
         summary: true
-        round: true
+        pack: true
         user: true
     * $group:
         _id:

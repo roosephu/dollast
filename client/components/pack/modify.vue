@@ -1,5 +1,5 @@
 <template lang="jade">
-  .ui.form.segment.basic#form-round
+  .ui.form.segment.basic#form-pack
     h2.ui.dividing.header {{formattedTitle}}
     .ui.success.message
       .header Changes saved.
@@ -66,10 +66,10 @@ require! {
   \../../actions : {raise-error}
 }
 
-log = debug \dollast:component:round:modify
+log = debug \dollast:component:pack:modify
 
 get-form-values = ->
-  $form = $ '#form-round'
+  $form = $ '#form-pack'
   values = $form.form 'get values'
 
   permit = values{owner, group, access}
@@ -79,10 +79,10 @@ get-form-values = ->
   data = Object.assign values{title, begin-time, end-time},
     {problems, permit}
 
-set-form-values = (round) ->
+set-form-values = (pack) ->
   #log 'new states. setting new values for form...', to-client-fmt problem.to-JS!
-  $form = $ '#form-round'
-  {title, begin-time, end-time, permit, problems} = round
+  $form = $ '#form-pack'
+  {title, begin-time, end-time, permit, problems} = pack
   # probs = map (-> prob-fmt it), probs
   # probs .= join!
   problems = map ((problem) -> "#{problem._id}"), problems
@@ -95,52 +95,35 @@ set-form-values = (round) ->
 
 module.exports =
   data: ->
-    rid: 0
-    rnd:
+    pack:
       _id: void
       problems: []
 
   computed:
     dropdown-problems: ->
-      {[x._id, vue.filter(\problem) x] for x in @rnd.problems}
+      {[x._id, vue.filter(\problem) x] for x in @pack.problems}
     formatted-title: ->
-      if @rnd._id == void
-        "Create new Round"
+      if @pack._id == void
+        "Create new Pack"
       else
-        "Round #{@rnd._id}. #{@rnd.title}"
+        "Pack #{@pack._id}. #{@pack.title}"
 
   vuex:
     getters:
-      uid: (.session.uid)
+      user: (.session.user)
     actions:
       {raise-error}
 
   ready: ->
-    $dropdown = $ '.ui.selection.dropdown'
-    # log {$dropdown}
-    $dropdown.dropdown do
-      data-type: \jsonp
-      api-settings:
-        save-remove-data: false
-        on-response: (response) ->
-          if !response.data?._id
-            return success: false, results: []
-          # log {response}
-          problem = response.data
-          {_id, outlook: {title}} = problem
-          return results: [value: _id, name: vue.filter(\problem) problem]
-        url: "/api/problem/{query}"
-        on-change: (value) ~>
-          log {value}
 
     submit = co.wrap (e) ~>*
       e.prevent-default!
       data = get-form-values!
-      {data: response} = yield vue.http.post "round/#{@rid}", data
+      {data: response} = yield vue.http.post "pack", data
       if response.errors
         log {response.errors}
 
-    $form = $ '#form-round'
+    $form = $ '#form-pack'
     $form.form do
       on: \blur
       inline: true
@@ -183,29 +166,29 @@ module.exports =
             * type: \isAccess
               prompt: 'access code should be /^[0-7]{3}$/'
             ...
-    if @rnd._id == void
-      @rnd.permit =
-        owner: @uid
-        group: \rounds
+    if @pack._id == void
+      @pack.permit =
+        owner: @user
+        group: \packs
         access: \rwxr--r--
-      set-form-values @rnd
-      # $form.form 'set values', @rnd.permit
+      set-form-values @pack
+      # $form.form 'set values', @pack.permit
 
   route:
-    data: co.wrap (to: params: {rid}) ->*
-      if rid != void
-        {data: response} = yield vue.http.get "round/#{rid}"
+    data: co.wrap (to: params: {pack}) ->*
+      if pack != void
+        {data: response} = yield vue.http.get "pack/#{pack}"
         if response.errors
           @raise-error response
           return null
-        round = response.data
+        pack = response.data
 
-        {rid, rnd: round}
+        {pack}
 
   watch:
-    'rnd._id': ->
+    'pack._id': ->
       @$next-tick ~>
         $ '.ui.selection.dropdown' .dropdown \refresh
-        set-form-values @rnd
+        set-form-values @pack
 
 </script>

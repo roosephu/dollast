@@ -82,7 +82,7 @@ module.exports =
         group: ""
 
   computed:
-    pid: ->
+    problem: ->
       @sol.problem._id
 
   route:

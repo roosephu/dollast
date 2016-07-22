@@ -1,11 +1,11 @@
 require! {
   \debug
   \./submissions
-  \./rounds
+  \./packs
   \./problems
   \./users
 }
 
 log = debug \dollast:db
 
-export submissions, rounds, problems, users
+export submissions, packs, problems, users

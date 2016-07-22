@@ -1,6 +1,6 @@
 <template lang="jade">
   .ui.form.basic.segment#submit-form
-    h1.ui.header.dividing Problem: {{pid}}
+    h1.ui.header.dividing Problem: {{problem}}
     .ui.success.message
       .header Submit successful. Redirect to status in 3 seconds...
     .ui.field
@@ -41,7 +41,6 @@
 require! {
   \debug
   \co
-  \prelude-ls : {pairs-to-obj, obj-to-pairs, flatten}
 }
 
 log = debug \dollast:components:submission:submit
@@ -49,15 +48,15 @@ log = debug \dollast:components:submission:submit
 module.exports =
   vuex:
     getters:
-      uid: (.session.uid)
+      user: (.session.user)
 
   data: ->
-    pid: @$route.params.pid
+    problem: @$route.params.problem
     languages: [\cpp, \java, \pas]
 
   computed:
     permit: ->
-      owner: @uid
+      owner: @user
       group: \submissions
       access: \rwxrw-r--
 
@@ -70,7 +69,7 @@ module.exports =
 
       data = Object.assign do
         all-values{code, language}
-        {@pid, permit}
+        {@problem, permit}
       {data: response} = yield @$http.post \submission/submit, data
       if response.errors
         errors = {}

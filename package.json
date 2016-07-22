@@ -22,9 +22,7 @@
     "css-loader": "^0.23.1",
     "debug": "^2.2.0",
     "del": "^2.2.0",
-    "dropzone": "^4.3.0",
     "extend": "^3.0.0",
-    "fine-uploader": "^5.9.0",
     "flat": "^2.0.1",
     "jade": "^1.11.0",
     "jade-loader": "^0.8.0",
@@ -61,7 +59,8 @@
     "vue-router": "^0.7.13",
     "vue-style-loader": "^1.0.0",
     "vuex": "^1.0.0-rc.2",
-    "webpack": "^1.13.1"
+    "webpack": "^1.13.1",
+    "winston": "^2.2.0"
   },
   "devDependencies": {
     "babel-core": "^6.10.4",

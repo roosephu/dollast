@@ -8,7 +8,7 @@
       .ui.field
         .ui.icon.input.left
           i.icon.user
-          input(name="uid", placeholder="user id")
+          input(name="user", placeholder="user id")
       .ui.field
         .ui.icon.input.left
           i.icon.lock
@@ -58,8 +58,8 @@ module.exports =
       on: \blur
       inline: true
       fields:
-        uid:
-          identifier: \uid
+        user:
+          identifier: \user
           rules:
             * type: 'minLength[6]'
               prompt: "User name must be longer than 5"

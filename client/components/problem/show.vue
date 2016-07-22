@@ -10,6 +10,8 @@
         .detail owner
       .ui.label {{problem.permit.group}}
         .detail group
+      .ui.label {{problem.config.pack | pack}}
+        .detail pack
 
     .ui.segment
       .ui.top.left.attached.label.teal description
@@ -34,17 +36,51 @@
             .ui.top.left.attached.label.teal sample output
             pre {{problem.outlook.sampleOutput}}
 
-  .ui.header
+    .ui.header
 
-  a.ui.icon.labeled.primary.button(href="#/submission/submit/{{problem._id}}")
-    i.icon.rocket
-    | submit
-  a.ui.icon.labeled.button(href="#/problem/{{problem._id}}/modify")
-    i.icon.edit
-    | modify
-  a.ui.icon.labeled.button(href="#/problem/{{problem._id}}/stat")
-    i.icon.chart.bar
-    | statistics
+    .ui.form#submit-form
+      .ui.success.message
+        .header Submit successful. Redirect to status in 3 seconds...
+      h2.ui.dividing.header Submission
+      .ui.field
+        label code
+        textarea(name="code")
+      .ui.two.fields
+        .ui.field
+          label language
+          .ui.dropdown.icon.selection
+            input(type="hidden", name="language")
+            .default.text select your language
+            i.dropdown.icon
+            .menu
+              .item(v-for="item in languages", data-value="{{item}}") {{item}}
+
+      h2.ui.dividing.header permission
+      .ui.four.fields
+        .ui.field
+          label owner
+          .ui.input
+            input(name="owner")
+        .ui.field
+          label group
+          .ui.input
+            input(name="group")
+        .ui.field
+          label access
+          .ui.input
+            input(name="access")
+
+      h2.ui.dividing.header
+      .ui.field
+        a.icon.labeled.ui.button.primary.floated.submit
+          i.icon.rocket
+          | submit
+        a.ui.icon.labeled.button(href="#/problem/{{problem._id}}/modify")
+          i.icon.edit
+          | modify
+        a.ui.icon.labeled.button(href="#/problem/{{problem._id}}/stat")
+          i.icon.chart.bar
+          | statistics
 </template>
 
 <script lang="vue-livescript">
@@ -61,17 +97,28 @@ module.exports =
   vuex:
     actions:
       {raise-error}
+    getters:
+      user: (.session.user)
 
   data: ->
+    languages: [\cpp, \java, \pas]
     problem:
       _id: 0
-      config: {}
+      config:
+        pack:
+          title: ""
       outlook: {}
       permit: {}
 
+  computed:
+    permit: ->
+      owner: @user
+      group: \submissions
+      access: \rwxrw-r--
+
   route:
-    data: co.wrap (to: params: {pid}) ->*
-      {data: response} = yield vue.http.get "problem/#{pid}"
+    data: co.wrap (to: params: {problem}) ->*
+      {data: response} = yield vue.http.get "problem/#{problem}"
       if response.errors
         @raise-error response
         return null
@@ -83,5 +130,67 @@ module.exports =
     'problem._id': ->
       @$next-tick ~>
         MathJax.Hub.Queue [\Typeset, MathJax.Hub]
+      
+  ready: ->
+    $ \.dropdown .dropdown!
+    submit = co.wrap (e) ~>*
+      $form = $ '#submit-form'
+      all-values = $form.form 'get values'
+      permit = all-values{owner, group, access}
+
+      data = Object.assign do
+        all-values{code, language}
+        {problem: @problem._id, permit}
+      {data: response} = yield @$http.post \submission, data
+      if response.errors
+        errors = {}
+        for error in response.errors
+          Object.assign errors, error
+
+        # TODO not working yet: https://github.com/Semantic-Org/Semantic-UI/issues/959
+        # need to set the form to invalid state
+        $form.form 'add errors', errors
+
+    $form = $ '#submit-form'
+    $form.form do
+      on: \blur
+      debug: true
+      fields:
+        code:
+          identifier: \code
+          rules:
+            * type: 'minLength[4]'
+              prompt: 'code minimum length is 4'
+            * type: 'maxLength[65535]'
+              prompt: 'code length cannot exceed 65535'
+        lang:
+          identifier: \language
+          rules:
+            * type: 'empty'
+              prompt: 'language cannot be empty'
+            ...
+        owner:
+          identifier: \owner
+          rules:
+            * type: \isUserId
+              prompt: 'wrong user id'
+            ...
+        group:
+          identifier: \group
+          rules:
+            * type: \isUserId
+              prompt: 'wrong group id'
+            ...
+        access:
+          identifier: \access
+          rules:
+            * type: \isAccess
+              prompt: 'wrong access code'
+            ...
+      on-success: submit
+      inline: true
+
+    $form.form 'set values', @permit
+
 
 </script>

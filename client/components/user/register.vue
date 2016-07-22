@@ -7,7 +7,7 @@
     .ui.field
       a.ui.input.icon.left
         i.icon.user
-        input(placeholder="user id", name="uid")
+        input(placeholder="user id", name="user")
     .ui.field
       a.ui.input.icon.left
         i.icon.lock
@@ -40,8 +40,8 @@ module.exports =
     $ '#register-form' .form do
       on: \blur
       fields:
-        uid:
-          identifier: \uid
+        user:
+          identifier: \user
           rules:
             * type: 'minLength[3]'
               prompt: "User name must be longer than 5"

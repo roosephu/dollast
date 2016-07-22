@@ -118,7 +118,7 @@ judge-result = co.wrap (pid, input-file, output-file, answer-file, cfg) ->*
   message = unwords message
   return
     status: status
-    score: parse-float score
+    score: 1 # parse-float score
     message: message
 
 limit = co-limiter config.concurrency
@@ -134,8 +134,8 @@ run-atom = (pid, language, exe-path, data, cfg) ->* # TODO if file not exists, t
   # log {exec-cmd}
   [proc-out, proc-err] = yield exec exec-cmd, cwd: path.dirname config.sandboxer
   # log {proc-out, proc-err, exec-cmd}
-  log "sandboxer result: #proc-err"
   exe-res = JSON.parse proc-err
+  log "sandboxer result:", exe-res
 
   if exe-res.status != 'OK'
     tmp-file.remove-callback!
@@ -192,6 +192,7 @@ export judge = co.wrap (language, code, problem-config, doc) ->*
     doc.results = results
     doc.summary = calc-problem-score zip dataset, results
     doc.summary.status = \finished
+    log doc
     yield doc.save!
   catch err
     log err

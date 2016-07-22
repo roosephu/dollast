@@ -38,7 +38,7 @@
               td {{atom.output}}
               td {{atom.weight}}
               td
-                a.ui.icon.labeled.button.right.floated.mini(:click="remove")
+                a.ui.icon.labeled.button.right.floated.mini(@click="remove(atom)")
                   i.icon.remove
                   | remove
 </template>
@@ -67,8 +67,8 @@ module.exports =
         dataset: []
 
   route:
-    data: co.wrap (to: params: {pid}) ~>*
-      {data: response} = yield vue.http.get "problem/#{pid}"
+    data: co.wrap (to: params: {problem}) ~>*
+      {data: response} = yield vue.http.get "problem/#{problem}"
       if response.errors
         @raise-error response
         return null
@@ -83,8 +83,10 @@ module.exports =
         @raise-error response
       else
         @problem.config.dataset = response.data
-
-    upload: co.wrap ->*
+    
+    remove: co.wrap (atom) ->*
+      {data: response} = yield @$http.get "data/#{@problem._id}/remove"
+      log atom
 
   ready: ->
     $ 'input:text, #select' .on \click, (e) ->

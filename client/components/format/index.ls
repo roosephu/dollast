@@ -3,21 +3,21 @@ require! {
   \vue
   \./code-link
   \./problem
-  \./round
+  \./pack
   \./user
 }
 
 vue.filter \problem, (problem) ->
   "#{problem._id}. #{problem.outlook.title}"
 
-vue.filter \round, (round) ->
-  "#{round._id}. #{round.title}"
+vue.filter \pack, (pack) ->
+  "#{pack._id}. #{pack.title}"
 
 vue.filter \user, (user) ->
   "#{user}"
 
 vue.filter \time, (time) ->
-  moment time .format "MMMM Do YYYY HH:mm:ss"
+  moment time .format "YYYY MMM Do HH:mm:ss"
 
 vue.filter \decimal, (value, fixed) ->
   if \number != typeof value
@@ -31,6 +31,6 @@ vue.filter \concise-time, (time) ->
 module.exports = {
   code-link
   problem
-  round
+  pack
   user
 }

@@ -10,29 +10,31 @@ require! {
 log = debug \dollast:ctrl:submission
 
 export submit = co.wrap (ctx) ->*
-  log {pid: ctx.request.body.pid}
-  ctx.check-body \pid .is-int! .ge 1
+  # ctx.check-body \pid .is-int! .ge 1
   ctx.check-body \language .in [\cpp, \java]
   ctx.check-body \code .len 1, 50000
   ctx.check-body \user .empty!
   return if ctx.errors?.length > 0
 
-  {pid, code, language, permit} = ctx.request.body
-  log {pid}
+  {problem, code, language, permit} = ctx.request.body
 
-  problem = yield models.problems.find-by-id pid, "permit config" .exec!
-  ctx.assert problem, id: pid, type: \problem, detail: 'no problem found. '
+  problem = yield models.problems.find-by-id problem, "permit config" 
+    .populate 'config.pack', 'title' 
+    .exec!
+  ctx.assert problem, id: problem._id, type: \problem, detail: 'no problem found. '
   problem.permit.check-access ctx.state.user, \x
 
-  {uid} = ctx.state.user.client
+  pack = problem.config.pack._id
+  {user} = ctx.state.user.client
 
-  # ctx.ensure-access model, 0, \x # sol = 0 => submision
+  # ctx.ensure-access model, 0, \x # sol = 0 => submission
   submission = new models.submissions do
     _id: yield models.submissions.next-count!
     code: code
     language: language
-    problem: pid
-    user: uid
+    problem: problem._id
+    user: user
+    pack: pack
     summary:
       status: \running
     permit: permit
@@ -46,12 +48,12 @@ export list = co.wrap (ctx) ->*
   # TODO: verify input
   opts = config.sol-list-opts with ctx.request.query
 
-  basic-filters = Obj.reject (== undefined), opts{user, round, language}
+  basic-filters = Obj.reject (== undefined), opts{user, pack, language}
   log {opts, basic-filters}
 
   query = models.submissions.find basic-filters, '-code -results'
     .populate \problem, 'outlook.title'
-    .populate \round, 'title beginTime'
+    .populate \pack, 'title beginTime'
     .sort '-date'
     .lean!
   if opts.page
@@ -67,12 +69,12 @@ export list = co.wrap (ctx) ->*
   ctx.body = submissions
 
 export show = co.wrap (ctx) ->*
-  {sid} = ctx.params
+  {submission} = ctx.params
 
-  submission = yield models.submissions.find-by-id sid
+  submission = yield models.submissions.find-by-id submission
     .populate \problem, 'outlook.title'
     .exec!
-  ctx.assert submission, id: sid, type: \submission, detail: 'no submission found. '
+  ctx.assert submission, id: submission, type: \submission, detail: 'no submission found. '
 
   submission.permit.check-access ctx.state.user, \r
 

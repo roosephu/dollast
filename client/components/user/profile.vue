@@ -1,6 +1,6 @@
 <template lang="jade">
   .ui.basic.segment(:class="{loading: $loadingRouteData}")
-    h1.ui.dividing.header Details of {{uid}}
+    h1.ui.dividing.header Details of {{user}}
     .ui.segment
       .ui.top.attached.label.large registered since
       p {{registerDate}}
@@ -28,20 +28,20 @@
             problem(:prob="prob")
 
     .ui.segment
-      .ui.top.attached.label.large Rounds owned
+      .ui.top.attached.label.large Packs owned
       .ui.relaxed.divided.link.list
-        .item(v-for="rnd in ownedRounds")
+        .item(v-for="pack in ownedPacks")
           .ui.right.floated 
-            .ui.label {{rnd.beginTime | time}}
+            .ui.label {{pack.beginTime | time}}
             | to  
-            .ui.label {{rnd.endTime | time}}
+            .ui.label {{pack.endTime | time}}
           .description
-            round(:rnd="rnd")
+            pack(:pack="pack")
 
-    a.ui.button.icon.labeled.text.primary(href="#/user/{{uid}}/modify")
+    a.ui.button.icon.labeled.text.primary(href="#/user/{{user}}/modify")
       i.icon.edit
       | modify
-    a.ui.button(v-link="{name: 'submissions', query: {user: uid}}")
+    a.ui.button(v-link="{name: 'submissions', query: {user: user}}")
       | All submissions
 </template>
 
@@ -63,11 +63,11 @@ module.exports =
       {raise-error}
 
   data: ->
-    uid: @$route.params.uid
+    user: @$route.params.user
     profile: {}
     solved-problems: []
     owned-problems: []
-    owned-rounds: []
+    owned-packs: []
   
   computed:
     register-date: ->
@@ -77,8 +77,8 @@ module.exports =
         ""
 
   route:
-    data: co.wrap (to: params: {uid}) ->*
-      {data: response} = yield vue.http.get "user/#{uid}"
+    data: co.wrap (to: params: {user}) ->*
+      {data: response} = yield vue.http.get "user/#{user}"
       if response.errors
         @raise-error response
         return null
@@ -87,6 +87,6 @@ module.exports =
       profile
 
   components:
-    format{problem, round}
+    format{problem, pack}
 
 </script>

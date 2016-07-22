@@ -10,9 +10,13 @@
         .ui.input
           input(name="title")
       .ui.field.four.wide
-        label round
-        .ui.input
-          input(name="rid", type="number", placeholder="optional")
+        label pack id
+        .ui.dropdown.icon.selection.fluid.search#pack
+          input(type="hidden", name="pack")
+          .default.text pack
+          i.dropdown.icon
+          .menu
+            .item(data-value="{{pack._id}}") {{pack | pack}}
     .ui.field
       label judger
       .ui.dropdown.icon.fluid.selection#judger
@@ -79,10 +83,10 @@
       .ui.icon.labeled.button.primary.submit
         i.icon.save
         | Save
-      .ui.icon.labeled.button.secondary(href="#/problem/{{pid}}")
+      .ui.icon.labeled.button.secondary(href="#/problem/{{problem}}")
         i.icon.reply
         | Back
-      a.ui.icon.labeled.button.secondary(v-if="pid != 0", href="#/problem/{{pid}}/data")
+      a.ui.icon.labeled.button.secondary(v-if="problem != 0", href="#/problem/{{problem}}/data")
         i.icon.archive
         | Dataset Manage
 </template>
@@ -92,6 +96,7 @@ require! {
   \debug
   \co
   \vue
+  \flat
   \../../../common/judgers
   \../../actions : {raise-error}
 }
@@ -110,12 +115,8 @@ flatten-object = (obj) ->
 get-form-values = ->
   values = $ '.form' .form 'get values'
   outlook = values{title, description, input-format, output-format, sample-input, sample-output}
-  config  = values{rid, pid, judger, time-limit, space-limit, output-limit, stack-limit}
+  config  = values{pack, problem, judger, time-limit, space-limit, output-limit, stack-limit}
   permit  = values{owner, group, access}
-  if config.rid == ""
-    delete config.rid
-  else
-    config.rid |>= parse-int
 
   config.time-limit   |>= parse-float
   config.space-limit  |>= parse-float
@@ -125,6 +126,8 @@ get-form-values = ->
   {outlook, config, permit}
 
 set-form-values = (data) ->
+  if data?.config?.pack?._id
+    data.config.pack .= _id
   problem = flatten-object data
   $form = $ '#problem-modify'
   $form.form 'set values', problem
@@ -132,13 +135,14 @@ set-form-values = (data) ->
 module.exports =
   vuex:
     getters:
-      uid: (.session.uid)
+      user: (.session.user)
     actions:
       {raise-error}
 
   data: ->
-    pid: ""
-    files: []
+    pack: 
+      _id: ""
+      title: ""
     judgers: judgers
     problem:
       _id: ""
@@ -146,6 +150,9 @@ module.exports =
         title: 'hello world'
       config:
         dataset: []
+        pack:
+          _id: ""
+          title: ""
 
   computed:
     title: ->
@@ -157,14 +164,28 @@ module.exports =
   ready: ->
     $ \.dropdown .dropdown!
 
+    $pack = $ '#pack'
+    # log {$dropdown}
+    $pack.dropdown do
+      data-type: \jsonp
+      api-settings:
+        save-remove-data: false
+        on-response: (response) ->
+          if !response.data?._id
+            return success: false, results: []
+          # log {response}
+          pack = response.data
+          {_id, title} = pack
+          return results: [value: _id, name: vue.filter(\pack) pack]
+        url: "/api/pack/{query}/"
+        on-change: (value) ~>
+          log {value}
+
     submit = co.wrap (e) ~>*
       e.prevent-default!
       problem = get-form-values!
       log {problem}
-      if @pid == ""
-        {data} = yield @$http.post "problem", problem
-      else
-        {data} = yield @$http.put "problem/#{@pid}", problem
+      {data} = yield @$http.post "problem", problem
       if data.errors != void
         log data.errors
 
@@ -180,13 +201,13 @@ module.exports =
               prompt: 'title minimum length is 2'
             * type: 'maxLength[63]'
               prompt: 'title length cannot exceed 63'
-        rid:
-          identifier: \rid
-          optional: true
+        pack:
+          identifier: \pack
           rules:
-            * type: 'integer[1..]'
-              prompt: '#rid must be a positive integer'
-            ...
+            * type: 'minLength[2]'
+              prompt: 'pack id minimum length is 2'
+            * type: 'maxLength[63]'
+              prompt: 'pack id length cannot exceed 63'
         judger:
           identifier: \judger
           rules:
@@ -267,21 +288,28 @@ module.exports =
             ...
       on-success:
         submit
-    if @pid == ""
+    if @problem == ""
       set-form-values do
-        owner: @uid
+        owner: @user
         group: \problems
         access: \rwxrw-r--
 
   route:
-    data: co.wrap (to: params: {pid}) ~>*
-      if pid != void
-        {data: response} = yield vue.http.get "problem/#{pid}"
+    data: co.wrap (to: params: {problem}) ->*
+      if problem != void
+        {data: response} = yield vue.http.get "problem/#{problem}"
         if response.errors
           @raise-error response
           return null
         problem = response.data
+        {pack} = problem.config
 
-        set-form-values problem
-        {pid, problem}
+        {problem, pack}
+  
+  watch:
+    'problem._id': ->
+      @$next-tick ->
+        $ '#pack' .dropdown \refresh
+        set-form-values @problem
+
 </script>

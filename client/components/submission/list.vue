@@ -27,9 +27,9 @@
                   .item(data-value="gt") $\geqslant$
               input(name="threshold", placeholder="threshold")
           .ui.field
-            label round
+            label pack
             .ui.input
-              input(name="round", placeholder="round")
+              input(name="pack", placeholder="pack")
           .ui.field
             label language
             .ui.dropdown.selection
@@ -62,7 +62,7 @@
           th time
           th space
           th.collapsing lang
-          th.collapsing round
+          th.collapsing pack
       tbody
         tr(v-for="sol in submissions", :class="{'positive': sol.summary.score > 0.999, 'negative': sol.summary.score < 0.001}")
           td
@@ -72,7 +72,7 @@
           td
             problem(:prob="sol.problem")
           td
-            user(:uid="sol.user")
+            user(:user="sol.user")
           td(v-if="sol.summary.status != 'running'") {{sol.summary.score | decimal 3}}
           td(v-else) running
           td(v-if="sol.summary.status != 'running'") {{sol.summary.time | decimal 3}}
@@ -80,8 +80,8 @@
           td(v-if="sol.summary.status != 'running'") {{sol.summary.space | decimal 3}}
           td(v-else)
           td {{sol.language}}
-          td(v-if="sol.round")
-            round(:rnd="sol.round")
+          td(v-if="sol.pack")
+            pack(:pack="sol.pack")
           td(v-else)
     // .ui.icon.labeled.button.floated.right.primary
     //   i.icon.refresh
@@ -193,8 +193,8 @@ module.exports =
             * type: "integer[1..]"
               prompt: "must be a positive integer"
             ...
-        round:
-          identifier: \round
+        pack:
+          identifier: \pack
           optional: true
           rules:
             * type: "integer[1..]"

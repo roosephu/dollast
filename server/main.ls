@@ -16,12 +16,33 @@ require! {
   \webpack
   \path
   \debug
+  \winston
   \babel-polyfill
   \../webpack.config : webpack-config
   \./config
   \./crypt
   \./Exception
 }
+
+winston.add-colors do
+  trace: 'magenta'
+  input: 'grey'
+  verbose: 'cyan'
+  prompt: 'grey'
+  debug: 'blue'
+  info: 'green'
+  data: 'grey'
+  help: 'cyan'
+  warn: 'yellow'
+  error: 'red'
+
+winston.remove winston.transports.Console
+winston.add winston.transports.Console, 
+  level: 'info'
+  pretty-print: true
+  colorize: true
+  silent: false
+  timestamp: true
 
 # can be used to implement a logging module
 # debug.log = ->

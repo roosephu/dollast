@@ -8,7 +8,7 @@ require! {
   \../config
 }
 
-log = debug \dollast:prob
+log = debug \dollast:problem
 
 schema = new Schema do
   _id: type: String, required: true
@@ -21,7 +21,7 @@ schema = new Schema do
     sample-output: String
   config:
     date: type: Date, default: Date.now
-    round: type: Number, ref: \round
+    pack: type: String, ref: \pack
     time-limit: Number
     space-limit: Number
     stack-limit: Number
@@ -36,8 +36,11 @@ schema = new Schema do
   statistics: {}
   permit: permit
 
-schema.statics.get-user-owned-problems = (uid) ->*
-  return yield model.find 'permit.owner': uid, '_id outlook.title' .exec!
+schema.index do
+  pack: 1
+
+schema.statics.get-problems-by-user = (user) ->*
+  yield model.find 'permit.owner': user, '_id outlook.title' .exec!
 
 schema.methods.rebuild = ->*
   pairs = yield gen-data-pairs @_id
@@ -45,6 +48,9 @@ schema.methods.rebuild = ->*
   yield @save!
 
   return pairs
+
+schema.statics.get-problems-by-pack = (pack) ->*
+  yield model.find 'config.pack': pack .exec!
 
 schema.statics.next-count = conn.make-next-count config.starting-ids.problems
 

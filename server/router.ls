@@ -7,34 +7,34 @@ require! {
   \co-busboy
   \./config
   \./core
-  \./controllers : {data, problems, submissions, rounds, site, users}
+  \./controllers : {data, problems, submissions, packs, site, users}
   \./Exception
 }
 
 log = debug \dollast:router
 
-params-validator =
-  pid: (pid, ctx, next) ->
-    ctx.params.pid = pid
-    # log {pid}, ctx.req
-    ctx.check-params \pid .to-int! .ge 0
-    return if ctx.errors
-    next!
-  sid: (sid, ctx, next) ->
-    ctx.params.sid = sid
-    ctx.check-params \sid .to-int! .ge 0
-    return if ctx.errors
-    next!
-  rid: (rid, ctx, next) ->
-    ctx.params.rid = rid
-    ctx.check-params \rid .to-int! .ge 0
-    return if ctx.errors
-    next!
-  uid: (uid, ctx, next) ->
-    ctx.params.uid = uid
-    ctx.check-params \uid .len config.uid-min-len, config.uid-max-len
-    return if ctx.errors
-    next!
+# params-validator =
+#   pid: (pid, ctx, next) ->
+#     ctx.params.pid = pid
+#     # log {pid}, ctx.req
+#     ctx.check-params \pid .to-int! .ge 0
+#     return if ctx.errors
+#     next!
+#   sid: (sid, ctx, next) ->
+#     ctx.params.sid = sid
+#     ctx.check-params \sid .to-int! .ge 0
+#     return if ctx.errors
+#     next!
+#   rid: (rid, ctx, next) ->
+#     ctx.params.rid = rid
+#     ctx.check-params \rid .to-int! .ge 0
+#     return if ctx.errors
+#     next!
+#   uid: (uid, ctx, next) ->
+#     ctx.params.uid = uid
+#     ctx.check-params \uid .len config.uid-min-len, config.uid-max-len
+#     return if ctx.errors
+#     next!
 
 app = new koa!
 
@@ -79,36 +79,35 @@ router
   # .get    '/site/session',              site.session
   .get    '/site/token',                site.token
   .post   '/site/login',                site.login
-  .post   '/site/logout',               site.logout
+  # .post   '/site/logout',               site.logout
 
   .post   '/user/register',             users.register
-  .post   '/user/:uid',                 users.save
-  .get    '/user/:uid',                 users.profile
+  .post   '/user/:user',                users.save
+  .get    '/user/:user',                users.profile
 
-  .get    '/round',                     rounds.list
-  # .get    '/round/next-count',          rnd.next-count
-  .get    '/round/:rid',                rounds.show
-  .get    '/round/:rid/board',          rounds.board
-  .post   '/round/:rid',                rounds.save
-  .delete '/round/:rid',                rounds.remove
+  .get    '/pack',                      packs.list
+  # .get    '/pack/next-count',           pack.next-count
+  .get    '/pack/:pack',                packs.show
+  .get    '/pack/:pack/board',          packs.board
+  .post   '/pack',                      packs.save
+  .delete '/pack/:pack',                packs.remove
 
   .get    '/problem',                   problems.list
   # .get    '/problem/next-count',        prob.next-count
-  .get    '/problem/:pid',              problems.show
+  .get    '/problem/:problem',          problems.show
   .post   '/problem',                   problems.save
-  .put    '/problem/:pid',              problems.save
-  .delete '/problem/:pid',              problems.remove
-  .get    '/problem/:pid/stat',         problems.stat
+  .delete '/problem/:problem',          problems.remove
+  .get    '/problem/:problem/stat',     problems.stat
 
   .get    '/submission',                submissions.list
-  .get    '/submission/:sid',           submissions.show
-  .post   '/submission/submit',         submissions.submit
+  .get    '/submission/:submission',    submissions.show
+  .post   '/submission',                submissions.submit
   # .post   '/submission/:sid/toggle',    submissions.toggle
 
   # .get    '/data/:pid',                 data.show
-  .post   '/data/:pid/upload',          data.upload
-  .get    '/data/:pid/rebuild',         data.rebuild
-  .delete '/data/:pid/:file',           data.remove
+  .post   '/data/:problem/upload',      data.upload
+  .get    '/data/:problem/rebuild',     data.rebuild
+  .delete '/data/:problem/:file',       data.remove
 
 app.use router.middleware!
 

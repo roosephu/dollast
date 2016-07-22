@@ -38,11 +38,12 @@ export save = co.wrap (ctx) ->*
     msg: "user profile saved"
 
 export register = co.wrap (ctx) ->*
-  # ctx.check-body '_id' .len 6, 15
-  # ctx.check-body 'pswd' .len 8, 15
-  {uid, password} = ctx.request.body
+  ctx.check-body 'user' .len 4, 15
+  ctx.check-body 'password' .len 8, 15
 
-  if yield models.users.find-by-id uid .count! .exec!
+  {user, password} = ctx.request.body
+
+  if yield models.users.find-by-id user .count! .exec!
     ctx.body =
       type: \register
       error: true
@@ -50,10 +51,10 @@ export register = co.wrap (ctx) ->*
 
   else
     user = new models.users do
-      _id: uid
+      _id: user
       groups: []
       permit:
-        owner: uid
+        owner: user
         group: \admin
         access: \rw-rw----
 
@@ -65,13 +66,13 @@ export register = co.wrap (ctx) ->*
       payload: "register successful"
 
 export profile = co.wrap (ctx) ->*
-  {uid} = ctx.params
+  {user} = ctx.params
 
-  profile = yield models.users.find-by-id uid, \-password .lean! .exec!
-  solved-problem-ids = yield models.submissions.get-user-solved-problem-ids uid
+  profile = yield models.users.find-by-id user, \-password .lean! .exec!
+  solved-problem-ids = yield models.submissions.get-user-solved-problem-ids user
   solved-problems = yield models.problems.populate solved-problem-ids, path: '_id', select: '_id outlook.title'
   solved-problems = map (._id), solved-problems 
 
-  owned-problems = yield models.problems.get-user-owned-problems uid
-  owned-rounds = yield models.rounds.get-user-owned-rounds uid
-  ctx.body = {profile, solved-problems, owned-problems, owned-rounds}
+  owned-problems = yield models.problems.get-problems-by-user user
+  owned-packs = yield models.packs.get-packs-by-user user
+  ctx.body = {profile, solved-problems, owned-problems, owned-packs}
