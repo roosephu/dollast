@@ -1,5 +1,6 @@
 <template lang="jade">
-  form.ui.form.basic.segment#register-form
+view
+  form.ui.form.basic.segment(slot="main")#register-form
     h1.ui.dividing.header Register
     .ui.error.message
     .ui.success.message
@@ -25,11 +26,15 @@
 require! {
   \debug
   \co
+  \../view
 }
 
 log = debug \dollast:component:login
 
 module.exports =
+  components:
+    {view}
+
   ready: ->
     submit = co.wrap (e) ~>*
       e.prevent-default!

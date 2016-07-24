@@ -1,5 +1,6 @@
 <template lang="jade">
-  .ui.basic.segment.form#form-user
+view
+  .ui.basic.segment.form(slot="main")#form-user
     h2.ui.dividing.header {{user.profile._id}}
     .ui.success.message
       .header Changes saved.
@@ -49,6 +50,7 @@ require! {
   \co
   \vue
   \debug
+  \../view
   \../../actions : {raise-error}
 }
 
@@ -58,6 +60,9 @@ module.exports =
   vuex:
     actions:
       {raise-error}
+
+  components:
+    {view}
 
   data: ->
     groups: [\problems, \submissions, \admin, \packs]

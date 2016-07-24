@@ -1,5 +1,29 @@
 <template lang="jade">
-  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+view
+  .menu(slot="config")
+    .item#filter
+      i.dropdown.icon
+      i.icon.filter
+      span Filter
+      .menu
+        .item(v-for="item in options", data-value="{{item}}")
+          | {{item}}
+    .divider
+    a.item(href="#/problem/create")
+      i.icon.plus
+      | Add a Problem
+    a.item(href="#/pack/{{pack._id}}/board")
+      i.icon.trophy
+      | Board
+    a.item(href="#/pack/{{pack._id}}/modify")
+      i.icon.edit
+      | Modify
+    .divider
+    a.item(v-link="{name: 'submissions', query: {pack: pack._id}}")
+      i.icon
+      | All Submissions
+
+  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Pack {{pack | pack}}
 
     .ui.olive.labels
@@ -17,30 +41,6 @@
         | to 
         .ui.label {{pack.endTime | time}}
 
-    .ui.icon.top.left.dropdown.pointing.button.primary#configuration
-      i.icon.wrench
-      .menu
-        .item#filter
-          i.dropdown.icon
-          i.icon.filter
-          span Filter
-          .menu
-            .item(v-for="item in options", data-value="{{item}}")
-              | {{item}}
-        .divider
-        a.item(href="#/problem/create")
-          i.icon.plus
-          | Create a new problem
-        a.item(href="#/pack/{{pack._id}}/board")
-          i.icon.trophy
-          | Board
-        a.item(href="#/pack/{{pack._id}}/modify")
-          i.icon.edit
-          | Modify
-        .divider
-        a.item(v-link="{name: 'submissions', query: {pack: pack._id}}")
-          i.icon
-          | All Submissions
     .ui.header
 
     div(v-if="started")
@@ -63,6 +63,7 @@ require! {
   \debug
   \moment
   \prelude-ls : {max}
+  \../view
   \../format : {problem, formatter}
   \../../actions : {raise-error}
 }
@@ -75,7 +76,7 @@ module.exports =
       {raise-error}
 
   components:
-    {problem}
+    {problem, view}
 
   data: ->
     options: [\All, \Failed, \Accepted, \New]

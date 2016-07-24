@@ -35,6 +35,7 @@ export show = co.wrap (ctx) ->*
 export save = co.wrap (ctx) ->*
   # TODO: validation
   pack = ctx.request.body
+  log {pack}
 
   if pack._id == void
     pack._id = yield models.packs.next-count!
@@ -67,7 +68,7 @@ export remove = co.wrap (ctx) ->*
   pack = yield models.packs.find-by-id pack, \permit .exec!
   pack.permit.check-access ctx.state.user, \w
 
-  pack.remove!
+  yield models.packs.find-by-id-and-remove pack._id .exec!
 
   ctx.body = status:
     type: "ok"
@@ -79,7 +80,6 @@ export board = co.wrap (ctx) ->*
   pack = yield models.packs.find-by-id pack, \permit .exec!
   if not pack
     throw new Error "no such packs"
-    return
   pack.permit.check-access ctx.state.user, \r
 
   ctx.body = yield models.submissions.get-submissions-in-a-pack rid

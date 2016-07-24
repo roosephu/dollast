@@ -1,29 +1,34 @@
 <template lang="jade">
-  .ui.left.sidebar.vertical.menu.inverted.visible.icon.labeled.borderless.blue
+  .ui.left.fixed.menu.vertical.borderless.blue.inverted.labeled.pointing
     a.item.labeled.header(href="#/")
-      img(src="/atm-inverted.png", width="60", height="60")
-    a.item.labeled(href="#/problem")
+      img.centered.tiny.ui.image(src="/atm-inverted.png", align="middle")
+    a.item(href="#/problem")
       i.icon.browser
-      | Problem
-    a.item.labeled(href="#/submission")
+      | Problems
+    a.item(href="#/submission")
       i.icon.info.circle
       | Submissions
-    a.item.labeled(href="#/pack")
-      i.icon.users
+    a.item(href="#/pack")
+      i.icon.shopping.bag
       | Packs
-    a.item.labeled(href="#/about")
+    a.item(href="#/about")
       i.icon.help.circle
       | About
-    a.item.labeled(v-if="user != undefined", href="#/user/{{user}}")
+    .ui.icon.labeled.dropdown.item#configuration
+      i.icon.configure
+      | Functions
+      slot(name="config")
+    .item.divider
+    a.item(v-if="user != undefined", href="#/user/{{user}}")
       i.icon.user
       | {{user}}
-    a.item.labeled(v-else, href="#/user/login")
+    a.item(v-else, href="#/user/login")
       i.icon.sign.in
       | Sign in
-    a.item.labeled(v-if="user != undefined", @click="logout")
+    a.item(v-if="user != undefined", @click="logout")
       i.icon.sign.out
       | Logout
-    a.item.labeled(v-else, href="#/user/register")
+    a.item(v-else, href="#/user/register")
       i.icon.signup
       | Register
 </template>
@@ -45,5 +50,9 @@ module.exports =
   methods:
     logout: ->
       @logout!
+  
+  ready: ->
+    $ \#configuration .dropdown do
+      on: \hover
 
 </script>

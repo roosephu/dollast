@@ -1,5 +1,14 @@
 <template lang="jade">
-  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+view
+  .menu(slot="config")
+    a.item(href="#/user/{{user}}/modify")
+      i.icon.edit
+      | Modify
+    a.item(v-link="{name: 'submissions', query: {user: user}}")
+      i.icon
+      | All submissions
+
+  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Details of {{user}}
     .ui.segment
       .ui.top.attached.label.large registered since
@@ -37,12 +46,6 @@
             .ui.label {{pack.endTime | time}}
           .description
             pack(:pack="pack")
-
-    a.ui.button.icon.labeled.text.primary(href="#/user/{{user}}/modify")
-      i.icon.edit
-      | modify
-    a.ui.button(v-link="{name: 'submissions', query: {user: user}}")
-      | All submissions
 </template>
 
 <script lang="vue-livescript">
@@ -51,6 +54,7 @@ require! {
   \co
   \moment
   \debug
+  \../view
   \../format
   \../../actions : {raise-error}
 }
@@ -87,6 +91,6 @@ module.exports =
       profile
 
   components:
-    format{problem, pack}
+    {view} <<< format{problem, pack}
 
 </script>

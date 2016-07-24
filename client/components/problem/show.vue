@@ -1,5 +1,14 @@
 <template lang="jade">
-  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+view
+  .menu(slot="config")
+    a.ui.icon.labeled.item(href="#/problem/{{problem._id}}/modify")
+      i.icon.edit
+      | Modify
+    a.ui.icon.labeled.item(href="#/problem/{{problem._id}}/stat")
+      i.icon.chart.bar
+      | Statistics
+
+  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
     .ui.olive.labels
       .ui.label {{problem.config.timeLimit}} s
@@ -75,12 +84,6 @@
         a.icon.labeled.ui.button.primary.floated.submit
           i.icon.rocket
           | submit
-        a.ui.icon.labeled.button(href="#/problem/{{problem._id}}/modify")
-          i.icon.edit
-          | modify
-        a.ui.icon.labeled.button(href="#/problem/{{problem._id}}/stat")
-          i.icon.chart.bar
-          | statistics
 </template>
 
 <script lang="vue-livescript">
@@ -88,6 +91,7 @@ require! {
   \co
   \debug
   \vue
+  \../view
   \../../actions : {raise-error}
 }
 
@@ -99,6 +103,9 @@ module.exports =
       {raise-error}
     getters:
       user: (.session.user)
+
+  components:
+    {view}
 
   data: ->
     languages: [\cpp, \java, \pas]
@@ -132,7 +139,7 @@ module.exports =
         MathJax.Hub.Queue [\Typeset, MathJax.Hub]
       
   ready: ->
-    $ \.dropdown .dropdown!
+    $ '#viewpoint .ui.dropdown' .dropdown!
     submit = co.wrap (e) ~>*
       $form = $ '#submit-form'
       all-values = $form.form 'get values'
@@ -191,6 +198,4 @@ module.exports =
       inline: true
 
     $form.form 'set values', @permit
-
-
 </script>

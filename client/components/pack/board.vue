@@ -1,5 +1,6 @@
 <template lang="jade">
-  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+view
+  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     table.ui.table.segment.large.green.selectable
       thead
         tr
@@ -21,8 +22,9 @@ require! {
   \debug
   \vue
   \co
-  \../format
   \prelude-ls : {obj-to-pairs, sort, reverse}
+  \../view
+  \../format
 }
 
 log = debug \dollast:component:pack:board
@@ -38,7 +40,7 @@ generate-board = (submissions) ->
 
 module.exports =
   components:
-    format{problem, code-link, user}
+    {view} <<< format{problem, code-link, user}
 
   data: ->
     board: []

@@ -1,5 +1,6 @@
 <template lang="jade">
-  .ui.form.basic.segment#form-data(:class="{loading: $loadingRouteData}")
+view
+  .ui.form.basic.segment#form-data(:class="{loading: $loadingRouteData}", slot="main")
     h2.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
 
     h3.ui.dividing.header Dataset Management
@@ -48,6 +49,7 @@ require! {
   \vue
   \debug
   \co
+  \../view
   \../../actions : {raise-error}
 }
 
@@ -57,6 +59,9 @@ module.exports =
   vuex:
     actions:
       {raise-error}
+  
+  components:
+    {view}
 
   data: ->
     problem:

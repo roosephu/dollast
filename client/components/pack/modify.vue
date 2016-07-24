@@ -1,5 +1,14 @@
 <template lang="jade">
-  .ui.form.segment.basic#form-pack
+view
+  .menu(slot="config")
+    .item(@click="del")
+      i.icon.delete
+      | Delete
+    .item(href="#!/pack/{{pack._id}}")
+      i.icon.left.arrow
+      | Back to Pack
+
+  .ui.form.segment.basic#form-pack(slot="main")
     h2.ui.dividing.header {{formattedTitle}}
     .ui.success.message
       .header Changes saved.
@@ -45,15 +54,9 @@
     br
 
     .ui.field
-      a.icon.ui.labeled.button.floated(:click="delete")
-        i.icon.delete
-        | delete
-      a.icon.ui.labeled.button.floated
-        i.icon.cancel
-        | undo
       a.icon.ui.labeled.button.floated.primary.submit
         i.icon.save
-        | save
+        | Save
 </template>
 
 <script lang="vue-livescript">
@@ -63,6 +66,7 @@ require! {
   \moment
   \debug
   \prelude-ls : {map, pairs-to-obj, obj-to-pairs, flatten}
+  \../view
   \../../actions : {raise-error}
 }
 
@@ -114,12 +118,23 @@ module.exports =
     actions:
       {raise-error}
 
-  ready: ->
+  components:
+    {view}
 
+  methods:
+    del: co.wrap ->*
+      log \delete
+      {data: response} = yield vue.http.delete "pack/#{@pack._id}"
+      log {response}
+      @$route.router.go "/pack" 
+
+  ready: ->
     submit = co.wrap (e) ~>*
       e.prevent-default!
-      data = get-form-values!
-      {data: response} = yield vue.http.post "pack", data
+      pack = get-form-values!
+      if @$route.params.pack != void
+        pack._id = @$route.params.pack
+      {data: response} = yield vue.http.post "pack", pack
       if response.errors
         log {response.errors}
 
@@ -172,7 +187,6 @@ module.exports =
         group: \packs
         access: \rwxr--r--
       set-form-values @pack
-      # $form.form 'set values', @pack.permit
 
   route:
     data: co.wrap (to: params: {pack}) ->*

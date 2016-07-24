@@ -1,5 +1,6 @@
 <template lang="jade">
-  .ui.form.basic.segment#problem-modify
+view
+  .ui.form.basic.segment(slot="main")#problem-modify
     h2.ui.dividing.header {{title}}
     .ui.error.message
 
@@ -97,8 +98,9 @@ require! {
   \co
   \vue
   \flat
-  \../../../common/judgers
+  \../view
   \../../actions : {raise-error}
+  \../../../common/judgers
 }
 
 log = debug 'dollast:component:problem:modify'
@@ -138,6 +140,9 @@ module.exports =
       user: (.session.user)
     actions:
       {raise-error}
+
+  components:
+    {view}
 
   data: ->
     pack: 

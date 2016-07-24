@@ -1,7 +1,8 @@
 <template lang="jade">
-  .ui.basic.segment
+view
+  .ui.basic.segment(slot="main")
     h1.ui.dividing.header Login
-    form.ui.form.segment#login-form(:class="{loading: loading, success: success}")
+    form.ui.form#login-form(:class="{loading: loading, success: success}")
       .ui.error.message
       .ui.success.message
         .header Login successfully. Redirect to problem list in 3 seconds.
@@ -23,6 +24,7 @@ require! {
   \debug
   \co
   \vue
+  \../view
   \../../actions
 }
 
@@ -32,6 +34,9 @@ module.exports =
   vuex:
     actions:
       actions{login, raise-error}
+
+  components:
+    {view}
 
   data: ->
     success: false

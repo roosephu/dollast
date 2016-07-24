@@ -1,21 +1,20 @@
 <template lang="jade">
-  .ui.basic.segment(:class="{loading: $loadingRouteData}")
-    h1.ui.header.dividing Packs
-
-    .ui.icon.top.left.dropdown.pointing.button.primary#configuration
-      i.icon.wrench
+view
+  .menu(slot="config")
+    .item.icon#filter
+      i.dropdown.icon
+      i.icon.filter
+      span Filter
       .menu
-        .item#filter
-          i.dropdown.icon
-          i.icon.filter
-          span Filter
-          .menu
-            .item(v-for="item in options", data-value="{{item}}")
-              | {{item}}
-        .divider
-        a.item(href="#/pack/create")
-          i.icon.plus 
-          | Create a new pack
+        .item(v-for="item in options", data-value="{{item}}")
+          | {{item}}
+    .divider
+    a.item(href="#/pack/create")
+      i.icon.plus 
+      | Add a Pack
+
+  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
+    h1.ui.header.dividing Packs
 
     .ui.very.relaxed.divided.link.list
       .item(v-for="pack in packs")
@@ -33,6 +32,7 @@ require! {
   \debug
   \co
   \../format
+  \../view
   \../../actions : {raise-error}
 }
 
@@ -40,11 +40,10 @@ log = debug \dollast:component:pack:list
 
 module.exports =
   components:
-    format{pack}
+    {view} <<< format{pack}
 
   data: ->
-    options: {\all, \past, \running, \pending}
-    showing: \all
+    options: {\All, \Past, \Running, \Pending}
     packs: []
 
   route:
@@ -59,7 +58,7 @@ module.exports =
 
   ready: ->
     $ '#configuration' .dropdown do
-      on: \hover 
+      on: \hover
 
     $filter = $ '#filter'
     $filter.dropdown do

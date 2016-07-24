@@ -1,5 +1,6 @@
 <template lang="jade">
-  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+view
+  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Submissions
 
     .error.message
@@ -94,6 +95,7 @@ require! {
   \co
   \vue
   \prelude-ls : {Obj}
+  \../view
   \../format
   \../../actions : {raise-error}
 }
@@ -112,7 +114,6 @@ set-form-values = (values) ->
   $ \#submission .form 'set values', values
 
 module.exports =
-
   vuex:
     actions:
       {raise-error}
@@ -145,7 +146,7 @@ module.exports =
       {submissions, query}
 
   components:
-    format
+    {view} <<< format
   
   methods:
     go: (page) ->

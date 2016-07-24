@@ -1,5 +1,17 @@
 <template lang="jade">
-  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+view
+  .menu(slot="config")
+    a.item(href="#!/user/{{sol.user}}")
+      i.icon.user
+      | To User
+    a.item(href="#!/problem/{{sol.problem._id}}")
+      i.icon.browser
+      | To Problem
+    a.item(href="#!/pack/{{sol.pack}}")
+      i.icon.users
+      | To Pack
+
+  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.header.dividing Solution {{$route.params.sid}}
     .ui.olive.labels
       .ui.label {{sol.permit.owner}}
@@ -10,10 +22,6 @@
         .detail language
       .ui.label {{sol.problem._id}}
         .detail problem
-
-    .ui.dividing.header
-    a.ui.button(href="#!/problem/{{sol.problem._id}}")
-      | Back to problem
 
     h2.ui.header.dividing code
     .ui.segment
@@ -60,6 +68,7 @@ require! {
   \debug
   \co
   \vue
+  \../view
   \../../actions : {raise-error}
 }
 
@@ -69,6 +78,9 @@ module.exports =
   vuex:
     actions:
       {raise-error}
+
+  components:
+    {view}
 
   data: ->
     sol:

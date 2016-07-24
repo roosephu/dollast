@@ -1,9 +1,16 @@
 <template lang="jade">
-  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+view
+  .menu(slot="config")
+    a.item(href="#!/problem/{{problem._id}}") 
+      i.icon.browser
+      | Go to problem
+    a.item(v-link="{name: 'submissions', query: {problem: problem._id}}") 
+      i.icon
+      | All submissions
+
+  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.header.dividing Statistics for Problem {{problem._id}}
     // problem(:prob="problem")
-    a.ui.button(href="#!/problem/{{problem._id}}") Back to problem
-    a.ui.button(v-link="{name: 'submissions', query: {problem: problem._id}}") All submissions
 
     h3.ui.header.dividing numbers
     .ui.statistics
@@ -18,6 +25,7 @@ require! {
   \debug
   \co
   \prelude-ls : {average, map, filter}
+  \../view
   \../format
   \../../actions : {raise-error}
 }
@@ -69,6 +77,6 @@ module.exports =
       problem: problem
 
   components:
-    format{problem}
+    {view} <<< format{problem}
 
 </script>

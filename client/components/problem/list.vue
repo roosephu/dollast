@@ -1,5 +1,6 @@
 <template lang="jade">
-  .ui.basic.segment(:class="{loading: $loadingRouteData}")
+view
+  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Problem List
     .ui.dropdown.floated.pointing.button.labeled.icon
       input(type="hidden", name="filter")
@@ -22,7 +23,8 @@ require! {
   \vue
   \co
   \debug
-  \../format/problem
+  \../view
+  \../format
   \../../actions : {raise-error}
 }
 
@@ -39,7 +41,7 @@ module.exports =
     problems: []
 
   components:
-    {problem}
+    {view} <<< format{problem}
 
   route:
     data: co.wrap ->*

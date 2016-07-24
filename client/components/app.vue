@@ -1,16 +1,6 @@
 <template lang="jade">
-  div
-    navbar
-    .ui.grid
-      error
-      .row
-      .row
-        .three.wide.column
-        .ten.wide.column
-          router-view
-      .row
-        .twelve.wide.column.centered
-          foot
+div
+  router-view
 </template>
 
 <script lang="vue-livescript">
