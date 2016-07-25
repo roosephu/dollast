@@ -1,32 +1,8 @@
 require! {
-  \co
-  \../models
-  \../crypt
-  \debug
-  \koa-jwt
-  \prelude-ls : {lists-to-obj}
-  \../config
-  \../Exception
-  \node-forge
+  \../../models
 }
 
-log = debug \dollast:ctrl:site
-
-export theme = ->*
-  @state.user.theme = @params.theme
-  @body = status: true
-
-export token = ->*
-  token = @crypt.gen-salt!
-  log {token}
-  # @state.user.token = str
-  @body = {token}
-#
-# session: ->*
-#   log @session
-#   @body = uid: if @session.passport?.user?._id? then that else void
-
-export login = ->*
+handler = ->*
   # @check-body '_id' .len 6, 15
   # @check-body 'pswd' .non-empty!
   {user, password} = @request.body
@@ -60,5 +36,7 @@ export login = ->*
   refresh = koa-jwt.sign payload, config.server-AES-key, expires-in: 60 * 60 * 24 * 30
   @body = {token}
 
-export logout = ->*
-  ...
+module.exports = 
+  method: \POST
+  path: \/site/login
+  handler: handler

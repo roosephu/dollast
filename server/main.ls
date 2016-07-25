@@ -3,10 +3,7 @@ require! {
   \koa
   \koa-compress
   \koa-json
-  \koa-static
-  \koa-bodyparser
   \koa-conditional-get
-  \koa-validate
   \koa-mount
   \koa-send
   \koa-etag
@@ -38,7 +35,6 @@ app.use koa-compress!
 app.use koa-conditional-get!
 app.use koa-etag!
 app.use koa-json!
-koa-validate app
 
 # ==== Webpack Middleware ====
 
@@ -90,11 +86,6 @@ app.keys = config.keys
 # app.use koa-generic-session do
 #   cookie:
 #     max-age: 1000 * 60 * 5
-
-app.use koa-bodyparser do
-  extend-types:
-    json: ['application/x-javascript']
-    multipart: ['multipart/form-data']
 
 app.use (next) ->*
   # log "server.user", @state.user

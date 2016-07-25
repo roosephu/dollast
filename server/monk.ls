@@ -1,7 +1,6 @@
 require! {
   \koa
-  \koa-router
-  \koa-convert
+  \koa-joi-router
   \co
   \debug
 }
@@ -9,10 +8,6 @@ require! {
 log = debug \dollast:monk
 
 app = new koa!
-
-_use = app.use
-app.use = (x) ->
-  _use.call app, koa-convert x
 
 class Database
   ->
@@ -48,7 +43,7 @@ dump = (ctx) ->
   ctx.body = db.db
   log \dump, db.db
 
-router = new koa-router!
+router = new koa-joi-router!
 router
   .post '/add',        add
   .get '/reset',       reset
