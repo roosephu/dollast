@@ -8,15 +8,15 @@ require! {
   \koa-conditional-get
   \koa-validate
   \koa-mount
-  \koa-convert
   \koa-send
   \koa-etag
   \koa-jwt
-  \koa-webpack-middleware : {dev-middleware, hot-middleware}
+  \stream : {PassThrough}
+  \webpack-dev-middleware
+  \webpack-hot-middleware
   \webpack
   \path
   \debug
-  \winston
   \babel-polyfill
   \../webpack.config : webpack-config
   \./config
@@ -24,37 +24,11 @@ require! {
   \./Exception
 }
 
-winston.add-colors do
-  trace: 'magenta'
-  input: 'grey'
-  verbose: 'cyan'
-  prompt: 'grey'
-  debug: 'blue'
-  info: 'green'
-  data: 'grey'
-  help: 'cyan'
-  warn: 'yellow'
-  error: 'red'
-
-winston.remove winston.transports.Console
-winston.add winston.transports.Console, 
-  level: 'info'
-  pretty-print: true
-  colorize: true
-  silent: false
-  timestamp: true
-
 # can be used to implement a logging module
 # debug.log = ->
 #   console.log ...
 
 export app = new koa!
-
-compile = webpack webpack-config
-
-_use = app.use
-app.use = (x) ->
-  _use.call app, koa-convert x
 
 log = debug \dollast:server
 
@@ -66,12 +40,7 @@ app.use koa-etag!
 app.use koa-json!
 koa-validate app
 
-app.use dev-middleware compile,
-  no-info: true
-  lazy: false
-  public-path: webpack-config.output.public-path
-  stats:
-    colors: true
+# ==== Webpack Middleware ====
 
 # we shouldn't compress webpack hot module replacement information
 app.use (next) ->*
@@ -80,9 +49,36 @@ app.use (next) ->*
     @compress = false
   yield next
 
-# I don't know why, but ctx.body gets modified after this middleware
-app.use hot-middleware compile,
+compiler = webpack webpack-config
+express-dev-middleware = webpack-dev-middleware compiler, 
+  no-info: true
+  lazy: false
+  public-path: webpack-config.output.public-path
+  stats:
+    colors: true
+express-hot-middleware = webpack-hot-middleware compiler,
   log: debug \dollast:webpack
+
+app.use (next) ->*
+  promise = express-dev-middleware @req, 
+    end: (content) ~>
+      @body = content
+    set-header: @set.bind @
+    co.wrap ->*
+      yield next
+  yield that if promise
+
+app.use (next) ->*
+  stream = new PassThrough!
+  @body = stream
+  promise = express-hot-middleware @req,
+    write: stream.write.bind stream
+    write-head: (state, headers) ~>
+      @state = state
+      @set headers
+    co.wrap ->*
+      yield next
+  yield that if promise 
 
 # ==== Session ====
 
@@ -100,44 +96,44 @@ app.use koa-bodyparser do
     json: ['application/x-javascript']
     multipart: ['multipart/form-data']
 
-app.use co.wrap (ctx, next) ->*
-  # log "server.user", ctx.state.user
-  # log koa-jwt.verify ctx.request.header.authorization.substr(7), config.jwt-key, ignore-expiration: false
+app.use (next) ->*
+  # log "server.user", @state.user
+  # log koa-jwt.verify @request.header.authorization.substr(7), config.jwt-key, ignore-expiration: false
 
   # decode header
-  if ctx.state?.user?.server
-    #ctx.state.user = JSON.parse crypt.AES.dec that, config.server-AES-key
-    if ctx.state.user.client
+  if @state?.user?.server
+    #@state.user = JSON.parse crypt.AES.dec that, config.server-AES-key
+    if @state.user.client
       client-state = JSON.parse that
       # log "client info", client-state
     else
       client-state = {}
-    ctx.state.user = JSON.parse ctx.state?.user?.server
-    ctx.state.user.client = client-state
-    # log 'encrypted data in header.server', ctx.state.user
+    @state.user = JSON.parse @state?.user?.server
+    @state.user.client = client-state
+    # log 'encrypted data in header.server', @state.user
   else
-    ctx.state.user = _id: \__guest__, groups: []
+    @state.user = _id: \__guest__, groups: []
 
-  ctx.state.user.theme ||= config.default.theme
-  ctx.state.user.groups  ||= config.default.groups
-  yield next!
+  @state.user.theme ||= config.default.theme
+  @state.user.groups  ||= config.default.groups
+  yield next
 
 # ==== JSON and Static Serving ====
 
-app.use co.wrap (ctx, next) ->*
-  if ctx.method in [\HEAD, \GET]
-    for folder in [\public, "theme/#{ctx.state.user.theme}"]
-      if yield koa-send ctx, ctx.path, index: \index.html, max-age: 864000000, root: path.resolve folder
+app.use (next) ->*
+  if @method in [\HEAD, \GET]
+    for folder in [\public, "theme/#{@state.user.theme}"]
+      if yield koa-send @, @path, index: \index.html, max-age: 864000000, root: path.resolve folder
         return
-  yield next!
+  yield next
 
 if process.env.NODE_ENV == \development
   app.use koa-mount \/monk, require \./monk
 
 app.use koa-mount \/api, require \./router
 
-app.use co.wrap (ctx, next) ->*
-  ctx.body = "404!"
+app.use (next) ->*
+  @body = "404!"
 
 # ====================================
 

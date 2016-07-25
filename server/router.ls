@@ -1,6 +1,5 @@
 require! {
   \koa
-  \koa-convert
   \koa-router
   \debug
   \co
@@ -14,59 +13,59 @@ require! {
 log = debug \dollast:router
 
 # params-validator =
-#   pid: (pid, ctx, next) ->
-#     ctx.params.pid = pid
-#     # log {pid}, ctx.req
-#     ctx.check-params \pid .to-int! .ge 0
-#     return if ctx.errors
+#   pid: (pid, @, next) ->
+#     @params.pid = pid
+#     # log {pid}, @req
+#     @check-params \pid .to-int! .ge 0
+#     return if @errors
 #     next!
-#   sid: (sid, ctx, next) ->
-#     ctx.params.sid = sid
-#     ctx.check-params \sid .to-int! .ge 0
-#     return if ctx.errors
+#   sid: (sid, @, next) ->
+#     @params.sid = sid
+#     @check-params \sid .to-int! .ge 0
+#     return if @errors
 #     next!
-#   rid: (rid, ctx, next) ->
-#     ctx.params.rid = rid
-#     ctx.check-params \rid .to-int! .ge 0
-#     return if ctx.errors
+#   rid: (rid, @, next) ->
+#     @params.rid = rid
+#     @check-params \rid .to-int! .ge 0
+#     return if @errors
 #     next!
-#   uid: (uid, ctx, next) ->
-#     ctx.params.uid = uid
-#     ctx.check-params \uid .len config.uid-min-len, config.uid-max-len
-#     return if ctx.errors
+#   uid: (uid, @, next) ->
+#     @params.uid = uid
+#     @check-params \uid .len config.uid-min-len, config.uid-max-len
+#     return if @errors
 #     next!
 
 app = new koa!
 
-app.use co.wrap (ctx, next) ->*
-  ctx.errors = []
-  ctx.throw = (err) ->
+app.use (next) ->*
+  @errors = []
+  @throw = (err) ->
     throw new Exception err
-  ctx.check-errors = ->
-    if ctx.errors.length > 0
+  @check-errors = ->
+    if @errors.length > 0
       throw new Exception
-  ctx.assert = (expression, e) ->
+  @assert = (expression, e) ->
     if !expression
       throw new Exception e
 
-  # log "response:", ctx.body, ctx.errors
-  log "#{ctx.req.method} #{ctx.req.url}:", ctx.request.body
-  ctx.body = void
+  # log "response:", @body, @errors
+  log "#{@req.method} #{@req.url}:", @request.body
+  @body = void
   try
-    yield next!
+    yield next
   catch e
     if e instanceof Exception
       if e.error
-        ctx.errors.push e.error
+        @errors.push e.error
     else
-      ctx.app.emit \error, e, ctx
+      @app.emit \error, e, @
 
-  ctx.status = 200
-  if ctx.errors.length > 0
-    ctx.body = errors: ctx.errors
+  @status = 200
+  if @errors.length > 0
+    @body = errors: @errors
   else
-    ctx.body = data: ctx.body
-  log ctx.body
+    @body = data: @body
+  log @body
 
 router = new koa-router!
 router

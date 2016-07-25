@@ -9,25 +9,25 @@ require! {
 
 log = debug \dollast:ctrl:submission
 
-export submit = co.wrap (ctx) ->*
-  # ctx.check-body \pid .is-int! .ge 1
-  ctx.check-body \language .in [\cpp, \java]
-  ctx.check-body \code .len 1, 50000
-  ctx.check-body \user .empty!
-  return if ctx.errors?.length > 0
+export submit = ->*
+  # @check-body \pid .is-int! .ge 1
+  @check-body \language .in [\cpp, \java]
+  @check-body \code .len 1, 50000
+  @check-body \user .empty!
+  return if @errors?.length > 0
 
-  {problem, code, language, permit} = ctx.request.body
+  {problem, code, language, permit} = @request.body
 
   problem = yield models.problems.find-by-id problem, "permit config" 
     .populate 'config.pack', 'title' 
     .exec!
-  ctx.assert problem, id: problem._id, type: \problem, detail: 'no problem found. '
-  problem.permit.check-access ctx.state.user, \x
+  @assert problem, id: problem._id, type: \problem, detail: 'no problem found. '
+  problem.permit.check-access @state.user, \x
 
   pack = problem.config.pack._id
-  {user} = ctx.state.user.client
+  {user} = @state.user.client
 
-  # ctx.ensure-access model, 0, \x # sol = 0 => submission
+  # @ensure-access model, 0, \x # sol = 0 => submission
   submission = new models.submissions do
     _id: yield models.submissions.next-count!
     code: code
@@ -42,11 +42,11 @@ export submit = co.wrap (ctx) ->*
   yield submission.save!
   core.judge language, code, problem.config, submission
 
-  ctx.body = msg: "submission submited successfully"
+  @body = msg: "submission submited successfully"
 
-export list = co.wrap (ctx) ->*
+export list = ->*
   # TODO: verify input
-  opts = config.sol-list-opts with ctx.request.query
+  opts = config.sol-list-opts with @request.query
 
   basic-filters = Obj.reject (== undefined), opts{user, pack, language}
   log {opts, basic-filters}
@@ -66,16 +66,16 @@ export list = co.wrap (ctx) ->*
 
   submissions = yield query.exec!
 
-  ctx.body = submissions
+  @body = submissions
 
-export show = co.wrap (ctx) ->*
-  {submission} = ctx.params
+export show = ->*
+  {submission} = @params
 
   submission = yield models.submissions.find-by-id submission
     .populate \problem, 'outlook.title'
     .exec!
-  ctx.assert submission, id: submission, type: \submission, detail: 'no submission found. '
+  @assert submission, id: submission, type: \submission, detail: 'no submission found. '
 
-  submission.permit.check-access ctx.state.user, \r
+  submission.permit.check-access @state.user, \r
 
-  ctx.body = submission
+  @body = submission

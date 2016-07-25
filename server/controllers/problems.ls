@@ -10,52 +10,52 @@ require! {
 
 log = debug \dollast:ctrls:prob
 
-export list = co.wrap (ctx) ->*
+export list = ->*
   opts = prob-list-opts
-  ctx.body = yield models.problems
+  @body = yield models.problems
     .find null, \outlook.title # "config.pack": $exists: true,
     .skip opts.skip
     .limit opts.limit
     .exec!
-  # log \problem-list, ctx.body
+  # log \problem-list, @body
 
-export show = co.wrap (ctx) ->*
+export show = ->*
   log "finding problem"
-  {problem} = ctx.params
+  {problem} = @params
 
   problem = yield models.problems.find-by-id problem
     .populate 'config.pack', \title
     .exec!
   if not problem
-    ctx.throw do
+    @throw do
       _id: problem._id
       type: \problem
       detail: "non-existing problem"
-  problem.permit.check-access ctx.state.user, \r
+  problem.permit.check-access @state.user, \r
 
   # TODO check whether the corresponding pack has started
   problem .= to-object!
-  ctx.body = problem
+  @body = problem
 
-export save = co.wrap (ctx) ->*
+export save = ->*
 
-  #ctx.check-body 'method' .in ['modify', 'create'], 'wrong method'
+  #@check-body 'method' .in ['modify', 'create'], 'wrong method'
   # log req.outlook.title
-  ctx.check-body \/outlook/title, true .get! .len 1, 63
-  # ctx.check req.outlook, 'title' .len 1, 63
-  #ctx.check req.outlook, 'inFmt' .not-empty!
-  #ctx.check req.outlook, 'outFmt' .not-empty!
-  #ctx.check req.outlook, 'sampleIn' .not-empty!
-  #ctx.check req.outlook, 'sampleOut' .not-empty!
-  ctx.check-body \/config/timeLimit, true .get! .is-float! .gt 0
-  ctx.check-body \/config/spaceLimit, true .get! .is-float! .gt 0
-  ctx.check-body \/config/stackLimit, true .get! .is-float! .gt 0
-  ctx.check-body \/config/outputLimit, true .get! .is-float! .gt 0
-  ctx.check-body \/config/judger, true .get! .in Object.keys judgers
-  ctx.check-body \/permit/owner, true .get!
-  return if ctx.errors?.length > 0
+  @check-body \/outlook/title, true .get! .len 1, 63
+  # @check req.outlook, 'title' .len 1, 63
+  #@check req.outlook, 'inFmt' .not-empty!
+  #@check req.outlook, 'outFmt' .not-empty!
+  #@check req.outlook, 'sampleIn' .not-empty!
+  #@check req.outlook, 'sampleOut' .not-empty!
+  @check-body \/config/timeLimit, true .get! .is-float! .gt 0
+  @check-body \/config/spaceLimit, true .get! .is-float! .gt 0
+  @check-body \/config/stackLimit, true .get! .is-float! .gt 0
+  @check-body \/config/outputLimit, true .get! .is-float! .gt 0
+  @check-body \/config/judger, true .get! .in Object.keys judgers
+  @check-body \/permit/owner, true .get!
+  return if @errors?.length > 0
 
-  problem = ctx.request.body
+  problem = @request.body
 
   if problem._id == void
     problem._id = yield models.problems.next-count!
@@ -65,9 +65,9 @@ export save = co.wrap (ctx) ->*
   else
 
     existed = yield models.problems.find-by-id problem._id, \permit .exec!
-    ctx.assert existed, id: problem._id, type: \problem, detail: "cannot find the original problem"
+    @assert existed, id: problem._id, type: \problem, detail: "cannot find the original problem"
 
-    existed.permit.check-access ctx.state.user, \w
+    existed.permit.check-access @state.user, \w
 
     # TODO: check permit is not modified here
     # only owner can transfer owner
@@ -77,20 +77,20 @@ export save = co.wrap (ctx) ->*
     log {problem}
 
   yield models.problems.update _id: problem._id, problem, upsert: true .exec!
-  ctx.body = problem
+  @body = problem
 
-export remove = co.wrap (ctx) ->*
+export remove = ->*
   # TODO: implement removing a problem
   ...
 
-export stat = co.wrap (ctx) ->*
-  {problem} = ctx.params
+export stat = ->*
+  {problem} = @params
 
   problem = yield models.problems.find-by-id problem, 'config.pack outlook.title permit'
     .exec!
   if not problem
     throw new Error "no such problem"
-  problem.permit.check-access ctx.state.user, \r
+  problem.permit.check-access @state.user, \r
 
   query = models.submissions.aggregate do
     * $match: problem: problem._id
@@ -112,4 +112,4 @@ export stat = co.wrap (ctx) ->*
   delete problem.config
   delete problem.permit
 
-  ctx.body = {submissions, problem}
+  @body = {submissions, problem}

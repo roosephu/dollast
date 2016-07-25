@@ -9,52 +9,52 @@ require! {
 
 log = debug \dollast:ctrl:data
 
-export upload = co.wrap (ctx) ->*
+export upload = ->*
   log \uploading
-  {pid} = ctx.params
+  {pid} = @params
 
   problem = yield models.problems.find-by-id pid, \permit .exec!
   if not problem
     throw new Exception "no such problem"
-  problem.permit.check-access ctx.state.user, \w
+  problem.permit.check-access @state.user, \w
 
   parts = co-busboy ctx, auto-fields: true
   while part = yield parts
     log {part}
-    ctx.body = yield core.upload pid, part # TODO
+    @body = yield core.upload pid, part # TODO
   pairs = yield problem.rebuild!
 
-  ctx.body = 
+  @body = 
     dataset: 
       pairs
 
-export rebuild = co.wrap (ctx) ->*
-  {pid} = ctx.params
+export rebuild = ->*
+  {pid} = @params
 
   problem = yield models.problems.find-by-id pid, "config.dataset permit" .exec!
   if not problem
     throw new Exception 'xxx'
-  problem.permit.check-access ctx.state.user, \w
+  problem.permit.check-access @state.user, \w
   
   new-pairs = yield problem.rebuild!
-  ctx.body = new-pairs
+  @body = new-pairs
 
-export remove = co.wrap (ctx) ->* # validate
-  {pid, file} = ctx.params
+export remove = ->* # validate
+  {pid, file} = @params
 
   problem = yield models.problems.find-by-id pid, "config.dataset permit" .exec!
   if not problem
     throw new Exception "xxx"
-  problem.permit.check-access ctx.state.user, \w
+  problem.permit.check-access @state.user, \w
 
-  yield core.delete-test-data pid, ctx.params
+  yield core.delete-test-data pid, @params
   yield problem.rebuild!
 
-  ctx.body = status:
+  @body = status:
     type: "ok"
     msg: "data has been deleted"
 
-# export show = co.wrap (ctx) ->*
-#   ctx.ensure-access models.problems.model, pid, \w
-#   data = yield models.problems.list-dataset ctx.params.pid
-#   ctx.body = data
+# export show = ->*
+#   @ensure-access models.problems.model, pid, \w
+#   data = yield models.problems.list-dataset @params.pid
+#   @body = data

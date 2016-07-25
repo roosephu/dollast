@@ -7,13 +7,13 @@ require! {
 
 log = debug \dollast:ctrl:pack
 
-export list = co.wrap (ctx) ->*
-  ctx.body = yield models.packs.find null, 'title beginTime endTime'
+export list = ->*
+  @body = yield models.packs.find null, 'title beginTime endTime'
     .lean!
     .exec!
 
-export show = co.wrap (ctx) ->*
-  {pack} = ctx.params
+export show = ->*
+  {pack} = @params
 
   pack = yield models.packs.find-by-id pack, '-__v'
     # .populate 'problems', '_id outlook.title'
@@ -30,11 +30,11 @@ export show = co.wrap (ctx) ->*
   # else
   #   pack.started = true
 
-  ctx.body = pack
+  @body = pack
 
-export save = co.wrap (ctx) ->*
+export save = ->*
   # TODO: validation
-  pack = ctx.request.body
+  pack = @request.body
   log {pack}
 
   if pack._id == void
@@ -43,12 +43,12 @@ export save = co.wrap (ctx) ->*
   else
     existed = yield models.packs.find-by-id pack._id, \permit .exec!
     if not existed
-      ctx.body =
+      @body =
         status:
           type: \error
           message: "cannot find the original pack"
       return
-    existed.permit.check-access ctx.state.user, \w
+    existed.permit.check-access @state.user, \w
 
     # TODO: check permit is not modified here
     # only owner can transfer owner
@@ -56,30 +56,30 @@ export save = co.wrap (ctx) ->*
     # flat it!
     pack |>= flat
 
-  ctx.body = yield models.packs.update _id: pack._id, pack, upsert: true .exec!
+  @body = yield models.packs.update _id: pack._id, pack, upsert: true .exec!
 
-  ctx.body =
+  @body =
     _id: pack._id
     detail: "pack saved"
 
-export remove = co.wrap (ctx) ->*
-  {pack} = ctx.params
+export remove = ->*
+  {pack} = @params
 
   pack = yield models.packs.find-by-id pack, \permit .exec!
-  pack.permit.check-access ctx.state.user, \w
+  pack.permit.check-access @state.user, \w
 
   yield models.packs.find-by-id-and-remove pack._id .exec!
 
-  ctx.body = status:
+  @body = status:
     type: "ok"
     msg: "pack has been deleted"
 
-export board = co.wrap (ctx) ->*
-  {pack} = ctx.params
+export board = ->*
+  {pack} = @params
 
   pack = yield models.packs.find-by-id pack, \permit .exec!
   if not pack
     throw new Error "no such packs"
-  pack.permit.check-access ctx.state.user, \r
+  pack.permit.check-access @state.user, \r
 
-  ctx.body = yield models.submissions.get-submissions-in-a-pack rid
+  @body = yield models.submissions.get-submissions-in-a-pack rid
