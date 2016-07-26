@@ -14,8 +14,7 @@ handler = ->*
   return if @errors?.length > 0
 
   user = yield models.users.find-by-id user .exec!
-  # log password, user.password
-  @assert (user and user.check-password password), user._id, \User, "bad user/password combination"
+  @assert (user and user.check-password password), @request.body.user, \User, "bad user/password combination", \password
 
   groups = user.groups
   groups.push \users

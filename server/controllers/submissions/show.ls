@@ -13,7 +13,7 @@ handler = ->*
   submission = yield models.submissions.find-by-id submission
     .populate \problem, 'outlook.title'
     .exec!
-  @assert submission, id: submission, type: \submission, detail: "doesn't exists"
+  @assert submission, @params.submission, \Submission, "doesn't exists"
 
   submission.check-access @state.user, \r
 

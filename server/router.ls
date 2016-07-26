@@ -30,6 +30,7 @@ app.use (next) ->*
           _id: @req.url
           type: \Request
           detail: "#{detail.message}, instead of '#{object[detail.path]}'"
+          field: detail.path
     else if e.re
       @errors.push e.error
       log \RuntimeError, e.error

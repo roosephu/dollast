@@ -15,7 +15,7 @@ handler = ->*
   problem = yield models.problems.find-by-id problem, "permit config" 
     .populate 'config.pack', 'title' 
     .exec!
-  @assert problem, id: problem._id, type: \problem, detail: "problem doesn't exist"
+  @assert problem, problem._id, \Problem, "problem doesn't exist"
   problem.check-access @state.user, \x
 
   pack = problem.config.pack._id
