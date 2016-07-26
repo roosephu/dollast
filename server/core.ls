@@ -12,17 +12,18 @@ require! {
   \co-limiter
   \prelude-ls : {take, unlines, drop, lines, unwords, zip}
   \./config
+  \../common/options
 }
 
 log = debug \dollast:core
 
 export compile = co.wrap (tmp-dir, lang, code) ->*
-  src-path = path.join tmp-dir, "/main#{config.lang-suffix[lang]}"
+  src-path = path.join tmp-dir, "/main#{options.lang-suffix[lang]}"
   exe-path = path.join tmp-dir, "/main"
   src-file = fs.create-write-stream src-path
   yield fs.write-file src-path, code
 
-  compile-cmd = config.compile-fmt[lang] src-path, exe-path
+  compile-cmd = options.compile-fmt[lang] src-path, exe-path
   log "compile-cmd #{compile-cmd}"
   yield exec compile-cmd
   return exe-path

@@ -42,9 +42,6 @@ module.exports =
       all-values = $form.form 'get values'
       yield @$http.post \user/register, all-values
 
-    $ '#register-form' .form do
-      on: \blur
-      on-success: submit
-      debug: true
+    $ '#register-form' .form on-success: submit
 
 </script>

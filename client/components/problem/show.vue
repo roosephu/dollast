@@ -7,6 +7,10 @@ view
     a.ui.icon.labeled.item(href="#/problem/{{problem._id}}/stat")
       i.icon.chart.bar
       | Statistics
+    .ui.divider
+    a.ui.icon.labeled.item(v-link="{name: 'submissions', query: {problem: problem._id}}")
+      i.icon
+      | All Submissions
 
   .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
@@ -140,30 +144,20 @@ module.exports =
       
   ready: ->
     $ '#viewpoint .ui.dropdown' .dropdown!
-    submit = co.wrap (e) ~>*
+    submit = co.wrap (e, values) ~>*
       $form = $ '#submit-form'
-      all-values = $form.form 'get values'
-      permit = all-values{owner, group, access}
+      permit = values{owner, group, access}
 
       data = Object.assign do
-        all-values{code, language}
+        values{code, language}
         {problem: @problem._id, permit}
       {data: response} = yield @$http.post \submission, data
       if response.errors
-        errors = {}
+        $form.form 'add errors', [""]
         for error in response.errors
-          Object.assign errors, error
-
-        # TODO not working yet: https://github.com/Semantic-Org/Semantic-UI/issues/959
-        # need to set the form to invalid state
-        $form.form 'add errors', errors
+          $form.form 'add prompt', error.field, error.detail
 
     $form = $ '#submit-form'
-    $form.form do
-      on: \blur
-      debug: true
-      on-success: submit
-      inline: true
-
+    $form.form on-success: submit
     $form.form 'set values', @permit
 </script>

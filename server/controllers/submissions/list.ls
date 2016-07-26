@@ -39,6 +39,7 @@ module.exports =
     query:
       user: validator.user!.optional!
       pack: validator.pack!.optional!
+      problem: validator.problem!.optional!
       page: Joi .number! .min 0
       language: Joi .string! .equal options.languages 
       threshold: Joi .number! .min 0 .max 1

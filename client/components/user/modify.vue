@@ -101,10 +101,7 @@ module.exports =
       # @props.dispatch on-update-user @props.params.user, updated
 
     $form = $ '#form-user'
-    $form.form do
-      on-success: submit
-      on: \blur
-      inline: true
+    $form.form on-success: submit
 
   watch:
     'user.profile._id': ->

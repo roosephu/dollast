@@ -60,9 +60,5 @@ module.exports =
         local-storage.token = token
         @login token
 
-    $form.form do
-      on: \blur
-      inline: true
-      on-success: submit
-      debug: true
+    $form.form on-success: submit
 </script>

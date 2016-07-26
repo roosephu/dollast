@@ -138,11 +138,7 @@ module.exports =
       if response.errors
         log {response.errors}
 
-    $form = $ '#form-pack'
-    $form.form do
-      on: \blur
-      inline: true
-      on-success: submit
+    $ '#form-pack' .form on-success: submit
 
     if @pack._id == void
       @pack.permit =

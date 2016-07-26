@@ -15,8 +15,8 @@ schema = new Schema do
 
 schema.methods.check-access = (user, action, _id, type) ->
 	log "checking permit:", user, action, {@owner, @group, @access}
-	if user.groups.admin != void
-		return true
+	# if user.groups.admin != void
+		# return true
 
 	offset = if @owner == user._id
 		0
@@ -29,15 +29,15 @@ schema.methods.check-access = (user, action, _id, type) ->
 		| \r => 0
 		| \w => 1
 		| \x => 2
-		| _ => throw new Exception 'invalid action'
-
-	assert @access[pos] != action, _id, type, "user `#{user._id}` cannot perform `#{action}` for doc `{#{@owner}, #{@group}, #{@access}}`"
+		| _ => assert false, _id, type, "invalid action `#{action}`"
+	
+	assert @access[pos] == action, _id, type, "user `#{user._id}` cannot perform `#{action}` for doc `{#{@owner}, #{@group}, #{@access}}`"
 
 schema.methods.check-owner = (user, _id, type) ->
-	assert @owner != user._id, _id, type, 'cannot modify groups'
+	assert @owner == user._id, _id, type, 'cannot modify groups'
 
 schema.methods.check-admin = (user, _id, type) ->
-	assert user.groups.admin == void, _id, type, "user `#{user._id}` is not an administrator"
+	assert user.groups.admin, _id, type, "user `#{user._id}` is not an administrator"
 
 # model = conn.model \permit, schema
 module.exports = schema

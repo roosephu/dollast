@@ -123,10 +123,6 @@ module.exports =
       
       @problem.config.dataset = response.data.dataset
 
-    $ '.form' .form do
-      inline: true
-      on: \blur
-      on-success:
-        submit
+    $ '.form' .form on-success: submit
 
 </script>

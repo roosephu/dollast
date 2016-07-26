@@ -18,6 +18,9 @@ extra-rules =
   is-access: (text) ->
     /^([r-][w-][x-]){3}$/.test text
 
+$.fn.form.settings.inline = true
+$.fn.form.settings.on = \blur
+
 for key, val of extra-rules
   # log key
   $.fn.form.settings.rules[key] = val

@@ -46,9 +46,6 @@ module.exports =
     body:
       language: Joi .string! .required! .valid [\java, \cpp]
       code: Joi .string! .required! .min 0 .max 50000
-      user: validator.user!
       problem: validator.problem!
-      pack: validator.pack!
       permit: validator.permit!
-    continue-on-error: false
   handler: handler

@@ -197,11 +197,7 @@ module.exports =
           $form.form 'add prompt', error.field, error.detail 
 
     $form = $ '#problem-modify'
-    $form.form do
-      on: \blur
-      inline: true
-      on-success:
-        submit
+    $form.form on-success: submit
     if @problem == ""
       set-form-values do
         owner: @user
