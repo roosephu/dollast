@@ -10,7 +10,7 @@ export problem = ->
   Joi .number! .required! .integer! .min 1
 
 export pack = -> 
-  Joi .number! .required! .integer! .min 1
+  Joi .number! .required! .integer! .min 0
 
 export submission = ->
   Joi .number! .required! .integer! .min 1

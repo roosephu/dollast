@@ -1,7 +1,6 @@
 require! {
   \../../models
   \../validator
-  \../error
 }
 
 handler = ->*

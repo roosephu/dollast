@@ -2,7 +2,7 @@ require! {
 	\mongoose : {Schema}
 	\./conn : {conn}
 	\debug
-	\../controllers/error
+	\../controllers/err : {assert}
 }
 
 log = debug \dollast:models:permit
@@ -31,16 +31,13 @@ schema.methods.check-access = (user, action, _id, type) ->
 		| \x => 2
 		| _ => throw new Exception 'invalid action'
 
-	if @access[pos] != action
-		throw new error _id, type, "user `#{user._id}` cannot perform `#{action}` for doc `{#{@owner}, #{@group}, #{@access}}`"
+	assert @access[pos] != action, _id, type, "user `#{user._id}` cannot perform `#{action}` for doc `{#{@owner}, #{@group}, #{@access}}`"
 
 schema.methods.check-owner = (user, _id, type) ->
-	if @owner != user._id
-		throw new error _id, type, 'cannot modify groups'
+	assert @owner != user._id, _id, type, 'cannot modify groups'
 
 schema.methods.check-admin = (user, _id, type) ->
-	if user.groups.admin == void
-		throw new error _id, type, "user `#{user._id}` is not an administrator"
+	assert user.groups.admin == void, _id, type, "user `#{user._id}` is not an administrator"
 
 # model = conn.model \permit, schema
 module.exports = schema

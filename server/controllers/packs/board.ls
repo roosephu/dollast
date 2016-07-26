@@ -1,15 +1,13 @@
 require! {
   \../../models
   \../validator
-  \../error
 }
 
 handler = ->*
   {pack} = @params
 
   pack = yield models.packs.find-by-id pack, \permit .exec!
-  if not pack
-    throw new error @params.pack, \Pack, "no such packs"
+  @assert pack, @params.pack, \Pack, "no such packs"
   pack.check-access @state.user, \r
 
   @body = yield models.submissions.get-submissions-in-a-pack rid

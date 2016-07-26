@@ -5,7 +5,8 @@ require! {
   \flat
   \./config
   \./core
-  \./controllers : {data, problems, submissions, packs, site, users, error}
+  \./controllers : {data, problems, submissions, packs, site, users}
+  \./controllers/err
 }
 
 log = debug \dollast:router
@@ -14,27 +15,26 @@ app = new koa!
 
 app.use (next) ->*
   @errors = []
-  @assert = (statement, _id, type, detail) ->
-    if !statement
-      throw new error _id, type, detail
+  @assert = err.assert
 
   # log "response:", @body, @errors
   log "#{@req.method} #{@req.url}:", @request.body
   try
     yield next
   catch e
-    if e instanceof Error
-      if e.name == \ValidationError
-        object = flat e._object
-        log e.details
-        for detail in e.details
-          @errors.push do
-            _id: @req.url
-            type: \Request
-            detail: "#{detail.message}, instead of '#{object[detail.path]}'"
-      else if e.re
-        e.errors.push e.error
+    if e.name == \ValidationError
+      object = flat e._object
+      log e.details
+      for detail in e.details
+        @errors.push do
+          _id: @req.url
+          type: \Request
+          detail: "#{detail.message}, instead of '#{object[detail.path]}'"
+    else if e.re
+      @errors.push e.error
+      log \RuntimeError, e.error
     else
+      throw e
       @app.emit \error, e, @
 
   @status = 200
