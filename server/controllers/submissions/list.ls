@@ -1,15 +1,16 @@
 require! {
   \prelude-ls : {Obj}
   \debug
-  \../../config : {sol-list-opts}
+  \koa-joi-router : {Joi}
+  \../validator
   \../../models
+  \../../../common/options
 }
 
 log = debug \dollast:ctrl:submissions:list
 
 handler = ->*
-  # TODO: verify input
-  opts = sol-list-opts with @request.query
+  opts = options.sol-list-opts with @request.query
 
   basic-filters = Obj.reject (== undefined), opts{user, pack, language}
   log {opts, basic-filters}
@@ -34,5 +35,12 @@ handler = ->*
 module.exports = 
   method: \GET
   path: \/submission
+  validate:
+    query:
+      user: validator.user!.optional!
+      pack: validator.pack!.optional!
+      page: Joi .number! .min 0
+      language: Joi .string! .equal options.languages 
+      threshold: Joi .number! .min 0 .max 1
   handler: handler
 

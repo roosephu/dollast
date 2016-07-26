@@ -1,5 +1,6 @@
 require! {
   \prelude-ls : {map}
+  \../validator
   \../../models
 }
 
@@ -18,4 +19,7 @@ handler = ->*
 module.exports = 
   method: \GET
   path: \/user/:user
+  validate:
+    params:
+      user: validator.user!
   handler: handler

@@ -1,6 +1,9 @@
 require! {
+  \koa-joi-router : {Joi}
   \../../config : {prob-list-opts}
+  \../../../common/options
   \../../models
+  \../validator
 }
 
 handler = ->*

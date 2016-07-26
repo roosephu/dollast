@@ -18,7 +18,6 @@ require! {
   \../webpack.config : webpack-config
   \./config
   \./crypt
-  \./Exception
 }
 
 # can be used to implement a logging module

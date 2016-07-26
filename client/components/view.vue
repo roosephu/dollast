@@ -3,7 +3,6 @@ div
   navbar
     slot(slot="config", name="config")
   .ui.grid
-    error
     .row
       .four.wide.column
       .ten.wide.column#viewpoint

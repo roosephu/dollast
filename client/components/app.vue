@@ -1,14 +1,13 @@
 <template lang="jade">
 div
   router-view
+  error(keep-alive)
 </template>
 
 <script lang="vue-livescript">
 require! {
   \vue
   \vue-router
-  \./site/foot
-  \./site/navbar
   \./site/error
   \../actions : {login}
 }
@@ -18,7 +17,7 @@ module.exports =
     actions: {login}
 
   components:
-    {navbar, foot, error}
+    {error}
 
   ready: ->
     @login!

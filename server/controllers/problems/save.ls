@@ -5,6 +5,7 @@ require! {
   \sanitize-html
   \../../../common/judgers
   \../../models
+  \../validator
 }
 
 log = debug \dollast:ctrl:problem:save
@@ -22,7 +23,7 @@ handler = ->*
     existed = yield models.problems.find-by-id problem._id, \permit .exec!
     @assert existed, id: problem._id, type: \problem, detail: "cannot find the original problem"
 
-    existed.permit.check-access @state.user, \w
+    existed.check-access @state.user, \w
 
     # TODO: check permit is not modified here
     # only owner can transfer owner
@@ -39,7 +40,8 @@ module.exports =
   path: \/problem
   validate:
     type: \json
-    body: Joi .object! .options presence: \required .keys do
+    body:
+      _id: validator.problem!
       outlook:
         title: Joi .string! .min 1 .max 63
       config:
@@ -48,6 +50,5 @@ module.exports =
         output-limit: Joi .number! .greater 0
         space-limit: Joi .number! .greater 0
         judger: Joi .string! .valid Object.keys judgers
-      permit:
-        owner: Joi .string!
+      permit: validator.permit!
   handler: handler

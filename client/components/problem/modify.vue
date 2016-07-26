@@ -219,13 +219,13 @@ module.exports =
             * type: 'empty'
               prompt: 'please choose your judger'
             ...
-        time-lmt:
+        time-limit:
           identifier: \timeLimit
           rules:
             * type: 'positive'
               prompt: 'time limit must be positive'
             ...
-        space-lmt:
+        space-limit:
           identifier: \spaceLimit
           rules:
             * type: \positive
@@ -237,37 +237,37 @@ module.exports =
             * type: \positive
               prompt: "stack limit must be positive"
             ...
-        output-lmt:
+        output-limit:
           identifier: \outputLimit
           rules:
             * type: \positive
               prompt: "output limit must be positive"
             ...
-        desc:
+        description:
           identifier: \description
           rules:
             * type: "maxLength[65535]"
               prompt: "description cannot be longer than 65535"
             ...
-        in-fmt:
+        input-format:
           identifier: \inputFormat
           rules:
             * type: "maxLength[65535]"
               prompt: "input format cannot be longer than 65535"
             ...
-        out-fmt:
+        output-format:
           identifier: \outputFormat
           rules:
             * type: "maxLength[65535]"
               prmopt: "output format cannot be longer than 65535"
             ...
-        sample-in:
+        sample-input:
           identifier: \sampleInput
           rules:
             * type: "maxLength[65535]"
               prompt: "sample input cannot be longer than 65535"
             ...
-        sample-out:
+        sample-output:
           identifier: \sampleOutput
           rules:
             * type: "maxLength[65535]"

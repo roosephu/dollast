@@ -8,7 +8,7 @@ view
       i.icon.browser
       | To Problem
     a.item(href="#!/pack/{{sol.pack}}")
-      i.icon.users
+      i.icon.shopping.bag
       | To Pack
 
   .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")

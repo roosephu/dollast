@@ -2,6 +2,7 @@ require! {
   \debug
   \flat
   \../../models
+  \../validator
 }
 
 log = debug \dollast:ctrl:pack:save 
@@ -13,19 +14,13 @@ handler = ->*
 
   if pack._id == void
     pack._id = yield models.packs.next-count!
-    # throw new Error "pack must have its id"
+    # TODO: can this user add a pack? 
   else
     existed = yield models.packs.find-by-id pack._id, \permit .exec!
-    if not existed
-      @body =
-        status:
-          type: \error
-          message: "cannot find the original pack"
-      return
-    existed.permit.check-access @state.user, \w
+    @assert existed, _id: pack._id, type: \Pack, detail: "cannot find the original pack"
+    existed.check-access @state.user, \w
 
-    # TODO: check permit is not modified here
-    # only owner can transfer owner
+    delete pack.permit
 
     # flat it!
     pack |>= flat
@@ -39,4 +34,8 @@ handler = ->*
 module.exports = 
   method: \POST
   path: \/pack
+  validate:
+    type: \json
+    body:
+      _id: validator.pack!
   handler: handler

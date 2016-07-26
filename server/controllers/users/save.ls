@@ -1,8 +1,8 @@
 require! {
   \koa-joi-router : {Joi}
   \prelude-ls : {difference, map}
-  \../../config : {uid-min-len, uid-max-len}
   \../../models
+  \../validator
 }
 
 handler = ->*
@@ -14,16 +14,12 @@ handler = ->*
   {_id, groups} = @request.body
 
   user = yield models.users.find-by-id _id .exec!
-  if not user
-    @body = status:
-      type: \error
-      message: "no such user"
-
-  user.permit.check-access @state.user, \w
+  @assert user, _id, \User, "doesn't exist"
+  user.check-access @state.user, \w
 
   priv-diff = difference user.groups, groups
   if priv-diff? and priv-diff.length > 0
-    user.permit.check-admin @state.user
+    user.check-admin @state.user
   delete @request.body.permit
 
   user <<< @request.body
@@ -38,6 +34,6 @@ module.exports =
   path: \/user/:user
   validate:
     type: \json
-    body: Joi .object! .options presence: \required .keys do
-      _id : Joi .string! .min uid-min-len .max uid-max-len
+    body:
+      _id : validator.user!
   handler: handler

@@ -1,4 +1,5 @@
 require! {
+  \../validator
   \../../models
 }
 
@@ -9,7 +10,7 @@ handler = ->*
   problem = yield models.problems.find-by-id pid, \permit .exec!
   if not problem
     throw new Exception "no such problem"
-  problem.permit.check-access @state.user, \w
+  problem.check-access @state.user, \w
 
   parts = yield @request.parts
   while part = yield parts
@@ -26,4 +27,7 @@ module.exports =
   path: \/data/:problem/upload
   validate:
     type: \multipart
+    max-body: '16MB'
+    params:
+      problem: validator.problem!
   handler: handler

@@ -1,10 +1,10 @@
 require! {
   \koa-joi-router : {Joi}
+  \../validator
   \../../models
 }
 
 handler = ->*
-
   {user, password} = @request.body
 
   if yield models.users.find-by-id user .count! .exec!
@@ -34,7 +34,7 @@ module.exports =
   path: \/user/register
   validate:
     type: \json
-    body: Joi .object! .options presence: \required .keys do
-      user: Joi .string! .min 4 .max 15
-      password: Joi .string! .min 8 .max 15
+    body: 
+      user: validator.user!
+      password: Joi .string! .required! .min 8 .max 15
   handler: handler

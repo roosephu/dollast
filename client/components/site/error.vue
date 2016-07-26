@@ -1,13 +1,11 @@
 <template lang="jade">
-  .ui.basic.modal.small
-    //- i.icon.close
+  .ui.basic.modal.small(keep-alive)#error
     .ui.icon.header
       i.icon.announcement
       | Error on {{ object }}
     .content
       h4 {{ message }}
     .actions
-      //- .two.fluid.ui.inverted.buttons
       .ui.red.basic.inverted.button(@click="home")
         i.icon.home
         | Home
@@ -47,10 +45,10 @@ module.exports =
       if @error == void
         ""
       else
-        "#{@error.type} #{@error.id}"
+        "#{@error.type} #{@error._id}"
 
   ready: ->
-    $modal = $ \.modal
+    $modal = $ \#error
     # if !@error.closable
     #   $modal.modal \setting, \closable, false
 
@@ -68,8 +66,9 @@ module.exports =
 
   watch:
     error: (val) ->
-      log {val}
-      $modal = $ \.modal
+      log "new error value", val
+      $modal = $ \#error
+      $modal.modal \refresh
       if val != void
         $modal.modal \setting, \closable, @error?.closable || false
         $modal.modal \show

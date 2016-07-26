@@ -1,5 +1,7 @@
 require! {
+  \koa-joi-router : {Joi}
   \../../models
+  \../validator
 }
 
 handler = ->*
@@ -8,7 +10,7 @@ handler = ->*
   problem = yield models.problems.find-by-id pid, "config.dataset permit" .exec!
   if not problem
     throw new Exception "xxx"
-  problem.permit.check-access @state.user, \w
+  problem.check-access @state.user, \w
 
   yield core.delete-test-data pid, @params
   yield problem.rebuild!
@@ -20,4 +22,9 @@ handler = ->*
 module.exports = 
   method: \DELETE
   path: \/data/:problem/:file
+  validate:
+    type: \json
+    params:
+      problem: validator.problem!
+      file: Joi .string! .required! # TODO: more limits (length, characters)
   handler: handler
