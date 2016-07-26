@@ -44,26 +44,6 @@ module.exports =
 
     $ '#register-form' .form do
       on: \blur
-      fields:
-        user:
-          identifier: \user
-          rules:
-            * type: 'minLength[3]'
-              prompt: "User name must be longer than 5"
-            * type: 'maxLength[16]'
-              prompt: "User name must be shorter than 15"
-        pswd:
-          identifier: \password
-          rules:
-            * type: 'isPassword'
-              prompt: 'password length must be longer than 5'
-            ...
-        email:
-          identifier: \email
-          rules:
-            * type: 'email'
-              prompt: 'please enter a valid email address'
-            ...
       on-success: submit
       debug: true
 

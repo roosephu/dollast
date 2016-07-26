@@ -126,13 +126,6 @@ module.exports =
     $ '.form' .form do
       inline: true
       on: \blur
-      fields:
-        upload:
-          identifier: \upload
-          rules:
-            * type: 'empty'
-              prompt: 'please select file first'
-            ...
       on-success:
         submit
 

@@ -114,8 +114,7 @@ flatten-object = (obj) ->
       ret[key] = val
   ret
 
-get-form-values = ->
-  values = $ '.form' .form 'get values'
+get-form-values = (values) ->
   outlook = values{title, description, input-format, output-format, sample-input, sample-output}
   config  = values{pack, problem, judger, time-limit, space-limit, output-limit, stack-limit}
   permit  = values{owner, group, access}
@@ -186,111 +185,21 @@ module.exports =
         on-change: (value) ~>
           log {value}
 
-    submit = co.wrap (e) ~>*
+    submit = co.wrap (e, values) ~>*
       e.prevent-default!
-      problem = get-form-values!
+      problem = get-form-values values
       log {problem}
       {data} = yield @$http.post "problem", problem
-      if data.errors != void
-        log data.errors
+      if data.errors
+        $form = $ '#problem-modify'
+        $form.form 'add errors', [""]
+        for error in data.errors
+          $form.form 'add prompt', error.field, error.detail 
 
     $form = $ '#problem-modify'
     $form.form do
       on: \blur
       inline: true
-      fields:
-        title:
-          identifier: \title
-          rules:
-            * type: 'minLength[2]'
-              prompt: 'title minimum length is 2'
-            * type: 'maxLength[63]'
-              prompt: 'title length cannot exceed 63'
-        pack:
-          identifier: \pack
-          rules:
-            * type: 'minLength[2]'
-              prompt: 'pack id minimum length is 2'
-            * type: 'maxLength[63]'
-              prompt: 'pack id length cannot exceed 63'
-        judger:
-          identifier: \judger
-          rules:
-            * type: 'empty'
-              prompt: 'please choose your judger'
-            ...
-        time-limit:
-          identifier: \timeLimit
-          rules:
-            * type: 'positive'
-              prompt: 'time limit must be positive'
-            ...
-        space-limit:
-          identifier: \spaceLimit
-          rules:
-            * type: \positive
-              prompt: 'space limit must be positive'
-            ...
-        stack-limit:
-          identifier: \stackLimit
-          rules:
-            * type: \positive
-              prompt: "stack limit must be positive"
-            ...
-        output-limit:
-          identifier: \outputLimit
-          rules:
-            * type: \positive
-              prompt: "output limit must be positive"
-            ...
-        description:
-          identifier: \description
-          rules:
-            * type: "maxLength[65535]"
-              prompt: "description cannot be longer than 65535"
-            ...
-        input-format:
-          identifier: \inputFormat
-          rules:
-            * type: "maxLength[65535]"
-              prompt: "input format cannot be longer than 65535"
-            ...
-        output-format:
-          identifier: \outputFormat
-          rules:
-            * type: "maxLength[65535]"
-              prmopt: "output format cannot be longer than 65535"
-            ...
-        sample-input:
-          identifier: \sampleInput
-          rules:
-            * type: "maxLength[65535]"
-              prompt: "sample input cannot be longer than 65535"
-            ...
-        sample-output:
-          identifier: \sampleOutput
-          rules:
-            * type: "maxLength[65535]"
-              prompt: "sample output cannot be longer than 65535"
-            ...
-        owner:
-          identifier: \owner
-          rules:
-            * type: \isUserId
-              prompt: 'owner should be valid'
-            ...
-        group:
-          identifier: \group
-          rules:
-            * type: \isUserId
-              prompt: 'group should be valid'
-            ...
-        access:
-          identifier: \access
-          rules:
-            * type: \isAccess
-              prompt: 'access code should be /^([r-][w-][x-]){3}$/'
-            ...
       on-success:
         submit
     if @problem == ""

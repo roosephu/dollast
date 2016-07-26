@@ -162,38 +162,6 @@ module.exports =
     $form.form do
       on: \blur
       debug: true
-      fields:
-        code:
-          identifier: \code
-          rules:
-            * type: 'minLength[4]'
-              prompt: 'code minimum length is 4'
-            * type: 'maxLength[65535]'
-              prompt: 'code length cannot exceed 65535'
-        lang:
-          identifier: \language
-          rules:
-            * type: 'empty'
-              prompt: 'language cannot be empty'
-            ...
-        owner:
-          identifier: \owner
-          rules:
-            * type: \isUserId
-              prompt: 'wrong user id'
-            ...
-        group:
-          identifier: \group
-          rules:
-            * type: \isUserId
-              prompt: 'wrong group id'
-            ...
-        access:
-          identifier: \access
-          rules:
-            * type: \isAccess
-              prompt: 'wrong access code'
-            ...
       on-success: submit
       inline: true
 

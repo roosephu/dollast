@@ -63,21 +63,6 @@ module.exports =
     $form.form do
       on: \blur
       inline: true
-      fields:
-        user:
-          identifier: \user
-          rules:
-            * type: 'minLength[6]'
-              prompt: "User name must be longer than 5"
-            * type: 'maxLength[16]'
-              prompt: "User name must be shorter than 16"
-        password:
-          identifier: \password
-          rules:
-            * type: 'minLength[6]'
-              prompt: 'password length must be longer than 5'
-            * type: 'maxLength[16]'
-              prompt: 'password length must be shorter than 16'
       on-success: submit
       debug: true
 </script>

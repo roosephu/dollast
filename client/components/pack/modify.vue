@@ -143,44 +143,7 @@ module.exports =
       on: \blur
       inline: true
       on-success: submit
-      fields:
-        title:
-          identifier: \title
-          rules:
-            * type: 'minLength[4]'
-              prompt: 'title has minimum length of 4'
-            * type: 'maxLength[63]'
-              prompt: 'title has maximum length of 63'
-        beg-time:
-          identifier: \beginTime
-          rules:
-            * type: \isTime
-              prompt: 'start time should be valid'
-            ...
-        end-time:
-          identifier: \endTime
-          rules:
-            * type: \isTime
-              prompt: 'start time should be valid'
-            ...
-        owner:
-          identifier: \owner
-          rules:
-            * type: \isUserId
-              prompt: 'owner should be valid'
-            ...
-        group:
-          identifier: \group
-          rules:
-            * type: \isUserId
-              prompt: 'group should be valid'
-            ...
-        access:
-          identifier: \access
-          rules:
-            * type: \isAccess
-              prompt: 'access code should be /^[0-7]{3}$/'
-            ...
+
     if @pack._id == void
       @pack.permit =
         owner: @user

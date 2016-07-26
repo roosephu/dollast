@@ -105,29 +105,6 @@ module.exports =
       on-success: submit
       on: \blur
       inline: true
-      fields:
-        old-password:
-          identifier: \oldPassword
-          optional: true
-          rules:
-            * type: \isPassword
-              prompt: "must be password"
-            ...
-        new-password:
-          identifier: \newPassword
-          optional: true
-          rules:
-            * type: \isPassword
-              prompt: "must be password"
-            ...
-        confirmation:
-          identifier: \confirmPassword
-          optional: true
-          rules:
-            * type: \isPassword
-              prompt: "must be password"
-            * type: "match[newPassword]"
-              prompt: "password must match"
 
   watch:
     'user.profile._id': ->
