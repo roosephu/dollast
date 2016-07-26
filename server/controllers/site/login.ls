@@ -1,5 +1,10 @@
 require! {
+  \koa-jwt
+  \koa-joi-router : {Joi}
+  \prelude-ls : {lists-to-obj}
   \../../models
+  \../../config
+  \../validator
 }
 
 handler = ->*
@@ -10,8 +15,7 @@ handler = ->*
 
   user = yield models.users.find-by-id user .exec!
   # log password, user.password
-  if not user or not user.check-password password
-    throw new Exception id: user._id, type: \user, detail: "bad user/password combination"
+  @assert (user and user.check-password password), user._id, \User, "bad user/password combination"
 
   groups = user.groups
   groups.push \users
@@ -39,4 +43,9 @@ handler = ->*
 module.exports = 
   method: \POST
   path: \/site/login
+  validate:
+    type: \json
+    body:
+      user: validator.user!
+      password: Joi .string! .min 8 .max 16
   handler: handler
