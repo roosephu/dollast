@@ -198,7 +198,7 @@ module.exports =
 
     $form = $ '#problem-modify'
     $form.form on-success: submit
-    if @problem == ""
+    if @problem._id == ""
       set-form-values do
         owner: @user
         group: \problems

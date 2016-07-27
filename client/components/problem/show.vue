@@ -143,7 +143,6 @@ module.exports =
         MathJax.Hub.Queue [\Typeset, MathJax.Hub]
       
   ready: ->
-    $ '#viewpoint .ui.dropdown' .dropdown!
     submit = co.wrap (e, values) ~>*
       $form = $ '#submit-form'
       permit = values{owner, group, access}

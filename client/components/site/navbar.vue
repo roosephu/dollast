@@ -1,7 +1,10 @@
 <template lang="jade">
-  .ui.left.fixed.menu.vertical.borderless.blue.inverted.labeled.pointing
-    a.item.labeled.header(href="#/")
+  .ui.left.fixed.menu.vertical.borderless.blue.inverted.labeled
+    .item
+    .ui.labeled.icon.item.dropdown#configuration(href="#/")
       img.centered.tiny.ui.image(src="/atm-inverted.png", align="middle")
+      slot(name="config")
+    .ui.divider
     a.item(href="#/problem")
       i.icon.browser
       | Problems
@@ -14,11 +17,7 @@
     a.item(href="#/about")
       i.icon.help.circle
       | About
-    .ui.icon.labeled.dropdown.item#configuration
-      i.icon.configure
-      | Functions
-      slot(name="config")
-    .item.divider
+    .ui.divider
     a.item(v-if="user != undefined", href="#/user/{{user}}")
       i.icon.user
       | {{user}}

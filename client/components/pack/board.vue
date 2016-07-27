@@ -12,9 +12,9 @@ view
         tr(v-for="[user, score] in board")
           td
             user(:user="user")
-          td {{score.total}}
+          td {{score}}
           td(v-for="problem in problems")
-            code-link(:sid="score[problem].sid")
+            code-link(:sid="score[problem].solution")
 </template>
 
 <script lang="vue-livescript">
@@ -25,6 +25,7 @@ require! {
   \prelude-ls : {obj-to-pairs, sort, reverse}
   \../view
   \../format
+  \../../actions : {raise-error}
 }
 
 log = debug \dollast:component:pack:board
@@ -34,16 +35,21 @@ generate-board = (submissions) ->
   for sol in submissions
     {user, prob} = sol._id
     board[user] ||= total: 0
-    board[user][prob] = sol{score, sid}
+    board[user][prob] = sol{score, solution}
     board[user].total += sol.score
   board
 
 module.exports =
+  vuex:
+    actions:
+      {raise-error}
+
   components:
     {view} <<< format{problem, code-link, user}
 
   data: ->
     board: []
+    problems: []
 
   route:
     data: co.wrap (to: params: {pack}) ->*
@@ -53,13 +59,14 @@ module.exports =
         return null
       pack = response.data
 
-      {data: response} = yield vue.http.get "pack/#{pack}/board"
+      {data: response} = yield vue.http.get "pack/#{pack._id}/board"
       if response.errors
         @raise-error response
         return null
       submissions = response.data
 
       board = generate-board submissions |> obj-to-pairs |> sort |> reverse
+      log {board}
       {board}
 
 </script>

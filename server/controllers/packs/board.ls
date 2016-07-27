@@ -10,7 +10,7 @@ handler = ->*
   @assert pack, @params.pack, \Pack, "no such packs"
   pack.check-access @state.user, \r
 
-  @body = yield models.submissions.get-submissions-in-a-pack rid
+  @body = yield models.submissions.get-submissions-in-a-pack pack._id
 
 module.exports = 
   method: \GET

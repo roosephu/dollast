@@ -89,7 +89,7 @@ schema.statics.get-submissions-in-a-pack = (pack) ->*
           user: \$user
         score:
           $first: '$summary.score'
-        sid:
+        solution:
           $first: \$_id
   return yield query.exec!
 

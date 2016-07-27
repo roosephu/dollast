@@ -1,56 +1,64 @@
 <template lang="jade">
 view
+  .form.menu#submission(slot="config")
+    .ui.header Options
+    .ui.left.icon.input
+      i.icon.user
+      input(name="user", placeholder="user")
+    .ui.left.icon.input
+      i.icon.browser
+      input(name="problem", placeholder="problem")
+    .ui.left.icon.input
+      i.icon.shopping.bag
+      input(name="pack", placeholder="pack")
+    .ui.left.icon.input
+      i.icon.calendar
+      input(name="after", placeholder="submitted after")
+    .ui.left.icon.input
+      i.icon.calendar
+      input(name="before", placeholder="submitted before")
+    .ui.input.labeled
+      .ui.dropdown.compact.button.label#relationship
+        input(type="hidden", name="relationship")
+        .default.text <>
+        .menu
+          .item(data-value="lt") $\leqslant$
+          .item(data-value="gt") $\geqslant$
+      input(name="threshold", placeholder="threshold")
+    .ui.dropdown.selection.item#langauge
+      i.dropdown.icon
+      input(type="hidden", name="language")
+      span Language: 
+      span.text
+      .menu
+        .item(v-for="item in languages", data-value="{{item}}") {{item}}
+        .item(data-value="")
+          .default.text all
+    .ui.divider
+    .ui.header Form Operations
+    .ui.item.icon.submit
+      i.icon
+      | Submit
+    .ui.item.icon.button(@click="clear")
+      i.icon
+      | Clear
+    .ui.divider
+    .ui.header Pagination
+    a.icon.labeled.item(:class="{'disabled': query.page == 1}", @click="go(1)")
+      i.icon.angle.double.left
+      | Top
+    a.icon.labeled.item(:class="{'disabled': query.page == 1}", @click="go(query.page - 1)")
+      i.icon.angle.left
+      | Previous page
+    .icon.labeled.item
+      i.icon.thin.circle
+      | Current: {{query.page}}
+    a.icon.labeled.item(@click="go(query.page + 1)") 
+      i.icon.angle.right
+      | Next page
+
   .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Submissions
-
-    .error.message
-    .ui.menu.pagination
-      .ui.item.icon#options
-        i.icon.wrench
-      .ui.fluid.popup
-        .ui.form#submission
-          .ui.field
-            label user
-            .ui.input
-              input(name="user", placeholder="user")
-          .ui.field
-            label problem
-            .ui.input
-              input(name="problem", placeholder="problem")
-          .ui.field
-            label result
-            .ui.input.labeled
-              .ui.dropdown.compact.button.label#relationship
-                input(type="hidden", name="relationship")
-                .default.text ?
-                .menu
-                  .item(data-value="lt") $\leqslant$
-                  .item(data-value="gt") $\geqslant$
-              input(name="threshold", placeholder="threshold")
-          .ui.field
-            label pack
-            .ui.input
-              input(name="pack", placeholder="pack")
-          .ui.field
-            label language
-            .ui.dropdown.selection
-              i.dropdown.icon
-              input(type="hidden", name="language")
-              span.text all
-              .menu
-                .item(v-for="item in languages", data-value="{{item}}") {{item}}
-                .item(data-value="")
-                  .default.text all
-          .ui.button.primary.submit submit
-          .ui.button(@click="clear") clear
-
-      a.item(:class="{'disabled': query.page == 1}", @click="go(1)")
-        i.icon.angle.double.left
-      a.item(:class="{'disabled': query.page == 1}", @click="go(query.page - 1)")
-        i.icon.angle.left
-      a.active.item {{query.page}}
-      a.item(@click="go(query.page + 1)") 
-        i.icon.angle.right
 
     table.ui.table.large.green.selectable.center.aligned.single.line
       thead
@@ -154,7 +162,7 @@ module.exports =
       @$route.router.go name: \submissions, query: @query
 
     clear: ->
-      $ \.form .form \clear
+      $ \#submission .form \clear
 
   ready: ->
     submit = co.wrap ~>*
@@ -203,9 +211,7 @@ module.exports =
           identifier: \language
           optional: true
 
-    $ \.dropdown .dropdown!
-    $ \#relationship .dropdown on: \hover
-    $ \#options .popup inline: true, hoverable: true, position: 'bottom left'
+    $ '#relationship, #language, #search' .dropdown on: \hover
     MathJax.Hub.Queue [\Typeset, MathJax.Hub]
 
 </script>
