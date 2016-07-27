@@ -28,20 +28,7 @@ view
         .ui.input
           input(name="endTime", placeholder="YYYY-MM-DD HH:mm:ss")
 
-    h3.ui.dividing.header Permission
-    .ui.four.fields
-      .ui.field
-        label owner
-        .ui.input
-          input(name="owner")
-      .ui.field
-        label group
-        .ui.input
-          input(name="group")
-      .ui.field
-        label access
-        .ui.input
-          input(name="access")
+    permit
 
     h3.ui.dividing.header Problemset
     .ui.field
@@ -66,6 +53,7 @@ require! {
   \moment
   \debug
   \prelude-ls : {map, pairs-to-obj, obj-to-pairs, flatten}
+  \../elements/permit
   \../view
   \../../actions : {raise-error}
 }
@@ -119,7 +107,7 @@ module.exports =
       {raise-error}
 
   components:
-    {view}
+    {view, permit}
 
   methods:
     del: co.wrap ->*

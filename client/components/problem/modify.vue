@@ -65,20 +65,7 @@ view
         label sample output
         textarea(name="sampleOutput")
 
-    h3.ui.dividing.header Permission
-    .ui.four.fields
-      .ui.field
-        label owner
-        .ui.input
-          input(name="owner")
-      .ui.field
-        label group
-        .ui.input
-          input(name="group")
-      .ui.field
-        label access
-        .ui.input
-          input(name="access")
+    permit
 
     .ui.field
       .ui.icon.labeled.button.primary.submit
@@ -99,6 +86,7 @@ require! {
   \vue
   \flat
   \../view
+  \../elements/permit
   \../../actions : {raise-error}
   \../../../common/judgers
 }
@@ -141,7 +129,7 @@ module.exports =
       {raise-error}
 
   components:
-    {view}
+    {view, permit}
 
   data: ->
     pack: 

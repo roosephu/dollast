@@ -10,7 +10,13 @@ view
       input(name="problem", placeholder="problem")
     .ui.left.icon.input
       i.icon.shopping.bag
-      input(name="pack", placeholder="pack")
+      .ui.dropdown.left.icon.selection.fluid.search#pack
+        input(type="hidden", name="pack")
+        .default.text pack
+        i.dropdown.icon
+        .menu
+          .item(data-value="{{pack}}") {{pack}}
+      // input(name="pack", placeholder="pack")
     .ui.left.icon.input
       i.icon.calendar
       input(name="after", placeholder="submitted after")
@@ -168,6 +174,22 @@ module.exports =
     submit = co.wrap ~>*
       values = get-form-values!
       @$route.router.go name: \submissions, query: values
+
+    $pack = $ '#pack'
+    $pack.dropdown do
+      data-type: \jsonp
+      api-settings:
+        save-remove-data: false
+        on-response: (response) ->
+          if !response.data?._id
+            return success: false, results: []
+          # log {response}
+          pack = response.data
+          {_id, title} = pack
+          return results: [value: _id, name: vue.filter(\pack) pack]
+        url: "/api/pack/{query}/"
+        on-change: (value) ~>
+          log {value}
 
     $ \#submission .form do
       on-success: submit

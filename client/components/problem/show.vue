@@ -68,20 +68,7 @@ view
             .menu
               .item(v-for="item in languages", data-value="{{item}}") {{item}}
 
-      h2.ui.dividing.header permission
-      .ui.four.fields
-        .ui.field
-          label owner
-          .ui.input
-            input(name="owner")
-        .ui.field
-          label group
-          .ui.input
-            input(name="group")
-        .ui.field
-          label access
-          .ui.input
-            input(name="access")
+      permit
 
       h2.ui.dividing.header
       .ui.field
@@ -96,6 +83,7 @@ require! {
   \debug
   \vue
   \../view
+  \../elements/permit
   \../../actions : {raise-error}
 }
 
@@ -109,7 +97,7 @@ module.exports =
       user: (.session.user)
 
   components:
-    {view}
+    {view, permit}
 
   data: ->
     languages: [\cpp, \java, \pas]
