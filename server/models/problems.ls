@@ -49,14 +49,7 @@ schema.methods.rebuild = ->*
 
   return pairs
 
-schema.methods.check-access = (user, action) ->
-  @permit.check-access user, action, @_id, \Problem
-
-schema.methods.check-owner = (user) ->
-  @permit.check-owner user, @_id, \Problem
-
-schema.methods.check-admin = (user) ->
-  @permit.check-admin user, @_id, \Problem
+schema.methods.get-display-name = -> \Problem
 
 schema.statics.get-problems-by-pack = (pack) ->*
   yield model.find 'config.pack': pack .exec!

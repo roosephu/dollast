@@ -10,7 +10,7 @@ handler = ->*
   problem = yield models.problems.find-by-id pid, \permit .exec!
   if not problem
     throw new Exception "no such problem"
-  problem.check-access @state.user, \w
+  problem.permit.check-access @state.user, \w
 
   parts = yield @request.parts
   while part = yield parts

@@ -8,7 +8,7 @@ handler = ->*
 
   pack = yield models.packs.find-by-id pack, \permit .exec!
   @assert pack, @params.pack, \Pack, "doesn't exist"
-  pack.check-access @state.user, \w
+  pack.permit.check-access @state.user, \w
 
   yield models.packs.find-by-id-and-remove pack._id .exec!
 

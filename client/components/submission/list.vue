@@ -10,13 +10,7 @@ view
       input(name="problem", placeholder="problem")
     .ui.left.icon.input
       i.icon.shopping.bag
-      .ui.dropdown.left.icon.selection.fluid.search#pack
-        input(type="hidden", name="pack")
-        .default.text pack
-        i.dropdown.icon
-        .menu
-          .item(data-value="{{pack}}") {{pack}}
-      // input(name="pack", placeholder="pack")
+      input(name="pack", placeholder="pack")
     .ui.left.icon.input
       i.icon.calendar
       input(name="after", placeholder="submitted after")
@@ -111,13 +105,13 @@ require! {
   \prelude-ls : {Obj}
   \../view
   \../format
+  \../elements/pack-selector
   \../../actions : {raise-error}
 }
 
 log = debug \dollast:component:submission:list
 
-get-form-values = ->
-  values = $ \#submission .form 'get values'
+get-form-values = (values) ->
   ret = Obj.reject (== ""), values
   if ret.threshold
     ret.threshold |>= parse-float
@@ -141,6 +135,9 @@ module.exports =
   route:
     data: co.wrap ->* 
       {query} = @$route
+      if not query.pack?
+        query.pack = "0"
+        @$route.router.go name: \submissions, query: query
       if query.page
         query.page |>= parse-int
       else
@@ -160,7 +157,7 @@ module.exports =
       {submissions, query}
 
   components:
-    {view} <<< format
+    {view, pack-selector} <<< format
   
   methods:
     go: (page) ->
@@ -171,25 +168,9 @@ module.exports =
       $ \#submission .form \clear
 
   ready: ->
-    submit = co.wrap ~>*
-      values = get-form-values!
+    submit = co.wrap (e, values) ~>*
+      values = get-form-values values
       @$route.router.go name: \submissions, query: values
-
-    $pack = $ '#pack'
-    $pack.dropdown do
-      data-type: \jsonp
-      api-settings:
-        save-remove-data: false
-        on-response: (response) ->
-          if !response.data?._id
-            return success: false, results: []
-          # log {response}
-          pack = response.data
-          {_id, title} = pack
-          return results: [value: _id, name: vue.filter(\pack) pack]
-        url: "/api/pack/{query}/"
-        on-change: (value) ~>
-          log {value}
 
     $ \#submission .form do
       on-success: submit

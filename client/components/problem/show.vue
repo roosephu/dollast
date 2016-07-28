@@ -68,7 +68,7 @@ view
             .menu
               .item(v-for="item in languages", data-value="{{item}}") {{item}}
 
-      permit
+      permit.hello
 
       h2.ui.dividing.header
       .ui.field

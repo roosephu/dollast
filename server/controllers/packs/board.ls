@@ -8,7 +8,7 @@ handler = ->*
 
   pack = yield models.packs.find-by-id pack, \permit .exec!
   @assert pack, @params.pack, \Pack, "no such packs"
-  pack.check-access @state.user, \r
+  pack.permit.check-access @state.user, \r
 
   @body = yield models.submissions.get-submissions-in-a-pack pack._id
 

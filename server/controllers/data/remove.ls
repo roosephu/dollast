@@ -10,7 +10,7 @@ handler = ->*
   problem = yield models.problems.find-by-id pid, "config.dataset permit" .exec!
   if not problem
     throw new Exception "xxx"
-  problem.check-access @state.user, \w
+  problem.permit.check-access @state.user, \w
 
   yield core.delete-test-data pid, @params
   yield problem.rebuild!

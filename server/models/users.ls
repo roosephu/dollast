@@ -23,14 +23,7 @@ schema.methods.set-password = (password) ->
   salt = bcrypt.gen-salt-sync bcrypt.bcrypt-cost
   @password = bcrypt.hash-sync password, salt
 
-schema.methods.check-access = (user, action) ->
-  @permit.check-access user, action, @_id, \User
-
-schema.methods.check-owner = (user) ->
-  @permit.check-owner user, @_id, \User
-
-schema.methods.check-admin = (user) ->
-  @permit.check-admin user, @_id, \User
+schema.methods.get-display-name = \User
 
 # TODO CSRF
 model = conn.conn.model \user, schema

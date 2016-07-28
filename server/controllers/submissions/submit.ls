@@ -16,7 +16,7 @@ handler = ->*
     .populate 'config.pack', 'title' 
     .exec!
   @assert problem, problem._id, \Problem, "problem doesn't exist"
-  problem.check-access @state.user, \x
+  problem.permit.check-access @state.user, \x
 
   pack = problem.config.pack._id
   {user} = @state.user.client

@@ -60,14 +60,7 @@ log = debug \dollast:sol
 
 schema.statics.next-count = make-next-count config.starting-ids.submissions
 
-schema.methods.check-access = (user, action) ->
-  @permit.check-access user, action, @_id, \Submission
-
-schema.methods.check-owner = (user) ->
-  @permit.check-owner user, @_id, \Submission
-
-schema.methods.check-admin = (user) ->
-  @permit.check-admin user, @_id, \Submission
+schema.methods.get-display-name = -> \Submission
 
 schema.statics.get-user-solved-problem-ids = (user) ->*
   # log {user, model.aggregate}

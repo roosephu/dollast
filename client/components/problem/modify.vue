@@ -12,12 +12,7 @@ view
           input(name="title")
       .ui.field.four.wide
         label pack id
-        .ui.dropdown.icon.selection.fluid.search#pack
-          input(type="hidden", name="pack")
-          .default.text pack
-          i.dropdown.icon
-          .menu
-            .item(data-value="{{pack._id}}") {{pack | pack}}
+        pack-selector(:pack="pack")
     .ui.field
       label judger
       .ui.dropdown.icon.fluid.selection#judger
@@ -87,6 +82,7 @@ require! {
   \flat
   \../view
   \../elements/permit
+  \../elements/pack-selector
   \../../actions : {raise-error}
   \../../../common/judgers
 }
@@ -129,12 +125,10 @@ module.exports =
       {raise-error}
 
   components:
-    {view, permit}
+    {view, permit, pack-selector}
 
   data: ->
-    pack: 
-      _id: ""
-      title: ""
+    pack: void
     judgers: judgers
     problem:
       _id: ""
@@ -155,23 +149,6 @@ module.exports =
 
   ready: ->
     $ \.dropdown .dropdown!
-
-    $pack = $ '#pack'
-    # log {$dropdown}
-    $pack.dropdown do
-      data-type: \jsonp
-      api-settings:
-        save-remove-data: false
-        on-response: (response) ->
-          if !response.data?._id
-            return success: false, results: []
-          # log {response}
-          pack = response.data
-          {_id, title} = pack
-          return results: [value: _id, name: vue.filter(\pack) pack]
-        url: "/api/pack/{query}/"
-        on-change: (value) ~>
-          log {value}
 
     submit = co.wrap (e, values) ~>*
       e.prevent-default!

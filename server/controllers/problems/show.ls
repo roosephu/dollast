@@ -14,7 +14,7 @@ handler = ->*
     .populate 'config.pack', \title
     .exec!
   @assert problem, @params._id, \Problem, "doesn't exist"
-  problem.check-access @state.user, \r
+  problem.permit.check-access @state.user, \r
 
   # TODO check whether the corresponding pack has started
   problem .= to-object!

@@ -31,14 +31,7 @@ schema.methods.is-started = ->
 schema.methods.is-ended = ->
   moment!.is-after @end-time
 
-schema.methods.check-access = (user, action) ->
-  @permit.check-access user, action, @_id, \Pack
-
-schema.methods.check-owner = (user) ->
-  @permit.check-owner user, @_id, \Pack
-
-schema.methods.check-admin = (user) ->
-  @permit.check-admin user, @_id, \Pack
+schema.methods.get-display-name = -> \Pack 
 
 # lock-prob = co.wrap (rid, state, problems) ->*
 #   log "locking", problems

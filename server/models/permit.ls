@@ -9,12 +9,19 @@ log = debug \dollast:models:permit
 
 schema = new Schema do
 	_id: false
+	parent: type: Schema.Types.ObjectId
 	owner: type: String, ref: \user
 	group: String
 	access: String
 
-schema.methods.check-access = (user, action, _id, type) ->
+schema.methods.check-access = (user, action) ->
 	log "checking permit:", user, action, {@owner, @group, @access}
+	if @parent
+		@parent.check-access user, action
+
+	owner = @owner-document!
+	{_id} = owner
+	type = owner.get-display-name!
 	# if user.groups.admin != void
 		# return true
 
@@ -33,10 +40,16 @@ schema.methods.check-access = (user, action, _id, type) ->
 	
 	assert @access[pos] == action, _id, type, "user `#{user._id}` cannot perform `#{action}` for doc `{#{@owner}, #{@group}, #{@access}}`"
 
-schema.methods.check-owner = (user, _id, type) ->
+schema.methods.check-owner = (user) ->
+	owner = @owner-document!
+	{_id} = owner
+	type = owner.get-display-name!
 	assert @owner == user._id, _id, type, 'cannot modify groups'
 
-schema.methods.check-admin = (user, _id, type) ->
+schema.methods.check-admin = (user) ->
+	owner = @owner-document!
+	{_id} = owner
+	type = owner.get-display-name!
 	assert user.groups.admin, _id, type, "user `#{user._id}` is not an administrator"
 
 # model = conn.model \permit, schema
