@@ -1,23 +1,34 @@
 require! {
 	\mongoose : {Schema}
-	\./conn : {conn}
 	\debug
+	\co
+	\prelude-ls : {capitalize}
+	\./conn : {conn}
 	\../controllers/err : {assert}
+	\. : models
 }
 
 log = debug \dollast:models:permit
 
 schema = new Schema do
 	_id: false
-	parent: type: Schema.Types.ObjectId
-	owner: type: String, ref: \user
+	parent-type: String
+	parent-id: type: String, ref-path: \srcType 
+	owner: type: String, ref: \User
 	group: String
 	access: String
 
-schema.methods.check-access = (user, action) ->
+translate = (name) ->
+	if \s != name.substr -1
+		name = name + \s
+	capitalize name
+
+schema.methods.check-access = co.wrap (user, action) ->*
 	log "checking permit:", user, action, {@owner, @group, @access}
-	if @parent
-		@parent.check-access user, action
+
+	if @parent-id
+		parent = yield models[translate @parent-type] .find-by-id @parent-id .exec!
+		yield parent.permit.check-access user, action
 
 	owner = @owner-document!
 	{_id} = owner
@@ -52,5 +63,4 @@ schema.methods.check-admin = (user) ->
 	type = owner.get-display-name!
 	assert user.groups.admin, _id, type, "user `#{user._id}` is not an administrator"
 
-# model = conn.model \permit, schema
 module.exports = schema

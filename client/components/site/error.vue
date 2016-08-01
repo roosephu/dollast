@@ -1,18 +1,17 @@
 <template lang="jade">
-  .ui.basic.modal.small(keep-alive)#error
-    .ui.icon.header
-      i.icon.announcement
+  .ui.modal.small(keep-alive)#error
+    .ui.header
       | Error on {{ object }}
     .content
       h4 {{ message }}
     .actions
-      .ui.red.basic.inverted.button(@click="home")
+      .ui.red.basic.button(@click="home")
         i.icon.home
         | Home
-      .ui.green.basic.inverted.button(@click="back")
+      .ui.green.basic.button(@click="back")
         i.icon.arrow.left
         | Back
-      .ui.green.basic.inverted.button(@click="ignore")
+      .ui.green.basic.button(@click="ignore")
         i.icon.configure
         | Ignore
 </template>

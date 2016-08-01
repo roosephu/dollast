@@ -15,7 +15,7 @@ handler = ->*
     .exec!
   @assert submission, @params.submission, \Submission, "doesn't exists"
 
-  submission.permit.check-access @state.user, \r
+  yield submission.permit.check-access @state.user, \r
 
   @body = submission
 

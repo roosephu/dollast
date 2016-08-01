@@ -3,3 +3,4 @@ database/*
 npm-debug.log
 bin/*
 .vscode/*
+migrate/*

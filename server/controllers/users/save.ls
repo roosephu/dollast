@@ -15,7 +15,7 @@ handler = ->*
 
   user = yield models.Users.find-by-id _id .exec!
   @assert user, _id, \User, "doesn't exist"
-  user.permit.check-access @state.user, \w
+  yield user.permit.check-access @state.user, \w
 
   priv-diff = difference user.groups, groups
   if priv-diff? and priv-diff.length > 0

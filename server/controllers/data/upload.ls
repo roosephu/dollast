@@ -8,9 +8,8 @@ handler = ->*
   {pid} = @params
 
   problem = yield models.Problems.find-by-id pid, \permit .exec!
-  if not problem
-    throw new Exception "no such problem"
-  problem.permit.check-access @state.user, \w
+  @assert problem, pid, \Problem, "no such problem"
+  yield problem.permit.check-access @state.user, \w
 
   parts = yield @request.parts
   while part = yield parts

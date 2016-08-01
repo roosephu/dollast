@@ -18,7 +18,7 @@ handler = ->*
   else
     existed = yield models.Packs.find-by-id pack._id, \permit .exec!
     @assert existed, _id: pack._id, type: \Pack, detail: "cannot find the original pack"
-    existed.permit.check-access @state.user, \w
+    yield existed.permit.check-access @state.user, \w
 
     delete pack.permit
 

@@ -14,6 +14,7 @@ handler = ->*
     .exec!
   log {pack}
   @assert pack, @params.pack, \Pack, "doesn't exist"
+  yield pack.permit.check-access @state.user, \r
   problems = yield models.Problems.find 'config.pack': pack._id, '_id outlook.title'
     .lean!
     .exec!

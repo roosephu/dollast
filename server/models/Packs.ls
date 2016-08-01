@@ -17,7 +17,7 @@ schema = new Schema do
   title: String
   begin-time: type: Date, default: Date.now
   end-time: type: Date, default: Date.now
-  problems: [type: Number, ref: \problem]
+  problems: [type: Number, ref: \Problem]
   permit: permit
 
 schema.index do

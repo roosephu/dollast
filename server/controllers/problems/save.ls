@@ -23,7 +23,7 @@ handler = ->*
     existed = yield models.Problems.find-by-id problem._id, \permit .exec!
     @assert existed, id: problem._id, type: \problem, detail: "cannot find the original problem"
 
-    existed.permit.check-access @state.user, \w
+    yield existed.permit.check-access @state.user, \w
 
     # TODO: check permit is not modified here
     # only owner can transfer owner
