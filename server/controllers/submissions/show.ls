@@ -10,7 +10,7 @@ handler = ->*
   {submission} = @params
   log \preparing, {submission} 
 
-  submission = yield models.submissions.find-by-id submission
+  submission = yield models.Submissions.find-by-id submission
     .populate \problem, 'outlook.title'
     .exec!
   @assert submission, @params.submission, \Submission, "doesn't exists"

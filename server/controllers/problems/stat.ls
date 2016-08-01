@@ -6,12 +6,12 @@ require! {
 handler = ->*
   {problem} = @params
 
-  problem = yield models.problems.find-by-id problem, 'config.pack outlook.title permit'
+  problem = yield models.Problems.find-by-id problem, 'config.pack outlook.title permit'
     .exec!
   @assert problem, @params.problem, \Problem, "doesn't exist"
   problem.permit.check-access @state.user, \r
 
-  query = models.submissions.aggregate do
+  query = models.Submissions.aggregate do
     * $match: problem: problem._id
     * $sort: user: 1, "final.score": -1
     * $project:

@@ -7,7 +7,7 @@ handler = ->*
   log \uploading
   {pid} = @params
 
-  problem = yield models.problems.find-by-id pid, \permit .exec!
+  problem = yield models.Problems.find-by-id pid, \permit .exec!
   if not problem
     throw new Exception "no such problem"
   problem.permit.check-access @state.user, \w

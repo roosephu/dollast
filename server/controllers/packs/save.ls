@@ -13,10 +13,10 @@ handler = ->*
   log {pack}
 
   if pack._id == void
-    pack._id = yield models.packs.next-count!
+    pack._id = yield models.Packs.next-count!
     # TODO: can this user add a pack? 
   else
-    existed = yield models.packs.find-by-id pack._id, \permit .exec!
+    existed = yield models.Packs.find-by-id pack._id, \permit .exec!
     @assert existed, _id: pack._id, type: \Pack, detail: "cannot find the original pack"
     existed.permit.check-access @state.user, \w
 
@@ -25,7 +25,7 @@ handler = ->*
     # flat it!
     pack |>= flat
 
-  @body = yield models.packs.update _id: pack._id, pack, upsert: true .exec!
+  @body = yield models.Packs.update _id: pack._id, pack, upsert: true .exec!
 
   @body =
     _id: pack._id

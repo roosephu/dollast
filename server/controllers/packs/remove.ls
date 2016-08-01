@@ -6,11 +6,11 @@ require! {
 handler = ->*
   {pack} = @params
 
-  pack = yield models.packs.find-by-id pack, \permit .exec!
+  pack = yield models.Packs.find-by-id pack, \permit .exec!
   @assert pack, @params.pack, \Pack, "doesn't exist"
   pack.permit.check-access @state.user, \w
 
-  yield models.packs.find-by-id-and-remove pack._id .exec!
+  yield models.Packs.find-by-id-and-remove pack._id .exec!
 
   @body = 
     _id: pack._id

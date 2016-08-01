@@ -7,14 +7,14 @@ require! {
 handler = ->*
   {user, password} = @request.body
 
-  if yield models.users.find-by-id user .count! .exec!
+  if yield models.Users.find-by-id user .count! .exec!
     @body =
       type: \register
       error: true
       payload: "duplicate user id"
 
   else
-    user = new models.users do
+    user = new models.Users do
       _id: user
       groups: []
       permit:

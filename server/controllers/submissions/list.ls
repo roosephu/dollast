@@ -15,7 +15,7 @@ handler = ->*
   basic-filters = Obj.reject (== undefined), opts{user, pack, language}
   log {opts, basic-filters}
 
-  query = models.submissions.find basic-filters, '-code -results'
+  query = models.Submissions.find basic-filters, '-code -results'
     .populate \problem, 'outlook.title'
     .populate \pack, 'title beginTime'
     .sort '-date'

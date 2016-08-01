@@ -14,13 +14,13 @@ handler = ->*
   problem = @request.body
 
   if problem._id == void
-    problem._id = yield models.problems.next-count!
+    problem._id = yield models.Problems.next-count!
     log "saving new problem using id #{problem._id}"
 
     # TODO: check whether user can create a problem here
   else
 
-    existed = yield models.problems.find-by-id problem._id, \permit .exec!
+    existed = yield models.Problems.find-by-id problem._id, \permit .exec!
     @assert existed, id: problem._id, type: \problem, detail: "cannot find the original problem"
 
     existed.permit.check-access @state.user, \w
@@ -32,7 +32,7 @@ handler = ->*
     problem |>= flat
     log {problem}
 
-  yield models.problems.update _id: problem._id, problem, upsert: true .exec!
+  yield models.Problems.update _id: problem._id, problem, upsert: true .exec!
   @body = problem
 
 module.exports = 

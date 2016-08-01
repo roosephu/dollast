@@ -5,7 +5,7 @@ require! {
 handler = ->*
   {pid} = @params
 
-  problem = yield models.problems.find-by-id pid, "config.dataset permit" .exec!
+  problem = yield models.Problems.find-by-id pid, "config.dataset permit" .exec!
   if not problem
     throw new Exception 'xxx'
   problem.permit.check-access @state.user, \w

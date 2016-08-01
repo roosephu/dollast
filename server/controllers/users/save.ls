@@ -13,7 +13,7 @@ handler = ->*
 
   {_id, groups} = @request.body
 
-  user = yield models.users.find-by-id _id .exec!
+  user = yield models.Users.find-by-id _id .exec!
   @assert user, _id, \User, "doesn't exist"
   user.permit.check-access @state.user, \w
 

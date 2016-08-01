@@ -8,7 +8,7 @@ require! {
 
 handler = ->*
   opts = prob-list-opts
-  @body = yield models.problems
+  @body = yield models.Problems
     .find {}, \outlook.title # "config.pack": $exists: true,
     .skip opts.skip
     .limit opts.limit

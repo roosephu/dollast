@@ -3,7 +3,7 @@ require! {
 }
 
 handler = ->*
-  @body = yield models.packs.find {}, 'title beginTime endTime'
+  @body = yield models.Packs.find {}, 'title beginTime endTime'
     .lean!
     .exec!
 

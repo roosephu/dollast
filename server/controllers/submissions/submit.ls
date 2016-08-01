@@ -12,7 +12,7 @@ handler = ->*
   log \submitting
   {problem, code, language, permit} = @request.body
 
-  problem = yield models.problems.find-by-id problem, "permit config" 
+  problem = yield models.Problems.find-by-id problem, "permit config" 
     .populate 'config.pack', 'title' 
     .exec!
   @assert problem, problem._id, \Problem, "problem doesn't exist"
@@ -22,8 +22,8 @@ handler = ->*
   {user} = @state.user.client
 
   # @ensure-access model, 0, \x # sol = 0 => submission
-  submission = new models.submissions do
-    _id: yield models.submissions.next-count!
+  submission = new models.Submissions do
+    _id: yield models.Submissions.next-count!
     code: code
     language: language
     problem: problem._id

@@ -10,7 +10,7 @@ handler = ->*
   log "finding problem"
   {problem} = @params
 
-  problem = yield models.problems.find-by-id problem
+  problem = yield models.Problems.find-by-id problem
     .populate 'config.pack', \title
     .exec!
   @assert problem, @params._id, \Problem, "doesn't exist"
