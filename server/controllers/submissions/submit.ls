@@ -31,6 +31,7 @@ handler = ->*
     pack: pack
     summary:
       status: \running
+      score: 0
     permit: permit
 
   yield submission.save!

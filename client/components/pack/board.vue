@@ -9,12 +9,14 @@ view
           th(v-for="problem in problems")
             problem(:prob="problem")
       tbody
-        tr(v-for="[user, score] in board")
+        tr(v-for="record in board")
           td
-            user(:user="user")
-          td {{score}}
+            user(:user="record[0]")
+          td {{record[1].total}}
           td(v-for="problem in problems")
-            code-link(:sid="score[problem].solution")
+            a(href="#!/submission/{{record[1][problem._id].solution}}") {{record[1][problem._id].score}}
+  
+    p Note: only last submission is considered. 
 </template>
 
 <script lang="vue-livescript">
@@ -32,11 +34,11 @@ log = debug \dollast:component:pack:board
 
 generate-board = (submissions) ->
   board = {}
-  for sol in submissions
-    {user, prob} = sol._id
+  for submission in submissions
+    {user, problem} = submission._id
     board[user] ||= total: 0
-    board[user][prob] = sol{score, solution}
-    board[user].total += sol.score
+    board[user][problem] = submission{score, solution}
+    board[user].total += submission.score
   board
 
 module.exports =
@@ -66,7 +68,6 @@ module.exports =
       submissions = response.data
 
       board = generate-board submissions |> obj-to-pairs |> sort |> reverse
-      log {board}
-      {board}
+      {board} <<<< pack{problems}
 
 </script>

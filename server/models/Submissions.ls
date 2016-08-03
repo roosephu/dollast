@@ -72,19 +72,5 @@ schema.statics.get-user-solved-problem-ids = (user) ->*
     
   return yield query.exec!
 
-schema.statics.get-submissions-in-a-pack = (pack) ->*
-  query = model.aggregate do
-    * $match: pack: pack
-    * $sort: problem: 1, user: 1, _id: -1
-    * $group:
-        _id:
-          problem: \$problem
-          user: \$user
-        score:
-          $first: '$summary.score'
-        solution:
-          $first: \$_id
-  return yield query.exec!
-
 model = conn.model \submission, schema
 module.exports = model

@@ -1,6 +1,20 @@
 <template lang="jade">
 view
   .form.menu#submission(slot="config")
+    .ui.header Pagination
+    a.icon.labeled.item(:class="{'disabled': query.page == 1}", @click="go(1)")
+      i.icon.angle.double.left
+      | Top
+    a.icon.labeled.item(:class="{'disabled': query.page == 1}", @click="go(query.page - 1)")
+      i.icon.angle.left
+      | Previous page
+    .icon.labeled.item
+      i.icon.thin.circle
+      | Current: {{query.page}}
+    a.icon.labeled.item(@click="go(query.page + 1)") 
+      i.icon.angle.right
+      | Next page
+    .ui.divider
     .ui.header Options
     .ui.left.icon.input
       i.icon.user
@@ -41,20 +55,6 @@ view
     .ui.item.icon.button(@click="clear")
       i.icon
       | Clear
-    .ui.divider
-    .ui.header Pagination
-    a.icon.labeled.item(:class="{'disabled': query.page == 1}", @click="go(1)")
-      i.icon.angle.double.left
-      | Top
-    a.icon.labeled.item(:class="{'disabled': query.page == 1}", @click="go(query.page - 1)")
-      i.icon.angle.left
-      | Previous page
-    .icon.labeled.item
-      i.icon.thin.circle
-      | Current: {{query.page}}
-    a.icon.labeled.item(@click="go(query.page + 1)") 
-      i.icon.angle.right
-      | Next page
 
   .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Submissions
