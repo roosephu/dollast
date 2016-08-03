@@ -32,8 +32,7 @@ view
       span.text
       .menu
         .item(v-for="item in languages", data-value="{{item}}") {{item}}
-        .item(data-value="")
-          .default.text all
+        .item(data-value="all") all
     .ui.divider
     .ui.header Form Operations
     .ui.item.icon.submit
@@ -103,6 +102,7 @@ require! {
   \co
   \vue
   \prelude-ls : {Obj}
+  \moment
   \../view
   \../format
   \../elements/pack-selector
@@ -115,9 +115,18 @@ get-form-values = (values) ->
   ret = Obj.reject (== ""), values
   if ret.threshold
     ret.threshold |>= parse-float
+  if ret.before
+    ret.before = new moment ret.before .value-of!
+  if ret.after
+    ret.after = new moment ret.after .value-of!
   return ret
 
 set-form-values = (values) ->
+  values = ^^values
+  if values.before
+    values.before = new moment values.before .format 'YYYY-MM-DD HH:mm:ss'
+  if values.after
+    values.after = new moment values.after .format 'YYYY-MM-DD HH:mm:ss'
   log 'setting form values', values
   $ \#submission .form 'set values', values
 
@@ -135,20 +144,23 @@ module.exports =
   route:
     data: co.wrap ->* 
       {query} = @$route
-      if not query.pack?
-        query.pack = "0"
-        @$route.router.go name: \submissions, query: query
+      if not query.pack
+        query.pack = \0
       if query.page
         query.page |>= parse-int
       else
         query.page = 1
       if query.threshold
         query.threshold |>= parse-float
+      if query.before
+        query.before |>= parse-int
+      if query.after
+        query.after |>= parse-int
 
       @$next-tick ->
         set-form-values query
 
-      {data: response} = yield vue.http.get \submission, params: query
+      {data: response} = yield @$http.get \submission, params: query
       if response.errors
         @raise-error response
         return null
@@ -170,10 +182,14 @@ module.exports =
   ready: ->
     submit = co.wrap (e, values) ~>*
       values = get-form-values values
+      log {values}
       @$route.router.go name: \submissions, query: values
 
     $ \#submission .form do
+      inline: false
       on-success: submit
+      on-failure: (errors, fields) ->
+        log errors, fields
       fields:
         user:
           identifier: \user
@@ -201,17 +217,23 @@ module.exports =
           optional: true
           rules:
             * type: "integer[1..]"
-              prompt: "must be a positive integer"
+              prompt: "problem id must be a positive integer"
             ...
         pack:
           identifier: \pack
           optional: true
           rules:
-            * type: "integer[1..]"
-              prompt: "must be a positive integer"
+            * type: "integer[0..]"
+              prompt: "pack id must be a positive integer"
             ...
-        langauge:
+        language:
           identifier: \language
+          optional: true
+        before:
+          identifier: \before
+          optional: true
+        after:
+          identifier: \after
           optional: true
 
     $ '#relationship, #language, #search' .dropdown on: \hover

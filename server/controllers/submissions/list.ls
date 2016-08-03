@@ -27,6 +27,12 @@ handler = ->*
     switch opts.relationship
       | \lt => query .= where 'summary.score' .lte opts.threshold
       | \gt => query .= where 'summary.score' .gte opts.threshold
+  if opts.before or opts.after
+    query .= where 'date'
+    if opts.before
+      query .= lte opts.before
+    if opts.after
+      query .= gte opts.after
 
   submissions = yield query.exec!
 
@@ -38,10 +44,12 @@ module.exports =
   validate:
     query:
       user: validator.user!.optional!
-      pack: validator.pack!.optional!
+      pack: validator.pack!
       problem: validator.problem!.optional!
       page: Joi .number! .min 0
       language: Joi .string! .equal options.languages 
       threshold: Joi .number! .min 0 .max 1
+      before: Joi .date! .timestamp!
+      after: Joi .date! .timestamp!
   handler: handler
 

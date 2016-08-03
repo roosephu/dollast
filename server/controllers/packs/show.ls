@@ -10,7 +10,6 @@ handler = ->*
   {pack} = @params
 
   pack = yield models.Packs.find-by-id pack, '-__v'
-    .lean!
     .exec!
   log {pack}
   @assert pack, @params.pack, \Pack, "doesn't exist"
@@ -18,7 +17,8 @@ handler = ->*
   problems = yield models.Problems.find 'config.pack': pack._id, '_id outlook.title'
     .lean!
     .exec!
-  pack.problems = problems
+  pack .= to-object!
+  pack <<<< {problems}
 
   @body = pack
 

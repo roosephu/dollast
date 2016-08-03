@@ -23,12 +23,13 @@ app.use (next) ->*
     yield next
   catch e
     if e.name == \ValidationError
+      obj = flat e._object
       log e.details
       for detail in e.details
         @errors.push do
           _id: @req.url
           type: \Request
-          detail: "#{detail.message}, instead of '#{detail.context.value}'"
+          detail: "#{detail.message}, got '#{obj[detail.context.key]}'"
           field: detail.context.key
     else if e.re
       @errors.push e.error
