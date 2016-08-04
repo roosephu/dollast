@@ -1,6 +1,7 @@
 require! {
   \debug
   \flat
+  \koa-joi-router : {Joi}
   \../../models
   \../validator
 }
@@ -17,8 +18,7 @@ handler = ->*
     # TODO: can this user add a pack? 
   else
     existed = yield models.Packs.find-by-id pack._id, \permit .exec!
-    @assert existed, _id: pack._id, type: \Pack, detail: "cannot find the original pack"
-    yield existed.permit.check-access @state.user, \w
+    yield @assert-exist exist, \w, pack._id, \Pack
 
     delete pack.permit
 
@@ -38,4 +38,8 @@ module.exports =
     type: \json
     body:
       _id: validator.pack!
+      title: Joi .string! .min 3 .max 16
+      begin-time: Joi .date! .timestamp!
+      end-time: Joi .date! .timestamp!
+      permit: validator.permit!
   handler: handler

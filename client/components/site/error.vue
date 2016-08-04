@@ -5,13 +5,13 @@
     .content
       h4 {{ message }}
     .actions
-      .ui.red.basic.button(@click="home")
+      .ui.left.floated.button(@click="home")
         i.icon.home
         | Home
-      .ui.green.basic.button(@click="back")
+      .ui.green.button(@click="back")
         i.icon.arrow.left
         | Back
-      .ui.green.basic.button(@click="ignore")
+      .ui.primary.button(@click="ignore")
         i.icon.configure
         | Ignore
 </template>
@@ -38,16 +38,17 @@ module.exports =
       if @error == void
         ""
       else
-        "#{@error.detail}"
+        "#{@error.message}"
 
     object: ->
       if @error == void
         ""
       else
-        "#{@error.type} #{@error._id}"
+        "#{@error.object}"
 
   ready: ->
     $modal = $ \#error
+    $modal.modal blurring: true .transition \fade
     # if !@error.closable
     #   $modal.modal \setting, \closable, false
 

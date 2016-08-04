@@ -7,8 +7,7 @@ handler = ->*
   {pack} = @params
 
   pack = yield models.Packs.find-by-id pack, 'permit beginTime endTime' .exec!
-  @assert pack, @params.pack, \Pack, "no such packs"
-  yield pack.permit.check-access @state.user, \r
+  yield @assert-exist pack, \r, @params.pack, \Pack
 
   query = models.Submissions.aggregate do
     * $match: 

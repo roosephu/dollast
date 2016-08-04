@@ -51,7 +51,7 @@ require! {
   \vue
   \debug
   \../view
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:components:user:modify
@@ -59,7 +59,7 @@ log = debug \dollast:components:user:modify
 module.exports =
   vuex:
     actions:
-      {raise-error}
+      {check-response-errors}
 
   components:
     {view}
@@ -74,8 +74,7 @@ module.exports =
   route:
     data: co.wrap (to: params: {user}) ->*
       {data: response} = yield vue.http.get "user/#{user}"
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       {data: user} = response 
       {user}

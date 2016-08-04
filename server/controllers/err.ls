@@ -1,10 +1,37 @@
+require! {
+  \co
+}
+
 class Err extends Error
-  (_id, type, detail, field) ->
+  (prop) ->
     @name = \RuntimeError
     @re = true
-    @error = {_id, type, detail, field}
+    @details = prop
 
 module.exports = 
   assert: (statement, _id, type, detail, field) ->
-    if !statement
-      throw new Err _id, type, detail, field
+    return if statement
+    if \string == typeof _id 
+      throw new Err {_id, type, detail, field}
+    else
+      throw new Err _id
+  
+  assert-name: (name, statement, prop) ->
+    return if statement
+    err = new Err prop
+    err.name = name
+    throw err
+
+  assert-permit: (statement, prop) ->
+    return if statement
+    err = new Err prop
+    err.name = \PermissionDenied
+    throw err
+  
+  assert-exist: co.wrap (obj, action, _id, type) ->*
+    if obj
+      yield obj.permit.check-access @state.user, action
+    else
+      err = new Err {_id, type}
+      err.name = \Nonexistence
+      throw err

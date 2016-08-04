@@ -27,7 +27,7 @@ require! {
   \prelude-ls : {obj-to-pairs, sort, reverse}
   \../view
   \../format
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:pack:board
@@ -44,7 +44,7 @@ generate-board = (submissions) ->
 module.exports =
   vuex:
     actions:
-      {raise-error}
+      {check-response-errors}
 
   components:
     {view} <<< format{problem, code-link, user}
@@ -56,14 +56,12 @@ module.exports =
   route:
     data: co.wrap (to: params: {pack}) ->*
       {data: response} = yield vue.http.get "pack/#{pack}"
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       pack = response.data
 
       {data: response} = yield vue.http.get "pack/#{pack._id}/board"
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       submissions = response.data
 

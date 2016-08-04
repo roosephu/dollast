@@ -27,7 +27,7 @@ require! {
   \prelude-ls : {average, map, filter}
   \../view
   \../format
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:problem:stat
@@ -53,7 +53,7 @@ generate-stat = (sols) ->
 module.exports =
   vuex:
     actions:
-      {raise-error}
+      {check-response-errors}
 
   data: ->
     stat: []
@@ -62,8 +62,7 @@ module.exports =
   route:
     data: co.wrap (to: params: {problem}) ->*
       {data: response} = yield vue.http.get "problem/#{problem}/stat"
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       {submissions, problem} = response.data
 

@@ -6,8 +6,7 @@ handler = ->*
   {pid} = @params
 
   problem = yield models.Problems.find-by-id pid, "config.dataset permit" .exec!
-  @assert problem, pid, \Problem, "no such problem"
-  yield problem.permit.check-access @state.user, \w
+  yield @assert-exist problem, \w, pid, \Problem
   
   new-pairs = yield problem.rebuild!
   @body = new-pairs

@@ -69,15 +69,15 @@ require! {
   \co
   \vue
   \../view
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:submission:show
 
 module.exports =
   vuex:
-    actions:
-      {raise-error}
+    actions: 
+      {check-response-errors}
 
   components:
     {view}
@@ -100,8 +100,7 @@ module.exports =
   route:
     data: co.wrap (to: params: {sid}) ->*
       {data: response} = yield vue.http.get "submission/#{sid}"
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       submission = response.data
 

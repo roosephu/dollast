@@ -84,7 +84,7 @@ require! {
   \vue
   \../view
   \../elements/permit
-  \../../actions : {raise-error}
+  \../../actions
 }
 
 log = debug \dollast:component:problem:show
@@ -92,7 +92,7 @@ log = debug \dollast:component:problem:show
 module.exports =
   vuex:
     actions:
-      {raise-error}
+      actions{check-response-errors}
     getters:
       user: (.session.user)
 
@@ -118,8 +118,7 @@ module.exports =
   route:
     data: co.wrap (to: params: {problem}) ->*
       {data: response} = yield vue.http.get "problem/#{problem}"
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       problem = response.data
 
@@ -135,14 +134,9 @@ module.exports =
       $form = $ '#submit-form'
       permit = values{owner, group, access}
 
-      data = Object.assign do
-        values{code, language}
-        {problem: @problem._id, permit}
+      data = {problem: @problem._id, permit} <<<< values{code, language}
       {data: response} = yield @$http.post \submission, data
-      if response.errors
-        $form.form 'add errors', [""]
-        for error in response.errors
-          $form.form 'add prompt', error.field, error.detail
+      @check-response-errors response, $form
 
     $form = $ '#submit-form'
     $form.form on-success: submit

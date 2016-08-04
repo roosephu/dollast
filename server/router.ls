@@ -16,6 +16,7 @@ app = new koa!
 app.use (next) ->*
   @errors = []
   @assert = err.assert
+  @assert-exist = err.assert-exist
 
   # log "response:", @body, @errors
   log "#{@req.method} #{@req.url}:", @request.body
@@ -23,16 +24,9 @@ app.use (next) ->*
     yield next
   catch e
     if e.name == \ValidationError
-      obj = flat e._object
-      log e.details
-      for detail in e.details
-        @errors.push do
-          _id: @req.url
-          type: \Request
-          detail: "#{detail.message}, got '#{obj[detail.context.key]}'"
-          field: detail.context.key
+      @errors.push e{name, details, _object}
     else if e.re
-      @errors.push e.error
+      @errors.push e{name, details}
       log \RuntimeError, e.error
     else
       throw e

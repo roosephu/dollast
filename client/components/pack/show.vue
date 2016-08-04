@@ -65,7 +65,7 @@ require! {
   \prelude-ls : {max}
   \../view
   \../format : {problem, formatter}
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:pack:show
@@ -73,7 +73,7 @@ log = debug \dollast:component:pack:show
 module.exports =
   vuex:
     actions:
-      {raise-error}
+      {check-response-errors}
 
   components:
     {problem, view}
@@ -96,8 +96,7 @@ module.exports =
   route:
     data: co.wrap (to: params: {pack}) ->*
       {data: response} = yield vue.http.get "pack/#{pack}"
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       pack = response.data
 

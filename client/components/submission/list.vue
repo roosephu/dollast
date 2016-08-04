@@ -106,7 +106,7 @@ require! {
   \../view
   \../format
   \../elements/pack-selector
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:submission:list
@@ -133,7 +133,7 @@ set-form-values = (values) ->
 module.exports =
   vuex:
     actions:
-      {raise-error}
+      {check-response-errors}
 
   data: ->
     submissions: []
@@ -161,8 +161,7 @@ module.exports =
         set-form-values query
 
       {data: response} = yield @$http.get \submission, params: query
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       submissions = response.data
 

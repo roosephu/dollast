@@ -1,3 +1,6 @@
+require! {
+  \moment
+}
 
 extra-rules =
   positive: (text) ->

@@ -33,12 +33,16 @@ require! {
   \co
   \../format
   \../view
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:pack:list
 
 module.exports =
+  vuex:
+    actions:
+      {check-response-errors}
+
   components:
     {view} <<< format{pack}
 
@@ -49,8 +53,7 @@ module.exports =
   route:
     data: co.wrap ->*
       {data: response} = yield vue.http.get "pack"
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       packs = response.data
 

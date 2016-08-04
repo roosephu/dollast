@@ -83,7 +83,7 @@ require! {
   \../view
   \../elements/permit
   \../elements/pack-selector
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
   \../../../common/judgers
 }
 
@@ -122,7 +122,7 @@ module.exports =
     getters:
       user: (.session.user)
     actions:
-      {raise-error}
+      {check-response-errors}
 
   components:
     {view, permit, pack-selector}
@@ -154,12 +154,8 @@ module.exports =
       e.prevent-default!
       problem = get-form-values values
       log {problem}
-      {data} = yield @$http.post "problem", problem
-      if data.errors
-        $form = $ '#problem-modify'
-        $form.form 'add errors', [""]
-        for error in data.errors
-          $form.form 'add prompt', error.field, error.detail 
+      {data: response} = yield @$http.post "problem", problem
+      @check-response-errors response, $ '#problem-modify'
 
     $form = $ '#problem-modify'
     $form.form on-success: submit
@@ -173,8 +169,7 @@ module.exports =
     data: co.wrap (to: params: {problem}) ->*
       if problem != void
         {data: response} = yield vue.http.get "problem/#{problem}"
-        if response.errors
-          @raise-error response
+        if @check-response-errors response
           return null
         problem = response.data
         {pack} = problem.config

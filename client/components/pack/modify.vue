@@ -30,15 +30,15 @@ view
 
     permit
 
-    h3.ui.dividing.header Problemset
-    .ui.field
-      .ui.dropdown.icon.selection.fluid.multiple.search
-        input(type="hidden", name="problems")
-        .default.text problems
-        i.dropdown.icon
-        .menu
-          .item(v-for="(key, value) of dropdownProblems", data-value="{{key}}") {{value}}
-    br
+    // h3.ui.dividing.header Problemset
+    // .ui.field
+    //   .ui.dropdown.icon.selection.fluid.multiple.search
+    //     input(type="hidden", name="problems")
+    //     .default.text problems
+    //     i.dropdown.icon
+    //     .menu
+    //       .item(v-for="(key, value) of dropdownProblems", data-value="{{key}}") {{value}}
+    // br
 
     .ui.field
       a.icon.ui.labeled.button.floated.primary.submit
@@ -55,21 +55,19 @@ require! {
   \prelude-ls : {map, pairs-to-obj, obj-to-pairs, flatten}
   \../elements/permit
   \../view
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:pack:modify
 
-get-form-values = ->
-  $form = $ '#form-pack'
-  values = $form.form 'get values'
-
+get-form-values = (values) ->
   permit = values{owner, group, access}
 
-  problems = if values.problems != "" then map parse-int, values.problems.split ',' else []
+  # problems = if values.problems != "" then map parse-int, values.problems.split ',' else []
+  begin-time = moment values.begin-time .value-of!
+  end-time = moment values.end-time .value-of! 
 
-  data = Object.assign values{title, begin-time, end-time},
-    {problems, permit}
+  {permit, begin-time, end-time} <<<< values{title}
 
 set-form-values = (pack) ->
   #log 'new states. setting new values for form...', to-client-fmt problem.to-JS!
@@ -80,8 +78,8 @@ set-form-values = (pack) ->
   problems = map ((problem) -> "#{problem._id}"), problems
   $form.form 'set values',
     title: title
-    begin-time: if begin-time then moment begin-time .format 'YYYY-MM-DD HH:mm:ss' else void
-    end-time: if end-time then moment end-time .format 'YYYY-MM-DD HH:mm:ss' else void
+    begin-time: if begin-time then new moment begin-time .format 'YYYY-MM-DD HH:mm:ss' else void
+    end-time: if end-time then new moment end-time .format 'YYYY-MM-DD HH:mm:ss' else void
     problems: problems
   $form.form 'set values', permit
 
@@ -104,7 +102,7 @@ module.exports =
     getters:
       user: (.session.user)
     actions:
-      {raise-error}
+      {check-response-errors}
 
   components:
     {view, permit}
@@ -117,14 +115,13 @@ module.exports =
       @$route.router.go "/pack" 
 
   ready: ->
-    submit = co.wrap (e) ~>*
+    submit = co.wrap (e, values) ~>*
       e.prevent-default!
-      pack = get-form-values!
+      pack = get-form-values values
       if @$route.params.pack != void
         pack._id = @$route.params.pack
       {data: response} = yield vue.http.post "pack", pack
-      if response.errors
-        log {response.errors}
+      @check-response-errors response, $ '#form-pack'
 
     $ '#form-pack' .form on-success: submit
 
@@ -139,9 +136,8 @@ module.exports =
     data: co.wrap (to: params: {pack}) ->*
       if pack != void
         {data: response} = yield vue.http.get "pack/#{pack}"
-        if response.errors
-          @raise-error response
-          return null
+      if @check-response-errors response
+        return null
         pack = response.data
 
         {pack}

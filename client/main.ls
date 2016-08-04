@@ -4,7 +4,6 @@ require! {
   \vue-router
   \vue-resource
   \debug
-  \moment
   \./validation
 }
 

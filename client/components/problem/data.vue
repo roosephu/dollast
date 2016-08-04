@@ -50,7 +50,7 @@ require! {
   \debug
   \co
   \../view
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:components:problems:data
@@ -58,7 +58,7 @@ log = debug \dollast:components:problems:data
 module.exports =
   vuex:
     actions:
-      {raise-error}
+      {check-response-errors}
   
   components:
     {view}
@@ -74,8 +74,7 @@ module.exports =
   route:
     data: co.wrap (to: params: {problem}) ~>*
       {data: response} = yield vue.http.get "problem/#{problem}"
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       problem = response.data
 
@@ -84,13 +83,12 @@ module.exports =
   methods:
     rebuild: co.wrap ->*
       {data: response} = yield @$http.get "data/#{@problem._id}/rebuild"
-      if response.errors
-        @raise-error response
-      else
+      if not @check-response-errors response
         @problem.config.dataset = response.data
     
     remove: co.wrap (atom) ->*
       {data: response} = yield @$http.get "data/#{@problem._id}/remove"
+      @check-response-errors response
       log atom
 
   ready: ->
@@ -118,8 +116,7 @@ module.exports =
         if e.length-computable
           $progress.progress value: e.loaded, total: e.total
       
-      if response.errors
-        @raise-error response
+      @check-response-errors response
       
       @problem.config.dataset = response.data.dataset
 

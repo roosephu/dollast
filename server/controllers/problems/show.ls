@@ -13,8 +13,7 @@ handler = ->*
   problem = yield models.Problems.find-by-id problem
     .populate 'config.pack', \title
     .exec!
-  @assert problem, @params._id, \Problem, "doesn't exist"
-  yield problem.permit.check-access @state.user, \r
+  yield @assert-exist problem, \r, @params.problem, \Problem
 
   # TODO check whether the corresponding pack has started
   problem .= to-object!

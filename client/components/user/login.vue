@@ -24,7 +24,7 @@ require! {
   \co
   \vue
   \../view
-  \../../actions
+  \../../actions : {login, check-response-errors}
 }
 
 log = debug 'dollast:component:login'
@@ -32,7 +32,7 @@ log = debug 'dollast:component:login'
 module.exports =
   vuex:
     actions:
-      actions{login, raise-error}
+      {login, check-response-errors}
 
   components:
     {view}
@@ -47,15 +47,11 @@ module.exports =
     submit = co.wrap (e, values) ~>*
       e.prevent-default!
       @loading = true
-      $form = $ '#login-form'
       {data} = yield vue.http.post \site/login, values
       @loading = false
 
-      if data.errors
-        $form.form 'add errors', [""]
-        for error in data.errors
-          $form.form 'add prompt', error.field, error.detail 
-      else
+      @check-response-errors data, $ '#login-form'
+      if not data.errors
         {data: {token}} = data
         local-storage.token = token
         @login token

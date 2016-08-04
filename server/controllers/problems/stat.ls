@@ -8,8 +8,7 @@ handler = ->*
 
   problem = yield models.Problems.find-by-id problem, 'config.pack outlook.title permit'
     .exec!
-  @assert problem, @params.problem, \Problem, "doesn't exist"
-  yield problem.permit.check-access @state.user, \r
+  yield @assert-exist problem, \r, @params.problem, \Problem
 
   query = models.Submissions.aggregate do
     * $match: problem: problem._id

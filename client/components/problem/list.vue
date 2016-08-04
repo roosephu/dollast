@@ -25,7 +25,7 @@ require! {
   \debug
   \../view
   \../format
-  \../../actions : {raise-error}
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:problem:list
@@ -33,7 +33,7 @@ log = debug \dollast:component:problem:list
 module.exports =
   vuex:
     actions:
-      {raise-error}
+      {check-response-errors}
 
   data: ->
     filter: \all
@@ -46,8 +46,7 @@ module.exports =
   route:
     data: co.wrap ->*
       {data: response} = yield vue.http.get \problem
-      if response.errors
-        @raise-error response
+      if @check-response-errors response
         return null
       problems = response.data
 
