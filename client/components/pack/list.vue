@@ -26,7 +26,7 @@ view
           pack(:pack="pack")
 </template>
 
-<script lang="vue-livescript">
+<script lang="livescript">
 require! {
   \vue
   \debug

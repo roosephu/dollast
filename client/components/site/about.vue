@@ -60,7 +60,7 @@ view
           p bbl 尽力啦，逗比不怪他。你说他不行，你行你上啊。
 </template>
 
-<script lang="vue-livescript">
+<script lang="livescript">
 require! {
   \../view
 }

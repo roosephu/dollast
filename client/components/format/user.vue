@@ -2,7 +2,7 @@
   a.ui.label(href="#/user/{{user}}") {{user | user}}
 </template>
 
-<script lang="vue-livescript">
+<script lang="livescript">
 module.exports =
   props:
     user: String

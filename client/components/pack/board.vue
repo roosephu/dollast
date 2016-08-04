@@ -19,7 +19,7 @@ view
     p Note: only last submission is considered. 
 </template>
 
-<script lang="vue-livescript">
+<script lang="livescript">
 require! {
   \debug
   \vue

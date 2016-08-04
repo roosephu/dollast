@@ -45,7 +45,7 @@ view
       | submit
 </template>
 
-<script lang="vue-livescript">
+<script lang="livescript">
 require! {
   \co
   \vue

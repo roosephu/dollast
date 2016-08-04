@@ -32,7 +32,7 @@ module.exports = config =
       * test: /\.vue$/
         loader: \vue
       * test: /\.ls$/
-        loader: \vue-livescript
+        loader: \livescript
   output:
     path: path.join __dirname, \public/js
     filename: \app.js

@@ -3,7 +3,7 @@
   a.ui.label.green(v-else) hidden
 </template>
 
-<script lang="vue-livescript">
+<script lang="livescript">
 module.exports =
   props:
     prob: Object

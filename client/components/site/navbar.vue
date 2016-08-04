@@ -1,10 +1,13 @@
 <template lang="jade">
   .ui.left.fixed.menu.vertical.borderless.blue.inverted.labeled
     .item
-    .ui.labeled.icon.item.dropdown#configuration(href="#/")
+    .ui.labeled.icon.item.dropdown#configuration
       img.centered.tiny.ui.image(src="/atm-inverted.png", align="middle")
       slot(name="config")
     .ui.divider
+    a.item(href="#/")
+      i.icon.home
+      | Home
     a.item(href="#/problem")
       i.icon.browser
       | Problems
@@ -32,7 +35,7 @@
       | Register
 </template>
 
-<script lang="vue-livescript">
+<script lang="livescript">
 require! {
   \debug
   \../../actions : {logout}

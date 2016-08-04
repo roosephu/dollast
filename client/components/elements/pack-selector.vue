@@ -7,7 +7,7 @@
     .item(v-if="pack", data-value="{{pack._id}}") {{pack | pack}}
 </template>
 
-<script lang="vue-livescript">
+<script lang="livescript">
 require! {
   \vue
   \debug

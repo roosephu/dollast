@@ -3,7 +3,7 @@
   a.ui.label.light.teal(v-else) hidden
 </template>
 
-<script lang="vue-livescript">
+<script lang="livescript">
 module.exports =
   props:
     pack: Object
