@@ -19,7 +19,7 @@ view
         .label {{key}}
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \vue
   \debug

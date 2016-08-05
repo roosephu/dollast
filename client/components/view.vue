@@ -13,7 +13,7 @@ div
         foot
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \vue
   \./site/foot

@@ -56,7 +56,7 @@ view
       h3.header Sorry, this pack has not started.
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \vue
   \co

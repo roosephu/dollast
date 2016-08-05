@@ -34,7 +34,7 @@ view
     .ui.input.labeled
       .ui.dropdown.compact.button.label#relationship
         input(type="hidden", name="relationship")
-        .default.text <>
+        .default.text ?
         .menu
           .item(data-value="lt") $\leqslant$
           .item(data-value="gt") $\geqslant$
@@ -96,7 +96,7 @@ view
     //   | refresh
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \debug
   \co

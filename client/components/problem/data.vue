@@ -44,7 +44,7 @@ view
                   | remove
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \vue
   \debug

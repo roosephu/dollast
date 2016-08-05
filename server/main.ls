@@ -15,7 +15,7 @@ require! {
   \path
   \debug
   \babel-polyfill
-  \../webpack.config : webpack-config
+  \../build/webpack.dev.config : webpack-dev-config
   \./config
   \./crypt
 }
@@ -44,36 +44,38 @@ app.use (next) ->*
     @compress = false
   yield next
 
-compiler = webpack webpack-config
-express-dev-middleware = webpack-dev-middleware compiler, 
-  no-info: true
-  lazy: false
-  public-path: webpack-config.output.public-path
-  stats:
-    colors: true
-express-hot-middleware = webpack-hot-middleware compiler,
-  log: debug \dollast:webpack
+if process.env.NODE_ENV == \development
 
-app.use (next) ->*
-  promise = express-dev-middleware @req, 
-    end: (content) ~>
-      @body = content
-    set-header: @set.bind @
-    co.wrap ->*
-      yield next
-  yield that if promise
+  compiler = webpack webpack-dev-config
+  express-dev-middleware = webpack-dev-middleware compiler, 
+    no-info: true
+    lazy: false
+    public-path: webpack-dev-config.output.public-path
+    stats:
+      colors: true
+  express-hot-middleware = webpack-hot-middleware compiler,
+    log: debug \dollast:webpack
 
-app.use (next) ->*
-  stream = new PassThrough!
-  @body = stream
-  promise = express-hot-middleware @req,
-    write: stream.write.bind stream
-    write-head: (state, headers) ~>
-      @state = state
-      @set headers
-    co.wrap ->*
-      yield next
-  yield that if promise 
+  app.use (next) ->*
+    promise = express-dev-middleware @req, 
+      end: (content) ~>
+        @body = content
+      set-header: @set.bind @
+      co.wrap ->*
+        yield next
+    yield that if promise
+
+  app.use (next) ->*
+    stream = new PassThrough!
+    @body = stream
+    promise = express-hot-middleware @req,
+      write: stream.write.bind stream
+      write-head: (state, headers) ~>
+        @state = state
+        @set headers
+      co.wrap ->*
+        yield next
+    yield that if promise 
 
 # ==== Session ====
 

@@ -47,7 +47,7 @@ view
         | Save
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \vue
   \co

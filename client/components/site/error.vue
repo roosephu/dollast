@@ -16,7 +16,7 @@
         | Ignore
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \vue
   \debug

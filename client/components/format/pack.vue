@@ -3,7 +3,7 @@
   a.ui.label.hvr-underline-from-center.light.teal(v-else) hidden
 </template>
 
-<script lang="livescript">
+<script>
 module.exports =
   props:
     pack: Object

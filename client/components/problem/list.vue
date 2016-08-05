@@ -18,7 +18,7 @@ view
           problem(:prob="problem")
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \vue
   \co

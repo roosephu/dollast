@@ -18,7 +18,7 @@ view
         | Login
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \debug
   \co

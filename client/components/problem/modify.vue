@@ -74,7 +74,7 @@ view
         | Dataset Manage
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \debug
   \co

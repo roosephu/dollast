@@ -4,7 +4,7 @@ div
   error(keep-alive)
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \vue
   \vue-router

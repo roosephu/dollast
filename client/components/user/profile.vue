@@ -48,7 +48,7 @@ view
             pack(:pack="pack")
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \vue
   \co

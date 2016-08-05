@@ -6,7 +6,7 @@ view
     h3.ui Hint: Try put your mouse over the logo in different pages.
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \../view
 }

@@ -19,7 +19,7 @@
   left: 50%;
   right: 50%;
   bottom: 0;
-  background: #000000;
+  background: #555555;
   height: 3px;
   -webkit-transition-property: left, right;
   transition-property: left, right;

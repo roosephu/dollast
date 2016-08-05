@@ -3,7 +3,7 @@
   a.ui.label.green.hvr-underline-from-center(v-else) hidden
 </template>
 
-<script lang="livescript">
+<script>
 module.exports =
   props:
     prob: Object

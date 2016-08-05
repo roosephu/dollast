@@ -63,7 +63,7 @@ view
               th {{sol.summary.message}}
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \debug
   \co

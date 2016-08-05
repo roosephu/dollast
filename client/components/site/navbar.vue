@@ -35,7 +35,7 @@
       | Register
 </template>
 
-<script lang="livescript">
+<script>
 require! {
   \debug
   \../../actions : {logout}
