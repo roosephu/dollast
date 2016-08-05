@@ -1,5 +1,5 @@
 <template lang="jade">
-  a.ui.label(href="#/user/{{user}}") {{user | user}}
+  a.ui.label.hvr-underline-from-center(href="#/user/{{user}}") {{user | user}}
 </template>
 
 <script lang="livescript">

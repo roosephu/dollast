@@ -61,7 +61,7 @@ view
       .ui.two.fields
         .ui.field
           label language
-          .ui.dropdown.icon.selection
+          .ui.dropdown.icon.selection#languages
             input(type="hidden", name="language")
             .default.text select your language
             i.dropdown.icon
@@ -141,4 +141,5 @@ module.exports =
     $form = $ '#submit-form'
     $form.form on-success: submit
     $form.form 'set values', @permit
+    $ '#languages' .dropdown!
 </script>

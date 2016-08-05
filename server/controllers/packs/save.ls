@@ -18,7 +18,7 @@ handler = ->*
     # TODO: can this user add a pack? 
   else
     existed = yield models.Packs.find-by-id pack._id, \permit .exec!
-    yield @assert-exist exist, \w, pack._id, \Pack
+    yield @assert-exist existed, \w, pack._id, \Pack
 
     delete pack.permit
 

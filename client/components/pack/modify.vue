@@ -12,6 +12,7 @@ view
     h2.ui.dividing.header {{formattedTitle}}
     .ui.success.message
       .header Changes saved.
+    .ui.error.message
 
     h3.ui.dividing.header Configuration
     .ui.fields.three
@@ -138,9 +139,9 @@ module.exports =
         {data: response} = yield vue.http.get "pack/#{pack}"
       if @check-response-errors response
         return null
-        pack = response.data
+      pack = response.data
 
-        {pack}
+      {pack}
 
   watch:
     'pack._id': ->

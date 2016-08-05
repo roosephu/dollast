@@ -21,6 +21,8 @@ mutations =
       token: token
 
   logout: (state) ->
+    delete local-storage.token
+    vue.http.headers.common.Authorization = ""
     state.session = guest: true
 
   raise-error: (state, error) ->
