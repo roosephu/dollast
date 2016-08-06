@@ -119,8 +119,8 @@ app.use (next) ->*
         return
   yield next
 
-if process.env.NODE_ENV == \development
-  app.use koa-mount \/monk, require \./monk
+if process.env.NODE_ENV == \mock
+  app.use koa-mount \/mock, require \./mock
 
 app.use koa-mount \/api, require \./router
 

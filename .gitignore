@@ -1,6 +1,7 @@
 node_modules/
-database/*
+database
 npm-debug.log
-bin/*
-.vscode/*
-migrate/*
+bin
+.vscode
+migrate
+public

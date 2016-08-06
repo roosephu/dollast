@@ -7,10 +7,9 @@ require! {
 module.exports = webpack-merge base,
   entry:
     app:
-      * './client/main.ls'
+      * './client/main'
         'webpack-hot-middleware/client?http://localhost:3000'
         'webpack/hot/dev-server'
-        'eventsource-polyfill'
   vue:
     loaders:
       js: \livescript

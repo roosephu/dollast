@@ -16,10 +16,12 @@ vendors =
 
 module.exports = 
   entry:
-    app: './client/main.ls'
+    app: './client/main'
     vendor: vendors
   resolve:
     extensions: [\.js, \.vue, \.ls, "", \.coffee]
+    alias: 
+      moment: "moment/min/moment-with-locales.min"
   module:
     loaders:
       * test: /\.vue$/
@@ -32,7 +34,9 @@ module.exports =
     public-path: \/assets/
   plugins: [
     new webpack.optimize.CommonsChunkPlugin \vendor, \vendors.js
+    new webpack.ContextReplacementPlugin /\.\/locale$/, 'empty-module', false, /js$/
     new webpack.optimize.OccurenceOrderPlugin!
+    new webpack.PrefetchPlugin './client/router'
     new webpack.NoErrorsPlugin!
     new webpack.DefinePlugin do
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || '"development"')

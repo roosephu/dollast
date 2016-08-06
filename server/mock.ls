@@ -24,23 +24,23 @@ class Database
 
 db = new Database!
 
-add = (ctx) ->
-  log \add, ctx.request.body
-  db.add ctx.request.body
-  ctx.body = done: true
+add = ->*
+  log \add, @request.body
+  db.add @request.body
+  @body = done: true
 
-reset = (ctx) ->
+reset = ->*
   log \reset
   db.reset!
-  ctx.body = done: true
+  @body = done: true
 
-query = (ctx) ->
-  {path} = ctx.params
+query = ->*
+  {path} = @params
   log \query, path, db.query path
-  ctx.body = db.query path
+  @body = db.query path
 
-dump = (ctx) ->
-  ctx.body = db.db
+dump = ->*
+  @body = db.db
   log \dump, db.db
 
 router = new koa-joi-router!

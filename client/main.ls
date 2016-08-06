@@ -16,7 +16,7 @@ log = debug \dollast:main
 vue.use vue-router
 require! \./router
 vue.use vue-resource
-vue.http.options.root = if process.env.NODE_ENV == \development then \/monk/query else \/api
+vue.http.options.root = if process.env.NODE_ENV == \mock then \/monk/query else \/api
 
 app = require \./components/app.vue
   ..store = require \./store
