@@ -1,5 +1,6 @@
 require! {
   \debug
+  # \node-forge : forge
 }
 
 pub-key = '''
@@ -11,7 +12,7 @@ s5vPQDiIR23dafkGODmE039aKRiTc+xxrLgx3huasFan+2yG/tiFQbXEFfAmLaal
 -----END PUBLIC KEY-----
 '''
 
-RSA-entity = forge.pki.public-key-from-pem pub-key
+# RSA-entity = forge.pki.public-key-from-pem pub-key
 
 log = debug 'dollast:auth'
 
@@ -50,7 +51,4 @@ export
 
     dec: (token) ->
       jwt-struct = token.split '.'
-      while jwt-struct[1].length % 4 != 0
-        jwt-struct[1] += "="
-      #log forge.util.decode64 jwt-struct[1]
-      payload = JSON.parse forge.util.decode64 jwt-struct[1]
+      payload = JSON.parse atob jwt-struct[1]

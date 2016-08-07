@@ -10,6 +10,7 @@ vendors =
     \vuex
     \vue-router
     \vue-resource
+    # \node-forge
     \prelude-ls
     \moment
     \flat
@@ -36,7 +37,6 @@ module.exports =
     new webpack.optimize.CommonsChunkPlugin \vendor, \vendors.js
     new webpack.ContextReplacementPlugin /\.\/locale$/, 'empty-module', false, /js$/
     new webpack.optimize.OccurenceOrderPlugin!
-    new webpack.PrefetchPlugin './client/router'
     new webpack.NoErrorsPlugin!
     new webpack.DefinePlugin do
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || '"development"')

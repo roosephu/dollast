@@ -39,10 +39,9 @@ $.fn.form.settings.defaults =
   pack:
     identifier: \pack
     rules:
-      * type: 'minLength[2]'
-        prompt: 'pack id minimum length is 2'
-      * type: 'maxLength[63]'
-        prompt: 'pack id length cannot exceed 63'
+      * type: 'integer[0..]'
+        prompt: 'pack id must be a non-negative integer'
+      ...
 
   # permit
   owner:

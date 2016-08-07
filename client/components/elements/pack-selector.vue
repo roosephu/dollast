@@ -35,4 +35,7 @@ module.exports =
         on-change: (value) ~>
           log {value}
 
+  watch:
+    'pack': ->
+      $ '#pack-selector' .dropdown \refresh
 </script>

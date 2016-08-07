@@ -12,7 +12,7 @@ view
           input(name="title")
       .ui.field.four.wide
         label pack id
-        pack-selector(:pack="pack")
+        pack-selector#pack(:pack="pack")
     .ui.field
       label judger
       .ui.dropdown.icon.fluid.selection#judger
@@ -44,7 +44,7 @@ view
     .ui.field
       .ui.field
         label description
-        textarea(name="description")
+        textarea#description(name="description")
     .ui.two.fields
       .ui.field
         label input format
@@ -148,11 +148,16 @@ module.exports =
         "Create new problem"
 
   ready: ->
+    CKEDITOR.replace \description
+
     $ \.dropdown .dropdown!
 
     submit = co.wrap (e, values) ~>*
       e.prevent-default!
-      problem = get-form-values values
+      description = CKEDITOR.instances.description.get-data!
+
+      problem = get-form-values values <<<< {description}
+
       log {problem}
       {data: response} = yield @$http.post "problem", problem
       @check-response-errors response, $ '#problem-modify'
@@ -179,7 +184,6 @@ module.exports =
   watch:
     'problem._id': ->
       @$next-tick ->
-        $ '#pack' .dropdown \refresh
         set-form-values @problem
 
 </script>

@@ -32,3 +32,8 @@
   left: 0;
   right: 0;
 }
+
+/* special hack. */
+.cke_dialog_background_cover {
+  visibility: hidden;
+}

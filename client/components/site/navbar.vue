@@ -1,5 +1,5 @@
 <template lang="jade">
-  .ui.left.fixed.menu.vertical.borderless.blue.inverted.labeled
+  .ui.left.fixed.menu.vertical.borderless.inverted.blue.labeled
     .item
     .ui.labeled.icon.item.dropdown#configuration
       img.centered.tiny.ui.image(src="/atm-inverted.png", align="middle")
