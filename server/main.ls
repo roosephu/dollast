@@ -35,47 +35,11 @@ app.use koa-conditional-get!
 app.use koa-etag!
 app.use koa-json!
 
-# ==== Webpack Middleware ====
-
-# we shouldn't compress webpack hot module replacement information
 app.use (next) ->*
   # log @request.method, @request.url
-  if @request.url == "/__webpack_hmr" or '/api' == @request.url.substr 0, 4
+  if '/api' == @request.url.substr 0, 4
     @compress = false
   yield next
-
-if process.env.NODE_ENV == \development
-
-  compiler = webpack webpack-dev-config
-  express-dev-middleware = webpack-dev-middleware compiler, 
-    no-info: true
-    lazy: false
-    public-path: webpack-dev-config.output.public-path
-    stats:
-      colors: true
-  express-hot-middleware = webpack-hot-middleware compiler,
-    log: debug \dollast:webpack
-
-  app.use (next) ->*
-    promise = express-dev-middleware @req, 
-      end: (content) ~>
-        @body = content
-      set-header: @set.bind @
-      co.wrap ->*
-        yield next
-    yield that if promise
-
-  app.use (next) ->*
-    stream = new PassThrough!
-    @body = stream
-    promise = express-hot-middleware @req,
-      write: stream.write.bind stream
-      write-head: (state, headers) ~>
-        @state = state
-        @set headers
-      co.wrap ->*
-        yield next
-    yield that if promise 
 
 # ==== Session ====
 
