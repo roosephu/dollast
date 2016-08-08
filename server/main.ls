@@ -8,14 +8,8 @@ require! {
   \koa-send
   \koa-etag
   \koa-jwt
-  \stream : {PassThrough}
-  \webpack-dev-middleware
-  \webpack-hot-middleware
-  \webpack
   \path
   \debug
-  \babel-polyfill
-  \../build/webpack.dev.config : webpack-dev-config
   \./config
   \./crypt
 }

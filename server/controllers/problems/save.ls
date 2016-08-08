@@ -18,6 +18,8 @@ handler = ->*
     log "saving new problem using id #{problem._id}"
 
     # TODO: check whether user can create a problem here
+
+    problem.permit <<<< {parent-type: \Pack, parent-id: problem.config.pack}
   else
 
     existed = yield models.Problems.find-by-id problem._id, \permit .exec!
@@ -39,10 +41,16 @@ module.exports =
   validate:
     type: \json
     body:
-      _id: validator.problem!
+      _id: validator.problem!.optional!
       outlook:
         title: Joi .string! .min 1 .max 63
+        description: Joi .string! .min 1 .max 65535
+        sample-input: Joi .string! .min 1 .max 65535
+        sample-output: Joi .string! .min 1 .max 65535
+        input-format: Joi .string! .min 1 .max 65535
+        output-format: Joi .string! .min 1 .max 65535
       config:
+        pack: validator .pack!
         stack-limit: Joi .number! .greater 0
         time-limit: Joi .number! .greater 0
         output-limit: Joi .number! .greater 0

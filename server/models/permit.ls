@@ -29,15 +29,16 @@ action-name =
 	x: \execute
 
 schema.methods.check-access = co.wrap (user, action) ->*
-	log "checking permit:", user, action, {@owner, @group, @access}
+	owner = @owner-document!
+	{_id} = owner
+	type = owner.get-display-name!
+
+	log "checking permit:", type, _id, user, action  
 
 	if @parent-id
 		parent = yield models[translate @parent-type] .find-by-id @parent-id .exec!
 		yield parent.permit.check-access user, action
 
-	owner = @owner-document!
-	{_id} = owner
-	type = owner.get-display-name!
 	# if user.groups.admin != void
 		# return true
 
@@ -64,6 +65,7 @@ schema.methods.check-access = co.wrap (user, action) ->*
 		user: user._id
 		action: action-name[action]
 		doc: {@owner, @group, @access}
+	true
 
 schema.methods.check-owner = (user) ->
 	owner = @owner-document!

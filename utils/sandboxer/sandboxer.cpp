@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <map>
 #include <cstring>
 #include <cstdlib>
 #include <cassert>
@@ -46,6 +47,7 @@ typedef unsigned long long uint64;
 pid_t pid;
 char *program, *fn_in, *fn_out;
 string syscall_name[max_sys_calls];
+map<string, int> syscall_ids;
 
 set<string> white_list;
 
@@ -181,8 +183,10 @@ void load_syscalls(string conf) {
 	ifstream fin(conf);
 	assert(fin);
 	int id;
-	for (string name; fin >> name >> id; )
+	for (string name; fin >> name >> id; ) {
 		syscall_name[id] = name;
+		syscall_ids[name] = id;
+	}
 }
 
 void load_white_list(string conf) {
@@ -197,8 +201,11 @@ void load_white_list(string conf) {
 void load_func_conf(string conf) {
 	ifstream fin(conf); assert(fin);
 
-	for (int id, cnt; fin >> id >> cnt; )
+	string name;
+	for (int cnt; fin >> name >> cnt; ) {
+		int id = syscall_ids[name];
 		maxcnt[id] = cnt;
+	}
 }
 
 void init(int argc, char **args) {

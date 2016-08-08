@@ -1,19 +1,23 @@
 require! {
+  \debug
   \../validator
   \../../models
+  \../../core
 }
+
+log = debug \dollast:ctrl:data:upload
 
 handler = ->*
   log \uploading
-  {pid} = @params
+  {problem} = @params
 
-  problem = yield models.Problems.find-by-id pid, \permit .exec!
-  yield @assert-exist problem, \w, pid, \Problem
+  problem = yield models.Problems.find-by-id problem, \permit .exec!
+  yield @assert-exist problem, \w, @params.problem, \Problem
 
-  parts = yield @request.parts
+  parts = @request.parts
   while part = yield parts
     log {part}
-    @body = yield core.upload pid, part
+    @body = yield core.upload problem._id, part
   pairs = yield problem.rebuild!
 
   @body = 

@@ -72,8 +72,8 @@ module.exports =
         dataset: []
 
   route:
-    data: co.wrap (to: params: {problem}) ~>*
-      {data: response} = yield vue.http.get "problem/#{problem}"
+    data: co.wrap (to: params: {problem}) ->*
+      {data: response} = yield @$http.get "problem/#{problem}"
       if @check-response-errors response
         return null
       problem = response.data

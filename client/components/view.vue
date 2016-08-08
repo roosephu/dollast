@@ -6,7 +6,7 @@ div
     .row
       .four.wide.column
       .ten.wide.column#viewpoint
-        slot(name="main")
+        slot#main(name="main")
     .row
       .two.wide.column
       .twelve.wide.column.centered

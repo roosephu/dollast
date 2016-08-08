@@ -26,7 +26,8 @@ view
     h2.ui.header.dividing code
     .ui.segment
       .ui.top.attached.label code
-      pre(:class="[sol.langauge]")#code {{sol.code}}
+      pre.line-numbers
+        code#code(:class="['language-' + sol.language]") {{sol.code}} 
 
     p(v-if="sol.summary.status == 'private'") this code is private
     .ui.segment(v-if="sol.summary.status == 'CE'")
@@ -68,6 +69,12 @@ require! {
   \debug
   \co
   \vue
+  \prismjs : Prism
+  \prismjs/components/prism-c
+  \prismjs/components/prism-cpp
+  \prismjs/themes/prism-solarizedlight.css
+  \prismjs/plugins/line-numbers/prism-line-numbers
+  \prismjs/plugins/line-numbers/prism-line-numbers.css
   \../view
   \../../actions : {check-response-errors}
 }
@@ -96,6 +103,12 @@ module.exports =
   computed:
     problem: ->
       @sol.problem._id
+    
+    highlighted: ->
+      if @sol.code != ""
+        Prism.highlight @sol.code, Prism.languages[@sol.language]
+      else
+        ""
 
   route:
     data: co.wrap (to: params: {sid}) ->*
@@ -109,8 +122,9 @@ module.exports =
   watch:
     'sol.code': ->
       @$next-tick ->
-        block = $ '#code' .0
-        hljs.highlight-block block
-
+        Prism.highlight-all!
+        # block = $ '#code' .0
+        # hljs.highlight-block block
+        # hljs.line-numbers-block block
 
 </script>

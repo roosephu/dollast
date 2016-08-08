@@ -10,7 +10,7 @@ vendors =
     \vuex
     \vue-router
     \vue-resource
-    # \node-forge
+    \prismjs
     \prelude-ls
     \moment
     \flat
@@ -20,7 +20,7 @@ module.exports =
     app: './client/main'
     vendor: vendors
   resolve:
-    extensions: [\.js, \.vue, \.ls, "", \.coffee]
+    extensions: [\.js, \.vue, \.ls, "", \.coffee, \css]
     alias: 
       moment: "moment/min/moment-with-locales.min"
   module:
@@ -29,10 +29,12 @@ module.exports =
         loader: 'vue'
       * test: /\.ls$/
         loader: 'livescript'
+      * test: /\.css$/
+        loader: 'style!css'
   output:
-    path: path.join __dirname, \../public/assets
+    path: path.join __dirname, \../public
     filename: \app.js
-    public-path: \/assets/
+    public-path: \/
   plugins: [
     new webpack.optimize.CommonsChunkPlugin \vendor, \vendors.js
     new webpack.ContextReplacementPlugin /\.\/locale$/, 'empty-module', false, /js$/

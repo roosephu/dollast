@@ -36,6 +36,6 @@ CKEDITOR.editorConfig = function( config ) {
 	// Simplify the dialog windows.
 	config.removeDialogTabs = 'image:advanced;link:advanced';
 
-	// config.skin = 'office2013';
-	config.extraPlugins = 'base64image';
+	config.skin = 'office2013';
+	config.extraPlugins = 'pastebase64';
 };

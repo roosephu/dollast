@@ -9,7 +9,7 @@ module.exports = webpack-merge base,
     app:
       * './client/main'
   output:
-    public-path: 'http://localhost:8080/assets/'
+    public-path: 'http://localhost:8080/'
   vue:
     loaders:
       js: \livescript

@@ -1,5 +1,17 @@
 <template lang="jade">
 view
+  .menu(slot="config")
+    .item(v-if="problem._id != ''", @click="remove")
+      i.icon.cancel
+      | Delete
+    a.item(href="#/problem/{{problem._id}}")
+      i.icon.reply
+      | Back to Problem
+    .ui.divider
+    a.item(v-if="problem._id != ''", href="#/problem/{{problem._id}}/data")
+      i.icon.archive
+      | Dataset Manage
+
   .ui.form.basic.segment(slot="main")#problem-modify
     h2.ui.dividing.header {{title}}
     .ui.error.message
@@ -66,12 +78,6 @@ view
       .ui.icon.labeled.button.primary.submit
         i.icon.save
         | Save
-      .ui.icon.labeled.button.secondary(href="#/problem/{{problem}}")
-        i.icon.reply
-        | Back
-      a.ui.icon.labeled.button.secondary(v-if="problem != 0", href="#/problem/{{problem}}/data")
-        i.icon.archive
-        | Dataset Manage
 </template>
 
 <script>
@@ -111,9 +117,9 @@ get-form-values = (values) ->
   {outlook, config, permit}
 
 set-form-values = (data) ->
-  if data?.config?.pack?._id
-    data.config.pack .= _id
   problem = flatten-object data
+  if data.config?.pack?._id
+    problem.pack = data.config.pack._id
   $form = $ '#problem-modify'
   $form.form 'set values', problem
 
@@ -126,6 +132,12 @@ module.exports =
 
   components:
     {view, permit, pack-selector}
+
+  methods:
+    remove: co.wrap ->*
+      {data: response} = yield @$http.delete "problem/#{@problem._id}"
+      if not @check-response-errors response
+        @$route.router.go "/pack/#{@problem.config.pack._id}"
 
   data: ->
     pack: void
@@ -150,17 +162,21 @@ module.exports =
   ready: ->
     CKEDITOR.replace \description
 
-    $ \.dropdown .dropdown!
+    $ '#ain .dropdown' .dropdown!
 
     submit = co.wrap (e, values) ~>*
       e.prevent-default!
       description = CKEDITOR.instances.description.get-data!
 
       problem = get-form-values values <<<< {description}
+      if @problem._id != ""
+        problem._id = @problem._id
 
       log {problem}
       {data: response} = yield @$http.post "problem", problem
-      @check-response-errors response, $ '#problem-modify'
+      if not @check-response-errors response, $ '#problem-modify'
+        if problem._id == ""
+          @$route.router.go path: "problem/#{response._id}/modify"
 
     $form = $ '#problem-modify'
     $form.form on-success: submit

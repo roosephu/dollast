@@ -4,7 +4,7 @@ view
     .item(@click="del")
       i.icon.delete
       | Delete
-    .item(href="#!/pack/{{pack._id}}")
+    a.item(href="#!/pack/{{pack._id}}")
       i.icon.left.arrow
       | Back to Pack
 
@@ -137,11 +137,11 @@ module.exports =
     data: co.wrap (to: params: {pack}) ->*
       if pack != void
         {data: response} = yield vue.http.get "pack/#{pack}"
-      if @check-response-errors response
-        return null
-      pack = response.data
+        if @check-response-errors response
+          return null
+        pack = response.data
 
-      {pack}
+        {pack}
 
   watch:
     'pack._id': ->

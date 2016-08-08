@@ -12,7 +12,9 @@ log = debug \dollast:ctrl:submissions:list
 handler = ->*
   opts = options.sol-list-opts with @request.query
 
-  basic-filters = Obj.reject (== undefined), opts{user, pack, language}
+  basic-filters = Obj.reject (== undefined), opts{user, pack, language, problem}
+  if basic-filters.problem
+    delete basic-filters.pack
   log {opts, basic-filters}
 
   query = models.Submissions.find basic-filters, '-code -results'
@@ -44,7 +46,7 @@ module.exports =
   validate:
     query:
       user: validator.user!.optional!
-      pack: validator.pack!
+      pack: validator.pack!.optional!
       problem: validator.problem!.optional!
       page: Joi .number! .min 0
       language: Joi .string! .equal options.languages 
@@ -52,4 +54,3 @@ module.exports =
       before: Joi .date! .timestamp!
       after: Joi .date! .timestamp!
   handler: handler
-

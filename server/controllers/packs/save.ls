@@ -37,8 +37,8 @@ module.exports =
   validate:
     type: \json
     body:
-      _id: validator.pack!
-      title: Joi .string! .min 3 .max 16
+      _id: validator.pack!.optional!
+      title: Joi .string! .min 3 .max 63
       begin-time: Joi .date! .timestamp!
       end-time: Joi .date! .timestamp!
       permit: validator.permit!
