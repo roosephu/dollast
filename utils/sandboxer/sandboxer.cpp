@@ -112,7 +112,7 @@ void run_parent(pid_t pid) {
 			// cerr("[runner]utime: %ld usec\n", res.ru_utime.tv_usec);
 			// cerr("[runner]stime: %ld usec\n", res.ru_stime.tv_usec);
 			// cerr("[runner]maxrss: %ld KB\n", res.ru_maxrss);
-			double used_time = res.ru_utime.tv_usec / 1000000.0;
+			double used_time = res.ru_utime.tv_usec / 1000000.0 + res.ru_utime.tv_sec;
 			double used_mem  = res.ru_maxrss / 1024.0;
 
 			const char *msg = "OK";

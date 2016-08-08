@@ -1,5 +1,16 @@
 <template lang="jade">
 view
+  .menu(slot="config")
+    .ui.header links
+    a.item(href="#!/pack/{{pack._id}}")
+      i.icon.left.arrow
+      | Go to Pack
+    .ui.divider
+    .ui.header operations
+    .item(@click="del")
+      i.icon.delete
+      | Delete
+
   .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     table.ui.table.segment.large.green.selectable
       thead

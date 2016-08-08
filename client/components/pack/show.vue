@@ -1,6 +1,12 @@
 <template lang="jade">
 view
   .menu(slot="config")
+    .ui.header links
+    a.item(v-link="{name: 'submissions', query: {pack: pack._id}}")
+      i.icon
+      | All Submissions
+    .ui.divider
+    .ui.header filter
     .item#filter
       i.dropdown.icon
       i.icon.filter
@@ -8,7 +14,8 @@ view
       .menu
         .item(v-for="item in options", data-value="{{item}}")
           | {{item}}
-    .divider
+    .ui.divider
+    .ui.header operations
     a.item(href="#/problem/create")
       i.icon.plus
       | Add a Problem
@@ -18,10 +25,6 @@ view
     a.item(href="#/pack/{{pack._id}}/modify")
       i.icon.edit
       | Modify
-    .divider
-    a.item(v-link="{name: 'submissions', query: {pack: pack._id}}")
-      i.icon
-      | All Submissions
 
   .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Pack {{pack | pack}}

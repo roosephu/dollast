@@ -1,12 +1,15 @@
 <template lang="jade">
 view
   .menu(slot="config")
+    .ui.header links
+    a.item(href="#!/pack/{{pack._id}}")
+      i.icon.left.arrow
+      | Go to Pack
+    .ui.divider
+    .ui.header operations
     .item(@click="del")
       i.icon.delete
       | Delete
-    a.item(href="#!/pack/{{pack._id}}")
-      i.icon.left.arrow
-      | Back to Pack
 
   .ui.form.segment.basic#form-pack(slot="main")
     h2.ui.dividing.header {{formattedTitle}}

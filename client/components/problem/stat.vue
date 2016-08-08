@@ -1,9 +1,10 @@
 <template lang="jade">
 view
   .menu(slot="config")
+    .ui.header links
     a.item(href="#!/problem/{{problem._id}}") 
       i.icon.browser
-      | Go to problem
+      | Go to Problem
     a.item(v-link="{name: 'submissions', query: {problem: problem._id}}") 
       i.icon
       | All submissions

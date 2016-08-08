@@ -1,13 +1,15 @@
 <template lang="jade">
 view
   .menu(slot="config")
+    .ui.header Links
+    a.item(href="#/problem/{{problem._id}}")
+      i.icon.reply
+      | Go to Problem
+    .ui.divider
+    .ui.header Operations 
     .item(v-if="problem._id != ''", @click="remove")
       i.icon.cancel
       | Delete
-    a.item(href="#/problem/{{problem._id}}")
-      i.icon.reply
-      | Back to Problem
-    .ui.divider
     a.item(v-if="problem._id != ''", href="#/problem/{{problem._id}}/data")
       i.icon.archive
       | Dataset Manage
@@ -162,7 +164,8 @@ module.exports =
   ready: ->
     CKEDITOR.replace \description
 
-    $ '#viewpoint .dropdown' .dropdown!
+    @$next-tick ->
+      $ '#judger' .dropdown!
 
     submit = co.wrap (e, values) ~>*
       e.prevent-default!

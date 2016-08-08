@@ -1,6 +1,7 @@
 <template lang="jade">
 view
   .menu(slot="config")
+    .ui.header filter
     .item.icon#filter
       i.dropdown.icon
       i.icon.filter
@@ -8,7 +9,8 @@ view
       .menu
         .item(v-for="item in options", data-value="{{item}}")
           | {{item}}
-    .divider
+    .ui.divider
+    .ui.header operations
     a.item(href="#/pack/create")
       i.icon.plus 
       | Add a Pack

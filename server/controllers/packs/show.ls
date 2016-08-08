@@ -15,6 +15,7 @@ handler = ->*
   yield @assert-exist pack, \r, @params.pack, \Pack
 
   problems = yield models.Problems.find 'config.pack': pack._id, '_id outlook.title'
+    .sort \_id
     .lean!
     .exec!
   pack .= to-object!

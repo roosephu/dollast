@@ -23,6 +23,7 @@
     "flat": "^2.0.1",
     "jade": "^1.11.0",
     "jade-loader": "^0.8.0",
+    "javascript-natural-sort": "^0.7.1",
     "koa": "^1.2.1",
     "koa-compress": "^1.0.9",
     "koa-conditional-get": "^1.0.3",

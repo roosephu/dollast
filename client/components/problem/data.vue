@@ -1,7 +1,13 @@
 <template lang="jade">
 view
+  .menu(slot="config")
+    .ui.header links
+    a.item(href="#/problem/{{problem._id}}")
+      i.icon.reply
+      | Go to Problem
+
   .ui.form.basic.segment#form-data(:class="{loading: $loadingRouteData}", slot="main")
-    h2.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
+    h2.ui.dividing.header Problem {{problem | problem}}
 
     h3.ui.dividing.header Dataset Management
     .ui.field
@@ -65,7 +71,7 @@ module.exports =
 
   data: ->
     problem:
-      _id: 0
+      _id: ""
       outlook:
         title: ""
       config:

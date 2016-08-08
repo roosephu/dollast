@@ -1,5 +1,11 @@
 <template lang="jade">
 view
+  .menu(slot="config")
+    .ui.header links
+    a.item(href="#!/user/{{user.profile._id}}")
+      i.icon.user
+      | Go to User
+
   .ui.basic.segment.form(slot="main")#form-user
     h2.ui.dividing.header {{user.profile._id}}
     .ui.success.message

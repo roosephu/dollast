@@ -1,12 +1,15 @@
 <template lang="jade">
 view
   .menu(slot="config")
-    a.item(href="#/user/{{user}}/modify")
-      i.icon.edit
-      | Modify
+    .ui.header links
     a.item(v-link="{name: 'submissions', query: {user: user}}")
       i.icon
       | All submissions
+    .ui.divider
+    .ui.header operations
+    a.item(href="#/user/{{user}}/modify")
+      i.icon.edit
+      | Modify
 
   .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Details of {{user}}

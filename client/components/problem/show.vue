@@ -1,19 +1,21 @@
 <template lang="jade">
 view
   .menu(slot="config")
-    a.ui.icon.labeled.item(href="#/problem/{{problem._id}}/modify")
-      i.icon.edit
-      | Modify
+    .ui.header links
     a.ui.icon.labeled.item(href="#/problem/{{problem._id}}/stat")
       i.icon.chart.bar
       | Statistics
     a.item(href="#/pack/{{problem.config.pack._id}}")
       i.icon.shopping.bag
       | Back to Pack
-    .ui.divider
     a.ui.icon.labeled.item(v-link="{name: 'submissions', query: {problem: problem._id}}")
       i.icon
       | All Submissions
+    .ui.divider
+    .ui.header operations
+    a.ui.icon.labeled.item(href="#/problem/{{problem._id}}/modify")
+      i.icon.edit
+      | Modify
 
   .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}

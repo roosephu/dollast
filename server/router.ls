@@ -37,7 +37,6 @@ app.use (next) ->*
     @body = errors: @errors
   else
     @body = data: @body
-  log @body
 
 router = new koa-joi-router!
 
