@@ -71,10 +71,10 @@ void run_child() {
 
 	// cerr("[runner]redirect stdin/stdout/stderr\n");
 	int f = 0;
-	// close(2);
 	ptrace(PTRACE_TRACEME, 0, NULL, NULL);
 	f = open(fn_in , O_RDONLY); close(0); dup(f); close(f);
 	f = open(fn_out, O_WRONLY); close(1); dup(f); close(f);
+	// close(2);
 
 	execl(program, program, NULL);
 }
@@ -139,13 +139,18 @@ void run_parent(pid_t pid) {
 			case SIGFPE : msg = "FPE" ; break; // floating-point-exception
 			case SIGQUIT: msg = "QUIT"; break; // user quit
 			case SIGXFSZ: msg = "XFSZ"; break; // file-size-limit-exceeded
-			default     : msg = "UNKW"; break; // unknown-signal
+			case SIGSEGV: msg = "SEGV"; break; // segment fault
+			default     : 
+				msg = "UNKW";
+				printf("unknown signal %d\n", sig); 
+				break; // unknown-signal
 			}
 			// cerr("[runner]%s\n", msg);
 			if (sig == SIGXCPU)
 				cerr("{\"score\": 0, \"status\": \"%s\", \"time\": %.6f}\n", msg, utm_lmt);
 			else
 				cerr("{\"score\": 0, \"status\": \"%s\"}\n", msg);
+			
 
 			ptrace(PTRACE_KILL, pid, NULL, NULL);
 			break;

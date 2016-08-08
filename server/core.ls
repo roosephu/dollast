@@ -77,17 +77,20 @@ export gen-data-pairs = co.wrap (pid) ->* # what if no directory
   data-dir = path.join config.data-dir, "/#pid/"
   files = fs.readdir-sync data-dir
   log "files: #{files}"
+  acceptable-suffixes = [\ans, \out]
   pairs = []
   for inf in files # ensure no directories
     inf-path = path.join data-dir, inf
     if ".in" == path.extname inf
-      ouf = take (inf.length - 2), inf
-      ouf = ouf + "out"
-      if yield fs.exists path.join data-dir, ouf
-        log "find a pair: #{inf} => #{ouf}"
-        pairs.push do
-          input: inf
-          output: ouf
+      pref = take (inf.length - 2), inf
+      for suffix in acceptable-suffixes
+        ouf = pref + suffix
+        if yield fs.exists path.join data-dir, ouf
+          log "find a pair: #{inf} => #{ouf}"
+          pairs.push do
+            input: inf
+            output: ouf
+          break
   return pairs
 
 testlib-exitcodes =
@@ -134,7 +137,7 @@ run-atom = (pid, language, exe-path, data, cfg) ->* # TODO if file not exists, t
   exec-cmd = "\"#{config.sandboxer}\" \"#{exe-path}\" #{cfg.time-limit} #{cfg.space-limit} #{cfg.stack-limit} #{cfg.output-limit} \"#{inf}\" \"#{ouf}\""
   # log {exec-cmd}
   [proc-out, proc-err] = yield exec exec-cmd, cwd: path.dirname config.sandboxer
-  # log {proc-out, proc-err, exec-cmd}
+  log {proc-out, proc-err, exec-cmd}
   exe-res = JSON.parse proc-err
   log "sandboxer result:", exe-res
 

@@ -35,12 +35,13 @@ schema.methods.check-access = co.wrap (user, action) ->*
 
 	log "checking permit:", type, _id, user, action  
 
+	if user.groups.admin != void
+		return true
+
 	if @parent-id
 		parent = yield models[translate @parent-type] .find-by-id @parent-id .exec!
 		yield parent.permit.check-access user, action
 
-	# if user.groups.admin != void
-		# return true
 
 	offset = if @owner == user._id
 		0

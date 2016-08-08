@@ -4,7 +4,7 @@ module.exports =
     \cpp : \.cpp
     \java : \.java
   compile-fmt:
-    \cpp : (src, dst) -> "g++ #{src} -o #{dst}"
+    \cpp : (src, dst) -> "g++ #{src} -o #{dst} -DONLINE_JUDGE"
   sol-list-opts:
     page: 1
     limit: 5

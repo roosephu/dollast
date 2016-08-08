@@ -162,7 +162,7 @@ module.exports =
   ready: ->
     CKEDITOR.replace \description
 
-    $ '#ain .dropdown' .dropdown!
+    $ '#viewpoint .dropdown' .dropdown!
 
     submit = co.wrap (e, values) ~>*
       e.prevent-default!
@@ -175,7 +175,7 @@ module.exports =
       log {problem}
       {data: response} = yield @$http.post "problem", problem
       if not @check-response-errors response, $ '#problem-modify'
-        if problem._id == ""
+        if @problem._id == ""
           @$route.router.go path: "problem/#{response._id}/modify"
 
     $form = $ '#problem-modify'

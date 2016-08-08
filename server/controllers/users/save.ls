@@ -1,9 +1,12 @@
 require! {
   \koa-joi-router : {Joi}
   \prelude-ls : {difference, map}
+  \debug
   \../../models
   \../validator
 }
+
+log = debug \dollast:ctrl:user:save
 
 handler = ->*
   # @acquire-privilege \login
@@ -14,14 +17,15 @@ handler = ->*
   {_id, groups} = @request.body
 
   user = yield models.Users.find-by-id _id .exec!
-  yield @assert user, \w, _id, \User
+  log user
+  yield @assert-exist user, \w, _id, \User
 
   priv-diff = difference user.groups, groups
   if priv-diff? and priv-diff.length > 0
-    user.check-admin @state.user
+    user.permit.check-admin @state.user
   delete @request.body.permit
 
-  user <<< @request.body
+  user <<<< @request.body
   yield user.save!
 
   @body = status:
@@ -35,4 +39,7 @@ module.exports =
     type: \json
     body:
       _id : validator.user!
+      description: Joi .string!
+      groups: Joi .array! .items do 
+        Joi .string!
   handler: handler

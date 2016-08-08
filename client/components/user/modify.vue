@@ -96,7 +96,8 @@ module.exports =
       else
         updated = {_id, groups, description, old-password, new-password}
 
-      response = yield vue.http.post "user/#{_id}", updated
+      {data: response} = yield vue.http.post "user/#{_id}", updated
+      @check-response-errors response, $form
       # @props.dispatch on-update-user @props.params.user, updated
 
     $form = $ '#form-user'
