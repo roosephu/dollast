@@ -93,7 +93,7 @@ export upload = (pid, part) ->*
       move = (file) ->*
         old = path.join dir, file
         now = path.join data-dir, file
-        yield fs.move-async old, now
+        yield fs.move-async old, now, clobber: true
 
       yield move input 
       yield move output 
@@ -107,7 +107,7 @@ export delete-test-data = (pid, filename) ->*
   filename = path.basename filename
   file-path = path.join config.data-dir, "/#pid/", filename
   log "delete #{file-path}"
-  yield fs.unlink file-path
+  yield fs.unlink-async file-path
 
 export upload-image = (part) ->* # deprecated
   ext-name = path.extname part.filename

@@ -1,27 +1,25 @@
 require! {
   \koa-joi-router : {Joi}
-  \../../models
   \../validator
+  \../../models
+  \../../core
 }
 
 handler = ->*
-  {pid, file} = @params
+  {problem, file} = @params
 
-  problem = yield models.Problems.find-by-id pid, "config.dataset permit" .exec!
-  yield @assert-exist problem, \w, pid, \Problem
+  problem = yield models.Problems.find-by-id problem, "config.dataset permit" .exec!
+  yield @assert-exist problem, \w, @params.problem, \Problem
 
-  yield core.delete-test-data pid, @params
-  yield problem.rebuild!
+  yield core.delete-test-data problem._id, file
+  pairs = yield problem.rebuild!
 
-  @body = status:
-    type: "ok"
-    msg: "data has been deleted"
+  @body = pairs
 
 module.exports = 
   method: \DELETE
   path: \/data/:problem/:file
   validate:
-    type: \json
     params:
       problem: validator.problem!
       file: Joi .string! .required! # TODO: more limits (length, characters)

@@ -29,8 +29,6 @@ view
         .progress
 
     .ui.two.fields
-      //- .ui.field.four.wide#dropzone
-        //- .dropzoneText drop files here or click
       .ui.field.twelve.wide
         table.ui.table.segment
           thead
@@ -40,7 +38,7 @@ view
               th weight
               th
           tbody
-            tr(v-for="atom in problem.config.dataset")
+            tr(v-for="atom in dataset")
               td {{atom.input}}
               td {{atom.output}}
               td {{atom.weight}}
@@ -55,6 +53,7 @@ require! {
   \vue
   \debug
   \co
+  \javascript-natural-sort : natural-sort
   \../view
   \../../actions : {check-response-errors}
 }
@@ -86,6 +85,11 @@ module.exports =
 
       {problem}
 
+  computed:
+    dataset: ->
+      @problem.config.dataset .sort (a, b) ->
+        natural-sort a.input, b.input
+
   methods:
     rebuild: co.wrap ->*
       {data: response} = yield @$http.get "data/#{@problem._id}/rebuild"
@@ -93,9 +97,9 @@ module.exports =
         @problem.config.dataset = response.data
     
     remove: co.wrap (atom) ->*
-      {data: response} = yield @$http.get "data/#{@problem._id}/remove"
+      {data: response} = yield @$http.delete "data/#{@problem._id}/#{atom.input}"
       @check-response-errors response
-      log atom
+      @problem.config.dataset = response.data
 
   ready: ->
     $ 'input:text, #select' .on \click, (e) ->
