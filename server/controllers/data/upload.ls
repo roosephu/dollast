@@ -16,8 +16,7 @@ handler = ->*
 
   parts = @request.parts
   while part = yield parts
-    log {part}
-    @body = yield core.upload problem._id, part
+    @body = yield core.upload.call @, problem._id, part
   pairs = yield problem.rebuild!
 
   @body = 

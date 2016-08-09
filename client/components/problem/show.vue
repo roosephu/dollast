@@ -144,7 +144,9 @@ module.exports =
       @check-response-errors response, $form
 
     $form = $ '#submit-form'
-    $form.form on-success: submit
+    $form.form do 
+      on-success: submit
+      on: \submit
     $form.form 'set values', @permit
     $ '#languages' .dropdown!
 </script>

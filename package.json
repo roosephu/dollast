@@ -6,12 +6,11 @@
   "lisense": "CC-BY-NC-ND",
   "repository": {
     "type": "git",
-    "url": "https://github.com/roosephu/dollast.git"
+    "url": "https://github.com/roosephu/dollast"
   },
   "scripts": {
     "prod": "DEBUG=dollast:* nodemon -w server -x lsc server/main.ls",
     "dev": "DEBUG=dollast:* NODE_ENV=development nodemon -w server -x lsc server/main.ls",
-    "mock": "DEBUG=dollast:* NODE_ENV=development nodemon -w server -x lsc server/main.ls",
     "dev-server": "webpack-dev-server --config build/webpack.dev.config.ls --compress --inline --hot"
   },
   "dependencies": {
@@ -21,6 +20,7 @@
     "co": "^4.6.0",
     "co-limiter": "^1.0.3",
     "flat": "^2.0.1",
+    "fs-extra": "^0.30.0",
     "jade": "^1.11.0",
     "jade-loader": "^0.8.0",
     "javascript-natural-sort": "^0.7.1",

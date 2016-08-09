@@ -1,7 +1,7 @@
 require! {
   \async
   \util
-  \mz/fs
+  \fs-extra
   \mz/child_process : {exec}
   \tmp
   \bluebird : {promisify-all}
@@ -15,56 +15,101 @@ require! {
   \../common/options
 }
 
+fs = promisify-all fs-extra
+
 log = debug \dollast:core
 
-export compile = co.wrap (tmp-dir, lang, code) ->*
+export compile = (tmp-dir, lang, code) ->*
   src-path = path.join tmp-dir, "/main#{options.lang-suffix[lang]}"
   exe-path = path.join tmp-dir, "/main"
-  src-file = fs.create-write-stream src-path
-  yield fs.write-file src-path, code
+  yield fs.write-file-async src-path, code
 
   compile-cmd = options.compile-fmt[lang] src-path, exe-path
   log "compile-cmd #{compile-cmd}"
   yield exec compile-cmd
   return exe-path
 
-flatten-dir = (base-dir) ->*
-  walk = (dir) ->*
-    files = fs.readdir-sync dir
-    for file in files
-      if fs.stat-sync file .is-directory!
-        walk path.join dir, file
-        fs.rmdir dir
-      else if dir != base-dir
-        fs.rename-sync
-  walk base-dir
+pair-files = (files) ->
 
-export upload = co.wrap (pid, part) ->*
+  ext-type = {}
+  for suf in [\ans, \out]
+    ext-type['.' + suf] = \output
+  for suf in [\in, \inp, \inf]
+    ext-type['.' + suf] = \input
+
+  buckets = {}
+  excessive = []
+
+  for file in files # ensure no directories
+    ext = path.extname file
+    base = path.basename file, ext
+    if ext-type[ext] != void
+      buckets.{}[base].[ext-type[ext]] = file
+    else
+      excessive.push file
+  
+  pairs = []
+  for base, exts of buckets
+    if exts.input != void and exts.output != void
+      pairs.push exts
+    else
+      for key, value of exts
+        excessive.push key
+  return {pairs, excessive}
+
+export upload = (pid, part) ->*
+  data-dir = path.join config.data-dir, "/#pid"
+  yield fs.mkdirs-async data-dir
+
   ext-name = path.extname part.filename
   zip-file = tmp.file-sync postfix: ext-name
+  tmp-dir = tmp.dir-sync! 
+
   log "upload #{part.filename} -> #{zip-file.name}"
   try
     yield stream-to-promise part.pipe fs.create-write-stream zip-file.name
-    data-dir = path.join config.data-dir, "/#pid"
-    [stdout, stderr] = yield exec "7z e #{zip-file.name} -o#{data-dir} -y"
+
+    [stdout, stderr] = yield exec "7z e #{zip-file.name} -o#{tmp-dir.name} -y"
     #log "output: #{stdout} #{stderr}"
-    flatten-dir data-dir # no need to flatten
-  catch err
-    ret = status: "decompressing error"
-    log err
+  catch e
+    @assert-name \DecompressError, false, e.message
   finally
     zip-file.remove-callback!
     ret = status: "OK"
+
+  walk = (dir) ->*
+    files = yield fs.readdir-async dir
+
+    file-list = []
+    for file in files
+      whole-path = path.join dir, file
+      if fs.stat-sync whole-path .is-directory!
+        yield walk whole-path
+      else
+        file-list.push file
+    {pairs, excessive} = pair-files file-list
+    for pair in pairs
+      {input, output} = pair
+      move = (file) ->*
+        old = path.join dir, file
+        now = path.join data-dir, file
+        yield fs.move-async old, now
+
+      yield move input 
+      yield move output 
+  
+  yield walk tmp-dir.name
+
   log "unzip status: #{util.inspect ret}"
   return ret
 
-export delete-test-data = co.wrap (pid, filename) ->*
+export delete-test-data = (pid, filename) ->*
   filename = path.basename filename
   file-path = path.join config.data-dir, "/#pid/", filename
   log "delete #{file-path}"
   yield fs.unlink file-path
 
-export upload-image = co.wrap (part) ->* # deprecated
+export upload-image = (part) ->* # deprecated
   ext-name = path.extname part.filename
   {name: image-file} = tmp.file-sync postfix: ext-name, prefix: "", dir: config.image-dir, keep: true
   log "image upload #{part.filename} -> #{path.resolve image-file}"
@@ -73,24 +118,10 @@ export upload-image = co.wrap (part) ->* # deprecated
   log image-file, base-name
   return "/image/#{base-name}"
 
-export gen-data-pairs = co.wrap (pid) ->* # what if no directory
+export gen-data-pairs = (pid) ->* # what if no directory
   data-dir = path.join config.data-dir, "/#pid/"
-  files = fs.readdir-sync data-dir
-  log "files: #{files}"
-  acceptable-suffixes = [\ans, \out]
-  pairs = []
-  for inf in files # ensure no directories
-    inf-path = path.join data-dir, inf
-    if ".in" == path.extname inf
-      pref = take (inf.length - 2), inf
-      for suffix in acceptable-suffixes
-        ouf = pref + suffix
-        if yield fs.exists path.join data-dir, ouf
-          log "find a pair: #{inf} => #{ouf}"
-          pairs.push do
-            input: inf
-            output: ouf
-          break
+  files = yield fs.readdir-async data-dir
+  {pairs, excessive} = pair-files files
   return pairs
 
 testlib-exitcodes =
@@ -103,7 +134,7 @@ testlib-exitcodes =
 drop-first-line = (message) ->
   unlines drop 1, lines message
 
-judge-result = co.wrap (pid, input-file, output-file, answer-file, cfg) ->*
+judge-result = (pid, input-file, output-file, answer-file, cfg) ->*
   judger = switch cfg.judger
     | 'custom'  => path.join config.data-dir, "/#pid/", "/judge"
     | otherwise => path.join config.judger-dir, "/#{cfg.judger}"
@@ -168,7 +199,7 @@ calc-problem-score = (results) ->
   ret.score = if ws then sum / ws else 0
   return ret
 
-export judge = co.wrap (language, code, problem-config, doc) ->*
+export judge = (language, code, problem-config, doc) ->*
   log "Start judging: language: #{language}"
   tmp-dir = tmp.dir-sync unsafe-cleanup: true
   config = problem-config.to-object!

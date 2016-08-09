@@ -17,6 +17,7 @@ app.use (next) ->*
   @errors = []
   @assert = err.assert
   @assert-exist = err.assert-exist
+  @assert-name = err.assert-name
 
   # log "response:", @body, @errors
   log "#{@req.method} #{@req.url}:", @request.body

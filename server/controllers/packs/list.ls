@@ -4,6 +4,7 @@ require! {
 
 handler = ->*
   @body = yield models.Packs.find {}, 'title beginTime endTime'
+    .sort \_id 
     .lean!
     .exec!
 

@@ -29,11 +29,11 @@ app.use koa-conditional-get!
 app.use koa-etag!
 app.use koa-json!
 
-app.use (next) ->*
-  # log @request.method, @request.url
-  if '/api' == @request.url.substr 0, 4
-    @compress = false
-  yield next
+# app.use (next) ->*
+#   # log @request.method, @request.url
+#   if '/api' == @request.url.substr 0, 4
+#     @compress = false
+#   yield next
 
 # ==== Session ====
 
