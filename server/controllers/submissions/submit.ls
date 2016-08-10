@@ -13,11 +13,12 @@ handler = ->*
   {problem, code, language, permit} = @request.body
 
   problem = yield models.Problems.find-by-id problem, "permit config" 
-    .populate 'config.pack', 'title' 
+    .populate 'config.pack', 'finished' 
     .exec!
   yield @assert-exist problem, \x, problem._id, \Problem
 
   pack = problem.config.pack._id
+  hidden = pack.finished
   {user} = @state.user.client
 
   # @ensure-access model, 0, \x # sol = 0 => submission
@@ -28,6 +29,7 @@ handler = ->*
     problem: problem._id
     user: user
     pack: pack
+    hidden: pack
     summary:
       status: \running
       score: 0

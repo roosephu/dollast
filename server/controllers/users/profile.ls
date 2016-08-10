@@ -1,14 +1,18 @@
 require! {
   \prelude-ls : {map}
+  \debug
   \../validator
   \../../models
 }
+
+log = debug \dollast:ctrl:user:profile
 
 handler = ->*
   {user} = @params
 
   profile = yield models.Users.find-by-id user, \-password .lean! .exec!
   solved-problem-ids = yield models.Submissions.get-user-solved-problem-ids user
+  log solved-problem-ids
   solved-problems = yield models.Problems.populate solved-problem-ids, path: '_id', select: '_id outlook.title'
   solved-problems = map (._id), solved-problems 
 

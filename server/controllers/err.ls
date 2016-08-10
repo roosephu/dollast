@@ -8,6 +8,11 @@ class Err extends Error
     @re = true
     @details = prop
 
+action-name = 
+  r: \read
+  w: \write
+  x: \execute
+
 module.exports = 
   assert: (statement, _id, type, detail, field) ->
     return if statement
@@ -30,7 +35,14 @@ module.exports =
   
   assert-exist: co.wrap (obj, action, _id, type) ->*
     if obj
-      yield obj.permit.check-access @state.user, action
+      result = yield obj.permit.check-access @state.user, action
+      if !result
+        throw new Err do
+          _id: _id
+          type: type 
+          user: @state.user._id
+          action: action-name[action]
+          doc: obj.permit{owner, group, access}
     else
       err = new Err {_id, type}
       err.name = \Nonexistence

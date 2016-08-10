@@ -25,6 +25,9 @@ handler = ->*
     # flat it!
     pack |>= flat
 
+  # always set true, so that the triggers can find it and try to update all solutions
+  pack.flag = true 
+
   @body = yield models.Packs.update _id: pack._id, pack, upsert: true .exec!
 
   @body =

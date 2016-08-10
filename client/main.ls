@@ -24,14 +24,14 @@ app = vue.extend app
 
 router.start app, '#app'
 
-if MathJax
+if MathJax?
   MathJax.Hub.Config do
     tex2jax:
       inline-math:
         * ['$','$']
         * ['\\(','\\)']
 else
-  log.error 'No MathJax found.'
+  log 'No MathJax found.'
 
 if module.hot
   module.hot.accept!

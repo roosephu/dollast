@@ -20,6 +20,7 @@ atom-result-schema = new Schema do
 
 schema = new Schema do
   _id: String
+  hidden: type: Boolean, required: true
   date: type: Date, default: Date.now
   code: String
   language: String
@@ -65,7 +66,7 @@ schema.methods.get-display-name = -> \Submission
 schema.statics.get-user-solved-problem-ids = (user) ->*
   # log {user, model.aggregate}
   query = model.aggregate do
-    * $match: user: user, 'summary.score': 1
+    * $match: user: user, 'summary.score': 1, hidden: false
     * $sort: problem: 1
     * $group:
         _id: \$problem

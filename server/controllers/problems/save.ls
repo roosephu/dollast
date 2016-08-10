@@ -27,6 +27,7 @@ handler = ->*
 
     # TODO: check permit is not modified here
     # only owner can transfer owner
+    delete problem.permit
 
     # we are updating!
     problem |>= flat

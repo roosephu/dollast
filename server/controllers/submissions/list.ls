@@ -19,16 +19,34 @@ handler = ->*
 
   query = models.Submissions.find basic-filters, '-code -results'
     .populate \problem, 'outlook.title'
-    .populate \pack, 'title beginTime'
+    .populate \pack, 'title endTime'
     .sort '-date'
     .lean!
   if opts.page
     query .= skip (opts.page - 1) * opts.limit
     query .= limit opts.limit
-  if opts.relationship and opts.threshold
-    switch opts.relationship
-      | \lt => query .= where 'summary.score' .lte opts.threshold
-      | \gt => query .= where 'summary.score' .gte opts.threshold
+  if opts.relationship in [\lt, \gt] and opts.threshold
+    log \???
+    # if current user is the owner of request pack, then he can see all submissions
+    check = false
+    if @state.user.admin?
+      check = true
+    else if opts.pack
+      pack = yield models.Packs.find-by-id opts.pack, \permit .exec!
+      if pack.permit.check-owner @state.user
+        check = true  
+
+    fn = 'summary.score': 
+      switch opts.relationship
+        | \lt => $lte: opts.threshold 
+        | \gt => $gte: opts.threshold
+
+    if not check
+      log 'show public submissions'
+      query .= and ['hidden': true, fn]
+    else
+      log 'show hidden submissions'
+      query .= where fn 
   if opts.before or opts.after
     query .= where 'date'
     if opts.before
@@ -37,6 +55,11 @@ handler = ->*
       query .= gte opts.after
 
   submissions = yield query.exec!
+  current-time = new Date!
+  for submission in submissions
+    if submission.pack.endTime > current-time
+      submission.summary = 
+        status: \hidden
 
   @body = submissions
 

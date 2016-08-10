@@ -13,7 +13,7 @@ view
       | Go to Pack
 
   .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
-    h1.ui.header.dividing submissionution {{$route.params.sid}}
+    h1.ui.header.dividing Submission {{$route.params.sid}}
     .ui.olive.labels
       .ui.label {{submission.permit.owner}}
         .detail owner
@@ -34,7 +34,8 @@ view
     .ui.segment(v-if="submission.summary.status == 'CE'")
       .ui.top.attached.label Error message
       pre {{submission.summary.message}}
-    .ui(v-if="submission.summary.status == 'running'") running
+    h2.ui(v-if="submission.summary.status == 'running'") running
+    h2.ui(v-if="submission.summary.status == 'hidden'") hidden
     div(v-if="submission.summary.status == 'finished'")
       .ui
         h1.ui.header.dividing details
@@ -97,7 +98,7 @@ module.exports =
       summary: {}
       results: []
       problem:
-        _id: 0
+        _id: "0"
       permit:
         owner: ""
         group: ""

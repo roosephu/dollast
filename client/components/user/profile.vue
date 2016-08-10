@@ -57,12 +57,19 @@ require! {
   \co
   \moment
   \debug
+  \javascript-natural-sort : natural-sort
   \../view
   \../format
   \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:components:user:profile
+
+natural-sort-by = (f) ->
+  (a, b) ->
+    a |>= f
+    b |>= f
+    natural-sort a, b
 
 module.exports =
   vuex:
@@ -89,6 +96,9 @@ module.exports =
       if @check-response-errors response
         return null
       profile = response.data
+      profile.solved-problems .= sort natural-sort-by (._id)
+      profile.owned-problems .= sort natural-sort-by (._id)
+      profile.owned-packs .= sort natural-sort-by (._id)
 
       profile
 

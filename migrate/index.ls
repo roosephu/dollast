@@ -8,9 +8,6 @@ require! {
 
 log = debug \dollast:migrate
 
-permit-schema = new Schema Schema.Types.Mixed
-permit-model = conn.model \Permit, permit-schema
-
 convert = co.wrap (permit) ->*
   new-permit = permit{owner, group, access}
   if permit.parent
@@ -21,13 +18,15 @@ convert = co.wrap (permit) ->*
 
 co ->*
   try
-    # for pack in yield models.Packs.find!.exec!
-    #   permit-id = pack.permit
-    #   permit = yield permit-model.find-by-id permit-id .lean! .exec!
-    #   new-permit = yield convert permit
-    #   log permit, new-permit
-    #   pack.permit = new-permit
-    #   yield pack.save!
+    for pack in yield models.Packs.find!.exec!
+      pack.flag = true
+      yield pack.save!
+      # permit-id = pack.permit
+      # permit = yield permit-model.find-by-id permit-id .lean! .exec!
+      # new-permit = yield convert permit
+      # log permit, new-permit
+      # pack.permit = new-permit
+      # yield pack.save!
 
       # permit = new models.permit pack.permit
       # permit.src-id = pack._id
@@ -49,12 +48,14 @@ co ->*
     #   problem.save!
 
     # for submission in yield models.Submissions.find!.exec!
-    #   permit-id = submission.permit
-    #   permit = yield permit-model.find-by-id permit-id .lean! .exec!
-    #   new-permit = yield convert permit
-    #   log permit, new-permit
-    #   submission.permit = new-permit
-    #   submission.save!
+    #   submission.hidden = true
+    #   log submission
+      # permit-id = submission.permit
+      # permit = yield permit-model.find-by-id permit-id .lean! .exec!
+      # new-permit = yield convert permit
+      # log permit, new-permit
+      # submission.permit = new-permit
+      # submission.save!
 
     # for user in yield models.Users.find!.exec!
     #   permit-id = user.permit

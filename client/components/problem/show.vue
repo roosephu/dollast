@@ -132,7 +132,7 @@ module.exports =
   watch:
     'problem._id': ->
       @$next-tick ~>
-        if MathJax
+        if MathJax?
           MathJax.Hub.Queue [\Typeset, MathJax.Hub]
       
   ready: ->

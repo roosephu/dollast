@@ -81,11 +81,11 @@ view
             problem(:prob="sol.problem")
           td
             user(:user="sol.user")
-          td(v-if="sol.summary.status != 'running'") {{sol.summary.score | decimal 3}}
-          td(v-else) running
-          td(v-if="sol.summary.status != 'running'") {{sol.summary.time | decimal 3}}
+          td(v-if="sol.summary.status == 'finished'") {{sol.summary.score | decimal 3}}
+          td(v-else) {{sol.summary.status}}
+          td(v-if="sol.summary.status == 'finished'") {{sol.summary.time | decimal 3}}
           td(v-else)
-          td(v-if="sol.summary.status != 'running'") {{sol.summary.space | decimal 3}}
+          td(v-if="sol.summary.status == 'finished'") {{sol.summary.space | decimal 3}}
           td(v-else)
           td {{sol.language}}
           td(v-if="sol.pack")
@@ -144,8 +144,6 @@ module.exports =
   route:
     data: co.wrap ->* 
       {query} = @$route
-      if not query.pack
-        query.pack = \0
       if query.page
         query.page |>= parse-int
       else
@@ -236,7 +234,7 @@ module.exports =
           optional: true
 
     $ '#relationship, #language, #search' .dropdown on: \hover
-    if MathJax
+    if MathJax?
       MathJax.Hub.Queue [\Typeset, MathJax.Hub]
 
 </script>

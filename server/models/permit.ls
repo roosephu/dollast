@@ -23,11 +23,6 @@ translate = (name) ->
 		name = name + \s
 	capitalize name
 
-action-name = 
-	r: \read
-	w: \write
-	x: \execute
-
 schema.methods.check-access = co.wrap (user, action) ->*
 	owner = @owner-document!
 	{_id} = owner
@@ -40,8 +35,9 @@ schema.methods.check-access = co.wrap (user, action) ->*
 
 	if @parent-id
 		parent = yield models[translate @parent-type] .find-by-id @parent-id .exec!
-		yield parent.permit.check-access user, action
-
+		result = yield parent.permit.check-access user, action
+		if !result
+			return false
 
 	offset = if @owner == user._id
 		0
@@ -54,38 +50,43 @@ schema.methods.check-access = co.wrap (user, action) ->*
 		| \r => 0
 		| \w => 1
 		| \x => 2
-		| _ => 
-			assert false,
-				_id: _id
-				type: type
-				action: action
+		| _ => -1
+	if pos == -1
+		return false
+			# assert false,
+			# 	_id: _id
+			# 	type: type
+			# 	action: action
 
-	assert @access[pos] == action, 
-		_id: _id
-		type: type
-		user: user._id
-		action: action-name[action]
-		doc: {@owner, @group, @access}
-	true
+	return @access[pos] == action
+	# assert @access[pos] == action, 
+	# 	_id: _id
+	# 	type: type
+	# 	user: user._id
+	# 	action: action-name[action]
+	# 	doc: {@owner, @group, @access}
+	# true
 
 schema.methods.check-owner = (user) ->
 	owner = @owner-document!
-	{_id} = owner
-	type = owner.get-display-name!
-	assert @owner == user._id, 
-		_id: _id
-		type: type
-		user: user._id
-		action: "ownership"
+	if user.groups.admin != void
+		return true
+	return @owner == user._id
+	# assert @owner == user._id, 
+	# 	_id: _id
+	# 	type: type
+	# 	user: user._id
+	# 	action: "ownership"
 
 schema.methods.check-admin = (user) ->
 	owner = @owner-document!
-	{_id} = owner
-	type = owner.get-display-name!
-	assert user.groups.admin, 
-		_id: _id
-		type: type
-		user: user._id
-		action: "administrator"
+	if user.groups.admin?
+		return true
+	return false
+	# assert user.groups.admin, 
+	# 	_id: _id
+	# 	type: type
+	# 	user: user._id
+	# 	action: "administrator"
 
 module.exports = schema

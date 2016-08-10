@@ -13,6 +13,7 @@ log = debug \dollast:model:pack
 
 schema = new Schema do
   _id: String
+  flag: type: Boolean, default: -> true
   date: type: Date, default: Date.now
   title: String
   begin-time: type: Date, default: Date.now
@@ -21,7 +22,7 @@ schema = new Schema do
   permit: permit
 
 schema.index do
-  begin-time: 1
+  end-time: 1
 
 schema.statics.next-count = conn.make-next-count config.starting-ids.problems
 

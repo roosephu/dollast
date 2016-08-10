@@ -5,11 +5,6 @@ view
     a.item(href="#!/pack/{{pack._id}}")
       i.icon.left.arrow
       | Go to Pack
-    .ui.divider
-    .ui.header operations
-    .item(@click="del")
-      i.icon.delete
-      | Delete
 
   .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     table.ui.table.segment.large.green.selectable
@@ -17,14 +12,14 @@ view
         tr
           th user
           th total
-          th(v-for="problem in problems")
+          th(v-for="problem in pack.problems")
             problem(:prob="problem")
       tbody
         tr(v-for="record in board")
           td
             user(:user="record[0]")
           td {{record[1].total}}
-          td(v-for="problem in problems")
+          td(v-for="problem in pack.problems")
             a(href="#!/submission/{{record[1][problem._id].solution}}") {{record[1][problem._id].score}}
   
     p Note: only last submission is considered. 
@@ -62,7 +57,9 @@ module.exports =
 
   data: ->
     board: []
-    problems: []
+    pack: 
+      problems: []
+      _id: "0"
 
   route:
     data: co.wrap (to: params: {pack}) ->*
@@ -77,6 +74,6 @@ module.exports =
       submissions = response.data
 
       board = generate-board submissions |> obj-to-pairs |> sort |> reverse
-      {board} <<<< pack{problems}
+      {board, pack}
 
 </script>
