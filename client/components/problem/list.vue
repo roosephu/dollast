@@ -1,5 +1,6 @@
 <template lang="jade">
-  .ui
+view
+  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
     h1.ui.dividing.header Problem List
     .ui.dropdown.floated.pointing.button.labeled.icon
       input(type="hidden", name="filter")
@@ -10,21 +11,21 @@
     a.ui.icon.labeled.button.right.floated.primary(href="#/problem/create")
       i.icon.plus
       | create
-    .ui.segment
-      .ui.very.relaxed.divided.link.list
-        .item(v-for="problem in problems")
-          .ui.right.floated ??
-          .ui.description
-            problem(:prob="problem")
+    .ui.very.relaxed.divided.link.list#problems
+      .item(v-for="problem in problems")
+        .ui.right.floated ??
+        .ui.description
+          problem(:prob="problem")
 </template>
 
-<script lang="vue-livescript">
+<script>
 require! {
   \vue
   \co
   \debug
-  \../format/problem
-  \../../actions : {raise-error}
+  \../view
+  \../format
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:problem:list
@@ -32,7 +33,7 @@ log = debug \dollast:component:problem:list
 module.exports =
   vuex:
     actions:
-      {raise-error}
+      {check-response-errors}
 
   data: ->
     filter: \all
@@ -40,13 +41,12 @@ module.exports =
     problems: []
 
   components:
-    {problem}
+    {view} <<< format{problem}
 
   route:
     data: co.wrap ->*
-      {data: response} = yield vue.http.get \/problem
-      if response.errors
-        @raise-error response
+      {data: response} = yield vue.http.get \problem
+      if @check-response-errors response
         return null
       problems = response.data
 

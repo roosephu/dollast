@@ -1,9 +1,9 @@
 <template lang="jade">
-  a.ui.label.grey(href="#/solution/{{sid}}") {{sid}}
+  a.ui.label.hvr-underline-from-center.grey(href="#/submission/{{sid}}") {{sid}}
 </template>
 
-<script lang="vue-livescript">
+<script>
 module.exports =
   props:
-    sid: Number
+    sid: String
 </script>

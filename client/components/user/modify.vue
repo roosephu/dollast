@@ -1,5 +1,12 @@
 <template lang="jade">
-  .ui.form#form-user
+view
+  .menu(slot="config")
+    .ui.header links
+    a.item(href="#!/user/{{user.profile._id}}")
+      i.icon.user
+      | Go to User
+
+  .ui.basic.segment.form(slot="main")#form-user
     h2.ui.dividing.header {{user.profile._id}}
     .ui.success.message
       .header Changes saved.
@@ -17,7 +24,7 @@
     .ui.two.fields
       .ui.field
         label describe yourself
-        textarea(name="desc")
+        textarea(name="description")
 
     h3.ui.dividing.header Password
     .four.fields.wide
@@ -44,26 +51,38 @@
       | submit
 </template>
 
-<script lang="vue-livescript">
+<script>
 require! {
   \co
   \vue
   \debug
+  \../view
+  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:components:user:modify
 
 module.exports =
+  vuex:
+    actions:
+      {check-response-errors}
+
+  components:
+    {view}
+
   data: ->
-    groups: [\problems, \solutions, \admin, \rounds]
+    groups: [\problems, \submissions, \admin, \packs]
     user:
       profile:
         _id: ""
         groups: []
 
   route:
-    data: co.wrap (to: params: {uid}) ->*
-      {data: user} = yield vue.http.get "/user/#{uid}"
+    data: co.wrap (to: params: {user}) ->*
+      {data: response} = yield vue.http.get "user/#{user}"
+      if @check-response-errors response
+        return null
+      {data: user} = response 
       {user}
 
   ready: ->
@@ -74,51 +93,26 @@ module.exports =
     submit = co.wrap (e) ~>*
       e.prevent-default!
       $form = $ '#form-user'
-      {groups, old-password, new-password, confirm-password, desc} = $form.form 'get values'
+      {groups, old-password, new-password, confirm-password, description} = $form.form 'get values'
       groups = groups.split ','
-      _id = @user.profile._id
+      {_id} = @user.profile
 
       if old-password == "" or new-password == ""
-        updated = {_id, groups, desc}
+        updated = {_id, groups, description}
       else
-        updated = {_id, groups, desc, old-password, new-password}
+        updated = {_id, groups, description, old-password, new-password}
 
-      response = yield vue.http.post "/user/#{_id}", updated
-      # @props.dispatch on-update-user @props.params.uid, updated
+      {data: response} = yield vue.http.post "user/#{_id}", updated
+      @check-response-errors response, $form
+      # @props.dispatch on-update-user @props.params.user, updated
 
     $form = $ '#form-user'
-    $form.form do
-      on-success: submit
-      on: \blur
-      inline: true
-      fields:
-        old-password:
-          identifier: \oldPassword
-          optional: true
-          rules:
-            * type: \isPassword
-              prompt: "must be password"
-            ...
-        new-password:
-          identifier: \newPassword
-          optional: true
-          rules:
-            * type: \isPassword
-              prompt: "must be password"
-            ...
-        confirmation:
-          identifier: \confirmPassword
-          optional: true
-          rules:
-            * type: \isPassword
-              prompt: "must be password"
-            * type: "match[newPassword]"
-              prompt: "password must match"
+    $form.form on-success: submit
 
   watch:
     'user.profile._id': ->
       $form = $ '#form-user'
       @$next-tick ~>
-        $form.form 'set values', groups: @user.profile.groups, desc: @user.profile.desc
+        $form.form 'set values', @user.profile{groups, description}
 
 </script>

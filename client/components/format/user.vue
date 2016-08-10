@@ -1,9 +1,9 @@
 <template lang="jade">
-  a.ui.label(href="#/user/{{uid}}") {{uid}}
+  a.ui.label.hvr-underline-from-center(href="#/user/{{user}}") {{user | user}}
 </template>
 
-<script lang="vue-livescript">
+<script>
 module.exports =
   props:
-    uid: String
+    user: String
 </script>

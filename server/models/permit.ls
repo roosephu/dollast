@@ -1,22 +1,43 @@
 require! {
 	\mongoose : {Schema}
-	\./conn : {conn}
 	\debug
-	\../Exception
+	\co
+	\prelude-ls : {capitalize}
+	\./conn : {conn}
+	\../controllers/err : {assert-permit: assert}
+	\. : models
 }
 
 log = debug \dollast:models:permit
 
 schema = new Schema do
 	_id: false
-	owner: type: String, ref: \user
+	parent-type: String
+	parent-id: type: String, ref-path: \srcType 
+	owner: type: String, ref: \User
 	group: String
 	access: String
 
-schema.methods.check-access = (user, action) ->
-	log "checking permit:", user, {@owner, @group, @access}
+translate = (name) ->
+	if \s != name.substr -1
+		name = name + \s
+	capitalize name
+
+schema.methods.check-access = co.wrap (user, action) ->*
+	owner = @owner-document!
+	{_id} = owner
+	type = owner.get-display-name!
+
+	log "checking permit:", type, _id, user, action  
+
 	if user.groups.admin != void
 		return true
+
+	if @parent-id
+		parent = yield models[translate @parent-type] .find-by-id @parent-id .exec!
+		result = yield parent.permit.check-access user, action
+		if !result
+			return false
 
 	offset = if @owner == user._id
 		0
@@ -29,18 +50,43 @@ schema.methods.check-access = (user, action) ->
 		| \r => 0
 		| \w => 1
 		| \x => 2
-		| _ => throw new Exception 'invalid action'
+		| _ => -1
+	if pos == -1
+		return false
+			# assert false,
+			# 	_id: _id
+			# 	type: type
+			# 	action: action
 
-	if @access[pos] != action
-		throw new Exception "user `#{user._id}` cannot perform `#{action}` for doc `{#{@owner}, #{@group}, #{@access}}`"
+	return @access[pos] == action
+	# assert @access[pos] == action, 
+	# 	_id: _id
+	# 	type: type
+	# 	user: user._id
+	# 	action: action-name[action]
+	# 	doc: {@owner, @group, @access}
+	# true
 
 schema.methods.check-owner = (user) ->
-	if @owner != user._id
-		throw new Exception 'cannot modify groups'
+	owner = @owner-document!
+	if user.groups.admin != void
+		return true
+	return @owner == user._id
+	# assert @owner == user._id, 
+	# 	_id: _id
+	# 	type: type
+	# 	user: user._id
+	# 	action: "ownership"
 
 schema.methods.check-admin = (user) ->
-	if user.groups.admin == void
-		throw new Exception "user `#{user._id}` is not an administrator"
+	owner = @owner-document!
+	if user.groups.admin?
+		return true
+	return false
+	# assert user.groups.admin, 
+	# 	_id: _id
+	# 	type: type
+	# 	user: user._id
+	# 	action: "administrator"
 
-# model = conn.model \permit, schema
 module.exports = schema

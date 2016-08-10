@@ -1,27 +1,30 @@
 <template lang="jade">
-  .ui
+view
+  .ui.basic.segment(slot="main")
     h1.ui.dividing.header Login
-    form.ui.form.segment#login-form(:class="{loading: loading, success: success}")
-      .ui.error.message
+    form.ui.form#login-form(:class="{loading: loading}")
       .ui.success.message
         .header Login successfully. Redirect to problem list in 3 seconds.
       .ui.field
         .ui.icon.input.left
           i.icon.user
-          input(name="uid", placeholder="user id")
+          input(name="user", placeholder="user id")
       .ui.field
         .ui.icon.input.left
           i.icon.lock
-          input(name="pswd", placeholder="password", type="password")
+          input(name="password", placeholder="password", type="password")
       .ui.icon.labeled.button.left.primary.submit
         i.icon.sign.in
         | Login
 </template>
 
-<script lang="vue-livescript">
+<script>
 require! {
   \debug
-  \../../actions : {login}
+  \co
+  \vue
+  \../view
+  \../../actions : {login, check-response-errors}
 }
 
 log = debug 'dollast:component:login'
@@ -29,7 +32,10 @@ log = debug 'dollast:component:login'
 module.exports =
   vuex:
     actions:
-      {login}
+      {login, check-response-errors}
+
+  components:
+    {view}
 
   data: ->
     success: false
@@ -38,32 +44,17 @@ module.exports =
   ready: ->
     $form = $ '#login-form'
 
-    submit = (e) ~>
+    submit = co.wrap (e, values) ~>*
       e.prevent-default!
-      $form = $ '#login-form'
-      values = $form.form 'get values'
-      @login values
-      @success = true
+      @loading = true
+      {data} = yield vue.http.post \site/login, values
+      @loading = false
 
-    $form.form do
-      on: \blur
-      inline: true
-      fields:
-        uid:
-          identifier: \uid
-          rules:
-            * type: 'minLength[6]'
-              prompt: "User name must be longer than 5"
-            * type: 'maxLength[16]'
-              prompt: "User name must be shorter than 15"
-        pswd:
-          identifier: \pswd
-          rules:
-            * type: 'minLength[6]'
-              prompt: 'password length must be longer than 5'
-            * type: 'maxLength[16]'
-              prompt: 'password length must be shorter than 15'
-      on-success: submit
-      debug: true
+      @check-response-errors data, $ '#login-form'
+      if not data.errors
+        {data: {token}} = data
+        local-storage.token = token
+        @login token
 
+    $form.form on-success: submit
 </script>

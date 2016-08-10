@@ -1,37 +1,39 @@
 require! {
+  \co
   \koa
   \koa-compress
   \koa-json
-  \koa-static
-  \koa-bodyparser
-  # 'koa-generic-session'
   \koa-conditional-get
-  \koa-validate
-  # 'koa-jade'
+  \koa-mount
   \koa-send
   \koa-etag
   \koa-jwt
   \path
   \debug
   \./config
-  \./models
   \./crypt
-  \./Exception
 }
 
-export app = koa!
+# can be used to implement a logging module
+# debug.log = ->
+#   console.log ...
+
+export app = new koa!
 
 log = debug \dollast:server
 
 # ==== Database ====
 
-log "No Database found" if !models
-
 app.use koa-compress!
 app.use koa-conditional-get!
 app.use koa-etag!
 app.use koa-json!
-koa-validate app
+
+# app.use (next) ->*
+#   # log @request.method, @request.url
+#   if '/api' == @request.url.substr 0, 4
+#     @compress = false
+#   yield next
 
 # ==== Session ====
 
@@ -44,38 +46,6 @@ app.keys = config.keys
 #   cookie:
 #     max-age: 1000 * 60 * 5
 
-app.use (next) ->*
-  # log @request
-  yield next
-
-app.use koa-bodyparser do
-  extend-types:
-    json: ['application/x-javascript']
-    multipart: ['multipart/form-data']
-
-<<<<<<< HEAD:src/bin/server.ls
-# ==== Logger ====
-app.use (next) ->*
-  try
-    log "#{@req.method} #{@req.url}"
-    yield next
-  catch e
-    log "catched error:"
-    log e
-    @status = e.status || 200
-    #@body = [error: e.message]
-    @body =
-      status: 'internal error'
-      data:
-        message: e.message
-  if @errors
-    @status = 200
-    @body =
-      status: 'invalid request'
-      data: @errors
-
-=======
->>>>>>> vue:server/main.ls
 app.use (next) ->*
   # log "server.user", @state.user
   # log koa-jwt.verify @request.header.authorization.substr(7), config.jwt-key, ignore-expiration: false
@@ -94,115 +64,26 @@ app.use (next) ->*
   else
     @state.user = _id: \__guest__, groups: []
 
-  # log 'user state', @state.user
-
-  #content = @request.body.signed
-  #if content
-    #content = koa-jwt.decode content
-    #data = crypt.RSA.dec content.content
-    #if @state.user.user and @state.user.client-key != data.client-key
-      #throw new Error 'wrong client-key'
-#
-    #@request.body = data
-    #log 'verified encrypted data found in body.', @request.body
-  yield next
-
-  # if @state.user.server
-    # @body = encrypted: crypt.AES.enc JSON.stringf
-
-app.use (next) ->*
-  @check = (obj, key, err-msg) ->
-    return true
-  #   if not obj
-  #     if not @errors
-  #       @errors = []
-  #     @errors.push "#{err-msg}"
-  #     new koa-validate.Validator @, null, null, false, null, false
-  #   else
-  #     new koa-validate.Validator @, key, obj[key], obj[key]?, obj
+  @state.user.theme ||= config.default.theme
+  @state.user.groups  ||= config.default.groups
   yield next
 
 # ==== JSON and Static Serving ====
 
 app.use (next) ->*
-  # log 'current user', @state.user, config.default
-  @state.user.theme ||= config.default.theme
-  @state.user.groups  ||= config.default.groups
-  # log @session
   if @method in [\HEAD, \GET]
-    for folders in [\public, "theme/#{@state.user.theme}"]
-      if yield koa-send @, @path, index: \index.html, max-age: 864000000, root: path.resolve folders
+    for folder in [\public, "theme/#{@state.user.theme}"]
+      if yield koa-send @, @path, index: \index.html, max-age: 864000000, root: path.resolve folder
         return
   yield next
 
-# ==== Logger ====
-app.use (next) ->*
-  @errors = []
-  @throw = (err) ->
-    throw new Exception err
-  @check-errors = ->
-    if @errors.length > 0
-      throw new Exception
-  @assert = (expression, e) ->
-    if !expression
-      throw new Exception e
+if process.env.NODE_ENV == \mock
+  app.use koa-mount \/mock, require \./mock
 
-  try
-    log 'request body', @request.body
-    log "#{@req.method} #{@req.url}"
-    yield next
-  catch e
-    if e instanceof Exception
-      if e.error
-        @errors.push e.error
-    else
-      @app.emit \error, e, @
-
-  @status = 200
-  if @errors.length > 0
-    @body = errors: @errors
-  else
-    @body = data: @body
-
-# ==== Jade ====
-#
-# app.use koa-jade.middleware do
-#   view-path: "theme/dollast"
-#   pretty: true
-#   compile-debug: false
-#
-# app.use (next) ->*
-#   log "hello world"
-#   extname = path.extname @req.url
-#   if @req.url == "/"
-#     yield @render "index.html", {}, true
-#   else if extname == ".html"
-#     yield @render @req.url, {}, true
-#   else
-#     yield next
-
-# ========= Router ===============
-
-routers = require \./routers
+app.use koa-mount \/api, require \./router
 
 app.use (next) ->*
-  try
-    yield next
-    @body =
-      status: \ok
-      data: @body
-  catch
-    @body =
-      status: \error
-      data: e
-
-app.use routers.router
-
-# app.use (next) ->*
-#   # log "request", @request.body, "jwt", @user, "query", @query
-#   if not @user and config.mode != "debug"
-#     throw new Error "login to explore more fields"
-#   yield next
+  @body = "404!"
 
 # ====================================
 

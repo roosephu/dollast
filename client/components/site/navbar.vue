@@ -1,39 +1,41 @@
 <template lang="jade">
-  .row
-    .ui.blue.inverted.page.grid.borderless.menu
-      .header.item dollast
-      a.item.labeled(href="#/")
-        i.icon.home
-        | Home
-      a.item.labeled(href="#/problem")
-        i.icon.browser
-        | Problem
-      a.item.labeled(href="#/solution")
-        i.icon.info.circle
-        | Status
-      a.item.labeled(href="#/round")
-        i.icon.users
-        | Contest
-      .right.menu
-        .item
-          .ui.input.icon.inverted.small
-            i.icon.search.link
-            input(placeholder="ID or Search")
-        a.item.labeled(v-if="uid != undefined", href="#/user/{{uid}}")
-          i.icon.user
-          | {{uid}}
-        a.item.labeled(v-else, href="#/user/login")
-          i.icon.sign.in
-          | Sign in
-        a.item.labeled(v-if="uid != undefined", @click="logout")
-          i.icon.sign.out
-          | Logout
-        a.item.labeled(v-else, href="#/user/register")
-          i.icon.signup
-          | Register
+  .ui.left.fixed.menu.vertical.borderless.inverted.blue.labeled
+    .item
+    .ui.labeled.icon.item.dropdown#configuration
+      img.centered.tiny.ui.image(src="/atm-inverted.png", align="middle")
+      slot(name="config")
+    .ui.divider
+    a.item(href="#/")
+      i.icon.home
+      | Home
+    a.item(href="#/problem")
+      i.icon.browser
+      | Problems
+    a.item(href="#/submission")
+      i.icon.info.circle
+      | Submissions
+    a.item(href="#/pack")
+      i.icon.shopping.bag
+      | Packs
+    a.item(href="#/about")
+      i.icon.help.circle
+      | About
+    .ui.divider
+    a.item(v-if="user != undefined", href="#/user/{{user}}")
+      i.icon.user
+      | {{user}}
+    a.item(v-else, href="#/user/login")
+      i.icon.sign.in
+      | Sign in
+    a.item(v-if="user != undefined", @click="logout")
+      i.icon.sign.out
+      | Logout
+    a.item(v-else, href="#/user/register")
+      i.icon.signup
+      | Register
 </template>
 
-<script lang="vue-livescript">
+<script>
 require! {
   \debug
   \../../actions : {logout}
@@ -43,11 +45,16 @@ log = debug \dollast:navbar
 module.exports =
   vuex:
     getters:
-      uid: (.session.uid)
+      user: (.session.user)
     actions:
       {logout}
+
   methods:
     logout: ->
       @logout!
+  
+  ready: ->
+    $ \#configuration .dropdown do
+      on: \hover
 
 </script>

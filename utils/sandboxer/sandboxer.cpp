@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <map>
 #include <cstring>
 #include <cstdlib>
 #include <cassert>
@@ -46,6 +47,7 @@ typedef unsigned long long uint64;
 pid_t pid;
 char *program, *fn_in, *fn_out;
 string syscall_name[max_sys_calls];
+map<string, int> syscall_ids;
 
 set<string> white_list;
 
@@ -69,10 +71,10 @@ void run_child() {
 
 	// cerr("[runner]redirect stdin/stdout/stderr\n");
 	int f = 0;
-	// close(2);
 	ptrace(PTRACE_TRACEME, 0, NULL, NULL);
 	f = open(fn_in , O_RDONLY); close(0); dup(f); close(f);
 	f = open(fn_out, O_WRONLY); close(1); dup(f); close(f);
+	// close(2);
 
 	execl(program, program, NULL);
 }
@@ -110,7 +112,7 @@ void run_parent(pid_t pid) {
 			// cerr("[runner]utime: %ld usec\n", res.ru_utime.tv_usec);
 			// cerr("[runner]stime: %ld usec\n", res.ru_stime.tv_usec);
 			// cerr("[runner]maxrss: %ld KB\n", res.ru_maxrss);
-			double used_time = res.ru_utime.tv_usec / 1000000.0;
+			double used_time = res.ru_utime.tv_usec / 1000000.0 + res.ru_utime.tv_sec;
 			double used_mem  = res.ru_maxrss / 1024.0;
 
 			const char *msg = "OK";
@@ -137,13 +139,18 @@ void run_parent(pid_t pid) {
 			case SIGFPE : msg = "FPE" ; break; // floating-point-exception
 			case SIGQUIT: msg = "QUIT"; break; // user quit
 			case SIGXFSZ: msg = "XFSZ"; break; // file-size-limit-exceeded
-			default     : msg = "UNKW"; break; // unknown-signal
+			case SIGSEGV: msg = "SEGV"; break; // segment fault
+			default     : 
+				msg = "UNKW";
+				printf("unknown signal %d\n", sig); 
+				break; // unknown-signal
 			}
-			cerr("[runner]%s\n", msg);
+			// cerr("[runner]%s\n", msg);
 			if (sig == SIGXCPU)
 				cerr("{\"score\": 0, \"status\": \"%s\", \"time\": %.6f}\n", msg, utm_lmt);
 			else
 				cerr("{\"score\": 0, \"status\": \"%s\"}\n", msg);
+			
 
 			ptrace(PTRACE_KILL, pid, NULL, NULL);
 			break;
@@ -181,8 +188,10 @@ void load_syscalls(string conf) {
 	ifstream fin(conf);
 	assert(fin);
 	int id;
-	for (string name; fin >> name >> id; )
+	for (string name; fin >> name >> id; ) {
 		syscall_name[id] = name;
+		syscall_ids[name] = id;
+	}
 }
 
 void load_white_list(string conf) {
@@ -197,8 +206,11 @@ void load_white_list(string conf) {
 void load_func_conf(string conf) {
 	ifstream fin(conf); assert(fin);
 
-	for (int id, cnt; fin >> id >> cnt; )
+	string name;
+	for (int cnt; fin >> name >> cnt; ) {
+		int id = syscall_ids[name];
 		maxcnt[id] = cnt;
+	}
 }
 
 void init(int argc, char **args) {

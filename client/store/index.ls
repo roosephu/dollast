@@ -10,17 +10,19 @@ state =
   error: void
 
 mutations =
-  load-from-token: (state, token) ->
+  login: (state, token) ->
     payload = auth.jwt.dec token
     client-info = JSON.parse payload.client
     local-storage.token = token
     vue.http.headers.common.Authorization = "Bearer #{token}"
     state.session =
       guest: false
-      uid: client-info.uid
+      user: client-info.user
       token: token
 
   logout: (state) ->
+    delete local-storage.token
+    vue.http.headers.common.Authorization = ""
     state.session = guest: true
 
   raise-error: (state, error) ->

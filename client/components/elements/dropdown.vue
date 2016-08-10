@@ -24,5 +24,5 @@ export dropdown = create-class do
 
 </template>
 
-<script lang="vue-livescript">
+<script>
 </script>
