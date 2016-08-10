@@ -99,7 +99,8 @@ export upload = (pid, part) ->*
       yield move output 
   
   yield walk tmp-dir.name
-  tmp-dir.remove-callback!
+  # tmp-dir.remove-callback!
+  yield fs.remove-async tmp-dir.name 
 
   log "unzip status: #{util.inspect ret}"
   return ret
