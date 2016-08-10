@@ -99,6 +99,7 @@ export upload = (pid, part) ->*
       yield move output 
   
   yield walk tmp-dir.name
+  tmp-dir.remove-callback!
 
   log "unzip status: #{util.inspect ret}"
   return ret
@@ -199,7 +200,7 @@ calc-problem-score = (results) ->
   ret.score = if ws then sum / ws else 0
   return ret
 
-export judge = (language, code, problem-config, doc) ->*
+export judge = co.wrap (language, code, problem-config, doc) ->*
   log "Start judging: language: #{language}"
   tmp-dir = tmp.dir-sync unsafe-cleanup: true
   config = problem-config.to-object!
@@ -227,7 +228,6 @@ export judge = (language, code, problem-config, doc) ->*
     doc.results = results
     doc.summary = calc-problem-score zip dataset, results
     doc.summary.status = \finished
-    log doc
     yield doc.save!
   catch err
     log err

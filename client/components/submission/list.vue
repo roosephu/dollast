@@ -236,6 +236,7 @@ module.exports =
           optional: true
 
     $ '#relationship, #language, #search' .dropdown on: \hover
-    MathJax.Hub.Queue [\Typeset, MathJax.Hub]
+    if MathJax
+      MathJax.Hub.Queue [\Typeset, MathJax.Hub]
 
 </script>

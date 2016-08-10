@@ -7,7 +7,7 @@ view
       | Statistics
     a.item(href="#/pack/{{problem.config.pack._id}}")
       i.icon.shopping.bag
-      | Back to Pack
+      | Go to Pack
     a.ui.icon.labeled.item(v-link="{name: 'submissions', query: {problem: problem._id}}")
       i.icon
       | All Submissions
@@ -132,7 +132,8 @@ module.exports =
   watch:
     'problem._id': ->
       @$next-tick ~>
-        MathJax.Hub.Queue [\Typeset, MathJax.Hub]
+        if MathJax
+          MathJax.Hub.Queue [\Typeset, MathJax.Hub]
       
   ready: ->
     submit = co.wrap (e, values) ~>*

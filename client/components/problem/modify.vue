@@ -62,10 +62,10 @@ view
     .ui.two.fields
       .ui.field
         label input format
-        textarea(name="inputFormat")
+        textarea#inputFormat(name="inputFormat")
       .ui.field
         label output format
-        textarea(name="outputFormat")
+        textarea#outputFormat(name="outputFormat")
     .ui.two.fields
       .ui.field
         label sample input
@@ -163,6 +163,8 @@ module.exports =
 
   ready: ->
     CKEDITOR.replace \description
+    CKEDITOR.replace \inputFormat
+    CKEDITOR.replace \outputFormat
 
     @$next-tick ->
       $ '#judger' .dropdown!
@@ -170,8 +172,10 @@ module.exports =
     submit = co.wrap (e, values) ~>*
       e.prevent-default!
       description = CKEDITOR.instances.description.get-data!
+      input-format = CKEDITOR.instances.inputFormat.get-data!
+      output-format = CKEDITOR.instances.outputFormat.get-data!
 
-      problem = get-form-values values <<<< {description}
+      problem = get-form-values values <<<< {description, input-format, output-format}
       if @problem._id != ""
         problem._id = @problem._id
 
