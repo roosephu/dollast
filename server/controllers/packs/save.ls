@@ -24,9 +24,12 @@ handler = ->*
 
     # flat it!
     pack |>= flat
+    for submission in yield models.Submissions.find pack: pack._id .exec!
+      submission.hidden = true
+      submission.save!
 
   # always set true, so that the triggers can find it and try to update all solutions
-  pack.flag = true 
+  pack.flag = true
 
   @body = yield models.Packs.update _id: pack._id, pack, upsert: true .exec!
 
