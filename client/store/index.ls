@@ -1,8 +1,12 @@
 require! {
   \vue
   \vuex
+  \debug
+  \moment
   \./auth
 }
+
+log = debug \dollast:store
 
 state =
   session:
@@ -11,14 +15,14 @@ state =
 
 mutations =
   login: (state, token) ->
-    payload = auth.jwt.dec token
-    client-info = JSON.parse payload.client
-    local-storage.token = token
-    vue.http.headers.common.Authorization = "Bearer #{token}"
-    state.session =
-      guest: false
-      user: client-info.user
-      token: token
+    {payload, header} = auth.decode token
+    if header.iss == \dollast and moment! <= header.exp
+      local-storage.token = token
+      vue.http.headers.common.Authorization = "Bearer #{token}"
+      state.session =
+        guest: false
+        user: payload._id
+        token: token
 
   logout: (state) ->
     delete local-storage.token

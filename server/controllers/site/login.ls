@@ -1,12 +1,15 @@
 require! {
-  \koa-jwt
   \koa-joi-router : {Joi}
+  \jsonwebtoken : jwt
   \prelude-ls : {lists-to-obj}
+  \debug
   \../err : {assert-name: assert}
   \../../models
   \../../config
   \../validator
 }
+
+log = debug \dollast:ctrl:site:login
 
 handler = ->*
   # @check-body '_id' .len 6, 15
@@ -19,26 +22,20 @@ handler = ->*
     _id: @request.body.user
 
   groups = user.groups
-  groups.push \users
+  groups.push \login
   @state.user.groups = lists-to-obj groups, [true for i from 1 to groups.length]
 
-  client-key = @request.body.client-key
-  server-key = config.server-AES-key
-  server-payload = JSON.stringify do
+  payload =
     _id: user._id
     groups: @state.user.groups
-    client-key: client-key
-  client-payload = JSON.stringify do
-    user: user._id
-  payload =
-    server: server-payload # crypt.AES.enc server-payload, server-key
-    client: client-payload # crypt.AES.enc client-payload, client-key
+  header = 
+    alg: config.jwt.alg
+    iss: \dollast
+    exp: config.jwt.get-exp!
+  log header
 
-  # log {payload}
-
-  token = koa-jwt.sign payload, config.jwt-key, expires-in: 60 * 60 * 24
-
-  refresh = koa-jwt.sign payload, config.server-AES-key, expires-in: 60 * 60 * 24 * 30
+  token = jwt.sign payload, config.jwt.key, {header, no-timestamp: true}
+  log jwt.decode token
   @body = {token}
 
 module.exports = 

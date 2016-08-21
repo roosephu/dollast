@@ -1,5 +1,6 @@
 require! {
   \path
+  \moment
   \../common
 }
 
@@ -17,7 +18,11 @@ export
     theme: \vue
     groups: {}
   bcrypt-cost: 10
-  jwt-key: \drdrdrd
+  jwt: 
+    key: \drdrdrd
+    alg: \HS256
+    get-exp: ->
+      moment!.value-of! + 24 * 60 * 60 * 1000 
   server-AES-key: \da63af5c90e00d60aa3ddd0793a6e3ca6a8284b0fa8884bba72602ec3719c661 # len = 64 bytes
   starting-ids:
     submissions: 1

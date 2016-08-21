@@ -17,7 +17,7 @@ app = new koa!
 trigger-pack = ->*
   while true
     pack = yield models.Packs.find-one flag: true, '' .sort 'endTime' .exec!
-    if pack.end-time < new Date!
+    if pack and pack.end-time < new Date!
       log "trigger Pack #{pack._id}"
       pack.flag = false
       yield pack.save!

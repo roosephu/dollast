@@ -29,43 +29,23 @@ app.use koa-conditional-get!
 app.use koa-etag!
 app.use koa-json!
 
-# app.use (next) ->*
-#   # log @request.method, @request.url
-#   if '/api' == @request.url.substr 0, 4
-#     @compress = false
-#   yield next
-
 # ==== Session ====
 
 app.use koa-jwt do
-  secret: config.jwt-key
+  secret: config.jwt.key
   passthrough: true
 
 app.keys = config.keys
-# app.use koa-generic-session do
-#   cookie:
-#     max-age: 1000 * 60 * 5
 
 app.use (next) ->*
-  # log "server.user", @state.user
-  # log koa-jwt.verify @request.header.authorization.substr(7), config.jwt-key, ignore-expiration: false
-
-  # decode header
-  if @state?.user?.server
-    #@state.user = JSON.parse crypt.AES.dec that, config.server-AES-key
-    if @state.user.client
-      client-state = JSON.parse that
-      # log "client info", client-state
-    else
-      client-state = {}
-    @state.user = JSON.parse @state?.user?.server
-    @state.user.client = client-state
-    # log 'encrypted data in header.server', @state.user
-  else
+  if not @state?.user?
     @state.user = _id: \__guest__, groups: []
+  else
+    log @state.user
 
   @state.user.theme ||= config.default.theme
   @state.user.groups  ||= config.default.groups
+
   yield next
 
 # ==== JSON and Static Serving ====
