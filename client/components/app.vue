@@ -7,19 +7,18 @@ div
 <script>
 require! {
   \vue
-  \vue-router
+  \vuex : {map-mutations}
   \./site/error
-  \../actions : {login}
 }
 
 module.exports =
-  vuex:
-    actions: {login}
-
   components:
     {error}
 
-  ready: ->
+  methods:
+    map-mutations [\login]
+
+  mounted: ->
     @login!
 
 </script>

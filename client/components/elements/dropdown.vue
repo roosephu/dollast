@@ -4,7 +4,7 @@
     .default.text
     i.dropdown.icon
     .menu
-      .item(v-for="(key, item) of " data-value="")
+      .item(v-for="(item, key) of " data-value="")
 export dropdown = create-class do
   display-name: \dropdown
 

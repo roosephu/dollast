@@ -10,12 +10,9 @@ module.exports = webpack-merge base,
       * './client/main'
   output:
     public-path: 'http://localhost:8080/'
-  vue:
-    loaders:
-      js: \livescript
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin \vendor, \vendors.js
-    new webpack.optimize.OccurenceOrderPlugin!
-    new webpack.NoErrorsPlugin!
+    new webpack.optimize.CommonsChunkPlugin name: \vendor, filename: \vendors.js
+    # new webpack.optimize.OccurenceOrderPlugin!
+    new webpack.NoEmitOnErrorsPlugin!
     new webpack.DefinePlugin 'process.env.NODE_ENV': '"development"'
   ]

@@ -2,27 +2,24 @@ require! {
   \vue
   \vuex
   \vue-router
-  \vue-resource
+  \axios
   \debug
   \./validation
+  \./components/app
 }
 
-vue.use vuex
-vue.config.debug = true
 debug.enable "dollast:*"
-
 log = debug \dollast:main
 
-vue.use vue-router
-require! \./router
-vue.use vue-resource
-vue.http.options.root = if process.env.NODE_ENV == \mock then \/monk/query else \/api
+axios.defaults.base-URL = if process.env.NODE_ENV == \mock then \/monk/query else \/api
 
-app = require \./components/app.vue
-  ..store = require \./store
-app = vue.extend app
+new vue do
+  el: '#app'
+  router: require \./router
+  store: require \./store
+  render: (h) -> h app
 
-router.start app, '#app'
+# router.start app, '#app'
 
 if MathJax?
   MathJax.Hub.Config do

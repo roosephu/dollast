@@ -1,10 +1,10 @@
-<template lang="jade">
+<template lang="pug">
 .ui.dropdown.icon.selection.search#pack-selector
   input(type="hidden", name="pack")
   i.dropdown.icon
   .default.text pack
   .menu
-    .item(v-if="pack", data-value="{{pack._id}}") {{pack | pack}}
+    .item(v-if="pack", :data-value="pack._id") {{pack | pack}}
 </template>
 
 <script>
@@ -15,11 +15,11 @@ require! {
 
 log = debug \dollast:components:elements:pack-selector
 
-module.exports = 
+module.exports =
   props:
     pack: Object
 
-  ready: ->
+  mounted: ->
     @$next-tick ->
       $ \#pack-selector .dropdown do
         data-type: \jsonp

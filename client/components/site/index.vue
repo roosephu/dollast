@@ -1,5 +1,5 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header links
     .item 
@@ -14,10 +14,10 @@ view
 
 <script>
 require! {
-  \../view
+  \../window
 }
 
 module.exports = 
   components:
-    {view}
+    {window}
 </script>

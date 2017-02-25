@@ -1,5 +1,5 @@
 <template lang="jade">
-view
+window
   div(slot="main")
     p Hi 小朋友们大家好，还记得我是谁吗，对了我就是青年理论计算机科学家 BBL ！（背景音乐：我可是世界上最厉害的……
     p 为了答谢广大人民群众对我的厚爱，以及老师们拉着我非要我写一个 OJ 出来，我就花了几个星期码了这样一个网站出来 →_→
@@ -62,14 +62,14 @@ view
 
 <script>
 require! {
-  \../view
+  \../window
 }
 
 module.exports =
   components:
-    {view} 
+    {window} 
 
-  ready: ->
+  mounted: ->
     $ \.accordion .accordion!
 
 </script>

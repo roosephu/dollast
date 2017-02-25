@@ -19,21 +19,14 @@
 <script>
 require! {
   \vue
+  \vuex : {map-mutations, map-getters}
   \debug
-  \co
-  \../../actions
 }
 
 log = debug \dollast:error
 
 module.exports =
-  vuex:
-    getters:
-      error: (.error)
-    actions:
-      actions{resolve-error}
-
-  computed:
+  computed: (map-getters [\error]) <<<
     message: ->
       if @error == void
         ""
@@ -46,21 +39,21 @@ module.exports =
       else
         "#{@error.object}"
 
-  ready: ->
+  mounted: ->
     $modal = $ \#error
     $modal.modal blurring: true .transition \fade
     # if !@error.closable
     #   $modal.modal \setting, \closable, false
 
-  methods:
+  methods: (map-mutations [\resolveError]) <<<
     back: ->
       @resolve-error!
-      @$route.router.go window.history.back!
+      @$router.go -1
 
     home: ->
       @resolve-error!
-      @$route.router.go '/'
-    
+      @$router.push '/'
+
     ignore: ->
       @resolve-error!
 

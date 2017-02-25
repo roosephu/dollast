@@ -1,5 +1,5 @@
 <template lang="jade">
-view
+window
   form.ui.form.basic.segment(slot="main")#register-form
     h1.ui.dividing.header Register
     .ui.error.message
@@ -25,23 +25,27 @@ view
 <script>
 require! {
   \debug
-  \co
-  \../view
+  \vue
+  \vuex : {map-actions}
+  \../window
 }
 
 log = debug \dollast:component:login
 
 module.exports =
   components:
-    {view}
+    {window}
 
-  ready: ->
-    submit = co.wrap (e) ~>*
+  methods: map-actions [\$fetch]
+
+  mounted: ->
+    submit = (e) ~>>
       e.prevent-default!
       $form = $ '#register-form'
       all-values = $form.form 'get values'
-      yield @$http.post \user/register, all-values
+      await @$fetch method: \POST, url: \user/register, data: all-values
 
-    $ '#register-form' .form on-success: submit
+    @$next-tick ->
+      $ '#register-form' .form on-success: submit
 
 </script>

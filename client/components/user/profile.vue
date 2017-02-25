@@ -1,17 +1,17 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header links
-    a.item(v-link="{name: 'submissions', query: {user: user}}")
+    router-link.item(:to="{name: 'submissions', query: {user: user}}")
       i.icon
       | All submissions
     .ui.divider
     .ui.header operations
-    a.item(href="#/user/{{user}}/modify")
+    a.item(:href="'#/user/' + user + '/modify'")
       i.icon.edit
       | Modify
 
-  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
+  .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.dividing.header Details of {{user}}
     .ui.segment
       .ui.top.attached.label.large registered since
@@ -43,9 +43,9 @@ view
       .ui.top.attached.label.large Packs owned
       .ui.relaxed.divided.link.list
         .item(v-for="pack in ownedPacks")
-          .ui.right.floated 
+          .ui.right.floated
             .ui.label {{pack.beginTime | time}}
-            | to  
+            | to
             .ui.label {{pack.endTime | time}}
           .description
             pack(:pack="pack")
@@ -54,13 +54,12 @@ view
 <script>
 require! {
   \vue
-  \co
+  \vuex : {map-actions, map-getters}
   \moment
   \debug
   \javascript-natural-sort : natural-sort
-  \../view
+  \../window
   \../format
-  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:components:user:profile
@@ -72,9 +71,6 @@ natural-sort-by = (f) ->
     natural-sort a, b
 
 module.exports =
-  vuex:
-    actions:
-      {check-response-errors}
 
   data: ->
     user: @$route.params.user
@@ -82,27 +78,31 @@ module.exports =
     solved-problems: []
     owned-problems: []
     owned-packs: []
-  
-  computed:
+
+  computed: (map-getters [\isLoading]) <<<
     register-date: ->
       if @profile.date
         moment @profile.date .format 'MMMM Do YYYY'
       else
         ""
 
-  route:
-    data: co.wrap (to: params: {user}) ->*
-      {data: response} = yield vue.http.get "user/#{user}"
-      if @check-response-errors response
-        return null
-      profile = response.data
+  created: ->
+    @fetch!
+
+  watch:
+    $route: ->
+      @fetch!
+
+  methods: (map-actions [\$fetch]) <<<
+    fetch: ->>
+      profile = await @$fetch method: \GET, url: "user/#{@$route.params.user}"
       profile.solved-problems .= sort natural-sort-by (._id)
       profile.owned-problems .= sort natural-sort-by (._id)
       profile.owned-packs .= sort natural-sort-by (._id)
 
-      profile
+      @ <<< {profile}
 
   components:
-    {view} <<< format{problem, pack}
+    {window} <<< format{problem, pack}
 
 </script>

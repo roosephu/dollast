@@ -1,5 +1,5 @@
 <template lang="jade">
-view
+window
   .form.menu#submission(slot="config")
     .ui.header Pagination
     a.icon.labeled.item(:class="{'disabled': query.page == 1}", @click="go(1)")
@@ -11,7 +11,7 @@ view
     .icon.labeled.item
       i.icon.thin.circle
       | Current: {{query.page}}
-    a.icon.labeled.item(@click="go(query.page + 1)") 
+    a.icon.labeled.item(@click="go(query.page + 1)")
       i.icon.angle.right
       | Next page
     .ui.divider
@@ -42,10 +42,10 @@ view
     .ui.dropdown.selection.item#langauge
       i.dropdown.icon
       input(type="hidden", name="language")
-      span Language: 
+      span Language:
       span.text
       .menu
-        .item(v-for="item in languages", data-value="{{item}}") {{item}}
+        .item(v-for="item in languages", :data-value="item") {{item}}
         .item(data-value="all") all
     .ui.divider
     .ui.header Form Operations
@@ -56,7 +56,7 @@ view
       i.icon
       | Clear
 
-  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
+  .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.dividing.header Submissions
 
     table.ui.table.large.green.selectable.center.aligned.single.line
@@ -99,14 +99,13 @@ view
 <script>
 require! {
   \debug
-  \co
   \vue
+  \vuex : {map-getters, map-actions}
   \prelude-ls : {Obj}
   \moment
-  \../view
+  \../window
   \../format
   \../elements/pack-selector
-  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:submission:list
@@ -131,9 +130,6 @@ set-form-values = (values) ->
   $ \#submission .form 'set values', values
 
 module.exports =
-  vuex:
-    actions:
-      {check-response-errors}
 
   data: ->
     submissions: []
@@ -141,8 +137,20 @@ module.exports =
     query:
       page: 1
 
-  route:
-    data: co.wrap ->* 
+  computed: map-getters [\isLoading]
+
+  components:
+    {window, pack-selector} <<< format
+
+  methods: (map-actions [\$fetch]) <<<
+    go: (page) ->
+      @query.page = page
+      @$router.push name: \submissions, query: @query
+
+    clear: ->
+      $ \#submission .form \clear
+
+    fetch: ->>
       {query} = @$route
       if query.page
         query.page |>= parse-int
@@ -158,83 +166,69 @@ module.exports =
       @$next-tick ->
         set-form-values query
 
-      {data: response} = yield @$http.get \submission, params: query
-      if @check-response-errors response
-        return null
-      submissions = response.data
+      @submissions = await @$fetch method: \GET, url: \submission, params: query
+      @query = query
 
-      {submissions, query}
+  mounted: ->
+    @$next-tick ->
+      submit = (e, values) ~>>
+        values = get-form-values values
+        log {values}
+        @$router.push name: \submissions, query: values
 
-  components:
-    {view, pack-selector} <<< format
-  
-  methods:
-    go: (page) ->
-      @query.page = page
-      @$route.router.go name: \submissions, query: @query
+      $ \#submission .form do
+        inline: false
+        on-success: submit
+        on-failure: (errors, fields) ->
+          log errors, fields
+        fields:
+          user:
+            identifier: \user
+            optional: true
+            rules:
+              * type: \isUserId
+                prompt: "invalid user"
+              ...
+          threshold:
+            identifier: \threshold
+            optional: true
+            rules:
+              * type: "number[0..1]"
+                prompt: "a number between [0, 1]"
+              ...
+          relationship:
+            identifier: \relationship
+            depends: \threshold
+            rules:
+              * type: \empty
+                prompt: "cannot be empty"
+              ...
+          problem:
+            identifier: \problem
+            optional: true
+            rules:
+              * type: "integer[1..]"
+                prompt: "problem id must be a positive integer"
+              ...
+          pack:
+            identifier: \pack
+            optional: true
+            rules:
+              * type: "integer[0..]"
+                prompt: "pack id must be a positive integer"
+              ...
+          language:
+            identifier: \language
+            optional: true
+          before:
+            identifier: \before
+            optional: true
+          after:
+            identifier: \after
+            optional: true
 
-    clear: ->
-      $ \#submission .form \clear
-
-  ready: ->
-    submit = co.wrap (e, values) ~>*
-      values = get-form-values values
-      log {values}
-      @$route.router.go name: \submissions, query: values
-
-    $ \#submission .form do
-      inline: false
-      on-success: submit
-      on-failure: (errors, fields) ->
-        log errors, fields
-      fields:
-        user:
-          identifier: \user
-          optional: true
-          rules:
-            * type: \isUserId
-              prompt: "invalid user"
-            ...
-        threshold:
-          identifier: \threshold
-          optional: true
-          rules:
-            * type: "number[0..1]"
-              prompt: "a number between [0, 1]"
-            ...
-        relationship:
-          identifier: \relationship
-          depends: \threshold
-          rules: 
-            * type: \empty
-              prompt: "cannot be empty"
-            ...
-        problem:
-          identifier: \problem
-          optional: true
-          rules:
-            * type: "integer[1..]"
-              prompt: "problem id must be a positive integer"
-            ...
-        pack:
-          identifier: \pack
-          optional: true
-          rules:
-            * type: "integer[0..]"
-              prompt: "pack id must be a positive integer"
-            ...
-        language:
-          identifier: \language
-          optional: true
-        before:
-          identifier: \before
-          optional: true
-        after:
-          identifier: \after
-          optional: true
-
-    $ '#relationship, #language, #search' .dropdown on: \hover
-    if MathJax?
-      MathJax.Hub.Queue [\Typeset, MathJax.Hub]
+      $ '#relationship, #language, #search' .dropdown on: \hover
+      if MathJax?
+        MathJax.Hub.Queue [\Typeset, MathJax.Hub]
 
 </script>

@@ -1,8 +1,8 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header links
-    a.item(v-link="{name: 'submissions', query: {pack: pack._id}}")
+    router-link.item(:to="{name: 'submissions', query: {pack: pack._id}}")
       i.icon
       | All Submissions
     .ui.divider
@@ -12,21 +12,21 @@ view
       i.icon.filter
       span Filter
       .menu
-        .item(v-for="item in options", data-value="{{item}}")
+        .item(v-for="item in options", :data-value="item")
           | {{item}}
     .ui.divider
     .ui.header operations
     a.item(href="#/problem/create")
       i.icon.plus
       | Add a Problem
-    a.item(href="#/pack/{{pack._id}}/board")
+    a.item(:href="'#/pack/' + pack._id + '/board'")
       i.icon.trophy
       | Board
-    a.item(href="#/pack/{{pack._id}}/modify")
+    a.item(:href="'#/pack/' + pack._id + '/modify'")
       i.icon.edit
       | Modify
 
-  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
+  .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.dividing.header Pack {{pack | pack}}
 
     .ui.olive.labels
@@ -39,9 +39,9 @@ view
       .bar
         .progress
       .label
-        | from 
-        .ui.label {{pack.beginTime | time}} 
-        | to 
+        | from
+        .ui.label {{pack.beginTime | time}}
+        | to
         .ui.label {{pack.endTime | time}}
 
     .ui.header
@@ -62,24 +62,20 @@ view
 <script>
 require! {
   \vue
-  \co
+  \vuex : {map-actions, map-getters}
   \debug
   \moment
   \prelude-ls : {max}
-  \../view
+  \../window
   \../format : {problem, formatter}
-  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:pack:show
 
 module.exports =
-  vuex:
-    actions:
-      {check-response-errors}
 
   components:
-    {problem, view}
+    {problem, window}
 
   data: ->
     options: [\All, \Failed, \Accepted, \New]
@@ -92,19 +88,14 @@ module.exports =
         owner: ""
         group: ""
 
-  computed:
+  computed: (map-getters [\isLoading]) <<<
     started: ->
       moment!.is-after @pack.begin-time
 
-  route:
-    data: co.wrap (to: params: {pack}) ->*
-      {data: response} = yield vue.http.get "pack/#{pack}"
-      if @check-response-errors response
-        return null
-      pack = response.data
+  methods: (map-actions [\$fetch]) <<<
+    fetch: ->>
+      @pack = await @$fetch method: 'GET', url: "pack/#{@$route.params.pack}"
 
-      {pack: pack}
-  
   watch:
     'pack._id': ->
       begin-time = moment @pack.begin-time
@@ -112,15 +103,23 @@ module.exports =
       current = moment!
       $ \.ui.progress .progress do
         total: end-time - begin-time
-        value: max(current - begin-time, 0) 
+        value: max(current - begin-time, 0)
 
-  ready: ->
-    $ '#configuration' .dropdown do
-      on: \hover 
+    $route: ->
+      @fetch!
 
-    $filter = $ '#filter'
-    $filter.dropdown do
-      on-change: (value, text, $choice) ->
-        log {value, text, $choice}
-    $filter.dropdown 'set text', \All
+  created: ->
+    @fetch!
+
+  mounted: ->
+    @$next-tick ->
+      $ '#configuration' .dropdown do
+        on: \hover
+
+      $filter = $ '#filter'
+      $filter.dropdown do
+        on-change: (value, text, $choice) ->
+          log {value, text, $choice}
+      $filter.dropdown 'set text', \All
+
 </script>

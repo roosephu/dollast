@@ -1,5 +1,5 @@
 <template lang="jade">
-  a.ui.label.hvr-underline-from-center.light.teal(v-if="pack", href="#/pack/{{pack._id}}") {{pack | pack}}
+  a.ui.label.hvr-underline-from-center.light.teal(v-if="pack", :href="'#/pack/' + pack._id") {{pack | pack}}
   a.ui.label.hvr-underline-from-center.light.teal(v-else) hidden
 </template>
 

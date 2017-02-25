@@ -21,7 +21,7 @@
       i.icon.help.circle
       | About
     .ui.divider
-    a.item(v-if="user != undefined", href="#/user/{{user}}")
+    a.item(v-if="user != undefined", :href="'#/user/' + user")
       i.icon.user
       | {{user}}
     a.item(v-else, href="#/user/login")
@@ -38,22 +38,18 @@
 <script>
 require! {
   \debug
-  \../../actions : {logout}
+  \vuex : {map-getters, map-actions}
 }
 log = debug \dollast:navbar
 
 module.exports =
-  vuex:
-    getters:
-      user: (.session.user)
-    actions:
-      {logout}
+  computed:
+    map-getters [\user]
 
   methods:
-    logout: ->
-      @logout!
-  
-  ready: ->
+    map-actions [\logout, \login]
+
+  mounted: ->
     $ \#configuration .dropdown do
       on: \hover
 

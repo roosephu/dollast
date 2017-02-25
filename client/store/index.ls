@@ -1,35 +1,21 @@
 require! {
   \vue
   \vuex
-  \./auth
+  \./actions
+  \./mutations
 }
 
 state =
   session:
     guest: true
   error: void
+  is-loading: false
 
-mutations =
-  login: (state, token) ->
-    payload = auth.jwt.dec token
-    client-info = JSON.parse payload.client
-    local-storage.token = token
-    vue.http.headers.common.Authorization = "Bearer #{token}"
-    state.session =
-      guest: false
-      user: client-info.user
-      token: token
+getters =
+  user: (.session.user)
+  is-loading: (.is-loading)
+  error: (.error)
 
-  logout: (state) ->
-    delete local-storage.token
-    vue.http.headers.common.Authorization = ""
-    state.session = guest: true
-
-  raise-error: (state, error) ->
-    state.error = error
-
-  resolve-error: ->
-    state.error = void
-
+vue.use vuex
 module.exports = new vuex.Store do
-  {state, mutations}
+  {state, mutations, getters, actions}

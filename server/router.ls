@@ -14,49 +14,49 @@ log = debug \dollast:router
 
 app = new koa!
 
-trigger-pack = ->*
+trigger-pack = ->>
   while true
-    pack = yield models.Packs.find-one flag: true, '' .sort 'endTime' .exec!
+    pack = await models.Packs.find-one flag: true, '' .sort \endTime .exec!
     if pack.end-time < new Date!
       log "trigger Pack #{pack._id}"
       pack.flag = false
-      yield pack.save!
+      await pack.save!
 
-      submissions = yield models.Submissions.find pack: pack._id, hidden: true, 'config.permit' .exec!
+      submissions = await models.Submissions.find pack: pack._id, hidden: true, 'config.permit' .exec!
       for submission in submissions
         submission.hidden = false
-        yield submission.save!
+        await submission.save!
     else
       break
 
-app.use (next) ->*
+app.use (ctx, next) ->>
 
-  @errors = []
-  @assert = err.assert
-  @assert-exist = err.assert-exist
-  @assert-name = err.assert-name
+  ctx.errors = []
+  ctx.assert = err.assert
+  ctx.assert-exist = err.assert-exist
+  ctx.assert-name = err.assert-name
 
-  yield trigger-pack!
+  await trigger-pack!
 
   # log "response:", @body, @errors
-  log "#{@req.method} #{@req.url}:", @request.body
+  log "#{ctx.req.method} #{ctx.req.url}:", ctx.request.body
   try
-    yield next
+    await next!
   catch e
     if e.name == \ValidationError
-      @errors.push e{name, details, _object}
+      ctx.errors.push e{name, details, _object}
     else if e.re
-      @errors.push e{name, details}
+      ctx.errors.push e{name, details}
       log \RuntimeError, e.error
     else
       throw e
-      @app.emit \error, e, @
+      ctx.app.emit \error, e, @
 
-  @status = 200
-  if @errors.length > 0
-    @body = errors: @errors
+  ctx.status = 200
+  if ctx.errors.length > 0
+    ctx.body = errors: ctx.errors
   else
-    @body = data: @body
+    ctx.body = data: ctx.body
 
 router = new koa-joi-router!
 

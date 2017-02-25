@@ -1,20 +1,20 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header Links
-    a.item(href="#/problem/{{problem._id}}")
+    a.item(:href="'#/problem/' + problem._id")
       i.icon.reply
       | Go to Problem
     .ui.divider
-    .ui.header Operations 
+    .ui.header Operations
     .item(v-if="problem._id != ''", @click="remove")
       i.icon.cancel
       | Delete
-    a.item(v-if="problem._id != ''", href="#/problem/{{problem._id}}/data")
+    a.item(v-if="problem._id != ''", href="'#/problem/' + problem._id + '/data'")
       i.icon.archive
       | Dataset Manage
 
-  .ui.form.basic.segment(slot="main")#problem-modify
+  .ui.form.basic.segment(:class="{loading: isLoading}", slot="main")#problem-modify
     h2.ui.dividing.header {{title}}
     .ui.error.message
 
@@ -34,7 +34,7 @@ view
         .default.text choose a judger
         i.dropdown.icon
         .menu
-          .item(v-for="(key, value) of judgers", data-value="{{key}}") ({{key}}) {{value}}
+          .item(v-for="(value, key) of judgers", :data-value="key") ({{key}}) {{value}}
 
     .ui.four.fields
       .ui.field
@@ -85,13 +85,12 @@ view
 <script>
 require! {
   \debug
-  \co
   \vue
+  \vuex : {map-getters, map-actions}
   \flat
-  \../view
+  \../window
   \../elements/permit
   \../elements/pack-selector
-  \../../actions : {check-response-errors}
   \../../../common/judgers
 }
 
@@ -126,20 +125,20 @@ set-form-values = (data) ->
   $form.form 'set values', problem
 
 module.exports =
-  vuex:
-    getters:
-      user: (.session.user)
-    actions:
-      {check-response-errors}
 
   components:
-    {view, permit, pack-selector}
+    {window, permit, pack-selector}
 
-  methods:
-    remove: co.wrap ->*
-      {data: response} = yield @$http.delete "problem/#{@problem._id}"
-      if not @check-response-errors response
-        @$route.router.go "/pack/#{@problem.config.pack._id}"
+  methods: (map-actions [\$fetch]) <<<
+    remove: ->>
+      await @$fetch method: \DELETE, url: "problem/#{@problem._id}"
+      @$router.push "/pack/#{@problem.config.pack._id}"
+
+    fetch: ->>
+      {problem} = @$route.params
+      if problem != void
+        {config: {pack}} = await @$fetch method: \GET, url: "problem/#{problem}"
+        @ <<< {problem, pack}
 
   data: ->
     pack: void
@@ -154,14 +153,17 @@ module.exports =
           _id: ""
           title: ""
 
-  computed:
+  computed: (map-getters [\user, \isLoading]) <<<
     title: ->
       if @problem._id != ""
         "Problem #{@problem._id}. #{@problem.outlook.title}"
       else
         "Create new problem"
 
-  ready: ->
+  created: ->
+    @fetch!
+
+  mounted: ->
     CKEDITOR.replace \description
     CKEDITOR.replace \inputFormat
     CKEDITOR.replace \outputFormat
@@ -169,7 +171,7 @@ module.exports =
     @$next-tick ->
       $ '#judger' .dropdown!
 
-    submit = co.wrap (e, values) ~>*
+    submit = (e, values) ~>>
       e.prevent-default!
       description = CKEDITOR.instances.description.get-data!
       input-format = CKEDITOR.instances.inputFormat.get-data!
@@ -180,10 +182,9 @@ module.exports =
         problem._id = @problem._id
 
       log {problem}
-      {data: response} = yield @$http.post "problem", problem
-      if not @check-response-errors response, $ '#problem-modify'
-        if @problem._id == ""
-          @$route.router.go path: "problem/#{response._id}/modify"
+      await @fetch method: \POST, url: "problem", data: problem, form: $ '#problem-modify'
+      if @problem._id == ""
+        @$router.push path: "problem/#{response._id}/modify"
 
     $form = $ '#problem-modify'
     $form.form on-success: submit
@@ -193,20 +194,12 @@ module.exports =
         group: \problems
         access: \rwxrw-r--
 
-  route:
-    data: co.wrap (to: params: {problem}) ->*
-      if problem != void
-        {data: response} = yield vue.http.get "problem/#{problem}"
-        if @check-response-errors response
-          return null
-        problem = response.data
-        {pack} = problem.config
-
-        {problem, pack}
-  
   watch:
     'problem._id': ->
       @$next-tick ->
         set-form-values @problem
+
+    $route: ->
+      @fetch!
 
 </script>

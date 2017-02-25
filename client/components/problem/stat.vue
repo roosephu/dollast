@@ -1,21 +1,21 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header links
-    a.item(href="#!/problem/{{problem._id}}") 
+    a.item(:href="'#!/problem/' + problem._id")
       i.icon.browser
       | Go to Problem
-    a.item(v-link="{name: 'submissions', query: {problem: problem._id}}") 
+    router-link.item(go="{name: 'submissions', query: {problem: problem._id}}")
       i.icon
       | All submissions
 
-  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
+  .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.header.dividing Statistics for Problem {{problem._id}}
     // problem(:prob="problem")
 
     h3.ui.header.dividing numbers
     .ui.statistics
-      .statistic(v-for="(key, val) in stat")
+      .statistic(v-for="(val, key) in stat")
         .value {{val}}
         .label {{key}}
 </template>
@@ -23,12 +23,11 @@ view
 <script>
 require! {
   \vue
+  \vuex : {map-actions, map-getters}
   \debug
-  \co
   \prelude-ls : {average, map, filter}
-  \../view
+  \../window
   \../format
-  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:problem:stat
@@ -52,31 +51,32 @@ generate-stat = (sols) ->
   return {solved, mean, median, stddev}
 
 module.exports =
-  vuex:
-    actions:
-      {check-response-errors}
 
   data: ->
     stat: []
     problem: {}
 
-  route:
-    data: co.wrap (to: params: {problem}) ->*
-      {data: response} = yield vue.http.get "problem/#{problem}/stat"
-      if @check-response-errors response
-        return null
-      {submissions, problem} = response.data
+  watch:
+    $route: ->
+      @fetch!
 
+  computed: map-getters [\isLoading]
+
+  methods: (map-actions [\$fetch]) <<<
+    fetch: ->>
+      {submissions, problem} = await @$fetch method: \GET, url: "problem/#{@$route.params.problem}/stat"
       stat = generate-stat submissions
-      stat:
-        "accepted users": stat.solved
-        # "accepted programs": "???"
-        mean: stat.mean
-        median: stat.median
-        "standard deviation": stat.stddev
-      problem: problem
+
+      @ <<<
+        stat:
+          "accepted users": stat.solved
+          # "accepted programs": "???"
+          mean: stat.mean
+          median: stat.median
+          "standard deviation": stat.stddev
+        problem: problem
 
   components:
-    {view} <<< format{problem}
+    {window} <<< format{problem}
 
 </script>

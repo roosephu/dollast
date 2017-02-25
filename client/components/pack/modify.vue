@@ -1,8 +1,8 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header links
-    a.item(href="#!/pack/{{pack._id}}")
+    a.item(:href="'#!/pack/' + pack._id")
       i.icon.left.arrow
       | Go to Pack
     .ui.divider
@@ -41,7 +41,7 @@ view
     //     .default.text problems
     //     i.dropdown.icon
     //     .menu
-    //       .item(v-for="(key, value) of dropdownProblems", data-value="{{key}}") {{value}}
+    //       .item(v-for="(value, key) of dropdownProblems", :data-value="key") {{value}}
     // br
 
     .ui.field
@@ -53,13 +53,12 @@ view
 <script>
 require! {
   \vue
-  \co
+  \vuex : {map-getters, map-actions}
   \moment
   \debug
   \prelude-ls : {map, pairs-to-obj, obj-to-pairs, flatten}
   \../elements/permit
-  \../view
-  \../../actions : {check-response-errors}
+  \../window
 }
 
 log = debug \dollast:component:pack:modify
@@ -69,7 +68,7 @@ get-form-values = (values) ->
 
   # problems = if values.problems != "" then map parse-int, values.problems.split ',' else []
   begin-time = moment values.begin-time .value-of!
-  end-time = moment values.end-time .value-of! 
+  end-time = moment values.end-time .value-of!
 
   {permit, begin-time, end-time} <<<< values{title}
 
@@ -102,54 +101,48 @@ module.exports =
       else
         "Pack #{@pack._id}. #{@pack.title}"
 
-  vuex:
-    getters:
-      user: (.session.user)
-    actions:
-      {check-response-errors}
-
   components:
-    {view, permit}
+    {window, permit}
 
-  methods:
-    del: co.wrap ->*
-      log \delete
-      {data: response} = yield vue.http.delete "pack/#{@pack._id}"
-      log {response}
-      @$route.router.go "/pack" 
-
-  ready: ->
-    submit = co.wrap (e, values) ~>*
-      e.prevent-default!
-      pack = get-form-values values
-      if @$route.params.pack != void
-        pack._id = @$route.params.pack
-      {data: response} = yield vue.http.post "pack", pack
-      @check-response-errors response, $ '#form-pack'
-
-    $ '#form-pack' .form on-success: submit
-
-    if @pack._id == void
-      @pack.permit =
-        owner: @user
-        group: \packs
-        access: \rwxr--r--
-      set-form-values @pack
-
-  route:
-    data: co.wrap (to: params: {pack}) ->*
+  methods: (map-actions [\$fetch]) <<<
+    fetch: ->>
+      {pack} = @$route.params
       if pack != void
-        {data: response} = yield vue.http.get "pack/#{pack}"
-        if @check-response-errors response
-          return null
-        pack = response.data
+        @pack = await @$fetch method: \GET, url: "pack/#{pack}"
 
-        {pack}
+    del: ->>
+      log \delete
+      await @$fetch method: \DELETE, url: "pack/#{@pack._id}"
+      @$router.go "/pack"
+
+  mounted: ->
+    @$next-tick ->
+      submit = (e, values) ~>>
+        e.prevent-default!
+        pack = get-form-values values
+        if @$route.params.pack != void
+          pack._id = @$route.params.pack
+        await @fetch method: \POST, url: "pack", data: pack
+
+      $ '#form-pack' .form on-success: submit
+
+      if @pack._id == void
+        @pack.permit =
+          owner: @user
+          group: \packs
+          access: \rwxr--r--
+        set-form-values @pack
+
+  created: ->
+    @fetch!
 
   watch:
     'pack._id': ->
       @$next-tick ~>
         $ '.ui.selection.dropdown' .dropdown \refresh
         set-form-values @pack
+
+    $route: ->
+      @fetch!
 
 </script>

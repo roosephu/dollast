@@ -1,8 +1,8 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header links
-    a.item(href="#!/user/{{user.profile._id}}")
+    a.item(:href="'#!/user/' + user.profile._id")
       i.icon.user
       | Go to User
 
@@ -18,7 +18,7 @@ view
         .default.text select proper access
         i.dropdown.icon
         .menu
-          .item(v-for="item in groups", data-value="{{item}}") {{item}}
+          .item(v-for="item in groups", :data-value="item") {{item}}
 
     h3.ui.dividing.header Description
     .ui.two.fields
@@ -53,22 +53,18 @@ view
 
 <script>
 require! {
-  \co
+  \vuex : {map-getters, map-actions}
   \vue
   \debug
-  \../view
-  \../../actions : {check-response-errors}
+  \../window
 }
 
 log = debug \dollast:components:user:modify
 
 module.exports =
-  vuex:
-    actions:
-      {check-response-errors}
 
   components:
-    {view}
+    {window}
 
   data: ->
     groups: [\problems, \submissions, \admin, \packs]
@@ -77,42 +73,45 @@ module.exports =
         _id: ""
         groups: []
 
-  route:
-    data: co.wrap (to: params: {user}) ->*
-      {data: response} = yield vue.http.get "user/#{user}"
-      if @check-response-errors response
-        return null
-      {data: user} = response 
-      {user}
+  methods: (map-actions [\$fetch]) <<<
+    fetch: ->>
+      @user = await @$fetch method: \GET, url: "user/#{@$route.params.user}"
 
-  ready: ->
-    $dropdown = $ \.ui.dropdown
-    $dropdown.dropdown do
-      allow-additions: true
+  computed: (map-getters [\isLoading])
 
-    submit = co.wrap (e) ~>*
-      e.prevent-default!
+  mounted: ->
+    @$next-tick ->
+      $dropdown = $ \.ui.dropdown
+      $dropdown.dropdown do
+        allow-additions: true
+
+      submit = (e) ~>>
+        e.prevent-default!
+        $form = $ '#form-user'
+        {groups, old-password, new-password, confirm-password, description} = $form.form 'get values'
+        groups = groups.split ','
+        {_id} = @user.profile
+
+        if old-password == "" or new-password == ""
+          updated = {_id, groups, description}
+        else
+          updated = {_id, groups, description, old-password, new-password}
+
+        await @$fetch method: \POST, url: "user/#{_id}", data: updated, form: $form
+
       $form = $ '#form-user'
-      {groups, old-password, new-password, confirm-password, description} = $form.form 'get values'
-      groups = groups.split ','
-      {_id} = @user.profile
-
-      if old-password == "" or new-password == ""
-        updated = {_id, groups, description}
-      else
-        updated = {_id, groups, description, old-password, new-password}
-
-      {data: response} = yield vue.http.post "user/#{_id}", updated
-      @check-response-errors response, $form
-      # @props.dispatch on-update-user @props.params.user, updated
-
-    $form = $ '#form-user'
-    $form.form on-success: submit
+      $form.form on-success: submit
 
   watch:
     'user.profile._id': ->
       $form = $ '#form-user'
       @$next-tick ~>
         $form.form 'set values', @user.profile{groups, description}
+
+    $route: ->
+      @fetch!
+
+  created: ->
+    @fetch!
 
 </script>

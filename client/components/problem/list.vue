@@ -1,13 +1,13 @@
 <template lang="jade">
-view
-  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
+window
+  .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.dividing.header Problem List
     .ui.dropdown.floated.pointing.button.labeled.icon
       input(type="hidden", name="filter")
       .default.text please select filter
       i.dropdown.icon
       .menu
-        .item(v-for="item in options", data-value="{{item}}") {{item}}
+        .item(v-for="item in options", :data-value="item") {{item}}
     a.ui.icon.labeled.button.right.floated.primary(href="#/problem/create")
       i.icon.plus
       | create
@@ -21,19 +21,15 @@ view
 <script>
 require! {
   \vue
-  \co
+  \vuex : {map-getters, map-actions}
   \debug
-  \../view
+  \../window
   \../format
-  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:problem:list
 
 module.exports =
-  vuex:
-    actions:
-      {check-response-errors}
 
   data: ->
     filter: \all
@@ -41,18 +37,22 @@ module.exports =
     problems: []
 
   components:
-    {view} <<< format{problem}
+    {window} <<< format{problem}
 
-  route:
-    data: co.wrap ->*
-      {data: response} = yield vue.http.get \problem
-      if @check-response-errors response
-        return null
-      problems = response.data
+  computed: map-getters [\isLoading]
 
-      {problems}
+  created: ->
+    @fetch!
 
-  ready: ->
+  watch:
+    $route: ->
+      @fetch!
+
+  methods: (map-actions [\$fetch]) <<<
+    fetch: ->>
+      @problem = await @$fetch method: \GET, url: \problem
+
+  mounted: ->
     $filter = $ '.dropdown'
     $filter.dropdown do
       on: \hover

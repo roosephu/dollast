@@ -1,18 +1,18 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header links
-    a.item(href="#!/user/{{submission.user}}")
+    a.item(:href="'#!/user/' + submission.user")
       i.icon.user
       | Go to User
-    a.item(href="#!/problem/{{submission.problem._id}}")
+    a.item(:href="'#!/problem/' + submission.problem._id")
       i.icon.browser
       | Go to Problem
-    a.item(href="#!/pack/{{submission.pack}}")
+    a.item(:href="'#!/pack/' + submission.pack")
       i.icon.shopping.bag
       | Go to Pack
 
-  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
+  .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.header.dividing Submission {{$route.params.sid}}
     .ui.olive.labels
       .ui.label {{submission.permit.owner}}
@@ -28,7 +28,7 @@ view
     .ui.segment
       .ui.top.attached.label code
       pre.line-numbers
-        code#code(:class="['language-' + submission.language]") {{submission.code}} 
+        code#code(:class="['language-' + submission.language]") {{submission.code}}
 
     p(v-if="submission.summary.status == 'private'") this code is private
     .ui.segment(v-if="submission.summary.status == 'CE'")
@@ -69,8 +69,8 @@ view
 <script>
 require! {
   \debug
-  \co
   \vue
+  \vuex : {map-getters, map-actions}
   \prismjs : Prism
   \javascript-natural-sort : natural-sort
   \prismjs/components/prism-c
@@ -78,19 +78,16 @@ require! {
   \prismjs/themes/prism-solarizedlight.css
   \prismjs/plugins/line-numbers/prism-line-numbers
   \prismjs/plugins/line-numbers/prism-line-numbers.css
-  \../view
+  \../window
   \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:submission:show
 
 module.exports =
-  vuex:
-    actions: 
-      {check-response-errors}
 
   components:
-    {view}
+    {window}
 
   data: ->
     submission:
@@ -103,30 +100,32 @@ module.exports =
         owner: ""
         group: ""
 
-  computed:
+  computed: (map-getters [\isLoading]) <<<
     problem: ->
       @submission.problem._id
-    
+
     highlighted: ->
       if @submission.code != ""
         Prism.highlight @submission.code, Prism.languages[@submission.language]
       else
         ""
 
-  route:
-    data: co.wrap (to: params: {sid}) ->*
-      {data: response} = yield vue.http.get "submission/#{sid}"
-      if @check-response-errors response
-        return null
-      submission = response.data
+  methods: (map-actions [\$fetch]) <<<
+    fetch: ->>
+      submission = await @$fetch method: \GET, url: "submission/#{@$route.params.sid}"
       submission.results .= sort (a, b) ->
         natural-sort a.input, b.input
+      @ <<< {submission}
 
-      {submission}
-  
   watch:
     'submission.code': ->
       @$next-tick ->
         Prism.highlight-all!
+
+    $route: ->
+      @fetch!
+
+  created: ->
+    @fetch!
 
 </script>

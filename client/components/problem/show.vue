@@ -1,23 +1,23 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header links
-    a.ui.icon.labeled.item(href="#/problem/{{problem._id}}/stat")
+    a.ui.icon.labeled.item(:href="'#/problem/' + problem._id + '/stat'")
       i.icon.chart.bar
       | Statistics
-    a.item(href="#/pack/{{problem.config.pack._id}}")
+    a.item(:href="'#/pack/' + problem.config.pack._id")
       i.icon.shopping.bag
       | Go to Pack
-    a.ui.icon.labeled.item(v-link="{name: 'submissions', query: {problem: problem._id}}")
+    router-link.ui.icon.labeled.item(:to="{name: 'submissions', query: {problem: problem._id}}")
       i.icon
       | All Submissions
     .ui.divider
     .ui.header operations
-    a.ui.icon.labeled.item(href="#/problem/{{problem._id}}/modify")
+    a.ui.icon.labeled.item(:href="'#/problem/' + problem._id + '/modify'")
       i.icon.edit
       | Modify
 
-  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
+  .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.dividing.header Problem {{problem._id}}. {{problem.outlook.title}}
     .ui.olive.labels
       .ui.label {{problem.config.timeLimit}} s
@@ -71,7 +71,7 @@ view
             .default.text select your language
             i.dropdown.icon
             .menu
-              .item(v-for="item in languages", data-value="{{item}}") {{item}}
+              .item(v-for="item in languages", :data-value="item") {{item}}
 
       permit.hello
 
@@ -84,25 +84,19 @@ view
 
 <script>
 require! {
-  \co
   \debug
   \vue
-  \../view
+  \vuex : {map-actions, map-getters}
+  \../window
   \../elements/permit
-  \../../actions
 }
 
 log = debug \dollast:component:problem:show
 
 module.exports =
-  vuex:
-    actions:
-      actions{check-response-errors}
-    getters:
-      user: (.session.user)
 
   components:
-    {view, permit}
+    {window, permit}
 
   data: ->
     languages: [\cpp, \java, \pas]
@@ -114,40 +108,41 @@ module.exports =
       outlook: {}
       permit: {}
 
-  computed:
+  computed: (map-getters [\isLoading]) <<<
     permit: ->
       owner: @user
       group: \submissions
-      access: \rwxrw-r--
+      access: 'rwxrw-r--'
 
-  route:
-    data: co.wrap (to: params: {problem}) ->*
-      {data: response} = yield vue.http.get "problem/#{problem}"
-      if @check-response-errors response
-        return null
-      problem = response.data
+  methods: (map-actions [\$fetch]) <<<
+    fetch: ->>
+      @problem = await @$fetch method: \GET, url: "problem/#{$route.params.problem}"
 
-      {problem}
+  created: ->
+    @fetch!
 
   watch:
     'problem._id': ->
       @$next-tick ~>
         if MathJax?
           MathJax.Hub.Queue [\Typeset, MathJax.Hub]
-      
-  ready: ->
-    submit = co.wrap (e, values) ~>*
+
+    $route: ->
+      @fetch!
+
+  mounted: ->
+    @$next-tick ->
+      submit = (e, values) ~>>
+        $form = $ '#submit-form'
+        permit = values{owner, group, access}
+
+        data = {problem: @problem._id, permit} <<<< values{code, language}
+        await @$fetch method: \POST, url: \submission, data: data
+
       $form = $ '#submit-form'
-      permit = values{owner, group, access}
-
-      data = {problem: @problem._id, permit} <<<< values{code, language}
-      {data: response} = yield @$http.post \submission, data
-      @check-response-errors response, $form
-
-    $form = $ '#submit-form'
-    $form.form do 
-      on-success: submit
-      on: \submit
-    $form.form 'set values', @permit
-    $ '#languages' .dropdown!
+      $form.form do
+        on-success: submit
+        on: \submit
+      $form.form 'set values', @permit
+      $ '#languages' .dropdown!
 </script>

@@ -1,12 +1,12 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header links
-    a.item(href="#!/pack/{{pack._id}}")
+    a.item(:href="'#!/pack/' + pack._id")
       i.icon.left.arrow
       | Go to Pack
 
-  .ui.basic.segment(:class="{loading: $loadingRouteData}", slot="main")
+  .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     table.ui.table.segment.large.green.selectable
       thead
         tr
@@ -20,20 +20,19 @@ view
             user(:user="record[0]")
           td {{record[1].total}}
           td(v-for="problem in pack.problems")
-            a(href="#!/submission/{{record[1][problem._id].solution}}") {{record[1][problem._id].score}}
-  
-    p Note: only last submission is considered. 
+            a(:href="'#!/submission/' + record[1][problem._id].solution") {{record[1][problem._id].score}}
+
+    p Note: only last submission is considered.
 </template>
 
 <script>
 require! {
   \debug
   \vue
-  \co
+  \vuex : {map-actions, map-getters}
   \prelude-ls : {obj-to-pairs, sort, reverse}
-  \../view
+  \../window
   \../format
-  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:pack:board
@@ -48,32 +47,29 @@ generate-board = (submissions) ->
   board
 
 module.exports =
-  vuex:
-    actions:
-      {check-response-errors}
 
   components:
-    {view} <<< format{problem, code-link, user}
+    {window} <<< format{problem, code-link, user}
+
+  computed: map-getters [\isLoading]
 
   data: ->
     board: []
-    pack: 
+    pack:
       problems: []
       _id: "0"
 
-  route:
-    data: co.wrap (to: params: {pack}) ->*
-      {data: response} = yield vue.http.get "pack/#{pack}"
-      if @check-response-errors response
-        return null
-      pack = response.data
+  methods: (map-actions [\$fetch]) <<<
+    fetch: ->>
+      @pack = await @$fetch method: \GET, url: "pack/#{@$route.params.pack}"
+      submissions = await @$fetch method: \GET, url: "pack/#{@$route.params.pack}/board"
+      @board = generate-board submissions |> obj-to-pairs |> sort |> reverse
 
-      {data: response} = yield vue.http.get "pack/#{pack._id}/board"
-      if @check-response-errors response
-        return null
-      submissions = response.data
+  watch:
+    $route: ->
+      @fetch!
 
-      board = generate-board submissions |> obj-to-pairs |> sort |> reverse
-      {board, pack}
+  created: ->
+    @fetch!
 
 </script>

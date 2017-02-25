@@ -1,12 +1,12 @@
 <template lang="jade">
-view
+window
   .menu(slot="config")
     .ui.header links
-    a.item(href="#/problem/{{problem._id}}")
+    a.item(:href="'#/problem/' + problem._id")
       i.icon.reply
       | Go to Problem
 
-  .ui.form.basic.segment#form-data(:class="{loading: $loadingRouteData}", slot="main")
+  .ui.form.basic.segment#form-data(:class="{loading: isLoading}", slot="main")
     h2.ui.dividing.header Problem {{problem | problem}}
 
     h3.ui.dividing.header Dataset Management
@@ -51,22 +51,18 @@ view
 <script>
 require! {
   \vue
+  \vuex : {map-getters, map-actions}
   \debug
-  \co
   \javascript-natural-sort : natural-sort
-  \../view
-  \../../actions : {check-response-errors}
+  \../window
 }
 
 log = debug \dollast:components:problems:data
 
 module.exports =
-  vuex:
-    actions:
-      {check-response-errors}
-  
+
   components:
-    {view}
+    {window}
 
   data: ->
     problem:
@@ -76,60 +72,54 @@ module.exports =
       config:
         dataset: []
 
-  route:
-    data: co.wrap (to: params: {problem}) ->*
-      {data: response} = yield @$http.get "problem/#{problem}"
-      if @check-response-errors response
-        return null
-      problem = response.data
-
-      {problem}
-
-  computed:
+  computed: (map-getters [\isLoading]) <<<
     dataset: ->
       @problem.config.dataset .sort (a, b) ->
         natural-sort a.input, b.input
 
-  methods:
-    rebuild: co.wrap ->*
-      {data: response} = yield @$http.get "data/#{@problem._id}/rebuild"
-      if not @check-response-errors response
-        @problem.config.dataset = response.data
-    
-    remove: co.wrap (atom) ->*
-      {data: response} = yield @$http.delete "data/#{@problem._id}/#{atom.input}"
-      @check-response-errors response
-      @problem.config.dataset = response.data
+  methods: (map-actions [\$fetch]) <<<
+    rebuild: ->>
+      @problem.config.dataset = await @$fetch method: \GET, url: "data/#{@problem._id}/rebuild"
 
-  ready: ->
-    $ 'input:text, #select' .on \click, (e) ->
-      $ '#upload', $(e.target).parents! .click!
-    
-    $ 'input:file' .on \change, (e) ->
-      if e.target?.files?.0?.name
-        name = e.target.files[0].name 
-        $ '#filename', $(e.target).parents! .val name
+    remove: (atom) ->>
+      @problem.config.dataset = await @$fetch method: \DELETE, url: "data/#{@problem._id}/#{atom.input}"
 
-    submit = co.wrap (e) ~>*
-      files = $ '#upload' .0 .files
+    fetch: ->>
+      @problem = await @$fetch method: \GET, url: "problem/#{@$route.params.problem}"
 
-      form-data = new FormData!
-      for file in files
-        form-data.append file.name, file
-      
-      $progress = $ \.ui.progress
-      $progress.progress do
-        text:
-          ratio: '{value} of {total}'
-          success: 'uploaded!'
-      {data: response} = yield @$http.post "data/#{@problem._id}/upload", form-data, progress: (e) ->
-        if e.length-computable
-          $progress.progress value: e.loaded, total: e.total
-      
-      @check-response-errors response
-      
-      @problem.config.dataset = response.data.dataset
+  watch:
+    $route: ->
+      @fetch!
 
-    $ '.form' .form on-success: submit
+  created: ->
+    @fetch!
+
+  mounted: ->
+    @$next-tick ->
+      $ 'input:text, #select' .on \click, (e) ->
+        $ '#upload', $(e.target).parents! .click!
+
+      $ 'input:file' .on \change, (e) ->
+        if e.target?.files?.0?.name
+          name = e.target.files[0].name
+          $ '#filename', $(e.target).parents! .val name
+
+      submit = (e) ~>>
+        files = $ '#upload' .0 .files
+
+        form-data = new FormData!
+        for file in files
+          form-data.append file.name, file
+
+        $progress = $ \.ui.progress
+        $progress.progress do
+          text:
+            ratio: '{value} of {total}'
+            success: 'uploaded!'
+        @problem.config.dataset = await @$fetch method: \POST, url: "data/#{@problem._id}/upload", data: form-data, progress: (e) ->
+          if e.length-computable
+            $progress.progress value: e.loaded, total: e.total
+
+      $ '.form' .form on-success: submit
 
 </script>
