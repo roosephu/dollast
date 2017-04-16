@@ -10,11 +10,11 @@ require! {
 
 log = debug \dollast:ctrl:problem:save
 
-handler = ->*
-  problem = @request.body
+handler = async (ctx) ->
+  problem = ctx.request.body
 
   if problem._id == void
-    problem._id = yield models.Problems.next-count!
+    problem._id = await models.Problems.next-count!
     log "saving new problem using id #{problem._id}"
 
     # TODO: check whether user can create a problem here
@@ -22,8 +22,8 @@ handler = ->*
     problem.permit <<<< {parent-type: \Pack, parent-id: problem.config.pack}
   else
 
-    existed = yield models.Problems.find-by-id problem._id, \permit .exec!
-    yield @assert-exist existed, \w, problem._id, \Problem
+    existed = await models.Problems.find-by-id problem._id, \permit .exec!
+    await ctx.assert-exist existed, \w, problem._id, \Problem
 
     # TODO: check permit is not modified here
     # only owner can transfer owner
@@ -33,10 +33,10 @@ handler = ->*
     problem |>= flat
     log {problem}
 
-  yield models.Problems.update _id: problem._id, problem, upsert: true .exec!
-  @body = problem
+  await models.Problems.update _id: problem._id, problem, upsert: true .exec!
+  ctx.body = problem
 
-module.exports = 
+module.exports =
   method: \POST
   path: \/problem
   validate:

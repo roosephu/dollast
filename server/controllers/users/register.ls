@@ -4,11 +4,11 @@ require! {
   \../../models
 }
 
-handler = ->*
-  {user, password} = @request.body
+handler = async (ctx) ->
+  {user, password} = ctx.request.body
 
-  if yield models.Users.find-by-id user .count! .exec!
-    @body =
+  if await models.Users.find-by-id user .count! .exec!
+    ctx.body =
       type: \register
       error: true
       payload: "duplicate user id"
@@ -23,18 +23,18 @@ handler = ->*
         access: \rw-rw----
 
     user.set-password password
-    yield user.save!
+    await user.save!
 
-    @body =
+    ctx.body =
       type: \register
       payload: "register successful"
 
-module.exports = 
+module.exports =
   method: \POST
   path: \/user/register
   validate:
     type: \json
-    body: 
+    body:
       user: validator.user!
       password: Joi .string! .required! .min 8 .max 15
   handler: handler

@@ -34,6 +34,8 @@ module.exports =
         loader: 'livescript-loader'
       * test: /\.css$/
         loader: 'style-loader!css-loader'
+      * test: /\.js$/
+        loader: 'babel-loader'
   output:
     path: path.join __dirname, \../public
     filename: \app.js

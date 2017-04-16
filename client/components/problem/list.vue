@@ -20,8 +20,7 @@ window
 
 <script>
 require! {
-  \vue
-  \vuex : {map-getters, map-actions}
+  \vuex : {default: {map-getters, map-actions}}
   \debug
   \../window
   \../format

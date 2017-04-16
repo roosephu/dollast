@@ -3,17 +3,17 @@ require! {
   \../validator
 }
 
-handler = ->*
-  {pack} = @params
+handler = async (ctx) ->
+  {pack} = ctx.params
 
-  pack = yield models.Packs.find-by-id pack, 'permit beginTime endTime' .exec!
-  yield @assert-exist pack, \r, @params.pack, \Pack
+  pack = await models.Packs.find-by-id pack, 'permit beginTime endTime' .exec!
+  await ctx.assert-exist pack, \r, ctx.params.pack, \Pack
 
-  if !pack.permit.check-owner @state.user
-    @assert-name \UnfinishedPack, false, _id: pack._id, type: \Pack, user: @state.user._id 
+  if !pack.permit.check-owner ctx.state.user
+    ctx.assert-name \UnfinishedPack, false, _id: pack._id, type: \Pack, user: ctx.state.user._id
 
   query = models.Submissions.aggregate do
-    * $match: 
+    * $match:
         pack: pack._id
         date:
           $gte: pack.begin-time
@@ -28,9 +28,9 @@ handler = ->*
         solution:
           $first: \$_id
 
-  @body = yield query.exec!
+  ctx.body = await query.exec!
 
-module.exports = 
+module.exports =
   method: \GET
   path: \/pack/:pack/board
   validate:

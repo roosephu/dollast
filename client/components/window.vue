@@ -15,13 +15,12 @@ div
 
 <script>
 require! {
-  \vue
   \./site/foot
   \./site/navbar
   \./site/error
 }
 
-module.exports = 
+module.exports =
   components:
     {foot, navbar, error}
 

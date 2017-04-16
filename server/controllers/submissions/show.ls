@@ -6,18 +6,18 @@ require! {
 
 log = debug \dollast:ctrl:submissions:show
 
-handler = ->*
-  {submission} = @params
-  log \preparing, {submission} 
+handler = async (ctx) ->
+  {submission} = ctx.params
+  log \preparing, {submission}
 
-  submission = yield models.Submissions.find-by-id submission
+  submission = await models.Submissions.find-by-id submission
     .populate \problem, 'outlook.title'
     .exec!
-  yield @assert-exist submission, \r, @params.submission, \Submission 
+  await ctx.assert-exist submission, \r, ctx.params.submission, \Submission
 
-  @body = submission
+  ctx.body = submission
 
-module.exports = 
+module.exports =
   method: \GET
   path: \/submission/:submission
   validate:

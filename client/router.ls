@@ -1,7 +1,10 @@
 require! {
-  \vue
-  \vue-router
+  \vue : {default: vue}
+  \vue-router : {default: vue-router}
+  \debug
 }
+
+log = debug \dollast:client:router
 
 vue.use vue-router
 router = new vue-router routes:

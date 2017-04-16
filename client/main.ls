@@ -1,7 +1,6 @@
 require! {
-  \vue
-  \vuex
-  \vue-router
+  \vue : {default: vue}
+  \vuex : {default: vuex}
   \axios
   \debug
   \./validation

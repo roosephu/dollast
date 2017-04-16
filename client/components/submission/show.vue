@@ -69,8 +69,7 @@ window
 <script>
 require! {
   \debug
-  \vue
-  \vuex : {map-getters, map-actions}
+  \vuex : {default: {map-getters, map-actions}}
   \prismjs : Prism
   \javascript-natural-sort : natural-sort
   \prismjs/components/prism-c
@@ -79,7 +78,6 @@ require! {
   \prismjs/plugins/line-numbers/prism-line-numbers
   \prismjs/plugins/line-numbers/prism-line-numbers.css
   \../window
-  \../../actions : {check-response-errors}
 }
 
 log = debug \dollast:component:submission:show

@@ -3,15 +3,15 @@ require! {
   \../validator
 }
 
-handler = ->*
-  {pack} = @params
+handler = async (ctx) ->
+  {pack} = ctx.params
 
-  pack = yield models.Packs.find-by-id pack, \permit .exec!
-  yield @assert-exist pack, \w, @params.pack, \Pack
+  pack = await models.Packs.find-by-id pack, \permit .exec!
+  await ctx.assert-exist pack, \w, ctx.params.pack, \Pack
 
-  yield models.Packs.find-by-id-and-remove pack._id .exec!
+  await models.Packs.find-by-id-and-remove pack._id .exec!
 
-  @body = 
+  ctx.body =
     _id: pack._id
     type: \pack
     detail: "pack has been deleted"

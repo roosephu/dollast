@@ -1,5 +1,5 @@
 require! {
-  \vue
+  \vue : {default: vue}
   \axios
   \debug
   \./auth

@@ -7,23 +7,23 @@ require! {
 
 log = debug \dollast:ctrl:data:upload
 
-handler = ->*
+handler = async (ctx) ->
   log \uploading
-  {problem} = @params
+  {problem} = ctx.params
 
-  problem = yield models.Problems.find-by-id problem, \permit .exec!
-  yield @assert-exist problem, \w, @params.problem, \Problem
+  problem = await models.Problems.find-by-id problem, \permit .exec!
+  await ctx.assert-exist problem, \w, ctx.params.problem, \Problem
 
-  parts = @request.parts
-  while part = yield parts
-    @body = yield core.upload.call @, problem._id, part
-  pairs = yield problem.rebuild!
+  parts = ctx.request.parts
+  # while (part = (await parts))
+  #   ctx.body = await core.upload.call ctx., problem._id, part
+  pairs = await problem.rebuild!
 
-  @body = 
-    dataset: 
+  ctx.body =
+    dataset:
       pairs
 
-module.exports = 
+module.exports =
   method: \POST
   path: \/data/:problem/upload
   validate:

@@ -28,8 +28,7 @@ window
 <script>
 require! {
   \debug
-  \vue
-  \vuex : {map-actions, map-getters}
+  \vuex : {default: {map-actions, map-getters}}
   \prelude-ls : {obj-to-pairs, sort, reverse}
   \../window
   \../format

@@ -25,8 +25,7 @@ window
 <script>
 require! {
   \debug
-  \vue
-  \vuex : {map-actions}
+  \vuex : {default: {map-actions}}
   \../window
 }
 

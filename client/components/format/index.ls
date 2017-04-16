@@ -1,6 +1,6 @@
 require! {
   \moment
-  \vue
+  \vue : {default: vue}
   \./code-link
   \./problem
   \./pack

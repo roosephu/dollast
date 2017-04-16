@@ -3,12 +3,12 @@ require! {
   \../validator
 }
 
-handler = ->*
-  {problem} = @params
+handler = async (ctx) ->
+  {problem} = ctx.params
 
-  problem = yield models.Problems.find-by-id problem, 'config.pack outlook.title permit'
+  problem = await models.Problems.find-by-id problem, 'config.pack outlook.title permit'
     .exec!
-  yield @assert-exist problem, \r, @params.problem, \Problem
+  await ctx.assert-exist problem, \r, ctx.params.problem, \Problem
 
   query = models.Submissions.aggregate do
     * $match: problem: problem._id
@@ -26,13 +26,13 @@ handler = ->*
         submits:
           $sum: 1
 
-  submissions = yield query.exec!
+  submissions = await query.exec!
   delete problem.config
   delete problem.permit
 
-  @body = {submissions, problem}
+  ctx.body = {submissions, problem}
 
-module.exports = 
+module.exports =
   method: \GET
   path: \/problem/:problem/stat
   validate:

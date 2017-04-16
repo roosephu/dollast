@@ -21,8 +21,7 @@ window
 <script>
 require! {
   \debug
-  \vue
-  \vuex : {map-getters, map-actions}
+  \vuex : {default: {map-getters, map-actions}}
   \../window
 }
 

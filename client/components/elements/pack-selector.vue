@@ -9,7 +9,7 @@
 
 <script>
 require! {
-  \vue
+  \vue : {default: vue}
   \debug
 }
 

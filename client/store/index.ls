@@ -1,6 +1,6 @@
 require! {
-  \vue
-  \vuex
+  \vue : {default: vue}
+  \vuex : {default: vuex}
   \./actions
   \./mutations
 }

@@ -52,8 +52,7 @@ window
 
 <script>
 require! {
-  \vue
-  \vuex : {map-getters, map-actions}
+  \vuex : {default: {map-getters, map-actions}}
   \moment
   \debug
   \prelude-ls : {map, pairs-to-obj, obj-to-pairs, flatten}

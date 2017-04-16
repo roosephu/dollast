@@ -1,8 +1,0 @@
-{
-  "verbose": true,
-  "ignore": ["public/", "src/"],
-  "execMap": {
-    "rb": "ruby",
-    "pde": "processing --sketch={{pwd}} --run"
-  }
-}

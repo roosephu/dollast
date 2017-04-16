@@ -38,7 +38,7 @@
 <script>
 require! {
   \debug
-  \vuex : {map-getters, map-actions}
+  \vuex : {default: {map-getters, map-actions}}
 }
 log = debug \dollast:navbar
 

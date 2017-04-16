@@ -6,20 +6,20 @@ require! {
 
 log = debug \dollast:ctrl:problems:show
 
-handler = ->*
+handler = async (ctx) ->
   log "finding problem"
-  {problem} = @params
+  {problem} = ctx.params
 
-  problem = yield models.Problems.find-by-id problem
+  problem = await models.Problems.find-by-id problem
     .populate 'config.pack', \title
     .exec!
-  yield @assert-exist problem, \r, @params.problem, \Problem
+  await ctx.assert-exist problem, \r, ctx.params.problem, \Problem
 
   # TODO check whether the corresponding pack has started
   problem .= to-object!
-  @body = problem
+  ctx.body = problem
 
-module.exports = 
+module.exports =
   method: \GET
   path: \/problem/:problem
   validate:

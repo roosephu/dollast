@@ -9,8 +9,8 @@ require! {
 
 log = debug \dollast:ctrl:submissions:list
 
-handler = ->*
-  opts = options.sol-list-opts with @request.query
+handler = async (ctx) ->
+  opts = options.sol-list-opts with ctx.request.query
 
   basic-filters = Obj.reject (== undefined), opts{user, pack, language, problem}
   if basic-filters.problem
@@ -29,16 +29,16 @@ handler = ->*
     log \???
     # if current user is the owner of request pack, then he can see all submissions
     check = false
-    if @state.user.admin?
+    if ctx.state.user.admin?
       check = true
     else if opts.pack
-      pack = yield models.Packs.find-by-id opts.pack, \permit .exec!
-      if pack.permit.check-owner @state.user
-        check = true  
+      pack = await models.Packs.find-by-id opts.pack, \permit .exec!
+      if pack.permit.check-owner ctx.state.user
+        check = true
 
-    fn = 'summary.score': 
+    fn = 'summary.score':
       switch opts.relationship
-        | \lt => $lte: opts.threshold 
+        | \lt => $lte: opts.threshold
         | \gt => $gte: opts.threshold
 
     if not check
@@ -46,7 +46,7 @@ handler = ->*
       query .= and ['hidden': true, fn]
     else
       log 'show hidden submissions'
-      query .= where fn 
+      query .= where fn
   if opts.before or opts.after
     query .= where 'date'
     if opts.before
@@ -54,16 +54,16 @@ handler = ->*
     if opts.after
       query .= gte opts.after
 
-  submissions = yield query.exec!
+  submissions = await query.exec!
   current-time = new Date!
   for submission in submissions
     if submission.pack.endTime > current-time
-      submission.summary = 
+      submission.summary =
         status: \hidden
 
-  @body = submissions
+  ctx.body = submissions
 
-module.exports = 
+module.exports =
   method: \GET
   path: \/submission
   validate:
@@ -72,7 +72,7 @@ module.exports =
       pack: validator.pack!.optional!
       problem: validator.problem!.optional!
       page: Joi .number! .min 0
-      language: Joi .string! .equal options.languages 
+      language: Joi .string! .equal options.languages
       threshold: Joi .number! .min 0 .max 1
       before: Joi .date! .timestamp!
       after: Joi .date! .timestamp!

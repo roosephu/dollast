@@ -85,8 +85,7 @@ window
 <script>
 require! {
   \debug
-  \vue
-  \vuex : {map-actions, map-getters}
+  \vuex : {default: {map-actions, map-getters}}
   \../window
   \../elements/permit
 }

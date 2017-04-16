@@ -8,22 +8,22 @@ require! {
 
 log = debug \dollast:ctrl:submissions:submit
 
-handler = ->*
+handler = async (ctx) ->
   log \submitting
-  {problem, code, language, permit} = @request.body
+  {problem, code, language, permit} = ctx.request.body
 
-  problem = yield models.Problems.find-by-id problem, "permit config" 
-    .populate 'config.pack', 'finished' 
+  problem = await models.Problems.find-by-id problem, "permit config"
+    .populate 'config.pack', 'finished'
     .exec!
-  yield @assert-exist problem, \x, problem._id, \Problem
+  await ctx.assert-exist problem, \x, problem._id, \Problem
 
   pack = problem.config.pack._id
   hidden = pack.finished
-  {user} = @state.user.client
+  {user} = ctx.state.user.client
 
-  # @ensure-access model, 0, \x # sol = 0 => submission
+  # ctx.ensure-access model, 0, \x # sol = 0 => submission
   submission = new models.Submissions do
-    _id: yield models.Submissions.next-count!
+    _id: await models.Submissions.next-count!
     code: code
     language: language
     problem: problem._id
@@ -35,12 +35,12 @@ handler = ->*
       score: 0
     permit: permit
 
-  yield submission.save!
+  await submission.save!
   core.judge language, code, problem.config, submission
 
-  @body = msg: "submission submited successfully"
+  ctx.body = msg: "submission submited successfully"
 
-module.exports = 
+module.exports =
   method: \POST
   path: \/submission
   validate:

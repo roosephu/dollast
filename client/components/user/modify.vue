@@ -53,8 +53,7 @@ window
 
 <script>
 require! {
-  \vuex : {map-getters, map-actions}
-  \vue
+  \vuex : {default: {map-getters, map-actions}}
   \debug
   \../window
 }

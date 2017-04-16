@@ -7,20 +7,20 @@ require! {
 
 log = debug \dollast:ctrl:user:profile
 
-handler = ->*
-  {user} = @params
+handler = async (ctx) ->
+  {user} = ctx.params
 
-  profile = yield models.Users.find-by-id user, \-password .lean! .exec!
-  solved-problem-ids = yield models.Submissions.get-user-solved-problem-ids user
+  profile = await models.Users.find-by-id user, \-password .lean! .exec!
+  solved-problem-ids = await models.Submissions.get-user-solved-problem-ids user
   log solved-problem-ids
-  solved-problems = yield models.Problems.populate solved-problem-ids, path: '_id', select: '_id outlook.title'
-  solved-problems = map (._id), solved-problems 
+  solved-problems = await models.Problems.populate solved-problem-ids, path: '_id', select: '_id outlook.title'
+  solved-problems = map (._id), solved-problems
 
-  owned-problems = yield models.Problems.get-problems-by-user user
-  owned-packs = yield models.Packs.get-packs-by-user user
-  @body = {profile, solved-problems, owned-problems, owned-packs}
+  owned-problems = await models.Problems.get-problems-by-user user
+  owned-packs = await models.Packs.get-packs-by-user user
+  ctx.body = {profile, solved-problems, owned-problems, owned-packs}
 
-module.exports = 
+module.exports =
   method: \GET
   path: \/user/:user
   validate:

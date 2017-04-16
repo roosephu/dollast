@@ -1,5 +1,4 @@
 require! {
-  \vue
   \debug
   \axios
 }

@@ -50,8 +50,7 @@ window
 
 <script>
 require! {
-  \vue
-  \vuex : {map-getters, map-actions}
+  \vuex : {default: {map-getters, map-actions}}
   \debug
   \javascript-natural-sort : natural-sort
   \../window

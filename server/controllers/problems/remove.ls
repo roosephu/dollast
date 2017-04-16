@@ -6,19 +6,19 @@ require! {
 
 log = debug \dollast:ctrl:problem:remove
 
-handler = ->*
-  {problem} = @params
+handler = async (ctx) ->
+  {problem} = ctx.params
 
-  problem = yield models.Problems.find-by-id problem, \permit .exec!
-  yield @assert-exist problem, \w, @params.problem, \Problem
+  problem = await models.Problems.find-by-id problem, \permit .exec!
+  await ctx.assert-exist problem, \w, ctx.params.problem, \Problem
 
-  yield models.Problems.find-by-id-and-remove problem._id .exec!
+  await models.Problems.find-by-id-and-remove problem._id .exec!
 
-  @body = 
+  ctx.body =
     data:
       message: "deleting done"
 
-module.exports = 
+module.exports =
   method: \DELETE
   path: \/problem/:problem
   validate:

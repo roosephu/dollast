@@ -6,16 +6,16 @@ require! {
   \../validator
 }
 
-handler = ->*
+handler = async (ctx) ->
   opts = prob-list-opts
-  @body = yield models.Problems
+  ctx.body = await models.Problems
     .find {}, \outlook.title # "config.pack": $exists: true,
     .skip opts.skip
     .limit opts.limit
     .exec!
-  # log \problem-list, @body
+  # log \problem-list, ctx.body
 
-module.exports = 
+module.exports =
   method: \GET
   path: \/problem
   handler: handler

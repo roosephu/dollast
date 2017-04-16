@@ -18,8 +18,7 @@
 
 <script>
 require! {
-  \vue
-  \vuex : {map-mutations, map-getters}
+  \vuex : {default: {map-mutations, map-getters}}
   \debug
 }
 

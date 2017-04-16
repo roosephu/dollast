@@ -6,8 +6,7 @@ div
 
 <script>
 require! {
-  \vue
-  \vuex : {map-mutations}
+  \vuex : {default: {map-mutations}}
   \./site/error
 }
 
