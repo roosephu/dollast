@@ -2,9 +2,9 @@
 window
   .menu(slot="config")
     .ui.header links
-    a.item(:href="'#!/pack/' + pack._id")
+    a.item(:href="'#!/round/' + round._id")
       i.icon.left.arrow
-      | Go to Pack
+      | Go to Round
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     table.ui.table.segment.large.green.selectable
@@ -12,20 +12,20 @@ window
         tr
           th user
           th total
-          th(v-for="problem in pack.problems")
+          th(v-for="problem in round.problems")
             problem(:prob="problem")
       tbody
         tr(v-for="record in board")
           td
             user(:user="record[0]")
           td {{record[1].total}}
-          td(v-for="problem in pack.problems")
+          td(v-for="problem in round.problems")
             a(:href="'#!/submission/' + record[1][problem._id].solution") {{record[1][problem._id].score}}
 
     p Note: only last submission is considered.
 </template>
 
-<script>
+<script lang="livescript">
 require! {
   \debug
   \vuex : {default: {map-actions, map-getters}}
@@ -34,7 +34,7 @@ require! {
   \../format
 }
 
-log = debug \dollast:component:pack:board
+log = debug \dollast:component:round:board
 
 generate-board = (submissions) ->
   board = {}
@@ -54,14 +54,14 @@ module.exports =
 
   data: ->
     board: []
-    pack:
+    round:
       problems: []
       _id: "0"
 
   methods: (map-actions [\$fetch]) <<<
     fetch: ->>
-      @pack = await @$fetch method: \GET, url: "pack/#{@$route.params.pack}"
-      submissions = await @$fetch method: \GET, url: "pack/#{@$route.params.pack}/board"
+      @round = await @$fetch method: \GET, url: "round/#{@$route.params.round}"
+      submissions = await @$fetch method: \GET, url: "round/#{@$route.params.round}/board"
       @board = generate-board submissions |> obj-to-pairs |> sort |> reverse
 
   watch:

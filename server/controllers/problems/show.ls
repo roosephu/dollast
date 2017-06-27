@@ -11,11 +11,11 @@ handler = async (ctx) ->
   {problem} = ctx.params
 
   problem = await models.Problems.find-by-id problem
-    .populate 'config.pack', \title
+    .populate 'config.round', \title
     .exec!
   await ctx.assert-exist problem, \r, ctx.params.problem, \Problem
 
-  # TODO check whether the corresponding pack has started
+  # TODO check whether the corresponding round has started
   problem .= to-object!
   ctx.body = problem
 

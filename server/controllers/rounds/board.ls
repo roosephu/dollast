@@ -4,20 +4,20 @@ require! {
 }
 
 handler = async (ctx) ->
-  {pack} = ctx.params
+  {round} = ctx.params
 
-  pack = await models.Packs.find-by-id pack, 'permit beginTime endTime' .exec!
-  await ctx.assert-exist pack, \r, ctx.params.pack, \Pack
+  round = await models.Rounds.find-by-id round, 'permit beginTime endTime' .exec!
+  await ctx.assert-exist round, \r, ctx.params.round, \Round
 
-  if !pack.permit.check-owner ctx.state.user
-    ctx.assert-name \UnfinishedPack, false, _id: pack._id, type: \Pack, user: ctx.state.user._id
+  if !round.permit.check-owner ctx.state.user
+    ctx.assert-name \UnfinishedRound, false, _id: round._id, type: \Round, user: ctx.state.user._id
 
   query = models.Submissions.aggregate do
     * $match:
-        pack: pack._id
+        round: round._id
         date:
-          $gte: pack.begin-time
-          $lte: pack.end-time
+          $gte: round.begin-time
+          $lte: round.end-time
     * $sort: problem: 1, user: 1, date: -1
     * $group:
         _id:
@@ -32,8 +32,8 @@ handler = async (ctx) ->
 
 module.exports =
   method: \GET
-  path: \/pack/:pack/board
+  path: \/round/:round/board
   validate:
     params:
-      pack: validator.pack!
+      round: validator.round!
   handler: handler

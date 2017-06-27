@@ -4,7 +4,7 @@ div
   error(keep-alive)
 </template>
 
-<script>
+<script lang="livescript">
 require! {
   \vuex : {default: {map-mutations}}
   \./site/error

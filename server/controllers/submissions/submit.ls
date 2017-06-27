@@ -13,12 +13,12 @@ handler = async (ctx) ->
   {problem, code, language, permit} = ctx.request.body
 
   problem = await models.Problems.find-by-id problem, "permit config"
-    .populate 'config.pack', 'finished'
+    .populate 'config.round', 'finished'
     .exec!
   await ctx.assert-exist problem, \x, problem._id, \Problem
 
-  pack = problem.config.pack._id
-  hidden = pack.finished
+  round = problem.config.round._id
+  hidden = round.finished
   {user} = ctx.state.user.client
 
   # ctx.ensure-access model, 0, \x # sol = 0 => submission
@@ -28,8 +28,8 @@ handler = async (ctx) ->
     language: language
     problem: problem._id
     user: user
-    pack: pack
-    hidden: pack
+    round: round
+    hidden: round
     summary:
       status: \running
       score: 0

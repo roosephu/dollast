@@ -6,7 +6,7 @@ require! {
 handler = async (ctx) ->
   {problem} = ctx.params
 
-  problem = await models.Problems.find-by-id problem, 'config.pack outlook.title permit'
+  problem = await models.Problems.find-by-id problem, 'config.round outlook.title permit'
     .exec!
   await ctx.assert-exist problem, \r, ctx.params.problem, \Problem
 
@@ -16,7 +16,7 @@ handler = async (ctx) ->
     * $project:
         language: true
         summary: true
-        pack: true
+        round: true
         user: true
     * $group:
         _id:

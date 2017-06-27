@@ -1,10 +1,10 @@
 <template lang="jade">
-  a.ui.label.hvr-underline-from-center.light.teal(v-if="pack", :href="'#/pack/' + pack._id") {{pack | pack}}
+  a.ui.label.hvr-underline-from-center.light.teal(v-if="round", :href="'#/round/' + round._id") {{round | round}}
   a.ui.label.hvr-underline-from-center.light.teal(v-else) hidden
 </template>
 
 <script>
 module.exports =
   props:
-    pack: Object
+    round: Object
 </script>

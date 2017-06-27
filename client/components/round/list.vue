@@ -11,24 +11,24 @@ window
           | {{item}}
     .ui.divider
     .ui.header operations
-    a.item(href="#/pack/create")
+    a.item(href="#/round/create")
       i.icon.plus
-      | Add a Pack
+      | Add a Round
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
-    h1.ui.header.dividing Packs
+    h1.ui.header.dividing Rounds
 
     .ui.very.relaxed.divided.link.list
-      .item(v-for="pack in packs")
+      .item(v-for="round in rounds")
         .ui.right.floated
-          .ui.label {{pack.beginTime | time}}
+          .ui.label {{round.beginTime | time}}
           | to
-          .ui.label {{pack.endTime | time}}
+          .ui.label {{round.endTime | time}}
         .description
-          pack(:pack="pack")
+          round(:round="round")
 </template>
 
-<script>
+<script lang="livescript">
 require! {
   \vuex : {default: {map-actions, map-getters}}
   \debug
@@ -36,21 +36,21 @@ require! {
   \../window
 }
 
-log = debug \dollast:component:pack:list
+log = debug \dollast:component:round:list
 
 module.exports =
   components:
-    {window} <<< format{pack}
+    {window} <<< format{round}
 
   data: ->
     options: {\All, \Past, \Running, \Pending}
-    packs: []
+    rounds: []
 
   computed: map-getters [\isLoading]
 
   methods: (map-actions [\$fetch]) <<<
     fetch: ->>
-      @packs = await @$fetch method: 'GET', url: "pack"
+      @rounds = await @$fetch method: 'GET', url: "round"
 
   watch:
     $route: ->

@@ -36,11 +36,11 @@ $.fn.form.settings.defaults =
         prompt: "User name must be longer than 5"
       * type: 'maxLength[16]'
         prompt: "User name must be shorter than 16"
-  pack:
-    identifier: \pack
+  round:
+    identifier: \round
     rules:
       * type: 'integer[0..]'
-        prompt: 'pack id must be a non-negative integer'
+        prompt: 'round id must be a non-negative integer'
       ...
 
   # permit
@@ -192,7 +192,7 @@ $.fn.form.settings.defaults =
         prompt: 'language cannot be empty'
       ...
 
-  # pack
+  # round
   begin-time:
     identifier: \beginTime
     rules:

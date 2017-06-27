@@ -9,7 +9,7 @@ require! {
 handler = async (ctx) ->
   opts = prob-list-opts
   ctx.body = await models.Problems
-    .find {}, \outlook.title # "config.pack": $exists: true,
+    .find {}, \outlook.title # "config.round": $exists: true,
     .skip opts.skip
     .limit opts.limit
     .exec!

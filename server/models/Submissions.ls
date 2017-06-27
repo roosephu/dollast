@@ -26,7 +26,7 @@ schema = new Schema do
   language: String
   problem: type: String, ref: \problem
   user: type: String, ref: \user
-  pack: type: String, ref: \pack
+  round: type: String, ref: \round
   summary:
     time: Number
     space: Number
@@ -41,7 +41,7 @@ schema = new Schema do
 
 # schema.plugin mongoose-auto-increment.plugin, model: \submission
 schema.index do
-  pack: 1
+  round: 1
   problem: 1
   user : 1
   _id: -1
@@ -52,7 +52,7 @@ schema.index do
 schema.index do
   user: 1
   problem: 1
-  pack: 1
+  round: 1
   "summary.score": -1
 schema.index do
   date: -1

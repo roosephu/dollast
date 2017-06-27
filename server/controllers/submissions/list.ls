@@ -12,14 +12,14 @@ log = debug \dollast:ctrl:submissions:list
 handler = async (ctx) ->
   opts = options.sol-list-opts with ctx.request.query
 
-  basic-filters = Obj.reject (== undefined), opts{user, pack, language, problem}
+  basic-filters = Obj.reject (== undefined), opts{user, round, language, problem}
   if basic-filters.problem
-    delete basic-filters.pack
+    delete basic-filters.round
   log {opts, basic-filters}
 
   query = models.Submissions.find basic-filters, '-code -results'
     .populate \problem, 'outlook.title'
-    .populate \pack, 'title endTime'
+    .populate \round, 'title endTime'
     .sort '-date'
     .lean!
   if opts.page
@@ -27,13 +27,13 @@ handler = async (ctx) ->
     query .= limit opts.limit
   if opts.relationship in [\lt, \gt] and opts.threshold
     log \???
-    # if current user is the owner of request pack, then he can see all submissions
+    # if current user is the owner of request round, then he can see all submissions
     check = false
     if ctx.state.user.admin?
       check = true
-    else if opts.pack
-      pack = await models.Packs.find-by-id opts.pack, \permit .exec!
-      if pack.permit.check-owner ctx.state.user
+    else if opts.round
+      round = await models.Rounds.find-by-id opts.round, \permit .exec!
+      if round.permit.check-owner ctx.state.user
         check = true
 
     fn = 'summary.score':
@@ -57,7 +57,7 @@ handler = async (ctx) ->
   submissions = await query.exec!
   current-time = new Date!
   for submission in submissions
-    if submission.pack.endTime > current-time
+    if submission.round.endTime > current-time
       submission.summary =
         status: \hidden
 
@@ -69,7 +69,7 @@ module.exports =
   validate:
     query:
       user: validator.user!.optional!
-      pack: validator.pack!.optional!
+      round: validator.round!.optional!
       problem: validator.problem!.optional!
       page: Joi .number! .min 0
       language: Joi .string! .equal options.languages

@@ -24,7 +24,7 @@ window
       input(name="problem", placeholder="problem")
     .ui.left.icon.input
       i.icon.shopping.bag
-      input(name="pack", placeholder="pack")
+      input(name="round", placeholder="round")
     .ui.left.icon.input
       i.icon.calendar
       input(name="after", placeholder="submitted after")
@@ -70,7 +70,7 @@ window
           th time
           th space
           th.collapsing lang
-          th.collapsing pack
+          th.collapsing round
       tbody
         tr(v-for="sol in submissions", :class="{'positive': sol.summary.score > 0.999, 'negative': sol.summary.score < 0.001}")
           td
@@ -88,8 +88,8 @@ window
           td(v-if="sol.summary.status == 'finished'") {{sol.summary.space | decimal 3}}
           td(v-else)
           td {{sol.language}}
-          td(v-if="sol.pack")
-            pack(:pack="sol.pack")
+          td(v-if="sol.round")
+            round(:round="sol.round")
           td(v-else)
     // .ui.icon.labeled.button.floated.right.primary
     //   i.icon.refresh
@@ -104,7 +104,7 @@ require! {
   \moment
   \../window
   \../format
-  \../elements/pack-selector
+  \../elements/round-selector
 }
 
 log = debug \dollast:component:submission:list
@@ -139,7 +139,7 @@ module.exports =
   computed: map-getters [\isLoading]
 
   components:
-    {window, pack-selector} <<< format
+    {window, round-selector} <<< format
 
   methods: (map-actions [\$fetch]) <<<
     go: (page) ->
@@ -209,12 +209,12 @@ module.exports =
               * type: "integer[1..]"
                 prompt: "problem id must be a positive integer"
               ...
-          pack:
-            identifier: \pack
+          round:
+            identifier: \round
             optional: true
             rules:
               * type: "integer[0..]"
-                prompt: "pack id must be a positive integer"
+                prompt: "round id must be a positive integer"
               ...
           language:
             identifier: \language

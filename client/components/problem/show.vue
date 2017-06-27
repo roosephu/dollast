@@ -5,9 +5,9 @@ window
     a.ui.icon.labeled.item(:href="'#/problem/' + problem._id + '/stat'")
       i.icon.chart.bar
       | Statistics
-    a.item(:href="'#/pack/' + problem.config.pack._id")
+    a.item(:href="'#/round/' + problem.config.round._id")
       i.icon.shopping.bag
-      | Go to Pack
+      | Go to Round
     router-link.ui.icon.labeled.item(:to="{name: 'submissions', query: {problem: problem._id}}")
       i.icon
       | All Submissions
@@ -28,8 +28,8 @@ window
         .detail owner
       .ui.label {{problem.permit.group}}
         .detail group
-      .ui.label {{problem.config.pack | pack}}
-        .detail pack
+      .ui.label {{problem.config.round | round}}
+        .detail round
 
     .ui.segment
       .ui.top.left.attached.label.teal description
@@ -102,7 +102,7 @@ module.exports =
     problem:
       _id: 0
       config:
-        pack:
+        round:
           title: ""
       outlook: {}
       permit: {}

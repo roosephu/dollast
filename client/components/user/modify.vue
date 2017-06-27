@@ -51,7 +51,7 @@ window
       | submit
 </template>
 
-<script>
+<script lang="livescript">
 require! {
   \vuex : {default: {map-getters, map-actions}}
   \debug
@@ -66,7 +66,7 @@ module.exports =
     {window}
 
   data: ->
-    groups: [\problems, \submissions, \admin, \packs]
+    groups: [\problems, \submissions, \admin, \rounds]
     user:
       profile:
         _id: ""

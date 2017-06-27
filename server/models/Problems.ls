@@ -21,7 +21,7 @@ schema = new Schema do
     sample-output: String
   config:
     date: type: Date, default: Date.now
-    pack: type: String, ref: \pack
+    round: type: String, ref: \round
     time-limit: Number
     space-limit: Number
     stack-limit: Number
@@ -37,7 +37,7 @@ schema = new Schema do
   permit: permit
 
 schema.index do
-  pack: 1
+  round: 1
 
 schema.statics.get-problems-by-user = (user) ->*
   yield model.find 'permit.owner': user, '_id outlook.title' .exec!
@@ -51,8 +51,8 @@ schema.methods.rebuild = ->*
 
 schema.methods.get-display-name = -> \Problem
 
-schema.statics.get-problems-by-pack = (pack) ->*
-  yield model.find 'config.pack': pack .exec!
+schema.statics.get-problems-by-round = (round) ->*
+  yield model.find 'config.round': round .exec!
 
 schema.statics.next-count = conn.make-next-count config.starting-ids.problems
 

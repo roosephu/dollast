@@ -3,12 +3,12 @@ require! {
 }
 
 handler = async (ctx) ->
-  ctx.body = await models.Packs.find {}, 'title beginTime endTime'
+  ctx.body = await models.Rounds.find {}, 'title beginTime endTime'
     .sort \_id
     .lean!
     .exec!
 
 module.exports =
   method: \GET
-  path: \/pack
+  path: \/round
   handler: handler

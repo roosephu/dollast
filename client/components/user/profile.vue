@@ -40,18 +40,18 @@ window
             problem(:prob="prob")
 
     .ui.segment
-      .ui.top.attached.label.large Packs owned
+      .ui.top.attached.label.large Rounds owned
       .ui.relaxed.divided.link.list
-        .item(v-for="pack in ownedPacks")
+        .item(v-for="round in ownedRounds")
           .ui.right.floated
-            .ui.label {{pack.beginTime | time}}
+            .ui.label {{round.beginTime | time}}
             | to
-            .ui.label {{pack.endTime | time}}
+            .ui.label {{round.endTime | time}}
           .description
-            pack(:pack="pack")
+            round(:round="round")
 </template>
 
-<script>
+<script lang="livescript">
 require! {
   \vuex : {default: {map-actions, map-getters}}
   \moment
@@ -76,7 +76,7 @@ module.exports =
     profile: {}
     solved-problems: []
     owned-problems: []
-    owned-packs: []
+    owned-rounds: []
 
   computed: (map-getters [\isLoading]) <<<
     register-date: ->
@@ -97,11 +97,11 @@ module.exports =
       profile = await @$fetch method: \GET, url: "user/#{@$route.params.user}"
       profile.solved-problems .= sort natural-sort-by (._id)
       profile.owned-problems .= sort natural-sort-by (._id)
-      profile.owned-packs .= sort natural-sort-by (._id)
+      profile.owned-rounds .= sort natural-sort-by (._id)
 
       @ <<< {profile}
 
   components:
-    {window} <<< format{problem, pack}
+    {window} <<< format{problem, round}
 
 </script>

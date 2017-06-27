@@ -17,8 +17,8 @@ handler = async (ctx) ->
   solved-problems = map (._id), solved-problems
 
   owned-problems = await models.Problems.get-problems-by-user user
-  owned-packs = await models.Packs.get-packs-by-user user
-  ctx.body = {profile, solved-problems, owned-problems, owned-packs}
+  owned-rounds = await models.Rounds.get-rounds-by-user user
+  ctx.body = {profile, solved-problems, owned-problems, owned-rounds}
 
 module.exports =
   method: \GET

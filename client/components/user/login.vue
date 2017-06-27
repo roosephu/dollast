@@ -18,10 +18,10 @@ window
         | Login
 </template>
 
-<script>
+<script lang="livescript">
 require! {
   \debug
-  \vuex : {default: {map-getters, map-actions}}
+  \vuex : {default: {map-getters, map-actions, map-mutations}}
   \../window
 }
 
@@ -34,7 +34,7 @@ module.exports =
 
   computed: map-getters [\isLoading]
 
-  methods: (map-actions [\$fetch, \login]) <<<
+  methods: (map-actions [\$fetch]) <<< (map-mutations [\login]) <<<
     fetch: (values, form) ->>
       {token} = await @$fetch form: form, method: \POST, url: \site/login, data: values
 
@@ -46,7 +46,8 @@ module.exports =
       $form = $ '#login-form'
       submit = (e, values) ~>>
         e.prevent-default!
-        await @fetch method: \POST, url: \site/login, data: values, form: $form
+        {token} = await @$fetch method: \POST, url: \site/login, data: values, form: $form
+        @login token
 
       $form.form on-success: submit
 

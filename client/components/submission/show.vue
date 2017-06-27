@@ -8,9 +8,9 @@ window
     a.item(:href="'#!/problem/' + submission.problem._id")
       i.icon.browser
       | Go to Problem
-    a.item(:href="'#!/pack/' + submission.pack")
+    a.item(:href="'#!/round/' + submission.round")
       i.icon.shopping.bag
-      | Go to Pack
+      | Go to Round
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.header.dividing Submission {{$route.params.sid}}
@@ -66,7 +66,7 @@ window
               th {{submission.summary.message}}
 </template>
 
-<script>
+<script lang="livescript">
 require! {
   \debug
   \vuex : {default: {map-getters, map-actions}}

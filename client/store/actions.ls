@@ -12,7 +12,8 @@ export wait-for = ({commit}, fn) ->>
   ret
 
 export $fetch = ({commit, dispatch, state}, {method, url, data, progress, query, form}) ->>
-  {data: response} = await dispatch \waitFor, axios {method, url, data, progress, query}
+  log {method, url, data, onUploadProgress: progress}
+  {data: response} = await dispatch \waitFor, axios {method, url, data, onUploadProgress: progress}
   commit \checkResponseErrors, {response, form}
   if state.error
     ...

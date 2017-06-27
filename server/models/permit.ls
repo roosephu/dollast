@@ -1,7 +1,7 @@
 require! {
 	\mongoose : {Schema}
 	\debug
-	\co
+	# \co
 	\prelude-ls : {capitalize}
 	\./conn : {conn}
 	\../controllers/err : {assert-permit: assert}
@@ -13,7 +13,7 @@ log = debug \dollast:models:permit
 schema = new Schema do
 	_id: false
 	parent-type: String
-	parent-id: type: String, ref-path: \srcType 
+	parent-id: type: String, ref-path: \srcType
 	owner: type: String, ref: \User
 	group: String
 	access: String
@@ -23,19 +23,21 @@ translate = (name) ->
 		name = name + \s
 	capitalize name
 
-schema.methods.check-access = co.wrap (user, action) ->*
+schema.methods.check-access = (user, action) ->>
+	return user.id != \__guest__
+
 	owner = @owner-document!
 	{_id} = owner
 	type = owner.get-display-name!
 
-	log "checking permit:", type, _id, user, action  
+	log "checking permit:", type, _id, user, action
 
 	if user.groups.admin != void
 		return true
 
 	if @parent-id
-		parent = yield models[translate @parent-type] .find-by-id @parent-id .exec!
-		result = yield parent.permit.check-access user, action
+		parent = await models[translate @parent-type] .find-by-id @parent-id .exec!
+		result = await parent.permit.check-access user, action
 		if !result
 			return false
 
@@ -59,7 +61,7 @@ schema.methods.check-access = co.wrap (user, action) ->*
 			# 	action: action
 
 	return @access[pos] == action
-	# assert @access[pos] == action, 
+	# assert @access[pos] == action,
 	# 	_id: _id
 	# 	type: type
 	# 	user: user._id
@@ -68,22 +70,26 @@ schema.methods.check-access = co.wrap (user, action) ->*
 	# true
 
 schema.methods.check-owner = (user) ->
+	return user.id != \__guest__
+
 	owner = @owner-document!
 	if user.groups.admin != void
 		return true
 	return @owner == user._id
-	# assert @owner == user._id, 
+	# assert @owner == user._id,
 	# 	_id: _id
 	# 	type: type
 	# 	user: user._id
 	# 	action: "ownership"
 
 schema.methods.check-admin = (user) ->
+	return user.id != \__guest__
+
 	owner = @owner-document!
 	if user.groups.admin?
 		return true
 	return false
-	# assert user.groups.admin, 
+	# assert user.groups.admin,
 	# 	_id: _id
 	# 	type: type
 	# 	user: user._id

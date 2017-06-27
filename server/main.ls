@@ -25,12 +25,12 @@ log = debug \dollast:server
 
 # ==== Database ====
 
-app.use koa-convert koa-compress!
-app.use koa-convert koa-conditional-get!
-app.use koa-convert koa-etag!
-app.use koa-convert koa-json!
+app.use koa-compress!
+app.use koa-conditional-get!
+app.use koa-etag!
+app.use koa-json!
 
-# app.use (next) ->*
+# app.use (next) ->
 #   # log @request.method, @request.url
 #   if '/api' == @request.url.substr 0, 4
 #     @compress = false
@@ -38,7 +38,7 @@ app.use koa-convert koa-json!
 
 # ==== Session ====
 
-app.use koa-convert koa-jwt do
+app.use koa-jwt do
   secret: config.jwt-key
   passthrough: true
 
@@ -74,7 +74,8 @@ app.use (ctx, next) ->>
 app.use (ctx, next) ->>
   if ctx.method in [\HEAD, \GET]
     for folder in [\public, "theme/#{ctx.state.user.theme}"]
-      if await koa-send ctx, ctx.path, index: \index.html, max-age: 864000000, root: path.resolve folder
+      try
+        await koa-send ctx, ctx.path, index: \index.html, max-age: 864000000, root: path.resolve folder
         return
   await next!
 

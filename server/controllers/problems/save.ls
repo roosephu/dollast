@@ -19,7 +19,7 @@ handler = async (ctx) ->
 
     # TODO: check whether user can create a problem here
 
-    problem.permit <<<< {parent-type: \Pack, parent-id: problem.config.pack}
+    problem.permit <<<< {parent-type: \Round, parent-id: problem.config.round}
   else
 
     existed = await models.Problems.find-by-id problem._id, \permit .exec!
@@ -51,7 +51,7 @@ module.exports =
         input-format: Joi .string! .min 1 .max 65535
         output-format: Joi .string! .min 1 .max 65535
       config:
-        pack: validator .pack!
+        round: validator .round!
         stack-limit: Joi .number! .greater 0
         time-limit: Joi .number! .greater 0
         output-limit: Joi .number! .greater 0

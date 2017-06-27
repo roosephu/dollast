@@ -1,11 +1,15 @@
 require! {
+  \debug
   \koa-joi-router : {Joi}
   \../validator
   \../../models
 }
 
-handler = async (ctx) ->
+log = debug \dollast:server:users:register
+
+handler = (ctx) ->>
   {user, password} = ctx.request.body
+  log ctx.request.body
 
   if await models.Users.find-by-id user .count! .exec!
     ctx.body =
@@ -37,4 +41,5 @@ module.exports =
     body:
       user: validator.user!
       password: Joi .string! .required! .min 8 .max 15
+      email: validator.email!
   handler: handler

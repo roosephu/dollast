@@ -20,21 +20,21 @@ router = new vue-router routes:
   # # "/submission/submit/:problem"       : component: require(\./components/submission/submit)
   * path: "/submission/user/:user"        , component: require(\./components/site/index)
   * path: "/submission/:sid"              , component: require(\./components/submission/show)
-  * path: "/pack"                         , component: require(\./components/pack/list)
-  * path: "/pack/create"                  , component: require(\./components/pack/modify)
-  * path: "/pack/:pack"                   , component: require(\./components/pack/show)
-  * path: "/pack/:pack/modify"            , component: require(\./components/pack/modify)
-  * path: "/pack/:pack/board"             , component: require(\./components/pack/board)
+  * path: "/round"                        , component: require(\./components/round/list)
+  * path: "/round/create"                 , component: require(\./components/round/modify)
+  * path: "/round/:round"                 , component: require(\./components/round/show)
+  * path: "/round/:round/modify"          , component: require(\./components/round/modify)
+  * path: "/round/:round/board"           , component: require(\./components/round/board)
   * path: "/user"                         , component: require(\./components/user/profile)
   * path: "/user/login"                   , component: require(\./components/user/login)
   * path: "/user/register"                , component: require(\./components/user/register)
   * path: "/user/:user"                   , component: require(\./components/user/profile)
   * path: "/user/:user/modify"            , component: require(\./components/user/modify)
-  * path: '/problem'                      , redirect: '/pack/0'
+  * path: '/problem'                      , redirect: '/round/0'
   * path: '*'                             , redirect: '/'
 
 # router.redirect do
-#   '/problem' : '/pack/0'
+#   '/problem' : '/round/0'
 #   '*'        : '/'
 
 module.exports = router

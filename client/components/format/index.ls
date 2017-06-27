@@ -3,15 +3,18 @@ require! {
   \vue : {default: vue}
   \./code-link
   \./problem
-  \./pack
+  \./round
   \./user
 }
 
 vue.filter \problem, (problem) ->
   "#{problem._id}. #{problem.outlook.title}"
 
-vue.filter \pack, (pack) ->
-  "#{pack._id}. #{pack.title}"
+vue.filter \round, (round) ->
+  if round._id == 0
+    \Problemset
+  else
+    "#{round._id}. #{round.title}"
 
 vue.filter \user, (user) ->
   "#{user}"
@@ -31,6 +34,6 @@ vue.filter \concise-time, (time) ->
 module.exports = {
   code-link
   problem
-  pack
+  round
   user
 }

@@ -6,7 +6,7 @@ require! {
   \./config
   \./models
   \./core
-  \./controllers : {data, problems, submissions, packs, site, users}
+  \./controllers : {data, problems, submissions, rounds, site, users}
   \./controllers/err
 }
 
@@ -14,15 +14,15 @@ log = debug \dollast:router
 
 app = new koa!
 
-trigger-pack = ->>
+trigger-round = ->>
   while true
-    pack = await models.Packs.find-one flag: true, '' .sort \endTime .exec!
-    if pack.end-time < new Date!
-      log "trigger Pack #{pack._id}"
-      pack.flag = false
-      await pack.save!
+    round = await models.Rounds.find-one flag: true, '' .sort \endTime .exec!
+    if round.end-time < new Date!
+      log "trigger Round #{round._id}"
+      round.flag = false
+      await round.save!
 
-      submissions = await models.Submissions.find pack: pack._id, hidden: true, 'config.permit' .exec!
+      submissions = await models.Submissions.find round: round._id, hidden: true, 'config.permit' .exec!
       for submission in submissions
         submission.hidden = false
         await submission.save!
@@ -36,7 +36,7 @@ app.use (ctx, next) ->>
   ctx.assert-exist = err.assert-exist
   ctx.assert-name = err.assert-name
 
-  await trigger-pack!
+  await trigger-round!
 
   # log "response:", @body, @errors
   log "#{ctx.req.method} #{ctx.req.url}:", ctx.request.body
@@ -60,7 +60,7 @@ app.use (ctx, next) ->>
 
 router = new koa-joi-router!
 
-router.route packs
+router.route rounds
 router.route data
 router.route problems
 router.route submissions

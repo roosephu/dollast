@@ -1,7 +1,7 @@
 <template lang="jade">
 div
   navbar
-    slot(slot="config", name="config")
+    slot(name="config")
   .ui.grid
     .row
       .four.wide.column
@@ -13,7 +13,7 @@ div
         foot
 </template>
 
-<script>
+<script lang="livescript">
 require! {
   \./site/foot
   \./site/navbar

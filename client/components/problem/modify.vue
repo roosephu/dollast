@@ -25,8 +25,8 @@ window
         .ui.input
           input(name="title")
       .ui.field.four.wide
-        label pack id
-        pack-selector#pack(:pack="pack")
+        label round id
+        round-selector#round(:round="round")
     .ui.field
       label judger
       .ui.dropdown.icon.fluid.selection#judger
@@ -89,7 +89,7 @@ require! {
   \flat
   \../window
   \../elements/permit
-  \../elements/pack-selector
+  \../elements/round-selector
   \../../../common/judgers
 }
 
@@ -106,7 +106,7 @@ flatten-object = (obj) ->
 
 get-form-values = (values) ->
   outlook = values{title, description, input-format, output-format, sample-input, sample-output}
-  config  = values{pack, problem, judger, time-limit, space-limit, output-limit, stack-limit}
+  config  = values{round, problem, judger, time-limit, space-limit, output-limit, stack-limit}
   permit  = values{owner, group, access}
 
   config.time-limit   |>= parse-float
@@ -118,29 +118,29 @@ get-form-values = (values) ->
 
 set-form-values = (data) ->
   problem = flatten-object data
-  if data.config?.pack?._id
-    problem.pack = data.config.pack._id
+  if data.config?.round?._id
+    problem.round = data.config.round._id
   $form = $ '#problem-modify'
   $form.form 'set values', problem
 
 module.exports =
 
   components:
-    {window, permit, pack-selector}
+    {window, permit, round-selector}
 
   methods: (map-actions [\$fetch]) <<<
     remove: ->>
       await @$fetch method: \DELETE, url: "problem/#{@problem._id}"
-      @$router.push "/pack/#{@problem.config.pack._id}"
+      @$router.push "/round/#{@problem.config.round._id}"
 
     fetch: ->>
       {problem} = @$route.params
       if problem != void
-        {config: {pack}} = await @$fetch method: \GET, url: "problem/#{problem}"
-        @ <<< {problem, pack}
+        {config: {round}} = await @$fetch method: \GET, url: "problem/#{problem}"
+        @ <<< {problem, round}
 
   data: ->
-    pack: void
+    round: void
     judgers: judgers
     problem:
       _id: ""
@@ -148,7 +148,7 @@ module.exports =
         title: 'hello world'
       config:
         dataset: []
-        pack:
+        round:
           _id: ""
           title: ""
 
@@ -157,15 +157,15 @@ module.exports =
       if @problem._id != ""
         "Problem #{@problem._id}. #{@problem.outlook.title}"
       else
-        "Create new problem"
+        "Create New problem"
 
   created: ->
     @fetch!
 
   mounted: ->
-    CKEDITOR.replace \description
-    CKEDITOR.replace \inputFormat
-    CKEDITOR.replace \outputFormat
+    // CKEDITOR.replace \description
+    // CKEDITOR.replace \inputFormat
+    // CKEDITOR.replace \outputFormat
 
     @$next-tick ->
       $ '#judger' .dropdown!

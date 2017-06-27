@@ -2,16 +2,16 @@
 window
   .menu(slot="config")
     .ui.header links
-    a.item(:href="'#!/pack/' + pack._id")
+    a.item(:href="'#/round/' + round._id")
       i.icon.left.arrow
-      | Go to Pack
+      | Go to Round
     .ui.divider
     .ui.header operations
     .item(@click="del")
       i.icon.delete
       | Delete
 
-  .ui.form.segment.basic#form-pack(slot="main")
+  .ui.form.segment.basic#form-round(slot="main")
     h2.ui.dividing.header {{formattedTitle}}
     .ui.success.message
       .header Changes saved.
@@ -50,7 +50,7 @@ window
         | Save
 </template>
 
-<script>
+<script lang="livescript">
 require! {
   \vuex : {default: {map-getters, map-actions}}
   \moment
@@ -60,7 +60,7 @@ require! {
   \../window
 }
 
-log = debug \dollast:component:pack:modify
+log = debug \dollast:component:round:modify
 
 get-form-values = (values) ->
   permit = values{owner, group, access}
@@ -71,10 +71,10 @@ get-form-values = (values) ->
 
   {permit, begin-time, end-time} <<<< values{title}
 
-set-form-values = (pack) ->
+set-form-values = (round) ->
   #log 'new states. setting new values for form...', to-client-fmt problem.to-JS!
-  $form = $ '#form-pack'
-  {title, begin-time, end-time, permit, problems} = pack
+  $form = $ '#form-round'
+  {title, begin-time, end-time, permit, problems} = round
   # probs = map (-> prob-fmt it), probs
   # probs .= join!
   problems = map ((problem) -> "#{problem._id}"), problems
@@ -87,59 +87,59 @@ set-form-values = (pack) ->
 
 module.exports =
   data: ->
-    pack:
+    round:
       _id: void
       problems: []
 
   computed:
     dropdown-problems: ->
-      {[x._id, vue.filter(\problem) x] for x in @pack.problems}
+      {[x._id, vue.filter(\problem) x] for x in @round.problems}
     formatted-title: ->
-      if @pack._id == void
-        "Create new Pack"
+      if not @round._id?
+        "Create new Round"
       else
-        "Pack #{@pack._id}. #{@pack.title}"
+        "Round #{@round._id}. #{@round.title}"
 
   components:
     {window, permit}
 
   methods: (map-actions [\$fetch]) <<<
     fetch: ->>
-      {pack} = @$route.params
-      if pack != void
-        @pack = await @$fetch method: \GET, url: "pack/#{pack}"
+      {round} = @$route.params
+      if round?
+        @round = await @$fetch method: \GET, url: "round/#{round}"
 
     del: ->>
       log \delete
-      await @$fetch method: \DELETE, url: "pack/#{@pack._id}"
-      @$router.go "/pack"
+      await @$fetch method: \DELETE, url: "round/#{@round._id}"
+      @$router.go "/round"
 
   mounted: ->
     @$next-tick ->
       submit = (e, values) ~>>
         e.prevent-default!
-        pack = get-form-values values
-        if @$route.params.pack != void
-          pack._id = @$route.params.pack
-        await @fetch method: \POST, url: "pack", data: pack
+        round = get-form-values values
+        if @$route.params.round != void
+          round._id = @$route.params.round
+        await @$fetch method: \POST, url: "round", data: round
 
-      $ '#form-pack' .form on-success: submit
+      $ '#form-round' .form on-success: submit
 
-      if @pack._id == void
-        @pack.permit =
+      if not @round._id?
+        @round.permit =
           owner: @user
-          group: \packs
+          group: \rounds
           access: \rwxr--r--
-        set-form-values @pack
+        set-form-values @round
 
   created: ->
     @fetch!
 
   watch:
-    'pack._id': ->
+    'round._id': ->
       @$next-tick ~>
         $ '.ui.selection.dropdown' .dropdown \refresh
-        set-form-values @pack
+        set-form-values @round
 
     $route: ->
       @fetch!

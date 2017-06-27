@@ -3,7 +3,7 @@
     .item
     .ui.labeled.icon.item.dropdown#configuration
       img.centered.tiny.ui.image(src="/atm-inverted.png", align="middle")
-      slot(name="config")
+      slot
     .ui.divider
     a.item(href="#/")
       i.icon.home
@@ -14,9 +14,9 @@
     a.item(href="#/submission")
       i.icon.info.circle
       | Submissions
-    a.item(href="#/pack")
+    a.item(href="#/round")
       i.icon.shopping.bag
-      | Packs
+      | Rounds
     a.item(href="#/about")
       i.icon.help.circle
       | About

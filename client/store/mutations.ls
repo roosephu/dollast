@@ -8,7 +8,8 @@ require! {
 log = debug \dollast:mutations
 
 export login = (state, token) ->
-  {token} = local-storage
+  if not token
+    {token} = local-storage
   return if not token
 
   payload = auth.jwt.dec token

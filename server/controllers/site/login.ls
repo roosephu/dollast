@@ -8,9 +8,7 @@ require! {
   \../validator
 }
 
-handler = async (ctx) ->
-  # ctx.check-body '_id' .len 6, 15
-  # ctx.check-body 'pswd' .non-empty!
+handler = (ctx) ->>
   {user, password} = ctx.request.body
   return if ctx.errors?.length > 0
 
@@ -20,7 +18,9 @@ handler = async (ctx) ->
 
   groups = user.groups
   groups.push \users
-  ctx.state.user.groups = lists-to-obj groups, [true for i from 1 to groups.length]
+  for g in groups
+    ctx.state.user.groups[g] = true
+  # ctx.state.user.groups = lists-to-obj groups, [true for i from 1 to groups.length]
 
   client-key = ctx.request.body.client-key
   server-key = config.server-AES-key

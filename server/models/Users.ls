@@ -1,7 +1,7 @@
 require! {
   \mongoose : {Schema}
   \debug
-  \bcrypt
+  # \bcrypt
   \./conn
   \./permit
 }
@@ -17,11 +17,13 @@ schema = new Schema do
   permit: permit
 
 schema.methods.check-password = (candidate) ->
-  bcrypt.compare-sync candidate, @password
+  # bcrypt.compare-sync candidate, @password
+  return candidate == @password
 
 schema.methods.set-password = (password) ->
-  salt = bcrypt.gen-salt-sync bcrypt.bcrypt-cost
-  @password = bcrypt.hash-sync password, salt
+  # salt = bcrypt.gen-salt-sync bcrypt.bcrypt-cost
+  # @password = bcrypt.hash-sync password, salt
+  @password = password
 
 schema.methods.get-display-name = -> \User
 

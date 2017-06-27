@@ -2,7 +2,7 @@
 window
   .menu(slot="config")
     .ui.header links
-    router-link.item(:to="{name: 'submissions', query: {pack: pack._id}}")
+    router-link.item(:to="{name: 'submissions', query: {round: round._id}}")
       i.icon
       | All Submissions
     .ui.divider
@@ -19,20 +19,20 @@ window
     a.item(href="#/problem/create")
       i.icon.plus
       | Add a Problem
-    a.item(:href="'#/pack/' + pack._id + '/board'")
+    a.item(:href="'#/round/' + round._id + '/board'")
       i.icon.trophy
       | Board
-    a.item(:href="'#/pack/' + pack._id + '/modify'")
+    a.item(:href="'#/round/' + round._id + '/modify'")
       i.icon.edit
       | Modify
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
-    h1.ui.dividing.header Pack {{pack | pack}}
+    h1.ui.dividing.header Round {{round | round}}
 
     .ui.olive.labels
-      .ui.label {{pack.permit.owner}}
+      .ui.label {{round.permit.owner}}
         .detail owner
-      .ui.label {{pack.permit.group}}
+      .ui.label {{round.permit.group}}
         .detail group
 
     .ui.progress
@@ -40,23 +40,23 @@ window
         .progress
       .label
         | from
-        .ui.label {{pack.beginTime | time}}
+        .ui.label {{round.beginTime | time}}
         | to
-        .ui.label {{pack.endTime | time}}
+        .ui.label {{round.endTime | time}}
 
     .ui.header
 
     div(v-if="started")
       h2.ui.dividing.header Problemset
       .ui.very.relaxed.divided.link.list
-        .item(v-for="prob in pack.problems")
+        .item(v-for="prob in round.problems")
           .ui.right.floated ??
           .description
             problem(:prob="prob")
       br
 
     div(v-else)
-      h3.header Sorry, this pack has not started.
+      h3.header Sorry, this round has not started.
 </template>
 
 <script>
@@ -69,7 +69,7 @@ require! {
   \../format : {problem, formatter}
 }
 
-log = debug \dollast:component:pack:show
+log = debug \dollast:component:round:show
 
 module.exports =
 
@@ -78,7 +78,7 @@ module.exports =
 
   data: ->
     options: [\All, \Failed, \Accepted, \New]
-    pack:
+    round:
       begin-time: 0
       end-time: 0
       _id: ''
@@ -89,16 +89,16 @@ module.exports =
 
   computed: (map-getters [\isLoading]) <<<
     started: ->
-      moment!.is-after @pack.begin-time
+      moment!.is-after @round.begin-time
 
   methods: (map-actions [\$fetch]) <<<
     fetch: ->>
-      @pack = await @$fetch method: 'GET', url: "pack/#{@$route.params.pack}"
+      @round = await @$fetch method: 'GET', url: "round/#{@$route.params.round}"
 
   watch:
-    'pack._id': ->
-      begin-time = moment @pack.begin-time
-      end-time = moment @pack.end-time
+    'round._id': ->
+      begin-time = moment @round.begin-time
+      end-time = moment @round.end-time
       current = moment!
       $ \.ui.progress .progress do
         total: end-time - begin-time

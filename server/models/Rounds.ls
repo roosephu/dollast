@@ -9,7 +9,7 @@ require! {
   \../config
 }
 
-log = debug \dollast:model:pack
+log = debug \dollast:model:round
 
 schema = new Schema do
   _id: String
@@ -32,34 +32,34 @@ schema.methods.is-started = ->
 schema.methods.is-ended = ->
   moment!.is-after @end-time
 
-schema.methods.get-display-name = -> \Pack 
+schema.methods.get-display-name = -> \Round
 
 # lock-prob = co.wrap (rid, state, problems) ->*
 #   log "locking", problems
 #   yield for pid in problems
-#     db.prob.model.find-by-id-and-update pid, $set: "config.pack": rid .exec!
+#     db.prob.model.find-by-id-and-update pid, $set: "config.round": rid .exec!
 #
 # unlock-prob = co.wrap (rid, state, problems) ->*
 #   log "unlocking", problems
 #   yield for pid in problems
-#     db.prob.model.find-by-id-and-update pid, $unset: "config.pack": rid .exec!
+#     db.prob.model.find-by-id-and-update pid, $unset: "config.round": rid .exec!
 
-schema.statics.get-packs-by-user = (user) ->*
+schema.statics.get-rounds-by-user = (user) ->*
   return yield model.find 'permit.owner': user, '_id title begTime endTime' .exec!
 
-model = conn.conn.model \pack, schema
+model = conn.conn.model \round, schema
 
 co ->*
   if not yield model.find-by-id \0 .count! .exec!
-    default-pack = new model do
+    default-round = new model do
       _id: \0
       title: \Default
       begin-time: new Date(0)
       end-time: new Date(1e14)
-      permit: 
+      permit:
         owner: \admin
-        group: \packs
+        group: \rounds
         access: \rwxrw-rw-
-    yield default-pack.save!
+    yield default-round.save!
 
 module.exports = model
