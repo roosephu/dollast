@@ -11,7 +11,7 @@ export default {
       query: gql`{
         problemId: getObjectID
       }`,
-      update({problemId}) {
+      update ({problemId}) {
         this.$router.push({
           name: 'problem',
           params: { problemId }

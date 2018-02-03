@@ -88,9 +88,9 @@ window
 import { debug } from 'debug'
 import { mapGetters } from 'vuex'
 import ckeditor from 'vue-ckeditor2'
-import window from '../window'
-import roundSelector from '../elements/round-selector'
-import judgers from '../../../common/judgers'
+import window from '@/components/window'
+import roundSelector from '@/components/elements/round-selector'
+import judgers from '@/../common/judgers'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:component:problem:modify')

@@ -61,7 +61,7 @@ window
 </template>
 
 <script>
-import window from '../window'
+import window from '@/components/window'
 
 export default {
   components: {

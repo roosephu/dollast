@@ -1,19 +1,19 @@
 import { Schema } from 'mongoose'
 import { debug } from 'debug'
-import { conn, Models } from '../connectors'
+import { conn, Models } from './connectors'
+import { judge } from '../core'
 
-const atomResultSchema = new Schema({
+const testCaseResultSchema = new Schema({
   time: Number,
   space: Number,
   message: String,
   score: Number,
-  status: String,
-  inf: String,
-  ans: String,
+  input: String,
+  answer: String,
   weight: Number
 })
 
-const schema = new Schema({
+const submissionSchema = new Schema({
   date: { type: Date, default: Date.now },
   code: String,
   language: String,
@@ -25,17 +25,14 @@ const schema = new Schema({
     space: Number,
     message: String,
     score: Number,
-    status: String,
-    input: String,
-    output: String,
-    weight: Number
+    status: String
   },
-  results: [atomResultSchema]
+  results: [testCaseResultSchema]
 })
 
 const log = debug('dollast:sol')
 
-export const Model = conn.model('submission', schema)
+export const Model = conn.model('Submission', submissionSchema)
 
 const typeDef = `
   type SubmissionSummary {
@@ -44,8 +41,15 @@ const typeDef = `
     message: String
     score: Float
     status: String
+  }
+
+  type TestCaseResult {
+    time: Float
+    space: Float
+    message: String
+    score: Float
     input: String
-    output: String
+    answer: String
     weight: Float
   }
 
@@ -57,6 +61,7 @@ const typeDef = `
     user: User
     round: Round
     summary: SubmissionSummary
+    results: [TestCaseResult]
   }
 
   extend type Query {
@@ -71,25 +76,40 @@ const typeDef = `
       problem: String
       round: String
     ): Submission
+    rejudgeSubmission(_id: String): Submission
   }
 `
+
+async function rejudge (doc) {
+  const problem = await Models.Problems.findById(doc.problem).exec()
+  const { language, code } = doc
+  const { timeLimit, spaceLimit, stackLimit, outputLimit, judger, dataset } = problem
+
+  judge(language, code, { timeLimit, spaceLimit, stackLimit, outputLimit, judger, dataset }, doc)
+}
 
 const resolvers = {
   Submission: {
     async problem (s) {
+      if (s.problem === undefined) {
+        return undefined
+      }
+      // log({ s, problems: Models.Problems })
       return Models.Problems.findById(s.problem).exec()
     },
 
     async user (s) {
+      if (s.user === undefined) {
+        return undefined
+      }
       return Models.Users.findById(s.user).exec()
     },
 
     async round (s) {
+      if (s.round === undefined) {
+        return undefined
+      }
       return Models.Rounds.findById(s.round).exec()
-    },
-
-    summary (s) {
-      return s.summary
     }
   },
 
@@ -98,7 +118,7 @@ const resolvers = {
       return Model.findById(_id).exec()
     },
 
-    submissions (root, args) {
+    async submissions (root, args) {
       return Model.find().exec()
     }
   },
@@ -108,9 +128,27 @@ const resolvers = {
       if (!ctx.session.user) {
         throw new Error('not logged in')
       }
-      submission.user = ctx.session.user
       const doc = new Model(submission)
+      doc.user = ctx.session.user
+      doc.summary = {
+        status: 'running',
+        score: 0
+      }
       await doc.save()
+
+      rejudge(doc)
+      return doc
+    },
+
+    async rejudgeSubmission (root, { _id }, ctx) {
+      const doc = await Model.findById(_id).exec()
+      doc.summary = {
+        status: 'running',
+        score: 0
+      }
+      await doc.save()
+
+      rejudge(doc)
       return doc
     }
   }

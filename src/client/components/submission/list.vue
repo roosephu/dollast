@@ -50,10 +50,10 @@ window
     .ui.divider
     .ui.header Form Operations
     .ui.item.icon.submit
-      i.icon
+      i.icon.save
       | Submit
     .ui.item.icon.button(@click="clear")
-      i.icon
+      i.icon.save
       | Clear
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
@@ -72,20 +72,20 @@ window
           th.collapsing lang
           th.collapsing round
       tbody
-        tr(v-for="sol in submissions", :class="{'positive': sol.summary.score > 0.999, 'negative': sol.summary.score < 0.001}")
+        tr(v-for="sol in submissions", :class="getRowColor(sol)")
           td
             code-link(:sid="sol._id")
           td
-            .ui.label.mini {{sol.date | concise-time}}
+            .ui.label.mini {{sol.date | conciseTime}}
           td
             problem(:prob="sol.problem")
           td
             user(:user="sol.user")
-          td(v-if="sol.summary.status == 'finished'") {{sol.summary.score | decimal 3}}
+          td(v-if="sol.summary.status == 'finished'") {{sol.summary.score | decimal(3)}}
           td(v-else) {{sol.summary.status}}
-          td(v-if="sol.summary.status == 'finished'") {{sol.summary.time | decimal 3}}
+          td(v-if="sol.summary.status == 'finished'") {{sol.summary.time | decimal(3)}}
           td(v-else)
-          td(v-if="sol.summary.status == 'finished'") {{sol.summary.space | decimal 3}}
+          td(v-if="sol.summary.status == 'finished'") {{sol.summary.space | decimal(3)}}
           td(v-else)
           td {{sol.language}}
           td(v-if="sol.round")
@@ -105,6 +105,8 @@ import Moment from 'moment'
 import problem from '@/components/format/problem'
 import user from '@/components/format/user'
 import round from '@/components/format/round'
+import codeLink from '@/components/format/codeLink'
+import gql from 'graphql-tag'
 
 const log = debug('dollast:component:submission:list')
 
@@ -153,7 +155,8 @@ export default {
     window,
     problem,
     user,
-    round
+    round,
+    codeLink
   },
 
   methods: {
@@ -167,6 +170,18 @@ export default {
 
     clear () {
       $('#submission').form('clear')
+    },
+
+    getRowColor (submission) {
+      const { summary } = submission
+      if (summary.status === 'running') {
+        return []
+      } else if (summary.score > 0.999) {
+        return ['positive']
+      } else if (summary.score < 0.001) {
+        return ['negative']
+      }
+      return []
     }
 
     // fetch: ->>
@@ -187,6 +202,34 @@ export default {
 
     //   @submissions = await @$fetch method: \GET, url: \submission, params: query
     //   @query = query
+  },
+
+  apollo: {
+    submissions: {
+      query: gql`query {
+        submissions {
+          _id
+          language
+          problem {
+            _id
+            title
+          }
+          user {
+            _id
+          }
+          round {
+            _id
+            title
+          }
+          summary {
+            time
+            space
+            score
+            status
+          }
+        }
+      }`
+    }
   },
 
   mounted () {

@@ -36,10 +36,10 @@
 </template>
 
 <script>
-import { debug } from "debug";
-import { mapGetters, mapActions, mapMutations } from 'vuex';
+import { debug } from 'debug'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
-const log = debug('dollast:navbar');
+const log = debug('dollast:navbar')
 
 export default {
   computed: {
@@ -48,10 +48,10 @@ export default {
 
   methods: {
     ...mapActions(['login']),
-    ...mapMutations(['logout']),
+    ...mapMutations(['logout'])
   },
 
-  mounted() {
+  mounted () {
     $('#configuration').dropdown({
       on: 'hover'
     })

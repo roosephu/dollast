@@ -41,13 +41,14 @@ export default {
       test: /\.ts$/,
       loader: 'ts-loader'
     }, {
+      test: /\.css$/,
+      loader: 'style-loader!css-loader'
+    }, {
       //   # options:
       //   #   loaders:
       //   #     js: "vue-livescript-loader
       // # * test: /".ls$/
       // #   loader: 'vue-livescript-loader'
-      // # * test: /".css$/
-      // #   loader: 'style-loader!css-loader'
       test: /\.js$/,
       // # exclude: /node_modules/
       include: [

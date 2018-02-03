@@ -5,7 +5,7 @@ div
 </template>
 
 <script>
-import error from './site/error'
+import error from '@/components/site/error'
 import { mapMutations } from 'vuex'
 
 export default {

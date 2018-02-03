@@ -26,19 +26,20 @@ window
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
 import { debug } from 'debug'
 import { objToPairs, sort, reverse } from 'prelude-ls'
 import window from '@/components/window'
 import problem from '@/components/format/problem'
-import codeLink from '@/components/format/code-link'
+import codeLink from '@/components/format/codeLink'
 import user from '@/components/format/user'
+import gql from 'graphql-tag'
 
 const log = debug('dollast:component:round:board')
 
 function generateBoard (submissions) {
   let board = {}
-  for(const submission in submissions) {
+  for (const submission in submissions) {
     const {user, problem} = submission._id
     board[user] = board[user] || { total: 0 }
     board[user][problem] = { score: submission.score, solution: submission.solution }
@@ -59,12 +60,18 @@ export default {
     ...mapGetters(['isLoading'])
   },
 
+  // apollo: {
+  //   round: {
+  //     query: gql`query`
+  //   }
+  // },
+
   data () {
     return {
       board: [],
       round: {
         problems: [],
-        _id: "0"
+        _id: '0'
       }
     }
   }

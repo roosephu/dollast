@@ -17,69 +17,69 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from "vuex";
-import { debug } from "debug";
+import { mapMutations, mapGetters } from 'vuex'
+import { debug } from 'debug'
 
-const log = debug('dollast:error');
+const log = debug('dollast:error')
 
 export default {
   computed: {
-    message() {
+    message () {
       if (this.error == null) {
-        return "";
+        return ''
       } else {
-        return this.error.message;
+        return this.error.message
       }
     },
 
-    object() {
+    object () {
       if (this.error == null) {
-        return "";
+        return ''
       } else {
-        return this.error.object;
+        return this.error.object
       }
     },
 
     ...mapGetters(['error'])
   },
 
-  mounted() {
-    const $modal = $('#error');
+  mounted () {
+    const $modal = $('#error')
     $modal.modal({
-      blurring: true,
-    }).transition('fade');
+      blurring: true
+    }).transition('fade')
   },
 
   methods: {
-    back() {
-      this.resolveError();
-      this.$router.go(-1);
+    back () {
+      this.resolveError()
+      this.$router.go(-1)
     },
 
-    home() {
-      this.resolveError();
-      this.$router.push('/');
+    home () {
+      this.resolveError()
+      this.$router.push('/')
     },
 
-    ignore() {
-      this.resolveError();
+    ignore () {
+      this.resolveError()
     },
 
     ...mapMutations(['resolveError'])
   },
 
   watch: {
-    error(val) {
-      log("new error value", val);
-      const $modal = $('#error');
-      $modal.modal('refresh');
+    error (val) {
+      log('new error value', val)
+      const $modal = $('#error')
+      $modal.modal('refresh')
       if (val != null) {
-        $modal.modal('setting', 'closable', this.error.closable || false);
-        $modal.modal('show');
+        $modal.modal('setting', 'closable', this.error.closable || false)
+        $modal.modal('show')
       } else {
-        $modal.modal('hide');
+        $modal.modal('hide')
       }
     }
-  },
+  }
 }
 </script>

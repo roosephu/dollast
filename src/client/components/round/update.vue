@@ -52,7 +52,7 @@ window
 
 <script>
 import Vue from 'vue'
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import { debug } from 'debug'
 import { map, pairsToObj, objToPairs, flatten } from 'prelude-ls'
@@ -101,7 +101,7 @@ export default {
 
     formattedTitle () {
       if (!this.round._id) {
-        return "Create new Round"
+        return 'Create new Round'
       } else {
         return `Round ${this.round._id}. ${this.round.title}`
       }

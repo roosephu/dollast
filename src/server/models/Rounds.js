@@ -1,7 +1,11 @@
-import { Schema, Types } from 'mongoose'
-import { conn } from '../connectors'
+import { Schema } from 'mongoose'
+import { conn, Models } from './connectors'
 import { GraphQLDateTime } from 'graphql-iso-date'
 import status from '../status'
+import { debug } from 'debug'
+import { AssertionError } from 'assert'
+
+const log = debug('dollast:Rounds')
 
 const roundSchema = new Schema({
   date: { type: Date, default: Date.now },
@@ -14,32 +18,74 @@ const roundSchema = new Schema({
 export const Model = conn.model('Round', roundSchema)
 
 const typeDef = `
-    scalar Date
+  scalar Date
 
-    type Round {
-        _id: String
-        title: String
-        beginTime: Date
-        endTime: Date
-    }
+  type Round {
+    _id: String
+    title: String
+    beginTime: Date
+    endTime: Date
+    board: [Submission]
+  }
 
-    extend type Query {
-        rounds: [Round]
-        round(_id: String): Round
-        defaultRoundId: String
-    }
+  extend type Query {
+    rounds: [Round]
+    round(_id: String): Round
+    defaultRoundId: String
+  }
 
-    extend type Mutation {
-        updateRound(
-            _id: String!
-            title: String
-            beginTime: Date
-            endTime: Date
-        ): Round
-    }
+  extend type Mutation {
+    updateRound(
+      _id: String!
+      title: String
+      beginTime: Date
+      endTime: Date
+    ): Round
+  }
 `
 
 const resolvers = {
+  Round: {
+    async board (r) {
+      const round = await Model.findById(r._id).exec()
+      if (!round) {
+        throw new AssertionError('fals')
+      }
+
+      const submissions = await Models.Submissions.aggregate([{
+        $match: {
+          round: r._id,
+          date: {
+            $gte: round.beginTime,
+            $lte: round.endTime
+          }
+        }
+      }, {
+        $sort: {
+          problem: 1,
+          user: 1,
+          date: -1
+        }
+      }, {
+        $group: {
+          _id: {
+            problem: '$problem',
+            user: '$user'
+          },
+          score: {
+            $first: '$summary.score'
+          },
+          solution: {
+            $first: '$id'
+          }
+        }
+      }]).exec()
+      log({ submissions })
+
+      return submissions
+    }
+  },
+
   Date: GraphQLDateTime,
 
   Query: {

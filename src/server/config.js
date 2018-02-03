@@ -9,6 +9,7 @@ export default {
   dataDir: resolve('./data'),
   judgerDir: resolve('./utils/judgers'),
   judgers: common.judgers,
+  sandboxer: resolve('./utils/sandboxer/sandboxer'),
   imageDir: 'public/images',
   default: {
     theme: 'vue',

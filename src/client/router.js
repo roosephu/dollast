@@ -1,27 +1,27 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import index from '@/components/site/index'
-import about from './components/site/about'
+import about from '@/components/site/about'
 
-import roundShow from './components/round/show'
-import roundDefault from './components/round/default'
-import roundUpdate from './components/round/update'
-import roundBoard from './components/round/board'
-import roundList from './components/round/list'
+import roundShow from '@/components/round/show'
+import roundDefault from '@/components/round/default'
+import roundUpdate from '@/components/round/update'
+import roundBoard from '@/components/round/board'
+import roundList from '@/components/round/list'
 
-import problemShow from './components/problem/show'
-import problemCreate from './components/problem/create'
-import problemUpdate from './components/problem/update'
-import problemStat from './components/problem/stat'
-import problemData from './components/problem/data'
+import problemShow from '@/components/problem/show'
+import problemCreate from '@/components/problem/create'
+import problemUpdate from '@/components/problem/update'
+import problemStat from '@/components/problem/stat'
+import problemData from '@/components/problem/data'
 
-// import submissionShow from './components/submission/show'
-import submissionList from './components/submission/list'
+import submissionShow from '@/components/submission/show'
+import submissionList from '@/components/submission/list'
 
-import userShow from './components/user/profile'
-import userLogin from './components/user/login'
-import userRegister from './components/user/register'
-import userUpdate from './components/user/update'
+import userShow from '@/components/user/profile'
+import userLogin from '@/components/user/login'
+import userRegister from '@/components/user/register'
+import userUpdate from '@/components/user/update'
 
 Vue.use(Router)
 
@@ -37,8 +37,8 @@ export default new Router({
     { path: '/problem/:problemId/stat', component: problemStat },
     { path: '/problem/:problemId/data', component: problemData },
 
-    { path: '/submission', component: submissionList },
-    // { path: '/submissions/:submission', component: submissionShow },
+    { path: '/submission', name: 'submissions', component: submissionList },
+    { path: '/submission/:submissionId', component: submissionShow },
 
     { path: '/round', component: roundList },
     { path: '/round/default', component: roundDefault },

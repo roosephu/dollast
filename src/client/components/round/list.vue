@@ -29,10 +29,11 @@ window
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 import { debug } from 'debug'
 import window from '@/components/window'
 import round from '@/components/format/round'
+import gql from 'graphql-tag'
 
 const log = debug('dollast:component:round:list')
 
@@ -53,16 +54,18 @@ export default {
     ...mapGetters(['isLoading'])
   },
 
-  // methods: (map-actions [\$fetch]) <<<
-  //   fetch: ->>
-  //     @rounds = await @$fetch method: 'GET', url: "round"
-
-  // watch:
-  //   $route: ->
-  //     @fetch!
-
-  // created: ->
-  //   @fetch!
+  apollo: {
+    rounds: {
+      query: gql`query {
+        rounds {
+          _id
+          title
+          beginTime
+          endTime
+        }
+      }`
+    }
+  },
 
   mounted () {
     this.$nextTick(() => {
@@ -70,7 +73,7 @@ export default {
         on: 'hover'
       })
 
-      $filter = $('#filter')
+      const $filter = $('#filter')
       $filter.dropdown({
         onChange (value, text, $choice) {
           log({value, text, $choice})

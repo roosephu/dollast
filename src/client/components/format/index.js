@@ -1,6 +1,6 @@
 import moment from 'moment'
 import Vue from 'vue'
-import codeLink from './code-link'
+import codeLink from './codeLink'
 import problem from './problem'
 import user from './user'
 import round from './round'
@@ -20,7 +20,7 @@ Vue.filter('round', round => {
   // }
 })
 
-Vue.filter('user', user => String(user))
+Vue.filter('user', user => user._id)
 
 Vue.filter('time', time => moment(time).format('YYYY MM Do HH:mm:ss'))
 
@@ -32,7 +32,7 @@ Vue.filter('decimal', (value, fixed) => {
   }
 })
 
-Vue.filter('concisetime', time => moment(time).format('YYYY-MM_DD HH:mm:ss'))
+Vue.filter('conciseTime', time => moment(time).format('YYYY-MM_DD HH:mm:ss'))
 
 export default {
   codeLink,

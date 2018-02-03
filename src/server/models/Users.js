@@ -1,8 +1,7 @@
 import { debug } from 'debug'
 import { Schema } from 'mongoose'
-import { conn } from '../connectors'
+import { conn } from './connectors'
 import config from '../config'
-import sign from 'jsonwebtoken'
 import { compareSync } from 'bcrypt'
 
 const log = debug('dollast:models:user')
@@ -15,7 +14,7 @@ const schema = new Schema({
   date: { type: Date, default: Date.now }
 })
 
-export const Model = conn.model('user', schema)
+export const Model = conn.model('User', schema)
 
 const typeDef = `
   type User {

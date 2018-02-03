@@ -63,7 +63,7 @@ window
       h2.ui.dividing.header Submission
       .ui.field
         label code
-        textarea(name="code")
+        textarea(name="code", style="font-family: monospace")
       .ui.two.fields
         .ui.field
           label language
@@ -86,7 +86,7 @@ window
 <script>
 import { debug } from 'debug'
 import { mapGetters } from 'vuex'
-import window from '../window'
+import window from '@/components/window'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:component:problem:show')

@@ -1,7 +1,8 @@
 import { Schema } from 'mongoose'
-import { conn, Models } from '../connectors'
+import { conn, Models } from './connectors'
 import { debug } from 'debug'
 import { upload, genDataPairs } from '../core'
+import { inspect } from 'util'
 
 const log = debug('dollast:models:Problems')
 
@@ -12,7 +13,7 @@ const testCaseSchema = new Schema({
 })
 
 const problemSchema = new Schema({
-    // outlook
+  // outlook
   description: String,
   title: String,
   inputFormat: String,
@@ -41,6 +42,12 @@ const typeDef = `
     weight: Float
   }
 
+  type ProblemStatistics {
+    _id: String
+    submission: Submission
+    numSubmissions: Float
+  }
+
   type Problem {
     _id: String
     description: String
@@ -56,6 +63,8 @@ const typeDef = `
     outputLimit: Float
     judger: String
     dataset: [TestCase]
+
+    statistics: [ProblemStatistics]
   }
 
   extend type Query {
@@ -92,9 +101,51 @@ function prepare (o) {
 }
 
 const resolvers = {
+  ProblemStatistics: {
+    async submission (stat) {
+      return Models.Submissions.findById(stat.submission).exec()
+    }
+  },
+
   Problem: {
     async round (p) {
       return Models.Rounds.findById(p.round).exec()
+    },
+
+    async statistics (problem) {
+      const doc = await Models.Problems.findById(problem._id).exec()
+
+      const submissions = await Models.Submissions.aggregate([{
+        $match: {
+          problem: doc._id
+        }
+      }, {
+        $sort: {
+          user: 1,
+          'final.score': 1
+        }
+      }, {
+        $project: {
+          language: true,
+          summary: true,
+          round: true,
+          user: true
+        }
+      }, {
+        $group: {
+          _id: '$user',
+          submission: {
+            $first: '$_id'
+          },
+          numSubmissions: {
+            $sum: 1
+          }
+        }
+      }]).exec()
+
+      log({ return: inspect(submissions) })
+
+      return submissions
     }
   },
 
@@ -129,6 +180,8 @@ const resolvers = {
 }
 
 export {
-    typeDef,
-    resolvers
+  typeDef,
+  resolvers
 }
+
+// log({ exports })

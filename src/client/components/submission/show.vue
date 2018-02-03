@@ -1,24 +1,29 @@
 <template lang="jade">
-window
+window(v-if="submission")
   .menu(slot="config")
     .ui.header links
-    a.item(:href="'#!/user/' + submission.user")
+    a.item(:href="'#!/user/' + submission.user._id")
       i.icon.user
       | Go to User
-    a.item(:href="'#!/problem/' + submission.problem._id")
+    a.item(:href="'#!/problem/' + problemId")
       i.icon.browser
       | Go to Problem
-    a.item(:href="'#!/round/' + submission.round")
+    a.item(:href="'#!/round/' + submission.round._id")
       i.icon.shopping.bag
       | Go to Round
+    .ui.divider
+    .ui.header operations
+    .item(@click="rejudge")
+      i.icon.save
+      | Rejudge
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.header.dividing Submission {{$route.params.sid}}
     .ui.olive.labels
-      .ui.label {{submission.permit.owner}}
-        .detail owner
-      .ui.label {{submission.permit.group}}
-        .detail group
+      //- .ui.label {{submission.permit.owner}}
+      //-   .detail owner
+      //- .ui.label {{submission.permit.group}}
+      //-   .detail group
       .ui.label {{submission.language}}
         .detail language
       .ui.label {{submission.problem._id}}
@@ -49,25 +54,25 @@ window
               th score
               th message
           tbody
-            tr.positive(v-for="result in submission.results")
+            tr.positive(v-for="result in sortedResults")
               td {{result.input}}
               td {{result.status}}
-              td {{result.time | decimal 3}}
-              td {{result.space | decimal 3}}
-              td {{result.score | decimal 3}}
+              td {{result.time | decimal(3)}}
+              td {{result.space | decimal(3)}}
+              td {{result.score | decimal(3)}}
               td {{result.message}}
           tfoot
             tr
               th final result
               th {{submission.summary.status}}
-              th {{submission.summary.time | decimal 3}}
-              th {{submission.summary.space | decimal 3}}
-              th {{submission.summary.score | decimal 3}}
+              th {{submission.summary.time | decimal(3)}}
+              th {{submission.summary.space | decimal(3)}}
+              th {{submission.summary.score | decimal(3)}}
               th {{submission.summary.message}}
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import { debug } from 'debug'
 import Prism from 'prismjs'
 import naturalSort from 'javascript-natural-sort'
@@ -77,6 +82,7 @@ import 'prismjs/themes/prism-solarizedlight.css'
 import 'prismjs/plugins/line-numbers/prism-line-numbers'
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css'
 import window from '@/components/window'
+import gql from 'graphql-tag'
 
 const log = debug('dollast:component:submission:show')
 
@@ -87,24 +93,61 @@ export default {
 
   data () {
     return {
-      submission: null
+      submission: undefined
     }
   },
 
-  // data: ->
-  //   submission:
-  //     code: ""
-  //     summary: {}
-  //     results: []
-  //     problem:
-  //       _id: "0"
-  //     permit:
-  //       owner: ""
-  //       group: ""
+  apollo: {
+    submission: {
+      query: gql`query ($_id: String) {
+        submission(_id: $_id) {
+          _id
+          code
+          language
+          problem {
+            _id
+            title
+          }
+          user {
+            _id
+          }
+          round {
+            _id
+            title
+          }
+          summary {
+            time
+            space
+            message
+            score
+            status
+          }
+          results {
+            time
+            space
+            message
+            score
+            input
+            answer
+            weight
+          }
+        }
+      }`,
+      variables () {
+        return {
+          _id: this.submissionId
+        }
+      }
+    }
+  },
 
   computed: {
-    problem () {
+    problemId () {
       return this.submission.problem._id
+    },
+
+    submissionId () {
+      return this.$route.params.submissionId
     },
 
     highlighted () {
@@ -115,7 +158,26 @@ export default {
       }
     },
 
+    sortedResults () {
+      return this.submission.results.sort((a, b) => naturalSort(a.input, b.input))
+    },
+
     ...mapGetters(['isLoading'])
+  },
+
+  methods: {
+    rejudge () {
+      this.$apollo.mutate({
+        mutation: gql`mutation ($_id: String) {
+          rejudgeSubmission(_id: $_id) {
+            _id
+          }
+        }`,
+        variables: {
+          _id: this.submissionId
+        }
+      })
+    }
   },
 
   // methods: (map-actions [\$fetch]) <<<

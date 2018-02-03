@@ -14,8 +14,8 @@ div
 </template>
 
 <script>
-import foot from './site/foot'
-import navbar from './site/navbar'
+import foot from '@/components/site/foot'
+import navbar from '@/components/site/navbar'
 
 export default {
   components: {
@@ -23,5 +23,4 @@ export default {
     navbar
   }
 }
-
 </script>

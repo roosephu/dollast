@@ -19,7 +19,7 @@ window
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import { mapGetters } from 'vuex'
 import { debug } from 'debug'
 import window from '@/components/window'
 import problem from '@/components/format/problem'
@@ -66,5 +66,4 @@ export default {
     $filter.dropdown('set text', 'all')
   }
 }
-
 </script>

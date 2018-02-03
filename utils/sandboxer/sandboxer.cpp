@@ -62,13 +62,13 @@ void setlimit(int resource, int val) {
 }
 
 void run_child() {
-    cerr("[runner] change limits\n");
+    // cerr("[runner] change limits\n");
     setlimit(RLIMIT_CPU  , (int)utm_lmt + 1);
     setlimit(RLIMIT_STACK, stk_lmt);
     setlimit(RLIMIT_RSS  , mem_lmt);
     setlimit(RLIMIT_FSIZE, out_lmt);
 
-    cerr("[runner] redirect stdin/stdout/stderr\n");
+    // cerr("[runner] redirect stdin/stdout/stderr\n");
     int f = 0;
     ptrace(PT_TRACE_ME, 0, NULL, NULL);
     f = open(fn_in , O_RDONLY); close(0); dup(f); close(f);
@@ -83,16 +83,16 @@ void run_parent(pid_t pid) {
     for ( ; ; ) {
         int stat = 0;
         wait(&stat);
-        cerr("[runner] status = %d\n", stat);
+        // cerr("[runner] status = %d\n", stat);
         if (WIFEXITED(stat)) {
-            cerr("[runner] subprocess has stopped, exitcode: %d\n", WEXITSTATUS(stat));
+            // cerr("[runner] subprocess has stopped, exitcode: %d\n", WEXITSTATUS(stat));
             int exitcode = WEXITSTATUS(stat);
 
             struct rusage res;
             getrusage(RUSAGE_CHILDREN, &res);
-            cerr("[runner] utime: %ld usec\n", res.ru_utime.tv_usec);
-            cerr("[runner] stime: %ld usec\n", res.ru_stime.tv_usec);
-            cerr("[runner] maxrss: %ld KB\n", res.ru_maxrss);
+            // cerr("[runner] utime: %ld usec\n", res.ru_utime.tv_usec);
+            // cerr("[runner] stime: %ld usec\n", res.ru_stime.tv_usec);
+            // cerr("[runner] maxrss: %ld KB\n", res.ru_maxrss);
             double used_time = res.ru_utime.tv_usec / 1000000.0 + res.ru_utime.tv_sec;
             double used_mem  = res.ru_maxrss / 1024.0;
 
@@ -186,7 +186,7 @@ void init(int argc, char **args) {
     fn_in  = args[6];
     fn_out = args[7];
 
-    cerr("[runner] init finished\n");
+    // cerr("[runner] init finished\n");
 }
 
 int main(int argc, char **args) {

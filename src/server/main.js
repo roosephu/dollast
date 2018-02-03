@@ -10,7 +10,7 @@ import KoaSession from 'koa-session'
 import { debug } from 'debug'
 import { graphqlKoa, graphiqlKoa } from 'apollo-server-koa'
 import { apolloUploadKoa } from 'apollo-upload-server'
-import schema from './models/schema'
+import schema from './models/connectors'
 import { resolve } from 'path'
 import config from './config'
 

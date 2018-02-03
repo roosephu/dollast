@@ -175,12 +175,21 @@ async function judgeResult (pid, inFile, outFile, ansFile, cfg) {
     judger = join(config.judgerDir, `/${cfg.judger}`)
   }
 
+  // log({
+  //   inf: await fs.readFile(inFile),
+  //   out: await fs.readFile(outFile),
+  //   ans: await fs.readFile(ansFile)
+  // })
+
+  // log({ judger })
+
   let stdout
   let stderr
   try {
     [stdout, stderr] = await exec(`${judger} ${inFile} ${outFile} ${ansFile}`)
   } catch (e) {
     const messages = dropFirstLine(e.message)
+    // log({ judger, stdout, stderr, messages })
     return {
       status: testlibExitCodes[e.code],
       score: 0,
@@ -188,7 +197,9 @@ async function judgeResult (pid, inFile, outFile, ansFile, cfg) {
     }
   }
 
-  let [status, score, ...message] = stderr.trim().split(' ')
+  log({ stdout, stderr })
+
+  let [status, ...message] = stderr.trim().split(' ')
   message = unwords(message)
   return {
     status,
@@ -198,23 +209,25 @@ async function judgeResult (pid, inFile, outFile, ansFile, cfg) {
 }
 
 async function runAtom (pid, lang, exePath, data, cfg) {
-  const tmpFile = tmp.fileAsync()
-  const ouf = tmpFile.name
-  const inf = join(config.dataDir, `/${pid}/`, data.input)
-  const ans = join(config.dataDir, `/${pid}/`, data.output)
-  log(`inf ${inf} ans ${ans}`)
-  const execCmd = `"${config.sandboxer}" "${exePath}" "${cfg.timeLimit}" "${cfg.spaceLimit}" ${cfg}`
+  // log({ pid, lang, exePath, data, cfg })
+  const tmpFile = tmp.fileSync()
+  const out = tmpFile.name
+  const inf = join(config.dataDir, String(pid), data.input)
+  const ans = join(config.dataDir, String(pid), data.answer)
+  const execCmd = `"${config.sandboxer}" "${exePath}" ${cfg.timeLimit} ${cfg.spaceLimit} ${cfg.stackLimit} ${cfg.outputLimit} "${inf}" "${out}"`
+
+  log({ execCmd })
 
   let [procOut, procErr] = await exec(execCmd, { cwd: dirname(config.sandboxer) })
 
   const exeRes = JSON.parse(procErr)
-  log(`sandboxer result: ${exeRes}`)
+  log({ exeRes })
 
   if (exeRes.status !== 'OK') {
     tmpFile.removeCallback()
     return Object.assign(exeRes, data)
   }
-  const judgeRes = await judgeResult(pid, inf, ouf, ans, cfg)
+  const judgeRes = await judgeResult(pid, inf, out, ans, cfg)
   tmpFile.removeCallback()
   return Object.assign(exeRes, Object.assign(judgeRes, data))
 }
@@ -249,11 +262,11 @@ function calcProblemScore (results) {
   return ret
 }
 
-export async function judge (lang, code, probConfig, doc) {
+export async function judge (lang, code, config, doc) {
   log(`start judging, lang = ${lang}`)
 
-  const tmpDir = tmp.dirSync({ unsafeCleanUp: true })
-  const config = probConfig.toObject()
+  const tmpDir = tmp.dirSync({ unsafeCleanup: true })
+  // log({ tmpDir })
   const pid = doc.problem
   let exePath
 
@@ -282,6 +295,7 @@ export async function judge (lang, code, probConfig, doc) {
 
     const results = await Promise.all(dataset.map(data => runAtom(pid, lang, exePath, data.toObject(), config)))
     log('writing back')
+    log({ results })
     doc.results = results
     doc.summary = calcProblemScore(zip(dataset, results))
     doc.summary.status = 'finished'

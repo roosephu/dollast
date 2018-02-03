@@ -1,11 +1,11 @@
 <template lang="jade">
-  a.ui.label.hvr-underline-from-center(:href="'#/user/' + user") {{user | user}}
+  a.ui.label.hvr-underline-from-center(:href="'#/user/' + user._id") {{user | user}}
 </template>
 
 <script>
 export default {
   props: {
-    user: String
+    user: Object
   }
 }
 </script>

@@ -24,7 +24,7 @@ window(v-if="round")
       | Board
     a.item(:href="'#/round/' + roundId + '/modify'")
       i.icon.edit
-      | Modify
+      | Update
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.dividing.header Round {{round | round}}
@@ -137,7 +137,7 @@ export default {
         total: endTime - beginTime,
         value: max(current - beginTime, 0)
       })
-    },
+    }
 
   },
 
