@@ -52,10 +52,8 @@ window
 
 <script>
 import Vue from 'vue'
-import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import { debug } from 'debug'
-import { map, pairsToObj, objToPairs, flatten } from 'prelude-ls'
 import window from '@/components/window'
 
 const log = debug('dollast:component:round:modify')
@@ -78,8 +76,8 @@ function setFormValues (round) {
   problems = problems.map(problem => `${problem._id}`)
   $form.form('set values', {
     title: title,
-    beginTime: beginTime ? new moment(beginTime).format('YYYY-MM-DD HH:mm:ss') : undefined,
-    endTime: endTime ? new moment(endTime).format('YYYY-MM-DD HH:mm:ss') : undefined,
+    beginTime: beginTime ? moment(beginTime).format('YYYY-MM-DD HH:mm:ss') : undefined,
+    endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : undefined,
     problems: problems
   })
 }
@@ -128,22 +126,20 @@ export default {
       const submit = async (e, values) => {
         e.preventDefault()
         const round = getFormValues(values)
-        if (this.$route.params.roundId != undefined) {
+        if (this.$route.params.roundId !== undefined) {
           round._id = this.$route.params.roundId
         }
         // await @$fetch method: \POST, url: "round", data: round
       }
 
       $('#form-round').form({
-        onSuccess: submit
+        onSuccess: submit,
+        fields: {
+          title: ['minLength[2]', 'maxLength[63]'],
+          beginTime: 'isTime',
+          endTime: 'isTime'
+        }
       })
-
-      if (!this.round._id) {
-        // @round.permit =
-        //   owner: @user
-        //   group: \rounds
-        //   access: \rwxr--r--
-      }
       setFormValues(this.round)
     })
   },

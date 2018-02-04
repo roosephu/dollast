@@ -23,10 +23,10 @@ window(v-if="problem")
 <script>
 import { mapGetters } from 'vuex'
 import { debug } from 'debug'
-import { average } from 'prelude-ls'
 import window from '@/components/window'
 import problem from '@/components/format/problem'
 import gql from 'graphql-tag'
+import * as _ from 'lodash'
 
 const log = debug('dollast:component:problem:stat')
 
@@ -41,9 +41,9 @@ function generateStat (sols) {
   }
 
   const scores = sols.map(sol => sol.submission.summary.score || 0)
-  const mean = average(scores)
+  const mean = _.mean(scores)
   const median = scores[Math.floor(scores.length / 2)]
-  const variance = average(scores.map(val => val * val)) - mean * mean
+  const variance = _.mean(scores.map(val => val * val)) - mean * mean
   const stddev = Math.sqrt(variance)
   const solved = scores.filter(x => x === 1).length
 
@@ -90,22 +90,6 @@ export default {
       }
     }
   },
-
-  // methods: {
-  //   ...mapActions(['$fetch'])
-  // } (map-actions [\$fetch]) <<<
-  //   fetch: ->>
-  //     {submissions, problem} = await @$fetch method: \GET, url: "problem/#{@$route.params.problem}/stat"
-  //     stat = generate-stat submissions
-
-  //     @ <<<
-  //       stat:
-  //         "accepted users": stat.solved
-  //         # "accepted programs": "???"
-  //         mean: stat.mean
-  //         median: stat.median
-  //         "standard deviation": stat.stddev
-  //       problem: problem
 
   components: {
     window,

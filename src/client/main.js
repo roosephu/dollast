@@ -7,6 +7,7 @@ import { debug } from 'debug'
 import router from './router'
 import store from './store'
 import App from '@/components/app'
+import './validation.js'
 
 debug.enable('dollast:*')
 // const log = debug('dollast:main')

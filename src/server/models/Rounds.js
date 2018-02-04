@@ -3,7 +3,6 @@ import { conn, Models } from './connectors'
 import { GraphQLDateTime } from 'graphql-iso-date'
 import status from '../status'
 import { debug } from 'debug'
-import { AssertionError } from 'assert'
 
 const log = debug('dollast:Rounds')
 
@@ -47,9 +46,9 @@ const typeDef = `
 const resolvers = {
   Round: {
     async board (r) {
-      const round = await Model.findById(r._id).exec()
+      const round = await Model.findById(r._id).lean().exec()
       if (!round) {
-        throw new AssertionError('fals')
+        return new Error('no such round')
       }
 
       const submissions = await Models.Submissions.aggregate([{
@@ -79,7 +78,7 @@ const resolvers = {
             $first: '$id'
           }
         }
-      }]).exec()
+      }]).lean().exec()
       log({ submissions })
 
       return submissions
@@ -90,11 +89,11 @@ const resolvers = {
 
   Query: {
     async rounds () {
-      return Model.find().exec()
+      return Model.find().lean().exec()
     },
 
     async round (root, {_id}) {
-      return Model.findById(_id).exec()
+      return Model.findById(_id).lean().exec()
     },
 
     defaultRoundId () {
@@ -106,7 +105,7 @@ const resolvers = {
     async updateRound (root, args) {
       const { _id } = args
       await Model.update({ _id }, args, { upsert: true }).exec()
-      return Model.findById(_id).exec()
+      return Model.findById(_id).lean().exec()
     }
   }
 }

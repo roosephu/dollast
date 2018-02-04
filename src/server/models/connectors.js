@@ -69,5 +69,3 @@ export default makeExecutableSchema({
     Rounds.resolvers
   ])
 })
-
-Problems.resolvers.Problem.statistics({ _id: '5a4fe94029782f06d006780f' })

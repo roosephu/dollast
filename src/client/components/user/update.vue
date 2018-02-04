@@ -2,23 +2,23 @@
 window
   .menu(slot="config")
     .ui.header links
-    a.item(:href="'#!/user/' + user.profile._id")
+    a.item(:href="'#!/user/' + user._id")
       i.icon.user
       | Go to User
 
   .ui.basic.segment.form(slot="main")#form-user
-    h2.ui.dividing.header {{user.profile._id}}
+    h2.ui.dividing.header {{user._id}}
     .ui.success.message
       .header Changes saved.
 
-    .ui.field
-      label groups
-      .ui.dropdown.icon.selection.search.multiple
-        input(type="hidden", name="groups")
-        .default.text select proper access
-        i.dropdown.icon
-        .menu
-          .item(v-for="item in groups", :data-value="item") {{item}}
+    //- .ui.field
+    //-   label groups
+    //-   .ui.dropdown.icon.selection.search.multiple
+    //-     input(type="hidden", name="groups")
+    //-     .default.text select proper access
+    //-     i.dropdown.icon
+    //-     .menu
+    //-       .item(v-for="item in groups", :data-value="item") {{item}}
 
     h3.ui.dividing.header Description
     .ui.two.fields
@@ -38,7 +38,7 @@ window
         label new password
         .ui.icon.input.left
           i.icon.lock
-          input(placeholder="new  password", name="newPassword", type="password")
+          input(placeholder="new password", name="password", type="password")
     .four.fields.wide
       .ui.field
         label confirm new password
@@ -52,9 +52,10 @@ window
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
-import { debug } from "debug"
+import { mapGetters } from 'vuex'
+import { debug } from 'debug'
 import window from '@/components/window'
+import gql from 'graphql-tag'
 
 const log = debug('dollast:components:user:modify')
 
@@ -67,17 +68,26 @@ export default {
     return {
       groups: ['problems', 'submissions', 'admin', 'rounds'],
       user: {
-        profile: {
-          _id: "",
-          groups: []
-        }
+        _id: ''
       }
     }
   },
 
-  // methods: (map-actions [\$fetch]) <<<
-  //   fetch: ->>
-  //     @user = await @$fetch method: \GET, url: "user/#{@$route.params.user}"
+  apollo: {
+    user: {
+      query: gql`query ($_id: String) {
+        user(_id: $_id) {
+          _id
+          description
+        }
+      }`,
+      variables () {
+        return {
+          _id: this.$route.params.userId
+        }
+      }
+    }
+  },
 
   computed: {
     ...mapGetters(['isLoading'])
@@ -88,43 +98,49 @@ export default {
       const $dropdown = $('.ui.dropdown')
       $dropdown.dropdown({ allowAdditions: true })
 
-      const submit = async (e) => {
+      const submit = async (e, values) => {
         e.preventDefault()
-        const $form = $('#form-user')
-        let { groups, oldPassword, newPassword, confirmPassword, description } = $form.form('get values')
-        groups = groups.split(',')
-        const { _id } = this.user.profile
+        let { oldPassword, password, description } = values
+        // groups = groups.split(',')
+        const { _id } = this.user
 
         let updated
-        if (oldPassword == "" || newPassword == "") {
-          updated = { _id, groups, description }
+        if (oldPassword === '' || password === '') {
+          updated = { _id, description }
         } else {
-          updated = { _id, groups, description, oldPassword, newPassword }
+          updated = { _id, description, oldPassword, password }
         }
 
-        // await @$fetch method: \POST, url: "user/#{_id}", data: updated, form: $form
+        await this.$apollo.mutate({
+          mutation: gql`mutation ($_id: String!, $password: String, $oldPassword: String, $description: String) {
+            updateUser(_id: $_id, password: $password, oldPassword: $oldPassword, description: $description) {
+              _id
+            }
+          }`,
+          variables: updated
+        })
       }
 
       const $form = $('#form-user')
-      $form.form({ onSuccess: submit })
+      $form.form({
+        onSuccess: submit,
+        fields: {
+          oldPassword: { optional: true, rules: [{ type: 'isPassword' }] },
+          password: { depends: 'oldPassword', rules: [{ type: 'isPassword' }] },
+          confirmPassword: { depends: 'oldPassword', rules: [{ type: 'isPassword' }, { type: 'match[password]' }] }
+        }
+      })
     })
   },
 
   watch: {
-    'user.profile._id' () {
+    'user._id' () {
       const $form = $('#form-user')
       this.$nextTick(() => {
-        const {groups, description} = this.user.profile
-        $form.form('set values', {groups, description})
+        const { description } = this.user
+        $form.form('set values', { description })
       })
-    },
-
-    $route () {
-      // @fetch!
     }
   }
-
-  // created: ->
-  //   @fetch!
 }
 </script>

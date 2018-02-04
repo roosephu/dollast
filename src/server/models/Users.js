@@ -1,6 +1,6 @@
 import { debug } from 'debug'
 import { Schema } from 'mongoose'
-import { conn } from './connectors'
+import { conn, Models } from './connectors'
 import config from '../config'
 import { compareSync } from 'bcrypt'
 
@@ -33,6 +33,7 @@ const typeDef = `
       _id: String!,
       description: String,
       password: String,
+      oldPassword: String,
       email: String
     ): User
     login(_id: String!, password: String!): Boolean
@@ -56,7 +57,11 @@ const resolvers = {
   Mutation: {
     async updateUser (root, user, ctx) {
       const { _id } = user
-      log(user)
+      const doc = await Models.Users.findById(_id).lean().exec()
+      if (doc.password && user.password && doc.password !== user.oldPassword) return new Error('password doesn\'t match')
+
+      delete user.oldPassword
+
       await Model.update({ _id }, user, { upsert: true }).exec()
       return Model.findById(_id).exec()
     },

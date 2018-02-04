@@ -241,6 +241,19 @@ export default {
             mutation: UPDATE_GQL,
             variables: values
           })
+        },
+        fields: {
+          title: ['minLength[2]', 'maxLength[63]'],
+          judger: 'empty',
+          timeLimit: 'positive',
+          spaceLimit: 'positive',
+          stackLimit: 'positive',
+          outputLimit: 'positive',
+          description: 'maxLength[65535]',
+          inputFormat: 'maxLength[65535]',
+          outputFormat: 'maxLength[65535]',
+          sampleInput: 'maxLength[65535]',
+          sampleOutput: 'maxLength[65535]'
         }
       })
     })

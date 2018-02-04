@@ -164,7 +164,10 @@ export default {
             // $progress.progress value: e.loaded, total: e.total
       }
 
-      $('.form').form({ onSuccess: submit })
+      $('.form').form({
+        onSuccess: submit,
+        fields: { upload: 'empty' }
+      })
     })
   }
 }

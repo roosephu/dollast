@@ -64,7 +64,10 @@ export default {
         })
       }
       $form.form({
-        onSuccess: submit
+        onSuccess: submit,
+        fields: {
+
+        }
       })
     })
   }

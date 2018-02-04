@@ -6,7 +6,7 @@ import * as fs from 'fs-extra'
 import config from './config'
 import tmp from 'tmp'
 import { inspect } from 'util'
-import { unlines, drop, lines, zip, unwords, reject, Obj } from 'prelude-ls'
+import * as _ from 'lodash'
 
 const log = debug('dollast:core')
 
@@ -164,7 +164,7 @@ const testlibExitCodes = {
 }
 
 function dropFirstLine (message) {
-  return unlines(drop(1, lines(message)))
+  _.drop(message.split('\n'), 1).join('\n')
 }
 
 async function judgeResult (pid, inFile, outFile, ansFile, cfg) {
@@ -200,7 +200,7 @@ async function judgeResult (pid, inFile, outFile, ansFile, cfg) {
   log({ stdout, stderr })
 
   let [status, ...message] = stderr.trim().split(' ')
-  message = unwords(message)
+  message = message.split(' ')
   return {
     status,
     score: 1,
@@ -297,7 +297,7 @@ export async function judge (lang, code, config, doc) {
     log('writing back')
     log({ results })
     doc.results = results
-    doc.summary = calcProblemScore(zip(dataset, results))
+    doc.summary = calcProblemScore(_.zip(dataset, results))
     doc.summary.status = 'finished'
     await doc.save()
   } catch (e) {

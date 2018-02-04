@@ -8,7 +8,7 @@ const vendors = [
   'vuex',
   'vue-router',
   'prismjs',
-  'prelude-ls',
+  'lodash',
   'moment',
   'flat',
   'axios',

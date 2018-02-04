@@ -3,6 +3,8 @@ import { conn, Models } from './connectors'
 import { debug } from 'debug'
 import { upload, genDataPairs } from '../core'
 import { inspect } from 'util'
+import * as _ from 'lodash'
+import sanitizeHtml from 'sanitize-html'
 
 const log = debug('dollast:models:Problems')
 
@@ -94,36 +96,30 @@ const typeDef = `
 `
 
 function prepare (o) {
-  if (o != null) {
-    o._id = o._id.toString()
-  }
+  if (o != null) o._id = o._id.toString()
   return o
 }
 
 const resolvers = {
   ProblemStatistics: {
     async submission (stat) {
-      return Models.Submissions.findById(stat.submission).exec()
+      return Models.Submissions.findById(stat.submission).lean().exec()
     }
   },
 
   Problem: {
     async round (p) {
-      return Models.Rounds.findById(p.round).exec()
+      return Models.Rounds.findById(p.round).lean().exec()
     },
 
     async statistics (problem) {
-      const doc = await Models.Problems.findById(problem._id).exec()
+      const doc = await Models.Problems.findById(problem._id).lean().exec()
+      if (!doc) return new Error('no such document')
 
       const submissions = await Models.Submissions.aggregate([{
-        $match: {
-          problem: doc._id
-        }
+        $match: { problem: doc._id }
       }, {
-        $sort: {
-          user: 1,
-          'final.score': 1
-        }
+        $sort: { user: 1, 'final.score': 1 }
       }, {
         $project: {
           language: true,
@@ -134,14 +130,10 @@ const resolvers = {
       }, {
         $group: {
           _id: '$user',
-          submission: {
-            $first: '$_id'
-          },
-          numSubmissions: {
-            $sum: 1
-          }
+          submission: { $first: '$_id' },
+          numSubmissions: { $sum: 1 }
         }
-      }]).exec()
+      }]).lean().exec()
 
       log({ return: inspect(submissions) })
 
@@ -155,25 +147,30 @@ const resolvers = {
 
   Query: {
     async problem (root, {_id}) {
-      return prepare(await Model.findById(_id).exec())
+      return prepare(await Model.findById(_id).lean().exec())
     },
 
     async problems (root, args) {
-      return (await Model.find(args).exec()).map(prepare)
+      return (await Model.find(args).lean().exec()).map(prepare)
     }
   },
 
   Mutation: {
     async updateProblem (root, problem) {
-      const { _id } = problem
-      await Model.update({ _id }, problem, { upsert: true }).exec()
-      return Model.findById(_id).exec()
+      let { _id } = problem
+
+      const dirtyHtml = _.pickBy(_.pick(problem, ['description', 'inputFormat', 'outputFormat', 'sampleInput', 'sampleOutput']))
+      const cleanHtml = _.mapValues(dirtyHtml, sanitizeHtml)
+      Object.assign(problem, cleanHtml)
+
+      await Model.update({ _id }, problem, { upsert: true }).lean().exec()
+      return Model.findById(_id).lean().exec()
     },
 
     async uploadData (root, { _id, file }) {
       await upload(_id, await file[0])
       const dataset = await genDataPairs(_id)
-      await Model.update({ _id }, { dataset }, { upsert: true }).exec()
+      await Model.update({ _id }, { dataset }, { upsert: true }).lean().exec()
       return dataset
     }
   }
@@ -183,5 +180,3 @@ export {
   typeDef,
   resolvers
 }
-
-// log({ exports })

@@ -11,11 +11,8 @@ export default {
       query: gql`{
         problemId: getObjectID
       }`,
-      update ({problemId}) {
-        this.$router.push({
-          name: 'problem',
-          params: { problemId }
-        })
+      update ({ problemId }) {
+        this.$router.push({ path: `problem/${problemId}/update` })
       }
     }
   }

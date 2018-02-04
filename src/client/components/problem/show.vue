@@ -177,6 +177,10 @@ export default {
             }
           })
         },
+        fields: {
+          code: ['minLength[4]', 'maxLength[65535]'],
+          language: 'empty'
+        },
         on: 'submit'
       })
 

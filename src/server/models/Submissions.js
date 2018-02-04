@@ -2,6 +2,8 @@ import { Schema } from 'mongoose'
 import { debug } from 'debug'
 import { conn, Models } from './connectors'
 import { judge } from '../core'
+import * as _ from 'lodash'
+import config from '../config'
 
 const testCaseResultSchema = new Schema({
   time: Number,
@@ -66,7 +68,15 @@ const typeDef = `
 
   extend type Query {
     submission(_id: String): Submission
-    submissions: [Submission]
+    submissions(
+      user: String
+      problem: String
+      round: String
+      maxScore: Float
+      minScore: Float
+      language: String
+      page: Int
+    ): [Submission]
   }
 
   extend type Mutation {
@@ -90,44 +100,43 @@ async function rejudge (doc) {
 
 const resolvers = {
   Submission: {
-    async problem (s) {
-      if (s.problem === undefined) {
-        return undefined
-      }
-      // log({ s, problems: Models.Problems })
-      return Models.Problems.findById(s.problem).exec()
+    async problem (root) {
+      return Models.Problems.findById(root.problem).lean().exec()
     },
 
-    async user (s) {
-      if (s.user === undefined) {
-        return undefined
-      }
-      return Models.Users.findById(s.user).exec()
+    async user (root) {
+      return Models.Users.findById(root.user).lean().exec()
     },
 
-    async round (s) {
-      if (s.round === undefined) {
-        return undefined
-      }
-      return Models.Rounds.findById(s.round).exec()
+    async round (root) {
+      return Models.Rounds.findById(root.round).lean().exec()
     }
   },
 
   Query: {
     async submission (root, { _id }) {
-      return Model.findById(_id).exec()
+      return Models.Submissions.findById(_id).lean().exec()
     },
 
     async submissions (root, args) {
-      return Model.find().exec()
+      const { user, problem, round, maxScore, minScore, language, page } = args
+
+      let query = Models.Submissions
+        .find(_.pickBy({ user, problem, round, language }))
+        .sort('-date')
+        .limit(config.limit)
+        .lean()
+      if (maxScore) query = query.and({ 'summary.score': { $lte: maxScore } })
+      if (minScore) query = query.and({ 'summary.score': { $gte: minScore } })
+      if (page) query = query.skip((page - 1) * config.limit)
+
+      return query.exec()
     }
   },
 
   Mutation: {
     async submit (root, submission, ctx) {
-      if (!ctx.session.user) {
-        throw new Error('not logged in')
-      }
+      if (!ctx.session.user) return new Error('not logged in')
       const doc = new Model(submission)
       doc.user = ctx.session.user
       doc.summary = {

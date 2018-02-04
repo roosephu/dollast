@@ -7,9 +7,9 @@ window
       | All submissions
     .ui.divider
     .ui.header operations
-    a.item(:href="'#/user/' + user + '/modify'")
+    a.item(:href="'#/user/' + user + '/update'")
       i.icon.edit
-      | Modify
+      | Update
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.dividing.header Details of {{user}}
@@ -52,7 +52,7 @@ window
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
+import { mapActions, mapGetters } from 'vuex'
 import moment from 'moment'
 import { debug } from 'debug'
 import naturalSort from 'javascript-natural-sort'
@@ -71,7 +71,7 @@ function naturalSortBy (f) {
 export default {
   data () {
     return {
-      user: this.$route.params.user,
+      user: this.$route.params.userId,
       profile: {},
       solvedProblems: [],
       ownedProblems: [],
@@ -84,7 +84,7 @@ export default {
       if (this.profile.date) {
         return moment(this.profile.date).format('MMMM Do YYYY')
       } else {
-        return ""
+        return ''
       }
     },
 

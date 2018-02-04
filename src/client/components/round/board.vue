@@ -28,7 +28,6 @@ window
 <script>
 import { mapGetters } from 'vuex'
 import { debug } from 'debug'
-import { objToPairs, sort, reverse } from 'prelude-ls'
 import window from '@/components/window'
 import problem from '@/components/format/problem'
 import codeLink from '@/components/format/codeLink'

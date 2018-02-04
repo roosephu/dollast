@@ -8,6 +8,7 @@ import roundDefault from '@/components/round/default'
 import roundUpdate from '@/components/round/update'
 import roundBoard from '@/components/round/board'
 import roundList from '@/components/round/list'
+import roundCreate from '@/components/round/create'
 
 import problemShow from '@/components/problem/show'
 import problemCreate from '@/components/problem/create'
@@ -41,6 +42,7 @@ export default new Router({
     { path: '/submission/:submissionId', component: submissionShow },
 
     { path: '/round', component: roundList },
+    { path: '/round/create', component: roundCreate },
     { path: '/round/default', component: roundDefault },
     { path: '/round/:roundId', name: 'round', component: roundShow },
     { path: '/round/:roundId/update', component: roundUpdate },

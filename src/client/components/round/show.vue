@@ -63,11 +63,11 @@ window(v-if="round")
 import { mapActions, mapGetters } from 'vuex'
 import { debug } from 'debug'
 import moment from 'moment'
-import { max } from 'prelude-ls'
 import window from '@/components/window'
 import problem from '@/components/format/problem'
-import _ from '@/components/format'
+import '@/components/format'
 import gql from 'graphql-tag'
+import * as _ from 'lodash'
 
 const log = debug('dollast:component:round:show')
 
@@ -135,10 +135,9 @@ export default {
       const current = moment()
       $('.ui.progress').progress({
         total: endTime - beginTime,
-        value: max(current - beginTime, 0)
+        value: _.max(current - beginTime, 0)
       })
     }
-
   },
 
   mounted () {
