@@ -92,6 +92,7 @@
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.19",
+    "@types/debug": "0.0.30",
     "@types/fs-extra": "^5.0.0",
     "@types/js-cookie": "^2.1.0",
     "@types/koa": "^2.0.43",

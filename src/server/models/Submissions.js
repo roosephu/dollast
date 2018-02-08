@@ -4,6 +4,7 @@ import { conn, Models } from './connectors'
 import { judge } from '../core'
 import * as _ from 'lodash'
 import config from '../config'
+import status from '../status'
 
 const testCaseResultSchema = new Schema({
   time: Number,
@@ -84,7 +85,6 @@ const typeDef = `
       code: String
       language: String
       problem: String
-      round: String
     ): Submission
     rejudgeSubmission(_id: String): Submission
   }
@@ -119,7 +119,8 @@ const resolvers = {
     },
 
     async submissions (root, args) {
-      const { user, problem, round, maxScore, minScore, language, page } = args
+      let { user, problem, round, maxScore, minScore, language, page } = args
+      round = round || status.defaultRoundId
 
       let query = Models.Submissions
         .find(_.pickBy({ user, problem, round, language }))
@@ -136,7 +137,11 @@ const resolvers = {
 
   Mutation: {
     async submit (root, submission, ctx) {
-      if (!ctx.session.user) return new Error('not logged in')
+      if (!ctx.session.user) return new Error('logged in to submit')
+      const problemDoc = await Models.findById(submission.problem).lean().exec()
+      if (!problemDoc) return new Error('no such problem')
+      submission.round = problemDoc.round
+
       const doc = new Model(submission)
       doc.user = ctx.session.user
       doc.summary = {

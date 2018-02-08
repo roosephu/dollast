@@ -2,7 +2,7 @@ import { debug } from 'debug'
 import { Schema } from 'mongoose'
 import { conn, Models } from './connectors'
 import config from '../config'
-import { compareSync } from 'bcrypt'
+import { compareSync, hashSync } from 'bcrypt'
 
 const log = debug('dollast:models:user')
 
@@ -58,7 +58,11 @@ const resolvers = {
     async updateUser (root, user, ctx) {
       const { _id } = user
       const doc = await Models.Users.findById(_id).lean().exec()
-      if (doc.password && user.password && doc.password !== user.oldPassword) return new Error('password doesn\'t match')
+      if (doc.password && user.password && !compareSync(doc.password, user.oldPassword)) return new Error('password doesn\'t match')
+
+      if (user.password) {
+        user.password = hashSync(user.password, config.bcryptCost)
+      }
 
       delete user.oldPassword
 
@@ -71,11 +75,11 @@ const resolvers = {
       // log(ctx)
       // log(user)
       if (!user) {
-        throw Error('no such user')
+        return new Error('no such user')
       }
       // if (!compareSync(password, user.password)) {
-      if (password !== user.password) {
-        throw Error('wrong password')
+      if (!compareSync(password, user.password)) {
+        return new Error('wrong password')
       }
       ctx.session.user = _id
       return true

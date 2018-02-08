@@ -165,14 +165,13 @@ export default {
           log('use GraphQL to submit updates')
 
           this.$apollo.mutate({
-            mutation: gql`mutation Submit($code: String, $language: String, $problem: String, $round: String) {
-              submit(code: $code, language: $language, problem: $problem, round: $round) {
+            mutation: gql`mutation Submit($code: String, $language: String, $problem: String) {
+              submit(code: $code, language: $language, problem: $problem) {
                 _id
               }
             }`,
             variables: {
               problem: this.problem._id,
-              round: this.problem.round._id,
               ...values
             }
           })
