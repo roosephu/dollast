@@ -67,7 +67,7 @@ export default {
 
   apollo: {
     problem: {
-      query: gql`query ($_id: String) {
+      query: gql`query ($_id: ID!) {
         problem(_id: $_id) {
           _id
           title

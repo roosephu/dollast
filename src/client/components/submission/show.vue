@@ -86,6 +86,41 @@ import gql from 'graphql-tag'
 
 const log = debug('dollast:component:submission:show')
 
+const GQL_SUBMISSION_QUERY = gql`query ($_id: ID!) {
+  submission(_id: $_id) {
+    _id
+    code
+    language
+    problem {
+      _id
+      title
+    }
+    user {
+      _id
+    }
+    round {
+      _id
+      title
+    }
+    summary {
+      time
+      space
+      message
+      score
+      status
+    }
+    results {
+      time
+      space
+      message
+      score
+      input
+      answer
+      weight
+    }
+  }
+}`
+
 export default {
   components: {
     window
@@ -99,40 +134,7 @@ export default {
 
   apollo: {
     submission: {
-      query: gql`query ($_id: String) {
-        submission(_id: $_id) {
-          _id
-          code
-          language
-          problem {
-            _id
-            title
-          }
-          user {
-            _id
-          }
-          round {
-            _id
-            title
-          }
-          summary {
-            time
-            space
-            message
-            score
-            status
-          }
-          results {
-            time
-            space
-            message
-            score
-            input
-            answer
-            weight
-          }
-        }
-      }`,
+      query: GQL_SUBMISSION_QUERY,
       variables () {
         return {
           _id: this.submissionId
@@ -168,7 +170,7 @@ export default {
   methods: {
     rejudge () {
       this.$apollo.mutate({
-        mutation: gql`mutation ($_id: String) {
+        mutation: gql`mutation ($_id: ID!) {
           rejudgeSubmission(_id: $_id) {
             _id
           }

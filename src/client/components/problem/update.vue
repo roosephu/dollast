@@ -117,8 +117,8 @@ function setFormValues (data) {
   $form.form('set values', problem)
 }
 
-const QUERY_GQL = gql`query Problem($problemId: String) {
-  problem(_id: $problemId) {
+const QUERY_GQL = gql`query Problem($_id: ID!) {
+  problem(_id: $_id) {
     _id
     description
     title
@@ -139,7 +139,7 @@ const QUERY_GQL = gql`query Problem($problemId: String) {
 }`
 
 const UPDATE_GQL = gql`mutation Update (
-  $_id: String!,
+  $_id: ID!,
   $description: String,
   $title: String,
   $inputFormat: String,
@@ -190,7 +190,7 @@ export default {
       query: QUERY_GQL,
       variables () {
         return {
-          problemId: this.problemId
+          _id: this.problemId
         }
       }
     }

@@ -75,7 +75,7 @@ export default {
 
   apollo: {
     user: {
-      query: gql`query ($_id: String) {
+      query: gql`query ($_id: ID!) {
         user(_id: $_id) {
           _id
           description
@@ -112,7 +112,7 @@ export default {
         }
 
         await this.$apollo.mutate({
-          mutation: gql`mutation ($_id: String!, $password: String, $oldPassword: String, $description: String) {
+          mutation: gql`mutation ($_id: ID!, $password: String, $oldPassword: String, $description: String) {
             updateUser(_id: $_id, password: $password, oldPassword: $oldPassword, description: $description) {
               _id
             }

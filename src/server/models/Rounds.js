@@ -17,28 +17,28 @@ const roundSchema = new Schema({
 export const Model = conn.model('Round', roundSchema)
 
 const typeDef = `
-  scalar Date
+  scalar DateTime
 
   type Round {
-    _id: String
+    _id: ID!
     title: String
-    beginTime: Date
-    endTime: Date
+    beginTime: DateTime
+    endTime: DateTime
     board: [Submission]
   }
 
   extend type Query {
     rounds: [Round]
-    round(_id: String): Round
+    round(_id: ID!): Round
     defaultRoundId: String
   }
 
   extend type Mutation {
     updateRound(
-      _id: String!
+      _id: ID!
       title: String
-      beginTime: Date
-      endTime: Date
+      beginTime: DateTime
+      endTime: DateTime
     ): Round
   }
 `
@@ -85,7 +85,7 @@ const resolvers = {
     }
   },
 
-  Date: GraphQLDateTime,
+  DateTime: GraphQLDateTime,
 
   Query: {
     async rounds () {

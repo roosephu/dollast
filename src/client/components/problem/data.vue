@@ -144,7 +144,7 @@ export default {
 
         // TODO progress
         await this.$apollo.mutate({
-          mutation: gql`mutation ($file: Upload, $_id: String) {
+          mutation: gql`mutation ($file: Upload!, $_id: ID!) {
             uploadData(file: $file, _id: $_id) {
               input
               answer

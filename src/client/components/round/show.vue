@@ -98,7 +98,7 @@ export default {
 
   apollo: {
     problems: {
-      query: gql`query Problems($roundId: String!) {
+      query: gql`query Problems($roundId: ID!) {
         problems(round: $roundId) {
           _id
           title
@@ -112,7 +112,7 @@ export default {
     },
 
     round: {
-      query: gql`query Round($roundId: String!) {
+      query: gql`query Round($roundId: ID!) {
         round(_id: $roundId) {
           _id
           title

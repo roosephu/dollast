@@ -8,7 +8,7 @@ import gql from 'graphql-tag'
 export default {
   apollo: {
     defaultRoundId: {
-      query: gql`{
+      query: gql`query {
         defaultRoundId
       }`,
       update ({defaultRoundId}) {
@@ -20,5 +20,4 @@ export default {
     }
   }
 }
-
 </script>

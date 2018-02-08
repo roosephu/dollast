@@ -55,14 +55,16 @@ import Vue from 'vue'
 import moment from 'moment'
 import { debug } from 'debug'
 import window from '@/components/window'
+import gql from 'graphql-tag'
 
 const log = debug('dollast:component:round:modify')
 
 function getFormValues (values) {
-  const beginTime = moment(values.beginTime).valueOf()
-  const endTime = moment(values.endTime).valueOf()
+  const beginTime = moment(values.beginTime).format()
+  const endTime = moment(values.endTime).format()
+  const { title } = values
 
-  return {beginTime, endTime, title: values.title}
+  return { beginTime, endTime, title }
 }
 
 function setFormValues (round) {
@@ -110,6 +112,12 @@ export default {
     window
   },
 
+  methods: {
+    del () {
+
+    }
+  },
+
   // methods: (map-actions [\$fetch]) <<<
   //   fetch: ->>
   //     {round} = @$route.params
@@ -126,10 +134,19 @@ export default {
       const submit = async (e, values) => {
         e.preventDefault()
         const round = getFormValues(values)
+        // const round = values
         if (this.$route.params.roundId !== undefined) {
           round._id = this.$route.params.roundId
         }
-        // await @$fetch method: \POST, url: "round", data: round
+
+        await this.$apollo.mutate({
+          mutation: gql`mutation ($_id: ID!, $title: String, $beginTime: Date, $endTime: Date) {
+            updateRound(_id: $_id, title: $title, beginTime: $beginTime, endTime: $endTime) {
+              _id
+            }
+          }`,
+          variables: round
+        })
       }
 
       $('#form-round').form({

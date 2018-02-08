@@ -45,13 +45,13 @@ const typeDef = `
   }
 
   type ProblemStatistics {
-    _id: String
+    _id: ID!
     submission: Submission
     numSubmissions: Float
   }
 
   type Problem {
-    _id: String
+    _id: ID!
     description: String
     title: String
     inputFormat: String
@@ -70,13 +70,13 @@ const typeDef = `
   }
 
   extend type Query {
-    problem(_id: String): Problem
+    problem(_id: ID!): Problem
     problems(round: String): [Problem]
   }
 
   extend type Mutation {
     updateProblem(
-      _id: String!
+      _id: ID!
       description: String
       title: String
       inputFormat: String
@@ -91,7 +91,7 @@ const typeDef = `
       judger: String
     ): Problem
 
-    uploadData(_id: String, file: Upload): [TestCase]
+    uploadData(_id: ID!, file: Upload): [TestCase]
   }
 `
 

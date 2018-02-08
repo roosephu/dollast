@@ -18,25 +18,25 @@ export const Model = conn.model('User', schema)
 
 const typeDef = `
   type User {
-    _id: String
+    _id: ID!
     password: String
     email: String
     description: String
   }
 
   extend type Query {
-    user(_id: String): User
+    user(_id: ID!): User
   }
 
   extend type Mutation {
     updateUser(
-      _id: String!,
+      _id: ID!,
       description: String,
       password: String,
       oldPassword: String,
       email: String
     ): User
-    login(_id: String!, password: String!): Boolean
+    login(_id: ID!, password: String!): Boolean
   }
 `
 

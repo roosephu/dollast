@@ -34,7 +34,7 @@ import gql from 'graphql-tag'
 const log = debug('dollast:component:register')
 
 const GQL_UPDATE = gql`mutation updateUser(
-  $user: String!,
+  $user: ID!,
   $description: String,
   $email: String,
   $password: String) {

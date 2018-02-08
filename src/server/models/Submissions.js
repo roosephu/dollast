@@ -57,7 +57,7 @@ const typeDef = `
   }
 
   type Submission {
-    _id: String
+    _id: ID!
     code: String
     language: String
     problem: Problem
@@ -68,7 +68,7 @@ const typeDef = `
   }
 
   extend type Query {
-    submission(_id: String): Submission
+    submission(_id: ID!): Submission
     submissions(
       user: String
       problem: String
@@ -86,16 +86,16 @@ const typeDef = `
       language: String
       problem: String
     ): Submission
-    rejudgeSubmission(_id: String): Submission
+    rejudgeSubmission(_id: ID!): Submission
   }
 `
 
 async function rejudge (doc) {
   const problem = await Models.Problems.findById(doc.problem).exec()
   const { language, code } = doc
-  const { timeLimit, spaceLimit, stackLimit, outputLimit, judger, dataset } = problem
+  const config = _.pick(problem, ['timeLimit', 'spaceLimit', 'stackLimit', 'outputLimit', 'judger', 'dataset'])
 
-  judge(language, code, { timeLimit, spaceLimit, stackLimit, outputLimit, judger, dataset }, doc)
+  judge(language, code, config, doc)
 }
 
 const resolvers = {

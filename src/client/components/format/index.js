@@ -22,7 +22,7 @@ Vue.filter('round', round => {
 
 Vue.filter('user', user => user._id)
 
-Vue.filter('time', time => moment(time).format('YYYY MM Do HH:mm:ss'))
+Vue.filter('time', time => moment(time).format('YYYY MMM Do HH:mm:ss'))
 
 Vue.filter('decimal', (value, fixed) => {
   if (typeof value !== 'number') {

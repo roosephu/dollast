@@ -45,7 +45,7 @@ export default {
       const submit = (e, values) => {
         e.preventDefault()
         this.$apollo.mutate({
-          mutation: gql`mutation login($user: String!, $password: String!) {
+          mutation: gql`mutation login($user: ID!, $password: String!) {
             login(_id: $user, password: $password)
           }`,
           variables: values,

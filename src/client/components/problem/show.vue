@@ -120,8 +120,8 @@ export default {
 
   apollo: {
     problem: {
-      query: gql`query Problem($problemId: String) {
-        problem(_id: $problemId) {
+      query: gql`query Problem($_id: ID!) {
+        problem(_id: $_id) {
           _id
           description
           title
@@ -141,7 +141,7 @@ export default {
       }`,
       variables () {
         return {
-          problemId: this.problemId
+          _id: this.problemId
         }
       }
     }
