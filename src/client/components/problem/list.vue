@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     h1.ui.dividing.header Problem List
     .ui.dropdown.floated.pointing.button.labeled.icon
@@ -15,14 +15,14 @@ window
       .item(v-for="problem in problems")
         .ui.right.floated ??
         .ui.description
-          problem(:prob="problem")
+          ProblemLink(:prob="problem")
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { debug } from 'debug'
-import window from '@/components/window'
-import problem from '@/components/format/problem'
+import Window from '@/components/Window'
+import ProblemLink from '@/components/format/Problem'
 
 const log = debug('dollast:component:problem:list')
 
@@ -36,8 +36,8 @@ export default {
   },
 
   components: {
-    window,
-    problem
+    Window,
+    ProblemLink
   },
 
   computed: {

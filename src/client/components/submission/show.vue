@@ -1,5 +1,5 @@
 <template lang="jade">
-window(v-if="submission")
+Window(v-if="submission")
   .menu(slot="config")
     .ui.header links
     a.item(:href="'#!/user/' + submission.user._id")
@@ -81,7 +81,7 @@ import 'prismjs/components/prism-cpp'
 import 'prismjs/themes/prism-solarizedlight.css'
 import 'prismjs/plugins/line-numbers/prism-line-numbers'
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css'
-import window from '@/components/window'
+import Window from '@/components/Window'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:component:submission:show')
@@ -123,7 +123,7 @@ const GQL_SUBMISSION_QUERY = gql`query ($_id: ID!) {
 
 export default {
   components: {
-    window
+    Window
   },
 
   data () {

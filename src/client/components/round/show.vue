@@ -1,5 +1,5 @@
 <template lang="jade">
-window(v-if="round")
+Window(v-if="round")
   .menu(slot="config")
     .ui.header links
     router-link.item(:to="{name: 'submissions', query: {round: round._id}}")
@@ -52,7 +52,7 @@ window(v-if="round")
         .item(v-for="prob in problems")
           .ui.right.floated ??
           .description
-            problem(:prob="prob")
+            ProblemLink(:prob="prob")
       br
 
     div(v-else)
@@ -63,8 +63,8 @@ window(v-if="round")
 import { mapActions, mapGetters } from 'vuex'
 import { debug } from 'debug'
 import moment from 'moment'
-import window from '@/components/window'
-import problem from '@/components/format/problem'
+import Window from '@/components/Window'
+import ProblemLink from '@/components/format/ProblemLink'
 import '@/components/format'
 import gql from 'graphql-tag'
 import * as _ from 'lodash'
@@ -73,8 +73,8 @@ const log = debug('dollast:component:round:show')
 
 export default {
   components: {
-    problem,
-    window
+    ProblemLink,
+    Window
   },
 
   data () {
@@ -98,7 +98,7 @@ export default {
 
   apollo: {
     problems: {
-      query: gql`query Problems($roundId: ID!) {
+      query: gql`query Problems($roundId: ID) {
         problems(round: $roundId) {
           _id
           title

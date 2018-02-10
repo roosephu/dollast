@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .menu(slot="config")
     .ui.header links
     a.item(:href="'#/round/' + round._id")
@@ -54,7 +54,7 @@ window
 import Vue from 'vue'
 import moment from 'moment'
 import { debug } from 'debug'
-import window from '@/components/window'
+import Window from '@/components/Window'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:component:round:modify')
@@ -109,7 +109,7 @@ export default {
   },
 
   components: {
-    window
+    Window
   },
 
   methods: {

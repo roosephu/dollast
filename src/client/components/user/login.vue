@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   //- Don't add (:class="{loading: isLoading}") since it doesn't work with Vue.js
   //- The status cannot be updated by both SemanticIO and Vue.
   form.ui.form.basic.segment(slot="main")#login-form
@@ -23,7 +23,7 @@ window
 
 <script>
 import { debug } from 'debug'
-import window from '@/components/window'
+import Window from '@/components/Window'
 import gql from 'graphql-tag'
 import { mapMutations } from 'vuex'
 
@@ -31,7 +31,7 @@ const log = debug('dollast:component:login')
 
 export default {
   components: {
-    window
+    Window
   },
 
   methods: {

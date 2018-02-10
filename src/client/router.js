@@ -1,58 +1,58 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import index from '@/components/site/index'
-import about from '@/components/site/about'
+import Index from '@/components/Site/Index'
+import About from '@/components/Site/About'
 
-import roundShow from '@/components/round/show'
-import roundDefault from '@/components/round/default'
-import roundUpdate from '@/components/round/update'
-import roundBoard from '@/components/round/board'
-import roundList from '@/components/round/list'
-import roundCreate from '@/components/round/create'
+import RoundShow from '@/components/Round/Show'
+import RoundDefault from '@/components/Round/Default'
+import RoundUpdate from '@/components/Round/Update'
+import RoundBoard from '@/components/Round/Board'
+import RoundList from '@/components/Round/List'
+import RoundCreate from '@/components/Round/Create'
 
-import problemShow from '@/components/problem/show'
-import problemCreate from '@/components/problem/create'
-import problemUpdate from '@/components/problem/update'
-import problemStat from '@/components/problem/stat'
-import problemData from '@/components/problem/data'
+import ProblemShow from '@/components/Problem/Show'
+import ProblemCreate from '@/components/Problem/Create'
+import ProblemUpdate from '@/components/Problem/Update'
+import ProblemStat from '@/components/Problem/Stat'
+import ProblemData from '@/components/Problem/Data'
 
-import submissionShow from '@/components/submission/show'
-import submissionList from '@/components/submission/list'
+import SubmissionShow from '@/components/Submission/Show'
+import SubmissionList from '@/components/Submission/List'
 
-import userShow from '@/components/user/profile'
-import userLogin from '@/components/user/login'
-import userRegister from '@/components/user/register'
-import userUpdate from '@/components/user/update'
+import UserShow from '@/components/User/Profile'
+import UserLogin from '@/components/User/Login'
+import UserRegister from '@/components/User/Register'
+import UserUpdate from '@/components/User/Update'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
-    { path: '/', component: index },
-    { path: '/about', component: about },
+    { path: '/', component: Index },
+    { path: '/about', component: About },
 
     { path: '/problem', redirect: '/round/default' },
-    { path: '/problem/create', component: problemCreate },
-    { path: '/problem/:problemId', name: 'problem', component: problemShow },
-    { path: '/problem/:problemId/update', component: problemUpdate },
-    { path: '/problem/:problemId/stat', component: problemStat },
-    { path: '/problem/:problemId/data', component: problemData },
+    { path: '/problem/create', component: ProblemCreate },
+    { path: '/problem/:problemId', name: 'problem', component: ProblemShow },
+    { path: '/problem/:problemId/update', component: ProblemUpdate },
+    { path: '/problem/:problemId/stat', component: ProblemStat },
+    { path: '/problem/:problemId/data', component: ProblemData },
 
-    { path: '/submission', name: 'submissions', component: submissionList },
-    { path: '/submission/:submissionId', component: submissionShow },
+    { path: '/submission', name: 'submissions', component: SubmissionList },
+    { path: '/submission/:submissionId', component: SubmissionShow },
 
-    { path: '/round', component: roundList },
-    { path: '/round/create', component: roundCreate },
-    { path: '/round/default', component: roundDefault },
-    { path: '/round/:roundId', name: 'round', component: roundShow },
-    { path: '/round/:roundId/update', component: roundUpdate },
-    { path: '/round/:roundId/board', component: roundBoard },
+    { path: '/round', component: RoundList },
+    { path: '/round/create', component: RoundCreate },
+    { path: '/round/default', component: RoundDefault },
+    { path: '/round/:roundId', name: 'round', component: RoundShow },
+    { path: '/round/:roundId/update', component: RoundUpdate },
+    { path: '/round/:roundId/board', component: RoundBoard },
 
-    { path: '/user', component: userShow },
-    { path: '/user/login', component: userLogin },
-    { path: '/user/register', component: userRegister },
-    { path: '/user/:userId', component: userShow },
-    { path: '/user/:userId/update', component: userUpdate },
+    { path: '/user', component: UserShow },
+    { path: '/user/login', component: UserLogin },
+    { path: '/user/register', component: UserRegister },
+    { path: '/user/:userId', component: UserShow },
+    { path: '/user/:userId/update', component: UserUpdate },
 
     { path: '*', redirect: '/' }
   ]

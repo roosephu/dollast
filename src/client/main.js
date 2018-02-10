@@ -6,7 +6,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { debug } from 'debug'
 import router from './router'
 import store from './store'
-import App from '@/components/app'
+import App from '@/components/App'
 import './validation.js'
 
 debug.enable('dollast:*')

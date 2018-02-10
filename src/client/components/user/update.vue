@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .menu(slot="config")
     .ui.header links
     a.item(:href="'#!/user/' + user._id")
@@ -10,15 +10,6 @@ window
     h2.ui.dividing.header {{user._id}}
     .ui.success.message
       .header Changes saved.
-
-    //- .ui.field
-    //-   label groups
-    //-   .ui.dropdown.icon.selection.search.multiple
-    //-     input(type="hidden", name="groups")
-    //-     .default.text select proper access
-    //-     i.dropdown.icon
-    //-     .menu
-    //-       .item(v-for="item in groups", :data-value="item") {{item}}
 
     h3.ui.dividing.header Description
     .ui.two.fields
@@ -54,14 +45,14 @@ window
 <script>
 import { mapGetters } from 'vuex'
 import { debug } from 'debug'
-import window from '@/components/window'
+import Window from '@/components/Window'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:components:user:modify')
 
 export default {
   components: {
-    window
+    Window
   },
 
   data () {

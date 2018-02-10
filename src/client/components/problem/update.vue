@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .menu(slot="config")
     .ui.header Links
     a.item(:href="'#/problem/' + problemId")
@@ -88,7 +88,7 @@ window
 import { debug } from 'debug'
 import { mapGetters } from 'vuex'
 import ckeditor from 'vue-ckeditor2'
-import window from '@/components/window'
+import Window from '@/components/Window'
 import roundSelector from '@/components/elements/round-selector'
 import judgers from '@/../common/judgers'
 import gql from 'graphql-tag'
@@ -172,7 +172,7 @@ const UPDATE_GQL = gql`mutation Update (
 
 export default {
   components: {
-    window,
+    Window,
     roundSelector,
     ckeditor
   },

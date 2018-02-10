@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .menu(slot="config")
     .ui.header links
     a.item(:href="'#!/round/' + round._id")
@@ -13,11 +13,11 @@ window
           th user
           th total
           th(v-for="problem in round.problems")
-            problem(:prob="problem")
+            ProblemLink(:prob="problem")
       tbody
         tr(v-for="record in board")
           td
-            user(:user="record[0]")
+            UserLink(:user="record[0]")
           td {{record[1].total}}
           td(v-for="problem in round.problems")
             a(:href="'#!/submission/' + record[1][problem._id].solution") {{record[1][problem._id].score}}
@@ -28,10 +28,10 @@ window
 <script>
 import { mapGetters } from 'vuex'
 import { debug } from 'debug'
-import window from '@/components/window'
-import problem from '@/components/format/problem'
-import codeLink from '@/components/format/codeLink'
-import user from '@/components/format/user'
+import Window from '@/components/Window'
+import ProblemLink from '@/components/format/ProblemLink'
+import SubmissionLink from '@/components/format/SubmissionLink'
+import UserLink from '@/components/format/UserLink'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:component:round:board')
@@ -49,10 +49,10 @@ function generateBoard (submissions) {
 
 export default {
   components: {
-    window,
-    problem,
-    codeLink,
-    user
+    Window,
+    ProblemLink,
+    SubmissionLink,
+    UserLink
   },
 
   computed: {

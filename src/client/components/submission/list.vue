@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .form.menu(slot="config")
     .ui.header Pagination
     a.icon.labeled.item(:class="{'disabled': query.page == 1}", @click="go(1)")
@@ -123,13 +123,13 @@ window
       tbody
         tr(v-for="sol in submissions", :class="getRowColor(sol)")
           td
-            code-link(:sid="sol._id")
+            SubmissionLink(:sid="sol._id")
           td
             .ui.label.mini {{sol.date | conciseTime}}
           td
-            problem(:prob="sol.problem")
+            ProblemLink(:prob="sol.problem")
           td
-            user(:user="sol.user")
+            UserLink(:user="sol.user")
           td(v-if="sol.summary.status == 'finished'") {{sol.summary.score | decimal(3)}}
           td(v-else) {{sol.summary.status}}
           td(v-if="sol.summary.status == 'finished'") {{sol.summary.time | decimal(3)}}
@@ -138,7 +138,7 @@ window
           td(v-else)
           td {{sol.language}}
           td(v-if="sol.round")
-            round(:round="sol.round")
+            RoundLink(:round="sol.round")
           td(v-else)
     // .ui.icon.labeled.button.floated.right.primary
     //   i.icon.refresh
@@ -148,12 +148,12 @@ window
 <script>
 import { mapGetters } from 'vuex'
 import { debug } from 'debug'
-import window from '@/components/window'
+import Window from '@/components/Window'
 import Moment from 'moment'
-import problem from '@/components/format/problem'
-import user from '@/components/format/user'
-import round from '@/components/format/round'
-import codeLink from '@/components/format/codeLink'
+import ProblemLink from '@/components/format/ProblemLink'
+import UserLink from '@/components/format/UserLink'
+import RoundLink from '@/components/format/RoundLink'
+import SubmissionLink from '@/components/format/SubmissionLink'
 import gql from 'graphql-tag'
 import * as _ from 'lodash'
 
@@ -218,11 +218,11 @@ export default {
   },
 
   components: {
-    window,
-    problem,
-    user,
-    round,
-    codeLink
+    Window,
+    ProblemLink,
+    UserLink,
+    RoundLink,
+    SubmissionLink
   },
 
   methods: {

@@ -1,5 +1,4 @@
 <<template lang="pug">
-div
 </template>
 
 <script>
@@ -11,7 +10,7 @@ export default {
       query: gql`query {
         defaultRoundId
       }`,
-      update ({defaultRoundId}) {
+      update ({ defaultRoundId }) {
         this.$router.push({
           name: 'round',
           params: { roundId: defaultRoundId }

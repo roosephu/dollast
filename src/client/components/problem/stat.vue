@@ -23,8 +23,8 @@ window(v-if="problem")
 <script>
 import { mapGetters } from 'vuex'
 import { debug } from 'debug'
-import window from '@/components/window'
-import problem from '@/components/format/problem'
+import Window from '@/components/Window'
+import ProblemLink from '@/components/format/ProblemLink'
 import gql from 'graphql-tag'
 import * as _ from 'lodash'
 
@@ -92,8 +92,8 @@ export default {
   },
 
   components: {
-    window,
-    problem
+    Window,
+    ProblemLink
   }
 }
 </script>

@@ -1,9 +1,9 @@
 import moment from 'moment'
 import Vue from 'vue'
-import codeLink from './codeLink'
-import problem from './problem'
-import user from './user'
-import round from './round'
+import SubmissionLink from './SubmissionLink'
+import ProblemLink from './ProblemLink'
+import UserLink from './UserLink'
+import RoundLink from './RoundLink'
 
 Vue.filter('problem', problem => {
   if (problem) {
@@ -35,8 +35,8 @@ Vue.filter('decimal', (value, fixed) => {
 Vue.filter('conciseTime', time => moment(time).format('YYYY-MM_DD HH:mm:ss'))
 
 export default {
-  codeLink,
-  problem,
-  round,
-  user
+  SubmissionLink,
+  ProblemLink,
+  RoundLink,
+  UserLink
 }

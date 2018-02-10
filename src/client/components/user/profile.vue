@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .menu(slot="config")
     .ui.header links
     router-link.item(:to="{name: 'submissions', query: {user: user}}")
@@ -56,9 +56,9 @@ import { mapActions, mapGetters } from 'vuex'
 import moment from 'moment'
 import { debug } from 'debug'
 import naturalSort from 'javascript-natural-sort'
-import window from '@/components/window'
-import problem from '@/components/format/problem'
-import round from '@/components/format/round'
+import Window from '@/components/Window'
+import ProblemLink from '@/components/format/ProblemLink'
+import RoundLink from '@/components/format/RoundLink'
 
 const log = debug('dollast:components:user:profile')
 
@@ -108,9 +108,9 @@ export default {
   //     @ <<< {profile}
 
   components: {
-    window,
-    problem,
-    round
+    Window,
+    ProblemLink,
+    RoundLink
   }
 }
 </script>

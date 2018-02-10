@@ -1,3 +1,3 @@
 <template lang="jade">
-  .ui.divider.horizontal Yuping Luo @ 2017
+  .ui.divider.horizontal Yuping Luo @ 2018
 </template>

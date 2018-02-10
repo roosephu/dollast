@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .menu(slot="config")
     .ui.header links
     a.item(:href="'#/problem/' + problemId")
@@ -52,14 +52,14 @@ window
 import { debug } from 'debug'
 import { mapGetters } from 'vuex'
 import naturalSort from 'javascript-natural-sort'
-import window from '@/components/window'
+import Window from '@/components/Window'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:components:problems:data')
 
 export default {
   components: {
-    window
+    Window
   },
 
   data () {

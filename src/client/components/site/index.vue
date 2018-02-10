@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .menu(slot="config")
     .ui.header links
     .item
@@ -13,11 +13,11 @@ window
 </template>
 
 <script>
-import window from '@/components/window'
+import Window from '@/components/Window'
 
 export default {
   components: {
-    window
+    Window
   }
 }
 </script>

@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose'
-import { debug } from 'debug'
+// import { debug } from 'debug'
 import { conn, Models } from './connectors'
 import { judge } from '../core'
 import * as _ from 'lodash'
@@ -33,7 +33,7 @@ const submissionSchema = new Schema({
   results: [testCaseResultSchema]
 })
 
-const log = debug('dollast:sol')
+// const log = debug('dollast:sol')
 
 export const Model = conn.model('Submission', submissionSchema)
 
@@ -86,7 +86,7 @@ const typeDef = `
       language: String
       problem: String
     ): Submission
-    rejudgeSubmission(_id: ID!): Submission
+    rejudgeSubmission(submissionId: ID, problemId: ID, contestId: ID): Submission
   }
 `
 
@@ -154,8 +154,8 @@ const resolvers = {
       return doc
     },
 
-    async rejudgeSubmission (root, { _id }, ctx) {
-      const doc = await Model.findById(_id).exec()
+    async rejudgeSubmission (root, { submissionId }, ctx) {
+      const doc = await Models.Submissions.findById(submissionId).exec()
       doc.summary = {
         status: 'running',
         score: 0

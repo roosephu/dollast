@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   //- See login.vue
   form.ui.form.basic.segment(slot="main")#register-form
     h1.ui.dividing.header Register
@@ -28,7 +28,7 @@ window
 
 <script>
 import { debug } from 'debug'
-import window from '@/components/window'
+import Window from '@/components/Window'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:component:register')

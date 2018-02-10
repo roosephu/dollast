@@ -71,7 +71,7 @@ const typeDef = `
 
   extend type Query {
     problem(_id: ID!): Problem
-    problems(round: String): [Problem]
+    problems(round: ID): [Problem]
   }
 
   extend type Mutation {

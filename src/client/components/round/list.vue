@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .menu(slot="config")
     .ui.header filter
     .item.icon#filter
@@ -25,22 +25,22 @@ window
           | to
           .ui.label {{round.endTime | time}}
         .description
-          round(:round="round")
+          RoundLink(:round="round")
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { debug } from 'debug'
-import window from '@/components/window'
-import round from '@/components/format/round'
+import Window from '@/components/Window'
+import RoundLink from '@/components/format/RoundLink'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:component:round:list')
 
 export default {
   components: {
-    window,
-    round
+    Window,
+    RoundLink
   },
 
   data () {

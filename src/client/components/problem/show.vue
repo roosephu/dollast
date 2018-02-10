@@ -1,5 +1,5 @@
 <template lang="jade">
-window
+Window
   .menu(slot="config")
     .ui.header links
     a.ui.icon.labeled.item(:href="'#/problem/' + problemId + '/stat'")
@@ -86,14 +86,14 @@ window
 <script>
 import { debug } from 'debug'
 import { mapGetters } from 'vuex'
-import window from '@/components/window'
+import Window from '@/components/Window'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:component:problem:show')
 
 export default {
   components: {
-    window
+    Window
   },
 
   data () {
