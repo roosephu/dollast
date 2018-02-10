@@ -22,7 +22,7 @@ Window
 import { mapGetters } from 'vuex'
 import { debug } from 'debug'
 import Window from '@/components/Window'
-import ProblemLink from '@/components/format/Problem'
+import ProblemLink from '@/components/format/ProblemLink'
 
 const log = debug('dollast:component:problem:list')
 

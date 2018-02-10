@@ -17,6 +17,7 @@ const testCaseResultSchema = new Schema({
 })
 
 const submissionSchema = new Schema({
+  index: Number,
   date: { type: Date, default: Date.now },
   code: String,
   language: String,
@@ -58,6 +59,7 @@ const typeDef = `
 
   type Submission {
     _id: ID!
+    index: Int
     code: String
     language: String
     problem: Problem

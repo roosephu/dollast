@@ -89,10 +89,12 @@ const log = debug('dollast:component:submission:show')
 const GQL_SUBMISSION_QUERY = gql`query ($_id: ID!) {
   submission(_id: $_id) {
     _id
+    index
     code
     language
     problem {
       _id
+      index
       title
     }
     user {
@@ -100,6 +102,7 @@ const GQL_SUBMISSION_QUERY = gql`query ($_id: ID!) {
     }
     round {
       _id
+      index
       title
     }
     summary {
@@ -173,6 +176,7 @@ export default {
         mutation: gql`mutation ($_id: ID!) {
           rejudgeSubmission(_id: $_id) {
             _id
+            index
           }
         }`,
         variables: {

@@ -10,6 +10,18 @@ Mongoose.Promose = global.Promise
 
 export const conn = Mongoose.createConnection('mongodb://localhost/dollast')
 
+export async function nextRandomIndex (model) {
+  const size = await model.count().exec()
+  const length = Math.ceil(Math.log10(size)) + 1
+  const upperLimit = Math.pow(10, length)
+  for (; ;) {
+    const randomId = Math.floor(Math.random() * upperLimit + 1)
+    if ((await model.find({ index: randomId }).limit(1)) !== null) {
+      return randomId
+    }
+  }
+}
+
 const Rounds = require('./Rounds')
 const Users = require('./Users')
 const Submissions = require('./Submissions')

@@ -15,6 +15,8 @@ const testCaseSchema = new Schema({
 })
 
 const problemSchema = new Schema({
+  index: Number,
+
   // outlook
   description: String,
   title: String,
@@ -52,6 +54,7 @@ const typeDef = `
 
   type Problem {
     _id: ID!
+    index: Int
     description: String
     title: String
     inputFormat: String
@@ -94,11 +97,6 @@ const typeDef = `
     uploadData(_id: ID!, file: Upload): [TestCase]
   }
 `
-
-function prepare (o) {
-  if (o != null) o._id = o._id.toString()
-  return o
-}
 
 const resolvers = {
   ProblemStatistics: {
@@ -147,11 +145,11 @@ const resolvers = {
 
   Query: {
     async problem (root, {_id}) {
-      return prepare(await Model.findById(_id).lean().exec())
+      return Model.findById(_id).lean().exec()
     },
 
     async problems (root, args) {
-      return (await Model.find(args).lean().exec()).map(prepare)
+      return Model.find(args).lean().exec()
     }
   },
 

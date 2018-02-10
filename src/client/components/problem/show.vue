@@ -19,7 +19,7 @@ Window
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     div(v-if="problem")
-      h1.ui.dividing.header Problem {{problem._id}}. {{problem.title}}
+      h1.ui.dividing.header Problem {{problem.index}}. {{problem.title}}
       .ui.olive.labels
         .ui.label {{problem.timeLimit}} s
           .detail time limit
@@ -123,6 +123,7 @@ export default {
       query: gql`query Problem($_id: ID!) {
         problem(_id: $_id) {
           _id
+          index
           description
           title
           inputFormat
@@ -131,6 +132,7 @@ export default {
           sampleOutput
           round {
             _id
+            index
             title
           }
           timeLimit
@@ -168,6 +170,7 @@ export default {
             mutation: gql`mutation Submit($code: String, $language: String, $problem: String) {
               submit(code: $code, language: $language, problem: $problem) {
                 _id
+                index
               }
             }`,
             variables: {

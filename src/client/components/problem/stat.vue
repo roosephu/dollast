@@ -22,13 +22,13 @@ window(v-if="problem")
 
 <script>
 import { mapGetters } from 'vuex'
-import { debug } from 'debug'
+// import { debug } from 'debug'
 import Window from '@/components/Window'
 import ProblemLink from '@/components/format/ProblemLink'
 import gql from 'graphql-tag'
 import * as _ from 'lodash'
 
-const log = debug('dollast:component:problem:stat')
+// const log = debug('dollast:component:problem:stat')
 
 function generateStat (sols) {
   if (!sols || sols.length === 0) {
@@ -70,12 +70,14 @@ export default {
       query: gql`query ($_id: ID!) {
         problem(_id: $_id) {
           _id
+          index
           title
           statistics {
             _id
             numSubmissions
             submission {
               _id
+              index
               summary {
                 score
               }

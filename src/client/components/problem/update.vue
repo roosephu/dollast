@@ -120,6 +120,7 @@ function setFormValues (data) {
 const QUERY_GQL = gql`query Problem($_id: ID!) {
   problem(_id: $_id) {
     _id
+    index
     description
     title
     inputFormat

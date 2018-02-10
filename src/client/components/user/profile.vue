@@ -30,14 +30,14 @@ Window
       .ui.relaxed.divided.link.list
         .item(v-for="prob in solvedProblems")
           .description
-            problem(:prob="prob")
+            ProblemLink(:prob="prob")
 
     .ui.segment
       .ui.top.attached.label.large Problems owned
       .ui.relaxed.divided.link.list
         .item(v-for="prob in ownedProblems")
           .description
-            problem(:prob="prob")
+            ProblemLink(:prob="prob")
 
     .ui.segment
       .ui.top.attached.label.large Rounds owned
@@ -48,11 +48,11 @@ Window
             | to
             .ui.label {{round.endTime | time}}
           .description
-            round(:round="round")
+            RoundLink(:round="round")
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import moment from 'moment'
 import { debug } from 'debug'
 import naturalSort from 'javascript-natural-sort'

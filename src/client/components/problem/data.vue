@@ -49,13 +49,13 @@ Window
 </template>
 
 <script>
-import { debug } from 'debug'
+// import { debug } from 'debug'
 import { mapGetters } from 'vuex'
 import naturalSort from 'javascript-natural-sort'
 import Window from '@/components/Window'
 import gql from 'graphql-tag'
 
-const log = debug('dollast:components:problems:data')
+// const log = debug('dollast:components:problems:data')
 
 export default {
   components: {
@@ -87,6 +87,7 @@ export default {
       query: gql`query Problem($problemId: String) {
         problem(_id: $problemId) {
           _id
+          index
           title
           dataset {
             input

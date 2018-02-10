@@ -59,6 +59,7 @@ export default {
       query: gql`query {
         rounds {
           _id
+          index
           title
           beginTime
           endTime

@@ -123,7 +123,7 @@ Window
       tbody
         tr(v-for="sol in submissions", :class="getRowColor(sol)")
           td
-            SubmissionLink(:sid="sol._id")
+            SubmissionLink(:sid="sol")
           td
             .ui.label.mini {{sol.date | conciseTime}}
           td
@@ -162,9 +162,11 @@ const log = debug('dollast:component:submission:list')
 const GQL_QUERY = gql`query ($user: String, $problem: String, $round: String, $maxScore: Float, $minScore: Float, $language: String, $page: Int) {
   submissions(user: $user, problem: $problem, round: $round, maxScore: $maxScore, minScore: $minScore, language: $language, page: $page) {
     _id
+    index
     language
     problem {
       _id
+      index
       title
     }
     user {
@@ -172,6 +174,7 @@ const GQL_QUERY = gql`query ($user: String, $problem: String, $round: String, $m
     }
     round {
       _id
+      index
       title
     }
     summary {

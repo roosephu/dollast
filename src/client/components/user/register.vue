@@ -50,7 +50,7 @@ const GQL_UPDATE = gql`mutation updateUser(
 
 export default {
   components: {
-    window
+    Window
   },
 
   mounted () {

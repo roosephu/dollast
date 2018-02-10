@@ -22,7 +22,7 @@ Window(v-if="round")
     a.item(:href="'#/round/' + roundId + '/board'")
       i.icon.trophy
       | Board
-    a.item(:href="'#/round/' + roundId + '/modify'")
+    a.item(:href="'#/round/' + roundId + '/update'")
       i.icon.edit
       | Update
 
@@ -60,7 +60,7 @@ Window(v-if="round")
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import { debug } from 'debug'
 import moment from 'moment'
 import Window from '@/components/Window'
@@ -98,9 +98,10 @@ export default {
 
   apollo: {
     problems: {
-      query: gql`query Problems($roundId: ID) {
+      query: gql`query ($roundId: ID) {
         problems(round: $roundId) {
           _id
+          index
           title
         }
       }`,
@@ -112,9 +113,10 @@ export default {
     },
 
     round: {
-      query: gql`query Round($roundId: ID!) {
+      query: gql`query ($roundId: ID!) {
         round(_id: $roundId) {
           _id
+          index
           title
           beginTime
           endTime
@@ -129,13 +131,13 @@ export default {
   },
 
   watch: {
-    'round._id' () {
+    round () {
       const beginTime = moment(this.round.beginTime)
       const endTime = moment(this.round.endTime)
       const current = moment()
       $('.ui.progress').progress({
         total: endTime - beginTime,
-        value: _.max(current - beginTime, 0)
+        value: _.max([current - beginTime, 0])
       })
     }
   },

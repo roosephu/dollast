@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose'
-import { conn, Models } from './connectors'
+import { conn, Models, nextRandomIndex } from './connectors'
 import { GraphQLDateTime } from 'graphql-iso-date'
 import status from '../status'
 import { debug } from 'debug'
@@ -7,6 +7,7 @@ import { debug } from 'debug'
 const log = debug('dollast:Rounds')
 
 const roundSchema = new Schema({
+  index: Number,
   date: { type: Date, default: Date.now },
   title: String,
   beginTime: { type: Date, default: Date.now },
@@ -21,6 +22,7 @@ const typeDef = `
 
   type Round {
     _id: ID!
+    index: Int
     title: String
     beginTime: DateTime
     endTime: DateTime
@@ -45,15 +47,15 @@ const typeDef = `
 
 const resolvers = {
   Round: {
-    async board (r) {
-      const round = await Model.findById(r._id).lean().exec()
+    async board ({ _id }) {
+      const round = await Model.findById(_id).lean().exec()
       if (!round) {
         return new Error('no such round')
       }
 
       const submissions = await Models.Submissions.aggregate([{
         $match: {
-          round: r._id,
+          round: _id,
           date: {
             $gte: round.beginTime,
             $lte: round.endTime
@@ -78,7 +80,7 @@ const resolvers = {
             $first: '$id'
           }
         }
-      }]).lean().exec()
+      }]).exec()
       log({ submissions })
 
       return submissions
@@ -92,7 +94,7 @@ const resolvers = {
       return Model.find().lean().exec()
     },
 
-    async round (root, {_id}) {
+    async round (root, { _id }) {
       return Model.findById(_id).lean().exec()
     },
 
