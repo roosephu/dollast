@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose'
-import { conn, Models } from './connectors'
+import { conn, Models, nextRandomIndex } from './connectors'
 import { debug } from 'debug'
 import { upload, genDataPairs } from '../core'
 import { inspect } from 'util'
@@ -160,6 +160,8 @@ const resolvers = {
       const dirtyHtml = _.pickBy(_.pick(problem, ['description', 'inputFormat', 'outputFormat', 'sampleInput', 'sampleOutput']))
       const cleanHtml = _.mapValues(dirtyHtml, sanitizeHtml)
       Object.assign(problem, cleanHtml)
+
+      if (!problem.index) problem.index = await nextRandomIndex(Model)
 
       await Model.update({ _id }, problem, { upsert: true }).lean().exec()
       return Model.findById(_id).lean().exec()

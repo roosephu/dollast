@@ -104,9 +104,12 @@ const resolvers = {
   },
 
   Mutation: {
-    async updateRound (root, args) {
-      const { _id } = args
-      await Model.update({ _id }, args, { upsert: true }).exec()
+    async updateRound (root, round) {
+      const { _id } = round
+
+      if (!round.index) round.index = await nextRandomIndex(Model)
+
+      await Model.update({ _id }, round, { upsert: true }).exec()
       return Model.findById(_id).lean().exec()
     }
   }

@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose'
 // import { debug } from 'debug'
-import { conn, Models } from './connectors'
+import { conn, Models, nextRandomIndex } from './connectors'
 import { judge } from '../core'
 import * as _ from 'lodash'
 import config from '../config'
@@ -145,6 +145,7 @@ const resolvers = {
       submission.round = problemDoc.round
 
       const doc = new Model(submission)
+      doc.index = await nextRandomIndex(Model)
       doc.user = ctx.session.user
       doc.summary = {
         status: 'running',
