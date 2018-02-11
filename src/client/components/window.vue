@@ -14,13 +14,13 @@ div
 </template>
 
 <script>
-import foot from '@/components/site/foot'
-import navbar from '@/components/site/navbar'
+import Foot from '@/components/site/Foot'
+import Navbar from '@/components/site/Navbar'
 
 export default {
   components: {
-    foot,
-    navbar
+    Foot,
+    Navbar
   }
 }
 </script>

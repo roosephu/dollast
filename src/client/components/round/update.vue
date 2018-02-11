@@ -2,7 +2,7 @@
 Window
   .menu(slot="config")
     .ui.header links
-    RouterLink.item(:to="'/round/' + round._id")
+    RouterLink.item(:to="'/round/' + roundId")
       i.icon.left.arrow
       | Go to Round
     .ui.divider
@@ -28,9 +28,9 @@ Window
         .ui.input
           input(name="beginTime", placeholder="YYYY-MM-DD HH:mm:ss")
       .ui.field
-        label end at
+        label duration
         .ui.input
-          input(name="endTime", placeholder="YYYY-MM-DD HH:mm:ss")
+          input(name="duration", placeholder="T3H")
 
     //- permit
 
@@ -61,7 +61,8 @@ const log = debug('dollast:component:round:modify')
 
 function getFormValues (values) {
   const beginTime = moment(values.beginTime).format()
-  const endTime = moment(values.endTime).format()
+  const duration = moment.duration(values.duration)
+  const endTime = moment(duration + moment(values.beginTime)).format()
   const { title } = values
 
   return { beginTime, endTime, title }
@@ -79,7 +80,7 @@ function setFormValues (round) {
   $form.form('set values', {
     title: title,
     beginTime: beginTime ? moment(beginTime).format('YYYY-MM-DD HH:mm:ss') : undefined,
-    endTime: endTime ? moment(endTime).format('YYYY-MM-DD HH:mm:ss') : undefined,
+    duration: endTime ? moment.duration(moment(endTime) - moment(beginTime)).toISOString() : undefined,
     problems: problems
   })
 }
@@ -87,23 +88,25 @@ function setFormValues (round) {
 export default {
   data () {
     return {
-      round: {
-        _id: null,
-        problems: []
-      }
+      round: null
     }
   },
 
   computed: {
     dropdownProblems () {
-      return this.round.problems.map(x => [x._id, Vue.filter('problem')(x)])
+      return []
+      // return this.round ? this.round.problems.map(x => [x._id, Vue.filter('problem')(x)]) : null
+    },
+
+    roundId () {
+      return this.$route.params.roundId
     },
 
     formattedTitle () {
-      if (!this.round._id) {
+      if (!this.round || !this.round._id) {
         return 'Create new Round'
       } else {
-        return `Round ${this.round._id}. ${this.round.title}`
+        return `Round #${this.round.index}. ${this.round.title}`
       }
     }
   },
@@ -118,11 +121,27 @@ export default {
     }
   },
 
-  // methods: (map-actions [\$fetch]) <<<
-  //   fetch: ->>
-  //     {round} = @$route.params
-  //     if round?
-  //       @round = await @$fetch method: \GET, url: "round/#{round}"
+  apollo: {
+    round: {
+      query: gql`query ($_id: ID!) {
+        round(_id: $_id) {
+          _id
+          index
+          title
+          beginTime
+          endTime
+          problems {
+            _id
+            index
+            title
+          }
+        }
+      }`,
+      variables () {
+        return { _id: this.$route.params.roundId }
+      }
+    }
+  },
 
   //   del: ->>
   //     log \delete
@@ -138,9 +157,10 @@ export default {
         if (this.$route.params.roundId !== undefined) {
           round._id = this.$route.params.roundId
         }
+        log({ round })
 
         await this.$apollo.mutate({
-          mutation: gql`mutation ($_id: ID!, $title: String, $beginTime: Date, $endTime: Date) {
+          mutation: gql`mutation ($_id: ID!, $title: String, $beginTime: DateTime, $endTime: DateTime) {
             updateRound(_id: $_id, title: $title, beginTime: $beginTime, endTime: $endTime) {
               _id
             }
@@ -157,16 +177,13 @@ export default {
           endTime: 'isTime'
         }
       })
-      setFormValues(this.round)
     })
   },
 
-  // created: ->
-  //   @fetch!
-
   watch: {
-    'round._id' () {
+    'round' () {
       this.$nextTick(() => {
+        log({ round: this.round })
         $('.ui.selection.dropdown').dropdown('refresh')
         setFormValues(this.round)
       })

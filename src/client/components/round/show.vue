@@ -39,10 +39,10 @@ Window(v-if="round")
       .bar
         .progress
       .label
-        | from
+        | start at
         .ui.label {{round.beginTime | time}}
-        | to
-        .ui.label {{round.endTime | time}}
+        | duration
+        .ui.label {{round | roundDuration}}
 
     .ui.header
 
@@ -106,9 +106,7 @@ export default {
         }
       }`,
       variables () {
-        return {
-          roundId: this.roundId
-        }
+        return { roundId: this.roundId }
       }
     },
 
@@ -123,9 +121,7 @@ export default {
         }
       }`,
       variables () {
-        return {
-          roundId: this.roundId
-        }
+        return { roundId: this.roundId }
       }
     }
   },
@@ -135,18 +131,14 @@ export default {
       const beginTime = moment(this.round.beginTime)
       const endTime = moment(this.round.endTime)
       const current = moment()
-      $('.ui.progress').progress({
-        total: endTime - beginTime,
-        value: _.max([current - beginTime, 0])
+      this.$nextTick(() => {
+        $('.ui.progress').progress({
+          total: endTime - beginTime,
+          value: _.max([current - beginTime, 0])
+        })
       })
-    }
-  },
 
-  mounted () {
-    this.$nextTick(() => {
-      $('#configuration').dropdown({
-        on: 'hover'
-      })
+      $('#configuration').dropdown({ on: 'hover' })
 
       const $filter = $('#filter')
       $filter.dropdown({
@@ -155,7 +147,7 @@ export default {
         }
       })
       $filter.dropdown('set text', 'All')
-    })
+    }
   }
 }
 </script>

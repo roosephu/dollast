@@ -112,7 +112,6 @@ Window
       thead
         tr
           th.collapsing.right id
-          th.collapsing time
           th problem
           th user
           th score
@@ -120,26 +119,27 @@ Window
           th space
           th.collapsing lang
           th.collapsing round
+          th.collapsing time
       tbody
         tr(v-for="sol in submissions", :class="getRowColor(sol)")
           td
             SubmissionLink(:sid="sol")
           td
-            .ui.label.mini {{sol.date | conciseTime}}
-          td
             ProblemLink(:prob="sol.problem")
           td
             UserLink(:user="sol.user")
-          td(v-if="sol.summary.status == 'finished'") {{sol.summary.score | decimal(3)}}
+          td(v-if="sol.summary.status == 'finished'") {{sol.summary.score | decimal(0)}}
           td(v-else) {{sol.summary.status}}
-          td(v-if="sol.summary.status == 'finished'") {{sol.summary.time | decimal(3)}}
+          td(v-if="sol.summary.status == 'finished'") {{sol.summary.time * 1000 | decimal(0)}} ms
           td(v-else)
-          td(v-if="sol.summary.status == 'finished'") {{sol.summary.space | decimal(3)}}
+          td(v-if="sol.summary.status == 'finished'") {{sol.summary.space * 1000 | decimal(0)}} KB
           td(v-else)
           td {{sol.language}}
           td(v-if="sol.round")
             RoundLink(:round="sol.round")
           td(v-else)
+          td
+            .ui.label.mini {{sol.date | conciseTime}}
     // .ui.icon.labeled.button.floated.right.primary
     //   i.icon.refresh
     //   | refresh

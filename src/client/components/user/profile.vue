@@ -2,33 +2,33 @@
 Window
   .menu(slot="config")
     .ui.header links
-    RouterLink.item(:to="{name: 'submissions', query: {user: user}}")
+    RouterLink.item(:to="{name: 'submissions', query: {user: user._id}}")
       i.icon
       | All submissions
     .ui.divider
     .ui.header operations
-    RouterLink.item(:to="'/user/' + user + '/update'")
+    RouterLink.item(:to="'/user/' + user._id + '/update'")
       i.icon.edit
       | Update
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
-    h1.ui.dividing.header Details of {{user}}
+    h1.ui.dividing.header Details of {{user | user}}
     .ui.segment
       .ui.top.attached.label.large registered since
       p {{registerDate}}
 
     .ui.segment
       .ui.large.top.attached.label description
-      p {{profile.description}}
+      p {{user.description}}
 
-    .ui.segment
-      .ui.top.attached.label.large Groups
-      .ui.olive.label(v-for="group in profile.groups") {{group}}
+    // .ui.segment
+    //   .ui.top.attached.label.large Groups
+    //   .ui.olive.label(v-for="group in user.groups") {{group}}
 
     .ui.segment
       .ui.top.attached.label.large Problems solved
       .ui.relaxed.divided.link.list
-        .item(v-for="prob in solvedProblems")
+        .item(v-for="prob in user.solvedProblems")
           .description
             ProblemLink(:prob="prob")
 
@@ -59,6 +59,7 @@ import naturalSort from 'javascript-natural-sort'
 import Window from '@/components/Window'
 import ProblemLink from '@/components/format/ProblemLink'
 import RoundLink from '@/components/format/RoundLink'
+import gql from 'graphql-tag'
 
 const log = debug('dollast:components:user:profile')
 
@@ -71,9 +72,7 @@ function naturalSortBy (f) {
 export default {
   data () {
     return {
-      user: this.$route.params.userId,
-      profile: {},
-      solvedProblems: [],
+      user: { _id: null },
       ownedProblems: [],
       ownedRounds: []
     }
@@ -81,18 +80,32 @@ export default {
 
   computed: {
     registerDate () {
-      if (this.profile.date) {
-        return moment(this.profile.date).format('MMMM Do YYYY')
-      } else {
-        return ''
-      }
+      return this.user.date ? moment(this.user.date).format('MMMM Do YYYY') : ''
     },
 
     ...mapGetters(['isLoading'])
   },
 
-  // created: ->
-  //   @fetch!
+  apollo: {
+    user: {
+      query: gql`query ($_id: ID!) {
+        user(_id: $_id) {
+          _id
+          email
+          description
+          date
+          solvedProblems {
+            _id
+            index
+            title
+          }
+        }
+      }`,
+      variables () {
+        return { _id: this.$route.params.userId }
+      }
+    }
+  },
 
   // watch:
   //   $route: ->

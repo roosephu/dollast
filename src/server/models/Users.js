@@ -19,9 +19,11 @@ export const Model = conn.model('User', schema)
 const typeDef = `
   type User {
     _id: ID!
-    password: String
     email: String
     description: String
+    date: DateTime
+
+    solvedProblems: [Problem]
   }
 
   extend type Query {
@@ -42,16 +44,25 @@ const typeDef = `
 
 const resolvers = {
   User: {
-    // password (root, args, ctx) {
+    async solvedProblems ({ _id }) {
+      if (!_id) return new Error('_id required')
+      const query = Models.Submissions.aggregate([{
+        $match: { user: _id, 'summary.score': 1 }
+      }, {
+        $sort: { problem: 1 }
+      }, {
+        $group: { _id: '$problem' }
+      }])
 
-    // }
+      const problemIds = await query.exec()
+      return Models.Problems.find({ _id: { $in: problemIds.map(x => x._id) } }).exec()
+    }
   },
 
   Query: {
-    async user (root, {_id}) {
+    async user (root, { _id }) {
       return Model.findById(_id).exec()
     }
-
   },
 
   Mutation: {
@@ -70,7 +81,7 @@ const resolvers = {
       return Model.findById(_id).exec()
     },
 
-    async login (root, {_id, password}, ctx) {
+    async login (root, { _id, password }, ctx) {
       const user = await Model.findById(_id).exec()
       // log(ctx)
       // log(user)

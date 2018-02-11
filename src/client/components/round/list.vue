@@ -21,9 +21,12 @@ Window
     .ui.very.relaxed.divided.link.list
       .item(v-for="round in rounds")
         .ui.right.floated
+          | start from
           .ui.label {{round.beginTime | time}}
-          | to
-          .ui.label {{round.endTime | time}}
+          | duration
+          .ui.label {{round | roundDuration}}
+          //- | to
+          //- .ui.label {{round.endTime | time}}
         .description
           RoundLink(:round="round")
 </template>
@@ -31,6 +34,7 @@ Window
 <script>
 import { mapGetters } from 'vuex'
 import { debug } from 'debug'
+import moment from 'moment'
 import Window from '@/components/Window'
 import RoundLink from '@/components/format/RoundLink'
 import gql from 'graphql-tag'
@@ -53,6 +57,13 @@ export default {
   computed: {
     ...mapGetters(['isLoading'])
   },
+
+  // methods: {
+  //   duration (round) {
+  //     log(moment(round.endTime) - moment(round.beginTime))
+  //     return round ? moment.duration(moment(round.endTime) - moment(round.beginTime)).humanize() : ''
+  //   }
+  // },
 
   apollo: {
     rounds: {

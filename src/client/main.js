@@ -23,7 +23,10 @@ const apolloProvider = new VueApollo({
     }),
     cache: new InMemoryCache(),
     connectToDevTools: true
-  })
+  }),
+  defaultOptions: {
+    $loadingKey: 'loading'
+  }
 })
 
 Vue.use(VueApollo)

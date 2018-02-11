@@ -26,6 +26,8 @@ const typeDef = `
     title: String
     beginTime: DateTime
     endTime: DateTime
+
+    problems: [Problem]
     board: [Submission]
   }
 
@@ -49,9 +51,7 @@ const resolvers = {
   Round: {
     async board ({ _id }) {
       const round = await Model.findById(_id).lean().exec()
-      if (!round) {
-        return new Error('no such round')
-      }
+      if (!round) return new Error('no such round')
 
       const submissions = await Models.Submissions.aggregate([{
         $match: {
@@ -84,6 +84,10 @@ const resolvers = {
       log({ submissions })
 
       return submissions
+    },
+
+    async problems ({ _id }) {
+      return Models.Problems.find({ round: _id }).lean().exec()
     }
   },
 
@@ -107,7 +111,8 @@ const resolvers = {
     async updateRound (root, round) {
       const { _id } = round
 
-      if (!round.index) round.index = await nextRandomIndex(Model)
+      let doc = await Models.Rounds.find({ _id }).limit().exec()
+      if (!doc) round.index = await nextRandomIndex(Model)
 
       await Model.update({ _id }, round, { upsert: true }).exec()
       return Model.findById(_id).lean().exec()

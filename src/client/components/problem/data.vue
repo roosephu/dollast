@@ -84,7 +84,7 @@ export default {
 
   apollo: {
     problem: {
-      query: gql`query Problem($problemId: String) {
+      query: gql`query Problem($problemId: ID!) {
         problem(_id: $problemId) {
           _id
           index
@@ -107,16 +107,16 @@ export default {
   methods: {
     rebuild () {
 
+    },
+
+    remove () {
+
     }
     // rebuild: ->>
     //   @problem.config.dataset = await @$fetch method: \GET, url: "data/#{@problem._id}/rebuild"
 
     // remove: (atom) ->>
     //   @problem.config.dataset = await @$fetch method: \DELETE, url: "data/#{@problem._id}/#{atom.input}"
-
-    // fetch: ->>
-    //   @problem = await @$fetch method: \GET, url: "problem/#{@$route.params.problem}"
-
   },
 
   mounted () {
