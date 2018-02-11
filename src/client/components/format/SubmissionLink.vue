@@ -1,5 +1,5 @@
 <template lang="jade">
-  a.ui.label.hvr-underline-from-center.grey(:href="'#/submission/' + sid._id") {{sid | submission}}
+  RouterLink.ui.label.hvr-underline-from-center.grey(:to="'/submission/' + sid._id") {{sid | submission}}
 </template>
 
 <script>

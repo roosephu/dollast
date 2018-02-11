@@ -11,7 +11,7 @@ export default {
         problemId: getObjectID
       }`,
       update ({ problemId }) {
-        this.$router.push({ path: `problem/${problemId}/update` })
+        this.$router.push(`/problem/${problemId}/update`)
       }
     }
   }

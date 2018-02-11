@@ -140,7 +140,7 @@ const resolvers = {
   Mutation: {
     async submit (root, submission, ctx) {
       if (!ctx.session.user) return new Error('logged in to submit')
-      const problemDoc = await Models.findById(submission.problem).lean().exec()
+      const problemDoc = await Models.Problems.findById(submission.problem).lean().exec()
       if (!problemDoc) return new Error('no such problem')
       submission.round = problemDoc.round
 

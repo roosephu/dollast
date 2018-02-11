@@ -8,7 +8,7 @@ Window
       i.dropdown.icon
       .menu
         .item(v-for="item in options", :data-value="item") {{item}}
-    a.ui.icon.labeled.button.right.floated.primary(href="#/problem/create")
+    RouterLink.ui.icon.labeled.button.right.floated.primary(to="/problem/create")
       i.icon.plus
       | create
     .ui.very.relaxed.divided.link.list#problems

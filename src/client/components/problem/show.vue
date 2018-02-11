@@ -2,24 +2,24 @@
 Window
   .menu(slot="config")
     .ui.header links
-    a.ui.icon.labeled.item(:href="'#/problem/' + problemId + '/stat'")
+    RouterLink.ui.icon.labeled.item(:to="'/problem/' + problemId + '/stat'")
       i.icon.chart.bar
       | Statistics
-    a.item(:href="'#/round/' + roundId")
+    RouterLink.item(:to="'/round/' + roundId")
       i.icon.shopping.bag
       | Go to Round
-    router-link.ui.icon.labeled.item(:to="{name: 'submissions', query: {problem: problemId}}")
+    RouterLink.ui.icon.labeled.item(:to="{name: 'submissions', query: {problem: problemId}}")
       i.icon
       | All Submissions
     .ui.divider
     .ui.header operations
-    a.ui.icon.labeled.item(:href="'#/problem/' + problemId + '/update'")
+    RouterLink.ui.icon.labeled.item(:to="'/problem/' + problemId + '/update'")
       i.icon.edit
       | Update
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
     div(v-if="problem")
-      h1.ui.dividing.header Problem {{problem.index}}. {{problem.title}}
+      h1.ui.dividing.header Problem {{problem | problem}}
       .ui.olive.labels
         .ui.label {{problem.timeLimit}} s
           .detail time limit

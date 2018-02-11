@@ -2,7 +2,7 @@
 Window
   .menu(slot="config")
     .ui.header links
-    a.item(:href="'#!/user/' + user._id")
+    RouterLink.item(:to="'/user/' + user._id")
       i.icon.user
       | Go to User
 

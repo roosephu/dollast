@@ -1,5 +1,5 @@
 <template lang="jade">
-  a.ui.label.hvr-underline-from-center(:href="'#/user/' + user._id") {{user | user}}
+  RouterLink.ui.label.hvr-underline-from-center(:to="'/user/' + user._id") {{user | user}}
 </template>
 
 <script>

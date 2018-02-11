@@ -61,10 +61,7 @@ function pairFiles (files) {
     }
   }
 
-  return {
-    pairs,
-    excessive
-  }
+  return { pairs, excessive }
 }
 
 export async function upload (pid, part) {
@@ -93,9 +90,7 @@ export async function upload (pid, part) {
     log({ e })
   } finally {
     zipFile.removeCallback()
-    ret = {
-      status: 'OK'
-    }
+    ret = { status: 'OK' }
   }
 
   async function walk (dir) {
@@ -113,7 +108,7 @@ export async function upload (pid, part) {
       }
     }
 
-    const {pairs, excessive} = pairFiles(fileList)
+    const { pairs, excessive } = pairFiles(fileList)
     // log({ fileList, pairs })
 
     for (const pair of pairs) {
@@ -122,9 +117,7 @@ export async function upload (pid, part) {
         const old = join(dir, file)
         const now = join(dataDir, file)
         // log({ old, now })
-        await fs.move(old, now, {
-          clobber: true
-        })
+        await fs.move(old, now, { clobber: true })
       }
 
       await move(input)
@@ -151,7 +144,7 @@ export async function deleteTestData (pid, filename) {
 export async function genDataPairs (pid) {
   const dataDir = join(config.dataDir, `/${pid}/`)
   const files = await fs.readdir(dataDir)
-  const {pairs, excessive} = pairFiles(files)
+  const { pairs, excessive } = pairFiles(files)
   return pairs
 }
 
@@ -164,7 +157,7 @@ const testlibExitCodes = {
 }
 
 function dropFirstLine (message) {
-  _.drop(message.split('\n'), 1).join('\n')
+  return _.drop(message.split('\n'), 1).join('\n')
 }
 
 async function judgeResult (pid, inFile, outFile, ansFile, cfg) {
@@ -188,6 +181,7 @@ async function judgeResult (pid, inFile, outFile, ansFile, cfg) {
   try {
     [stdout, stderr] = await exec(`${judger} ${inFile} ${outFile} ${ansFile}`)
   } catch (e) {
+    // log({ message: e.message })
     const messages = dropFirstLine(e.message)
     // log({ judger, stdout, stderr, messages })
     return {
@@ -201,11 +195,7 @@ async function judgeResult (pid, inFile, outFile, ansFile, cfg) {
 
   let [status, ...message] = stderr.trim().split(' ')
   message = message.split(' ')
-  return {
-    status,
-    score: 1,
-    message
-  }
+  return { status, score: 1, message }
 }
 
 async function runAtom (pid, lang, exePath, data, cfg) {
@@ -243,12 +233,8 @@ function calcProblemScore (results) {
   let ws = 0
 
   for (const [data, result] of results) {
-    if (result.time !== undefined) {
-      ret.time = Math.max(result.time, ret.time)
-    }
-    if (result.space !== undefined) {
-      ret.space = Math.max(result.space, ret.space)
-    }
+    if (result.time) ret.time = Math.max(result.time, ret.time)
+    if (result.space) ret.space = Math.max(result.space, ret.space)
 
     sum += data.weight * result.score
     ws += data.weight
@@ -278,15 +264,9 @@ export async function judge (lang, code, config, doc) {
     log(e)
     log('CE: ', message)
 
-    doc.summary = {
-      score: 0,
-      status: 'CE',
-      message
-    }
+    doc.summary = { score: 0, status: 'CE', message }
     await doc.save()
-    return {
-      status: 'CE'
-    }
+    return { status: 'CE' }
   }
 
   try {
@@ -306,7 +286,5 @@ export async function judge (lang, code, config, doc) {
     tmpDir.removeCallback()
   }
 
-  return {
-    status: 'OK'
-  }
+  return { status: 'OK' }
 }

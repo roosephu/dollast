@@ -2,13 +2,13 @@
 Window(v-if="submission")
   .menu(slot="config")
     .ui.header links
-    a.item(:href="'#!/user/' + submission.user._id")
+    RouterLink.item(:to="'/user/' + submission.user._id")
       i.icon.user
       | Go to User
-    a.item(:href="'#!/problem/' + problemId")
+    RouterLink.item(:to="'/problem/' + problemId")
       i.icon.browser
       | Go to Problem
-    a.item(:href="'#!/round/' + submission.round._id")
+    RouterLink.item(:to="'/round/' + submission.round._id")
       i.icon.shopping.bag
       | Go to Round
     .ui.divider
@@ -18,7 +18,7 @@ Window(v-if="submission")
       | Rejudge
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
-    h1.ui.header.dividing Submission {{$route.params.sid}}
+    h1.ui.header.dividing Submission {{submission.index}}
     .ui.olive.labels
       //- .ui.label {{submission.permit.owner}}
       //-   .detail owner
@@ -26,8 +26,10 @@ Window(v-if="submission")
       //-   .detail group
       .ui.label {{submission.language}}
         .detail language
-      .ui.label {{submission.problem._id}}
+      .ui.label {{submission.problem.index}}
         .detail problem
+      .ui.label {{submission.round.index}}
+        .detail round
 
     h2.ui.header.dividing code
     .ui.segment
@@ -173,8 +175,8 @@ export default {
   methods: {
     rejudge () {
       this.$apollo.mutate({
-        mutation: gql`mutation ($_id: ID!) {
-          rejudgeSubmission(_id: $_id) {
+        mutation: gql`mutation ($_id: ID) {
+          rejudgeSubmission(submissionId: $_id) {
             _id
             index
           }

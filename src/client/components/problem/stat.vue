@@ -2,15 +2,15 @@
 window(v-if="problem")
   .menu(slot="config")
     .ui.header links
-    a.item(:href="'#!/problem/' + problem._id")
+    RouterLink.item(:to="'/problem/' + problem._id")
       i.icon.browser
       | Go to Problem
-    router-link.item(to="{name: 'submissions', query: {problem: problem._id}}")
+    RouterLink.item(to="{name: 'submissions', query: {problem: problem._id}}")
       i.icon
       | All submissions
 
   .ui.basic.segment(:class="{loading: isLoading}", slot="main")
-    h1.ui.header.dividing Statistics for Problem {{problem._id}}
+    h1.ui.header.dividing Statistics for Problem {{problem | problem}}
     // problem(:prob="problem")
 
     h3.ui.header.dividing numbers

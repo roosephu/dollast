@@ -2,7 +2,7 @@
 Window(v-if="round")
   .menu(slot="config")
     .ui.header links
-    router-link.item(:to="{name: 'submissions', query: {round: round._id}}")
+    RouterLink.item(:to="{name: 'submissions', query: {round: round._id}}")
       i.icon
       | All Submissions
     .ui.divider
@@ -16,13 +16,13 @@ Window(v-if="round")
           | {{item}}
     .ui.divider
     .ui.header operations
-    a.item(href="#/problem/create")
+    RouterLink.item(to="/problem/create")
       i.icon.plus
       | Add a Problem
-    a.item(:href="'#/round/' + roundId + '/board'")
+    RouterLink.item(:to="'/round/' + roundId + '/board'")
       i.icon.trophy
       | Board
-    a.item(:href="'#/round/' + roundId + '/update'")
+    RouterLink.item(:to="'/round/' + roundId + '/update'")
       i.icon.edit
       | Update
 

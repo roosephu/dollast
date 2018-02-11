@@ -2,7 +2,7 @@
 Window
   .menu(slot="config")
     .ui.header links
-    a.item(:href="'#/problem/' + problemId")
+    RouterLink.item(:to="'/problem/' + problemId")
       i.icon.reply
       | Go to Problem
 

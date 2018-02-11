@@ -1,5 +1,5 @@
 <template lang="jade">
-  a.ui.label.hvr-underline-from-center.light.teal(v-if="round", :href="'#/round/' + round._id") {{round | round}}
+  RouterLink.ui.label.hvr-underline-from-center.light.teal(v-if="round", :to="'/round/' + round._id") {{round | round}}
   a.ui.label.hvr-underline-from-center.light.teal(v-else) hidden
 </template>
 
@@ -9,5 +9,4 @@ export default {
     round: Object
   }
 }
-
 </script>

@@ -11,7 +11,7 @@ Window
           | {{item}}
     .ui.divider
     .ui.header operations
-    a.item(href="#/round/create")
+    RouterLink.item(to="/round/create")
       i.icon.plus
       | Add a Round
 

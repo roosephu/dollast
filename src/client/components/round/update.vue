@@ -2,7 +2,7 @@
 Window
   .menu(slot="config")
     .ui.header links
-    a.item(:href="'#/round/' + round._id")
+    RouterLink.item(:to="'/round/' + round._id")
       i.icon.left.arrow
       | Go to Round
     .ui.divider

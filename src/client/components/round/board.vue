@@ -2,7 +2,7 @@
 Window
   .menu(slot="config")
     .ui.header links
-    a.item(:href="'#!/round/' + round._id")
+    RouterLink.item(:to="'/round/' + round._id")
       i.icon.left.arrow
       | Go to Round
 
@@ -20,7 +20,7 @@ Window
             UserLink(:user="record[0]")
           td {{record[1].total}}
           td(v-for="problem in round.problems")
-            a(:href="'#!/submission/' + record[1][problem._id].solution") {{record[1][problem._id].score}}
+            a(:href="'/submission/' + record[1][problem._id].solution") {{record[1][problem._id].score}}
 
     p Note: only last submission is considered.
 </template>

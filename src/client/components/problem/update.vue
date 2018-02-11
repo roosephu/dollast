@@ -2,7 +2,7 @@
 Window
   .menu(slot="config")
     .ui.header Links
-    a.item(:href="'#/problem/' + problemId")
+    RouterLink.item(:to="'/problem/' + problemId")
       i.icon.reply
       | Go to Problem
     .ui.divider
@@ -10,7 +10,7 @@ Window
     .item(v-if="problemId != ''", @click="remove")
       i.icon.cancel
       | Delete
-    a.item(v-if="problemId != ''", :href="'#/problem/' + problemId + '/data'")
+    RouterLink.item(v-if="problemId != ''", :to="'/problem/' + problemId + '/data'")
       i.icon.archive
       | Dataset Manage
 

@@ -5,32 +5,32 @@
       img.centered.tiny.ui.image(src="/atm-inverted.png", align="middle")
       slot
     .ui.divider
-    a.item(href="#/")
+    RouterLink.item(to="/")
       i.icon.home
       | Home
-    a.item(href="#/problem")
+    RouterLink.item(to="/problem")
       i.icon.browser
       | Problems
-    a.item(href="#/submission")
+    RouterLink.item(to="/submission")
       i.icon.info.circle
       | Submissions
-    a.item(href="#/round")
+    RouterLink.item(to="/round")
       i.icon.shopping.bag
       | Rounds
-    a.item(href="#/about")
+    RouterLink.item(to="/about")
       i.icon.help.circle
       | About
     .ui.divider
-    a.item(v-if="user != undefined", :href="'#/user/' + user")
+    RouterLink.item(v-if="user != undefined", :to="'/user/' + user")
       i.icon.user
       | {{user}}
-    a.item(v-else, href="#/user/login")
+    RouterLink.item(v-else, to="/user/login")
       i.icon.sign.in
       | Sign in
     a.item(v-if="user != undefined", @click="logout")
       i.icon.sign.out
       | Logout
-    a.item(v-else, href="#/user/register")
+    RouterLink.item(v-else, to="/user/register")
       i.icon.signup
       | Register
 </template>

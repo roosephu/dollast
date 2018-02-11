@@ -2,12 +2,12 @@
 Window
   .menu(slot="config")
     .ui.header links
-    router-link.item(:to="{name: 'submissions', query: {user: user}}")
+    RouterLink.item(:to="{name: 'submissions', query: {user: user}}")
       i.icon
       | All submissions
     .ui.divider
     .ui.header operations
-    a.item(:href="'#/user/' + user + '/update'")
+    RouterLink.item(:to="'/user/' + user + '/update'")
       i.icon.edit
       | Update
 
