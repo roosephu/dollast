@@ -8,13 +8,13 @@
     RouterLink.item(to="/")
       i.icon.home
       | Home
-    RouterLink.item(to="/problem")
+    RouterLink.item(to="/problems")
       i.icon.browser
       | Problems
-    RouterLink.item(to="/submission")
+    RouterLink.item(to="/submissions")
       i.icon.info.circle
       | Submissions
-    RouterLink.item(to="/round")
+    RouterLink.item(to="/rounds")
       i.icon.shopping.bag
       | Rounds
     RouterLink.item(to="/about")

@@ -28,21 +28,21 @@ Window
     .ui.segment
       .ui.top.attached.label.large Problems solved
       .ui.relaxed.divided.link.list
-        .item(v-for="prob in user.solvedProblems")
+        .item(v-for="prob in sortByIndex(user.solvedProblems)")
           .description
             ProblemLink(:prob="prob")
 
     .ui.segment
       .ui.top.attached.label.large Problems owned
       .ui.relaxed.divided.link.list
-        .item(v-for="prob in ownedProblems")
+        .item(v-for="prob in sortByIndex(ownedProblems)")
           .description
             ProblemLink(:prob="prob")
 
     .ui.segment
       .ui.top.attached.label.large Rounds owned
       .ui.relaxed.divided.link.list
-        .item(v-for="round in ownedRounds")
+        .item(v-for="round in sortByIndex(ownedRounds)")
           .ui.right.floated
             .ui.label {{round.beginTime | time}}
             | to
@@ -55,19 +55,13 @@ Window
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 import { debug } from 'debug'
-import naturalSort from 'javascript-natural-sort'
+// import naturalSort from 'javascript-natural-sort'
 import Window from '@/components/Window'
 import ProblemLink from '@/components/format/ProblemLink'
 import RoundLink from '@/components/format/RoundLink'
 import gql from 'graphql-tag'
 
 const log = debug('dollast:components:user:profile')
-
-function naturalSortBy (f) {
-  return (a, b) => {
-    naturalSort(f(a), f(b))
-  }
-}
 
 export default {
   data () {
@@ -80,10 +74,16 @@ export default {
 
   computed: {
     registerDate () {
-      return this.user.date ? moment(this.user.date).format('MMMM Do YYYY') : ''
+      return this.user.date && moment(this.user.date).format('MMMM Do YYYY')
     },
 
     ...mapGetters(['isLoading'])
+  },
+
+  methods: {
+    sortByIndex (x) {
+      return x && [...x].sort((a, b) => a.index < b.index)
+    }
   },
 
   apollo: {
@@ -106,19 +106,6 @@ export default {
       }
     }
   },
-
-  // watch:
-  //   $route: ->
-  //     @fetch!
-
-  // methods: (map-actions [\$fetch]) <<<
-  //   fetch: ->>
-  //     profile = await @$fetch method: \GET, url: "user/#{@$route.params.user}"
-  //     profile.solved-problems .= sort natural-sort-by (._id)
-  //     profile.owned-problems .= sort natural-sort-by (._id)
-  //     profile.owned-rounds .= sort natural-sort-by (._id)
-
-  //     @ <<< {profile}
 
   components: {
     Window,

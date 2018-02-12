@@ -1,10 +1,10 @@
-import { debug } from 'debug'
+// import { debug } from 'debug'
 import { Schema } from 'mongoose'
 import { conn, Models } from './connectors'
 import config from '../config'
 import { compareSync, hashSync } from 'bcrypt'
 
-const log = debug('dollast:models:user')
+// const log = debug('dollast:models:user')
 
 const schema = new Schema({
   _id: { type: String, required: true, trim: true },
@@ -69,11 +69,12 @@ const resolvers = {
     async updateUser (root, user, ctx) {
       const { _id } = user
       const doc = await Models.Users.findById(_id).lean().exec()
-      if (doc.password && user.password && !compareSync(doc.password, user.oldPassword)) return new Error('password doesn\'t match')
-
-      if (user.password) {
-        user.password = hashSync(user.password, config.bcryptCost)
+      if (!doc) { // create
+      } else {
+        if (doc.password && user.password && !compareSync(doc.password, user.oldPassword)) return new Error('password doesn\'t match')
       }
+
+      if (user.password) user.password = hashSync(user.password, config.bcryptCost)
 
       delete user.oldPassword
 
@@ -85,13 +86,9 @@ const resolvers = {
       const user = await Model.findById(_id).exec()
       // log(ctx)
       // log(user)
-      if (!user) {
-        return new Error('no such user')
-      }
+      if (!user) return new Error('no such user')
       // if (!compareSync(password, user.password)) {
-      if (!compareSync(password, user.password)) {
-        return new Error('wrong password')
-      }
+      if (!compareSync(password, user.password)) return new Error('wrong password')
       ctx.session.user = _id
       return true
 

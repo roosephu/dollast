@@ -89,7 +89,7 @@ Window
             input(name="threshold")
         .ui.field
           label language
-          .ui.dropdown.selection.item#langauge
+          .ui.dropdown.selection.item#language
             i.dropdown.icon
             input(type="hidden", name="language")
             span Language:
@@ -281,7 +281,7 @@ export default {
         this.$nextTick(() => setFormValues(query))
 
         const values = {}
-        Object.assign(values, _.pickBy(_.pick(query, ['user', 'problem', 'round', 'langugage'])))
+        Object.assign(values, _.pickBy(_.pick(query, ['user', 'problem', 'round', 'language'])))
 
         if (values.relationship === 'lt') values.maxScore = parseFloat(values.threshold)
         if (values.relationship === 'ge') values.minScore = parseFloat(values.threshold)
@@ -294,7 +294,6 @@ export default {
 
   mounted () {
     this.$nextTick(() => {
-      setFormValues(getFormValues())
       const submit = (e, values) => {
         values = getFormValues()
         log({ values, this: this })

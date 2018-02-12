@@ -17,7 +17,7 @@ const extraRules = {
   },
 
   isUserId (text) {
-    return /^[a-zA-Z0-9._]$/.test(text)
+    return /^[a-zA-Z0-9._]*$/.test(text)
   },
 
   isObjectId (text) {

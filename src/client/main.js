@@ -10,7 +10,7 @@ import App from '@/components/App'
 import './validation.js'
 
 debug.enable('dollast:*')
-// const log = debug('dollast:main')
+const log = debug('dollast:main')
 
 // axios.defaults.baseURL = '/api'
 

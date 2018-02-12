@@ -190,9 +190,7 @@ export default {
     problem: {
       query: QUERY_GQL,
       variables () {
-        return {
-          _id: this.problemId
-        }
+        return { _id: this.problemId }
       }
     }
   },
@@ -238,10 +236,7 @@ export default {
           values.inputFormat = CKEDITOR.instances.inputFormat.getData()
           values.outputFormat = CKEDITOR.instances.outputFormat.getData()
 
-          await this.$apollo.mutate({
-            mutation: UPDATE_GQL,
-            variables: values
-          })
+          await this.$apollo.mutate({ mutation: UPDATE_GQL, variables: values })
         },
         fields: {
           title: ['minLength[2]', 'maxLength[63]'],
@@ -262,9 +257,7 @@ export default {
 
   watch: {
     'problem' () {
-      this.$nextTick(() => {
-        setFormValues(this.problem)
-      })
+      this.$nextTick(() => setFormValues(this.problem))
     }
   }
 }

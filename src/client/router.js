@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Site/Index'
 import About from '@/components/Site/About'
+import NotFound from '@/components/Site/404'
 
 import RoundShow from '@/components/Round/Show'
 import RoundDefault from '@/components/Round/Default'
@@ -31,17 +32,17 @@ export default new Router({
     { path: '/', component: Index },
     { path: '/about', component: About },
 
-    { path: '/problem', redirect: '/round/default' },
+    { path: '/problems', redirect: '/round/default' },
     { path: '/problem/create', component: ProblemCreate },
     { path: '/problem/:problemId', name: 'problem', component: ProblemShow },
     { path: '/problem/:problemId/update', component: ProblemUpdate },
     { path: '/problem/:problemId/stat', component: ProblemStat },
     { path: '/problem/:problemId/data', component: ProblemData },
 
-    { path: '/submission', name: 'submissions', component: SubmissionList },
+    { path: '/submissions', name: 'submissions', component: SubmissionList },
     { path: '/submission/:submissionId', component: SubmissionShow },
 
-    { path: '/round', component: RoundList },
+    { path: '/rounds', component: RoundList },
     { path: '/round/create', component: RoundCreate },
     { path: '/round/default', component: RoundDefault },
     { path: '/round/:roundId', name: 'round', component: RoundShow },
@@ -54,6 +55,6 @@ export default new Router({
     { path: '/user/:userId', component: UserShow },
     { path: '/user/:userId/update', component: UserUpdate },
 
-    { path: '*', redirect: '/' }
+    { path: '/404', alias: '*', component: NotFound, name: '404' }
   ]
 })

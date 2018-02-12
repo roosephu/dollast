@@ -3,6 +3,7 @@ import { conn, Models, nextRandomIndex } from './connectors'
 import { GraphQLDateTime } from 'graphql-iso-date'
 import status from '../status'
 import { debug } from 'debug'
+import moment from 'moment'
 
 const log = debug('dollast:Rounds')
 
@@ -52,38 +53,23 @@ const resolvers = {
     async board ({ _id }) {
       const round = await Model.findById(_id).lean().exec()
       if (!round) return new Error('no such round')
+      if (moment().isBefore(round.beginTime)) return new Error('wait until started')
 
-      const submissions = await Models.Submissions.aggregate([{
+      const submissionIds = await Models.Submissions.aggregate([{
         $match: {
           round: _id,
-          date: {
-            $gte: round.beginTime,
-            $lte: round.endTime
-          }
+          date: { $gte: round.beginTime, $lte: round.endTime }
         }
       }, {
-        $sort: {
-          problem: 1,
-          user: 1,
-          date: -1
-        }
+        $sort: { problem: 1, user: 1, date: -1 }
       }, {
         $group: {
-          _id: {
-            problem: '$problem',
-            user: '$user'
-          },
-          score: {
-            $first: '$summary.score'
-          },
-          solution: {
-            $first: '$id'
-          }
+          _id: { problem: '$problem', user: '$user' },
+          submissionId: { $first: '$id' }
         }
       }]).exec()
-      log({ submissions })
 
-      return submissions
+      return Models.Submissions.find({ _id: { $in: submissionIds.map(x => x.submissionId) } }).exec()
     },
 
     async problems ({ _id }) {
@@ -111,10 +97,16 @@ const resolvers = {
     async updateRound (root, round) {
       const { _id } = round
 
-      let doc = await Models.Rounds.find({ _id }).limit().exec()
-      if (!doc) round.index = await nextRandomIndex(Model)
+      let doc = null
+      if (_id) {
+        doc = await Models.Rounds.find({ _id }).limit().exec()
+      } else {
+        doc = new Model(round)
+      }
 
+      if (!doc) round.index = await nextRandomIndex(Model)
       await Model.update({ _id }, round, { upsert: true }).exec()
+
       return Model.findById(_id).lean().exec()
     }
   }
