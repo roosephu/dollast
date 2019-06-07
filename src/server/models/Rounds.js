@@ -15,6 +15,7 @@ const roundSchema = new Schema({
   endTime: { type: Date, default: Date.now },
   problems: [{ type: Schema.Types.ObjectId, ref: 'Problem' }]
 })
+roundSchema.index({ index: 1 })
 
 export const Model = conn.model('Round', roundSchema)
 
@@ -55,19 +56,11 @@ const resolvers = {
       if (!round) return new Error('no such round')
       if (moment().isBefore(round.beginTime)) return new Error('wait until started')
 
-      const submissionIds = await Models.Submissions.aggregate([{
-        $match: {
-          round: _id,
-          date: { $gte: round.beginTime, $lte: round.endTime }
-        }
-      }, {
-        $sort: { problem: 1, user: 1, date: -1 }
-      }, {
-        $group: {
-          _id: { problem: '$problem', user: '$user' },
-          submissionId: { $first: '$id' }
-        }
-      }]).exec()
+      const submissionIds = await Models.Submissions.aggregate([
+        { $match: { round: _id, date: { $gte: round.beginTime, $lte: round.endTime } } },
+        { $sort: { problem: 1, user: 1, date: -1 } },
+        { $group: { _id: { problem: '$problem', user: '$user' }, submissionId: { $first: '$id' } } }
+      ]).exec()
 
       return Models.Submissions.find({ _id: { $in: submissionIds.map(x => x.submissionId) } }).exec()
     },

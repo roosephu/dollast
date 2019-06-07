@@ -33,6 +33,10 @@ const submissionSchema = new Schema({
   },
   results: [testCaseResultSchema]
 })
+submissionSchema.index({ index: 1 })
+submissionSchema.index({ round: 1, date: 1, problem: 1, user: 1, 'summary.score': -1 })
+submissionSchema.index({ problem: 1, user: 1, 'summary.score': -1 })
+submissionSchema.index({ user: 1, problem: 1, 'summary.score': -1 })
 
 // const log = debug('dollast:sol')
 

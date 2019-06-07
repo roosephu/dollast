@@ -15,12 +15,12 @@ Window
           th(v-for="problem in round.problems")
             ProblemLink(:prob="problem")
       tbody
-        tr(v-for="record in board")
+        tr(v-for="record in round.board")
           td
             UserLink(:user="record[0]")
           td {{record[1].total}}
           td(v-for="problem in round.problems")
-            a(:href="'/submission/' + record[1][problem._id].solution") {{record[1][problem._id].score}}
+            RouterLink(:to="'/submission/' + record[1][problem._id]._id") {{record[1][problem._id].score}}
 
     p Note: only last submission is considered.
 </template>
@@ -39,10 +39,12 @@ const log = debug('dollast:component:round:board')
 function generateBoard (submissions) {
   let board = {}
   for (const submission in submissions) {
-    const {user, problem} = submission._id
-    board[user] = board[user] || { total: 0 }
-    board[user][problem] = { score: submission.score, solution: submission.solution }
-    board[user].total += submission.score
+    const { user, problem, _id, score } = submission
+    const { _id: userId } = user
+    const { _id: problemId } = problem
+    board[userId] = board[userId] || { total: 0 }
+    board[userId][problemId] = { score, _id }
+    board[userId].total += submission.score
   }
   return board
 }
@@ -56,18 +58,43 @@ export default {
   },
 
   computed: {
+    board () {
+      return generateBoard(this.round.board)
+    },
+
     ...mapGetters(['isLoading'])
   },
 
-  // apollo: {
-  //   round: {
-  //     query: gql`query`
-  //   }
-  // },
+  apollo: {
+    round: {
+      query: gql`query ($_id: ID!) {
+        round(_id: $_id) {
+          _id
+          index
+          title
+          board {
+            _id
+            user {
+              _id
+            }
+            problem {
+              _id
+            }
+            index
+            summary {
+              score
+            }
+          }
+        }
+      }`,
+      variables () {
+        return { _id: this.$route.params.roundId }
+      }
+    }
+  },
 
   data () {
     return {
-      board: [],
       round: {
         problems: [],
         _id: '0'

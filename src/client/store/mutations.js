@@ -6,10 +6,6 @@ import Cookies from 'js-cookie'
 
 const log = debug('dollast:store:mutations')
 
-export function resolveError (state) {
-  Vue.set(state, 'error', null)
-}
-
 // export function login (state, token) {
 //   if (token == null) {
 //     token = localStorage.token
@@ -53,10 +49,19 @@ export function waitFor (state, progress) {
   Vue.set(state, 'isLoading', progress)
 }
 
-export function raiseError (state, {response, closable}) {
+export function raiseError (state, { error, closable }) {
+  const { graphQLErrors, networkError } = error
+  log('raise', { graphQLErrors, networkError })
 
+  if (graphQLErrors) {
+    Vue.set(state, 'error', graphQLErrors[0])
+  }
 }
 
-export function checkResponseErrors (state, {response, $form}) {
+export function fixError (state) {
+  Vue.set(state, 'error', null)
+}
+
+export function checkResponseErrors (state, { response, $form }) {
 
 }

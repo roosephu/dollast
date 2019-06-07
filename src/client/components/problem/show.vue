@@ -145,11 +145,6 @@ export default {
         return {
           _id: this.problemId
         }
-      },
-      error (error) {
-        const { graphQLErrors, networkError } = error
-        log({ graphQLErrors, networkError })
-        this.$router.push({ name: '404' })
       }
     }
   },

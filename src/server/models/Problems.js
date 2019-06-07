@@ -36,6 +36,7 @@ const problemSchema = new Schema({
 
   dataset: [testCaseSchema]
 })
+problemSchema.index({ index: 1 })
 
 export const Model = conn.model('Problem', problemSchema)
 
@@ -114,24 +115,12 @@ const resolvers = {
       const doc = await Models.Problems.findById(problem._id).lean().exec()
       if (!doc) return new Error('no such document')
 
-      const submissions = await Models.Submissions.aggregate([{
-        $match: { problem: doc._id }
-      }, {
-        $sort: { user: 1, 'final.score': 1 }
-      }, {
-        $project: {
-          language: true,
-          summary: true,
-          round: true,
-          user: true
-        }
-      }, {
-        $group: {
-          _id: '$user',
-          submission: { $first: '$_id' },
-          numSubmissions: { $sum: 1 }
-        }
-      }]).lean().exec()
+      const submissions = await Models.Submissions.aggregate([
+        { $match: { problem: doc._id } },
+        { $sort: { user: 1, 'final.score': 1 } },
+        { $project: { language: true, summary: true, round: true, user: true } },
+        { $group: { _id: '$user', submission: { $first: '$_id' }, numSubmissions: { $sum: 1 } } }
+      ]).exec()
 
       log({ return: inspect(submissions) })
 

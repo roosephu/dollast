@@ -26,6 +26,11 @@ const apolloProvider = new VueApollo({
   }),
   defaultOptions: {
     $loadingKey: 'loading'
+  },
+  errorHandler (error) {
+    const { graphQLErrors } = error
+    this.$store.commit('raiseError', { error, closable: false })
+    if (graphQLErrors) this.$router.replace('/404')
   }
 })
 
@@ -36,7 +41,7 @@ new Vue({
   router,
   store,
   apolloProvider,
-  components: {App},
+  components: { App },
   template: '<App />'
 })
 

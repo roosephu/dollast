@@ -1,7 +1,8 @@
 <template lang="jade">
   .ui.modal.small(keep-alive)#error
     .ui.header
-      | Error on {{ object }}
+      | Error
+      //-  on {{ object }}
     .content
       h4 {{ message }}
     .actions
@@ -25,19 +26,11 @@ const log = debug('dollast:error')
 export default {
   computed: {
     message () {
-      if (this.error == null) {
-        return ''
-      } else {
-        return this.error.message
-      }
+      return this.error && this.error.message
     },
 
     object () {
-      if (this.error == null) {
-        return ''
-      } else {
-        return this.error.object
-      }
+      return this.error && this.error.object
     },
 
     ...mapGetters(['error'])
@@ -46,26 +39,26 @@ export default {
   mounted () {
     const $modal = $('#error')
     $modal.modal({
-      blurring: true
+      // blurring: true
     }).transition('fade')
   },
 
   methods: {
     back () {
-      this.resolveError()
+      this.fixError()
       this.$router.go(-1)
     },
 
     home () {
-      this.resolveError()
+      this.fixError()
       this.$router.push('/')
     },
 
     ignore () {
-      this.resolveError()
+      this.fixError()
     },
 
-    ...mapMutations(['resolveError'])
+    ...mapMutations(['fixError'])
   },
 
   watch: {

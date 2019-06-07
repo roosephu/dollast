@@ -3,6 +3,7 @@ import { Schema } from 'mongoose'
 import { conn, Models } from './connectors'
 import config from '../config'
 import { compareSync, hashSync } from 'bcrypt'
+import sanitizeHtml from 'sanitize-html'
 
 // const log = debug('dollast:models:user')
 
@@ -11,6 +12,7 @@ const schema = new Schema({
   password: String,
   description: String,
   email: String,
+  rating: Number,
   date: { type: Date, default: Date.now }
 })
 
@@ -22,6 +24,7 @@ const typeDef = `
     email: String
     description: String
     date: DateTime
+    rating: Float
 
     solvedProblems: [Problem]
   }
@@ -46,13 +49,11 @@ const resolvers = {
   User: {
     async solvedProblems ({ _id }) {
       if (!_id) return new Error('_id required')
-      const query = Models.Submissions.aggregate([{
-        $match: { user: _id, 'summary.score': 1 }
-      }, {
-        $sort: { problem: 1 }
-      }, {
-        $group: { _id: '$problem' }
-      }])
+      const query = Models.Submissions.aggregate([
+        { $match: { user: _id, 'summary.score': 1 } },
+        { $sort: { problem: 1 } },
+        { $group: { _id: '$problem' } }
+      ])
 
       const problemIds = await query.exec()
       return Models.Problems.find({ _id: { $in: problemIds.map(x => x._id) } }).exec()
@@ -75,6 +76,7 @@ const resolvers = {
       }
 
       if (user.password) user.password = hashSync(user.password, config.bcryptCost)
+      if (user.description) user.description = sanitizeHtml(user.description)
 
       delete user.oldPassword
 
