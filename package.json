@@ -69,7 +69,7 @@
     "node-forge": "^0.10.0",
     "node-rsa": "^0.4.2",
     "prismjs": "^1.5.1",
-    "pug": "^2.0.0-rc.2",
+    "pug": "^3.0.1",
     "sanitize-html": "^1.11.4",
     "stream-to-promise": "^2.1.1",
     "style-loader": "^0.18.2",
