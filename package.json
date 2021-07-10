@@ -23,7 +23,7 @@
     "apollo-upload-client": "^7.0.0-alpha.4",
     "apollo-upload-server": "^4.0.2",
     "async": "^2.4.1",
-    "axios": "^0.16.2",
+    "axios": "^0.21.1",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.0",
     "babel-plugin-external-helpers": "^6.22.0",
