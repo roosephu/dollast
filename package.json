@@ -119,7 +119,7 @@
     "eventsource-polyfill": "^0.9.6",
     "fetch": "^1.1.0",
     "livescript-loader": "^0.1.5",
-    "node-fetch": "^1.7.1",
+    "node-fetch": "^2.6.7",
     "ts-loader": "^3.2.0",
     "typescript": "^2.6.2"
   },
